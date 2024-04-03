@@ -482,7 +482,7 @@ version = "2.80.0+0"
 
 [[deps.GraphPPL]]
 deps = ["BitSetTuples", "DataStructures", "Dictionaries", "MacroTools", "MetaGraphsNext", "NamedTupleTools", "Static", "StaticArrays", "TupleTools", "Unrolled"]
-git-tree-sha1 = "c81f78379649787375bf882ed7e9ea8efee7c2fd"
+git-tree-sha1 = "92be8293743af7327cf8d6b72e1ce93e9ef7de7e"
 pinned = true
 repo-rev = "main"
 repo-url = "https://github.com/ReactiveBayes/GraphPPL.jl.git"
