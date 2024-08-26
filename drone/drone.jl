@@ -284,12 +284,12 @@ T = 40
 	Dict(:type => :Slider, :label => "m", :range => 0.1:0.1:2.0, :default => 1.0),
 	Dict(:type => :Slider, :label => "I", :range => 0.1:0.1:2.0, :default => 1.0),
 	Dict(:type => :Slider, :label => "radius", :range => 0.1:0.01:0.5, :default => 0.2),
-	Dict(:type => :Slider, :label => "Δt", :range => 0.001:0.001:1.0, :default => 0.1),
+	Dict(:type => :Slider, :label => "Δt", :range => 0.05:0.001:0.1, :default => 0.05),
 	Dict(:type => :Slider, :label => "target_x", :range => -1.0:0.1:0.5, :default => -0.8),
 	Dict(:type => :Slider, :label => "target_y", :range => -0.5:0.1:0.8, :default => 0.6),
-	Dict(:type => :Slider, :label => "drone_alpha", :range => 1e-4:1e-4:10.0, :default => 1e-3),
+	Dict(:type => :Slider, :label => "drone_alpha", :range => 1e-4:1e-4:1e2, :default => 1e-3),
 	Dict(:type => :Slider, :label => "drone_beta", :range => -5.0:0.1:5.0, :default => 2.0),
-	Dict(:type => :Slider, :label => "drone_kappa", :range => -2.0:0.1:2.0, :default => 0.0),
+	Dict(:type => :Slider, :label => "drone_kappa", :range => 0.0:0.1:1e3, :default => 0.0),
 ])
 
 # ╔═╡ 08529795-0653-4678-8bdb-5af51ae8267e
@@ -334,7 +334,8 @@ for i in 1:T
 	push!(actual_states, new_state)
 end
 p = scatter([target[1]], [target[2]], label = "target"; color = :red)
-plot!(xlims = [-1.0, 1.0], ylims = [-1.0, 1.0])
+#plot!(xlims = [-1.0, 1.0], ylims = [-1.0, 1.0])
+plot!(xlims = mxlims, ylims = mylims)
 
 xy = hcat(predicted_states...)[1:2, :]'
 cov = [ i[1:2, 1:2] for i in std.(results.posteriors[:s])]	
@@ -2646,7 +2647,7 @@ version = "1.4.1+1"
 # ╠═7f56b394-e05d-430a-a762-cb3982b2fb53
 # ╟─4a4b19f0-d8fe-4e16-8577-0119e31c4a1d
 # ╠═ae8b7501-8947-4404-8263-3b7dd7a820e6
-# ╟─ff14bdb0-a65a-4a2a-bf53-32c1af445658
+# ╠═ff14bdb0-a65a-4a2a-bf53-32c1af445658
 # ╟─08529795-0653-4678-8bdb-5af51ae8267e
 # ╠═9addaec2-57d3-46ce-bbaa-35fe2f85b2f9
 # ╠═1331e04c-e49b-45b3-897d-08988a5a9e2c
