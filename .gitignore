@@ -1,0 +1,39 @@
+# Julia specific
+*.jl.cov
+*.jl.*.cov
+*.jl.mem
+deps/deps.jl
+Manifest.toml
+**/Manifest.toml
+
+# Jupyter Notebook specific
+.ipynb_checkpoints
+*/.ipynb_checkpoints/*
+*.nbconvert.ipynb
+
+# Julia environments
+.julia/
+
+# System specific
+.DS_Store
+.env
+*.swp
+*.swo
+*~
+
+# VSCode specific (if you use VSCode)
+.vscode/
+*.code-workspace
+
+# Plots and data files (uncomment if needed)
+# *.png
+# *.jpg
+# *.csv
+# *.dat
+
+# Documentation
+docs/build/
+docs/site/
+
+# Package specific
+build/
