@@ -7,6 +7,9 @@ Pkg.instantiate()
 using Weave
 using Distributed
 
+# Parse command line arguments
+const FILTER = length(ARGS) > 0 ? ARGS[1] : nothing
+
 # Add worker processes if none exist
 if nworkers() == 1
     addprocs(max(1, Sys.CPU_THREADS ÷ 2))
@@ -17,9 +20,9 @@ end
 @everywhere using Pkg
 
 # Define build directories
-const BUILD_DIR = joinpath(@__DIR__, "build")
+const BUILD_DIR = abspath(joinpath(@__DIR__, "..", "docs", "src", "examples"))
 const FIG_DIR   = joinpath(BUILD_DIR, "figures")
-const CACHE_DIR = joinpath(@__DIR__, "cache")
+const CACHE_DIR = joinpath(BUILD_DIR, "_cache")
 
 # Clear previous build
 rm(BUILD_DIR; force=true, recursive=true)
@@ -29,8 +32,36 @@ mkpath(BUILD_DIR)
 mkpath(FIG_DIR)
 mkpath(CACHE_DIR)
 
+@info """
+Build directories:
+BUILD_DIR: $BUILD_DIR
+FIG_DIR: $FIG_DIR
+CACHE_DIR: $CACHE_DIR
+"""
+
+# Function to copy auxiliary files
+@everywhere function copy_auxiliary_files(src_dir, dst_dir)
+    # Create destination directory if it doesn't exist
+    mkpath(dst_dir)
+    
+    # Copy all files except .ipynb files and Manifest.toml
+    for item in readdir(src_dir; join=true)
+        basename(item) == "Manifest.toml" && continue
+        
+        if isfile(item)
+            dst = joinpath(dst_dir, basename(item))
+            @info "Copying auxiliary file: $(basename(item))"
+            cp(item, dst; force=true)
+        elseif isdir(item)
+            # Recursively copy subdirectories
+            dst_subdir = joinpath(dst_dir, basename(item))
+            copy_auxiliary_files(item, dst_subdir)
+        end
+    end
+end
+
 # Function to check markdown for error blocks
-function has_error_blocks(md_path)
+@everywhere function has_error_blocks(md_path)
     !isfile(md_path) && return true
     mdtext = read(md_path, String)
     
@@ -61,27 +92,48 @@ end
     # Create a new module for this notebook
     mod = Module()
     
-    # Activate and instantiate the project in the notebook's directory within the module
-    Core.eval(mod, quote
-        using Pkg
-        Pkg.activate($notebook_dir)
-        Pkg.instantiate()
-    end)
-    
+    # Setup paths
     input_path = abspath(notebook_path)
-    rel_path = relpath(notebook_path, dirname(build_dir))
+    rel_path = relpath(notebook_path, @__DIR__)
     output_path = joinpath(build_dir, replace(rel_path, ".ipynb" => ".md"))
+    output_dir = dirname(output_path)
+    build_input_path = joinpath(build_dir, rel_path)
+    
+    @info """
+    Path information:
+    notebook_dir: $notebook_dir
+    output_dir: $output_dir
+    Current working directory (before): $(pwd())
+    Files in notebook_dir: $(readdir(notebook_dir))
+    """
+    
+    # Create directories and copy files
+    mkpath(output_dir)
+    copy_auxiliary_files(notebook_dir, output_dir)
+    
+    @info """
+    After copying:
+    Files in output_dir: $(readdir(output_dir))
+    """
     
     # Create notebook-specific cache directory
     notebook_cache_dir = joinpath(cache_dir, dirname(rel_path))
     mkpath(notebook_cache_dir)
     
-    # Ensure output directory exists
-    mkpath(dirname(output_path))
+    # Change to output directory before activating
+    cd(output_dir)
+    @info "Working directory changed to: $(pwd())"
+    
+    # Activate the project in the current directory
+    Core.eval(mod, quote
+        using Pkg
+        Pkg.activate(".")
+        Pkg.instantiate()
+    end)
     
     @info "Processing $rel_path..."
     try
-        weave(input_path;
+        weave(build_input_path;
             out_path=output_path,
             doctype="github",
             fig_path=fig_dir,
@@ -100,11 +152,28 @@ end
 # Find all notebook files in the examples directory
 notebook_files = String[]
 for (root, dirs, files) in walkdir(@__DIR__)
+    # Skip .ipynb_checkpoints directories
+    filter!(d -> d != ".ipynb_checkpoints", dirs)
+    
     for file in files
         if endswith(file, ".ipynb")
             push!(notebook_files, relpath(joinpath(root, file), @__DIR__))
         end
     end
+end
+
+# Filter notebooks if a pattern is provided
+if !isnothing(FILTER)
+    original_count = length(notebook_files)
+    notebook_files = filter(notebook_files) do notebook
+        occursin(lowercase(FILTER), lowercase(notebook))
+    end
+    filtered_count = length(notebook_files)
+    if filtered_count == 0
+        @error "No notebooks found matching pattern: $FILTER"
+        exit(1)
+    end
+    @info "Filtered notebooks: $filtered_count / $original_count match pattern '$FILTER'"
 end
 
 # Process notebooks in parallel
@@ -134,12 +203,20 @@ Total notebooks: $(length(final_results))
 Successful: $(length(successful_notebooks))
 Failed: $(length(failed_notebooks))
 
-Successfully processed notebooks:
-$(join(["  • " * notebook for notebook in successful_notebooks], "\n"))
-
-Failed notebooks:
-$(join(["  • " * notebook for notebook in failed_notebooks], "\n"))
+$(isempty(successful_notebooks) ? "" : "\nSuccessfully processed notebooks:\n" * join(["  • " * notebook for notebook in successful_notebooks], "\n"))
+$(isempty(failed_notebooks) ? "" : "\nFailed notebooks:\n" * join(["  • " * notebook for notebook in failed_notebooks], "\n"))
 """
+
+if !isempty(failed_notebooks)
+    @info """
+    Some notebooks failed to process. This might be due to:
+    1. Actual errors in the notebooks
+    2. Cached results causing issues
+
+    Try running 'make clean' to clear all build artifacts and cache,
+    then run the build again. If the error persists, check the notebook contents.
+    """
+end
 
 # Exit with error if any notebooks failed
 exit(isempty(failed_notebooks) ? 0 : 1)

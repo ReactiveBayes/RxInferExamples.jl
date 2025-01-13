@@ -34,8 +34,8 @@ Manifest.toml
 # Documentation
 docs/build/
 docs/site/
+docs/src/examples/
 
 # Package specific
 build/
-examples/build/
 examples/cache/

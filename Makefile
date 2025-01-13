@@ -7,6 +7,14 @@ all: examples docs
 examples:
 	julia --project=examples examples/make.jl
 
+# Build specific examples (usage: make example FILTER=pattern)
+example:
+	@if [ "$(FILTER)" = "" ]; then \
+		echo "Error: FILTER is required. Usage: make example FILTER=pattern"; \
+		exit 1; \
+	fi
+	julia --project=examples examples/make.jl $(FILTER)
+
 # Build documentation
 docs: docs-setup
 	julia --project=docs docs/make.jl
@@ -14,8 +22,7 @@ docs: docs-setup
 # Clean build artifacts
 clean:
 	rm -rf docs/build
-	rm -rf examples/build
-	rm -rf examples/cache
+	rm -rf docs/src/examples
 
 # Install documentation dependencies
 docs-setup:
@@ -32,3 +39,4 @@ help:
 	@echo "  docs-setup - Install documentation dependencies"
 	@echo "  preview    - Open documentation in browser (can be run after `docs` target)"
 	@echo "  clean      - Remove build artifacts"
+	@echo "  example    - Build specific examples (usage: make example FILTER=pattern)"
