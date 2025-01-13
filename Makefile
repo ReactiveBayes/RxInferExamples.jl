@@ -5,7 +5,7 @@ all: examples docs
 
 # Build examples
 examples: examples-setup
-	julia --project=examples examples/make.jl --use-release
+	julia --project=examples examples/make.jl
 
 # Build specific examples (usage: make example FILTER=pattern)
 example: examples-setup
