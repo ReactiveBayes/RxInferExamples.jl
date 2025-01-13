@@ -1,0 +1,57 @@
+# RxInfer.jl Examples
+
+Welcome to the examples gallery for [RxInfer.jl](https://github.com/ReactiveBayes/RxInfer.jl), a Julia package for reactive message passing and probabilistic programming.
+
+## About RxInfer.jl
+
+RxInfer.jl is a Julia package that combines message passing-based inference with reactive programming paradigms. It provides:
+
+- A flexible framework for probabilistic programming
+- Reactive message passing for real-time inference
+- Efficient and scalable inference algorithms
+- Support for both online and offline inference
+- Integration with the Julia ecosystem
+
+## Examples
+
+Browse our comprehensive collection of examples in the [List of Examples](list_of_examples.md) section.
+Each example demonstrates different aspects of RxInfer.jl's capabilities and includes detailed explanations and code.
+
+## Contributing
+
+We welcome contributions from the community! Whether you want to fix bugs, improve existing examples, or add new ones,
+please check our [contribution guide](how_to_contribute.md) for detailed instructions and best practices.
+
+## Getting Started
+
+To run these examples locally:
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/ReactiveBayes/RxInferExamples.jl.git
+   ```
+
+2. Build the examples:
+   ```bash
+   make examples
+   ```
+
+3. Build the documentation:
+   ```bash
+   make docs
+   ```
+
+4. Preview the documentation:
+   ```bash
+   make preview
+   ```
+   
+## Resources
+
+- [RxInfer.jl Documentation](https://reactivebayes.github.io/RxInfer.jl/stable/)
+- [RxInfer.jl GitHub Repository](https://github.com/ReactiveBayes/RxInfer.jl)
+- [Julia Documentation](https://docs.julialang.org)
+
+## License
+
+RxInfer.jl and these examples are licensed under the MIT License. See the LICENSE file in the repository for more details.

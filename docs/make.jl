@@ -1,12 +1,96 @@
 using Documenter, Weave
 
+# Function to collect metadata from all examples
+function collect_examples_metadata()
+    examples_dir = joinpath(@__DIR__, "src", "examples")
+    !isdir(examples_dir) && return []
+
+    metadata = []
+    
+    # Walk through all directories
+    for (root, _, files) in walkdir(examples_dir)
+        # Check if there's a meta.jl file
+        meta_path = joinpath(root, "meta.jl")
+        md_files = filter(f -> endswith(f, ".md") && f != "index.md", files)
+        
+        for md_file in md_files
+            example_path = relpath(joinpath(root, md_file), joinpath(@__DIR__, "src"))
+            meta = if isfile(meta_path)
+                include(meta_path)
+            else
+                continue
+            end
+            
+            push!(metadata, (
+                path = example_path,
+                title = meta.title,
+                description = meta.description,
+                tags = meta.tags
+            ))
+        end
+    end
+    
+    return metadata
+end
+
+# Function to generate the list of examples page
+function generate_examples_list()
+    metadata = collect_examples_metadata()
+    
+    # Group examples by their primary tag (first tag)
+    categories = Dict()
+    for meta in metadata
+        category = meta.tags[1]
+        push!(get!(categories, category, []), meta)
+    end
+    
+    # Generate markdown content
+    open(joinpath(@__DIR__, "src", "list_of_examples.md"), "w") do io
+        write(io, """
+        # List of Examples
+
+        This page contains a comprehensive list of all available examples in the RxInfer.jl Examples collection.
+        Each example includes a brief description and relevant tags to help you find what you're looking for.
+
+        """)
+        
+        # Write examples by category
+        for category in sort(collect(keys(categories)))
+            write(io, """
+            ## $(titlecase(category))
+            
+            """)
+            
+            for meta in categories[category]
+                tags_str = join(["[$(tag)]" for tag in meta.tags[2:end]], " ")
+                write(io, """
+                ### [$(meta.title)]($(meta.path))
+                
+                $(meta.description)
+                
+                **Tags:** $(tags_str)
+                
+                ---
+                
+                """)
+            end
+        end
+    end
+end
+
+# Generate the examples list before building docs
+generate_examples_list()
+
 # Function to generate pages structure from examples directory
 function generate_pages()
     examples_dir = joinpath(@__DIR__, "src", "examples")
     !isdir(examples_dir) && return ["Main page" => "index.md"]
 
-    # Base pages with main index
-    pages = Any["Home" => "index.md"]
+    # Base pages with main index and list of examples
+    pages = Any[
+        "Home" => "index.md",
+        "List of Examples" => "list_of_examples.md"
+    ]
 
     # Helper function to create nested page structure
     function process_directory(dir, prefix="")
