@@ -6,10 +6,6 @@ Welcome to the examples gallery for [RxInfer.jl](https://github.com/ReactiveBaye
     This documentation is automatically generated from Jupyter notebooks in the repository.
     The examples are regularly tested to ensure they work with the latest version of RxInfer.jl.
 
-!!! info "For Developers"
-    If you're interested in how the examples and documentation are built,
-    check out our [Build System Documentation](how_build_works.md).
-
 ## About RxInfer.jl
 
 RxInfer.jl is a Julia package that combines message passing-based inference with reactive programming paradigms. It provides:
@@ -19,6 +15,8 @@ RxInfer.jl is a Julia package that combines message passing-based inference with
 - Efficient and scalable inference algorithms
 - Support for both online and offline inference
 - Integration with the Julia ecosystem
+
+Read more about RxInfer.jl in the [RxInfer.jl Documentation](https://reactivebayes.github.io/RxInfer.jl/stable/).
 
 ## Examples
 
@@ -34,31 +32,36 @@ please check our [contribution guide](how_to_contribute.md) for detailed instruc
 
 To run these examples locally:
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/ReactiveBayes/RxInferExamples.jl.git
-   ```
+- Clone the repository:
+```bash
+git clone https://github.com/ReactiveBayes/RxInferExamples.jl.git
+```
 
-2. Build the examples:
-   ```bash
-   make examples
-   ```
+- Build the examples:
+```bash
+make examples
+```
 
-3. Build the documentation:
-   ```bash
-   make docs
-   ```
+- Build the documentation:
+```bash
+make docs
+```
 
-4. Preview the documentation:
-   ```bash
-   make preview
-   ```
+- Preview the documentation:
+```bash
+make preview
+```
 
 ## Resources
 
+- [How to Contribute](how_to_contribute.md)
 - [RxInfer.jl Documentation](https://reactivebayes.github.io/RxInfer.jl/stable/)
 - [RxInfer.jl GitHub Repository](https://github.com/ReactiveBayes/RxInfer.jl)
 - [Julia Documentation](https://docs.julialang.org)
+
+!!! info "For Developers"
+    If you're interested in how the examples and documentation are built,
+    check out our [Build System Documentation](how_build_works.md).
 
 ## License
 

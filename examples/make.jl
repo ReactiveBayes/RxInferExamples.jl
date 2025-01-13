@@ -15,7 +15,7 @@ if nworkers() == 1
     addprocs(max(1, Sys.CPU_THREADS ÷ 2))
 end
 
-# Load Weave on all workers
+# Load Weave and Pkg on all workers
 @everywhere using Weave
 @everywhere using Pkg
 
@@ -23,7 +23,7 @@ end
 const BUILD_DIR = abspath(joinpath(@__DIR__, "..", "docs", "src", "examples"))
 const CACHE_DIR = joinpath(BUILD_DIR, "_cache")
 
-# Create build directories
+# Create build directories if dont exist
 mkpath(BUILD_DIR)
 mkpath(CACHE_DIR)
 
@@ -33,23 +33,23 @@ BUILD_DIR: $BUILD_DIR
 CACHE_DIR: $CACHE_DIR
 """
 
-# Function to copy auxiliary files
-@everywhere function copy_auxiliary_files(src_dir, dst_dir)
+# Function to copy files with exceptions
+@everywhere function copy_files(src_dir, dst_dir; exclude = [])
     # Create destination directory if it doesn't exist
     mkpath(dst_dir)
     
-    # Copy all files except .ipynb files and Manifest.toml
+    # Copy all files except those in exclude list
     for item in readdir(src_dir; join=true)
-        basename(item) == "Manifest.toml" && continue
+        basename(item) in exclude && continue
         
         if isfile(item)
             dst = joinpath(dst_dir, basename(item))
-            @info "Copying auxiliary file: $(basename(item))"
+            @info "Copying file: $(basename(item))"
             cp(item, dst; force=true)
         elseif isdir(item)
             # Recursively copy subdirectories
             dst_subdir = joinpath(dst_dir, basename(item))
-            copy_auxiliary_files(item, dst_subdir)
+            copy_files(item, dst_subdir; exclude)
         end
     end
 end
@@ -79,6 +79,10 @@ end
 end
 
 # Function to fix image paths in markdown
+# The problem is that Weave generates absolute image paths 
+# but the Documenter wants relative paths
+# this function finds absolute path in the string content 
+# of the file (verbatim) and replaces it with relative paths 
 @everywhere function fix_image_paths(md_path)
     content = read(md_path, String)
     
@@ -115,9 +119,6 @@ end
     # Get the notebook's directory and activate its environment
     notebook_dir = dirname(notebook_path)
     
-    # Create a new module for this notebook
-    mod = Module()
-    
     # Setup paths
     input_path = abspath(notebook_path)
     rel_path = relpath(notebook_path, @__DIR__)
@@ -126,16 +127,17 @@ end
     build_input_path = joinpath(build_dir, rel_path)
     
     @info """
-    Path information:
-    notebook_dir: $notebook_dir
-    output_dir: $output_dir
-    Current working directory (before): $(pwd())
-    Files in notebook_dir: $(readdir(notebook_dir))
+    Notebook directory: $notebook_dir
+    Files in the notebook directory: $(readdir(notebook_dir))
+    Output directory: $output_dir
     """
     
-    # Create directories and copy files
+    # Create directories if dont exist
     mkpath(output_dir)
-    copy_auxiliary_files(notebook_dir, output_dir)
+
+    # Copy all the files (except for `Manifest.toml`) from the notebook directory 
+    # to the build directory
+    copy_files(notebook_dir, output_dir; exclude = ["Manifest.toml"])
     
     @info """
     After copying:
@@ -149,6 +151,10 @@ end
     # Change to output directory before activating
     cd(output_dir)
     @info "Working directory changed to: $(pwd())"
+
+    # Create a new module for this notebook
+    mod = Module()
+    @info "Created an anonymous module for execution of $notebook_dir"
     
     # Activate the project in the current directory
     Core.eval(mod, quote
@@ -173,23 +179,30 @@ end
         
         # Read the existing content
         content = read(output_path, String)
+
+        CONTRIBUTING_NOTE = """
+        !!! note "Contributing"
+            This example was automatically generated from a Jupyter notebook in the [RxInferExamples.jl](https://github.com/ReactiveBayes/RxInferExamples.jl) repository.
+
+            We welcome and encourage contributions! You can help by:
+            - Improving this example
+            - Creating new examples 
+            - Reporting issues or bugs
+            - Suggesting enhancements
+
+            Visit our [GitHub repository](https://github.com/ReactiveBayes/RxInferExamples.jl) to get started.
+            Together we can make [RxInfer.jl](https://github.com/ReactiveBayes/RxInfer.jl) even better! 💪
+        """
         
         # Write the contribution note at the beginning
-        write(output_path, """
-        !!! note "Contributing"
-            This example was automatically generated from a Jupyter notebook. 
-            You can find the source code in the [RxInferExamples.jl](https://github.com/ReactiveBayes/RxInferExamples.jl) repository.
-            We welcome contributions! If you'd like to:
-            - Fix or improve this example
-            - Add a new example
-            - Report an issue
-            
-            Visit our [GitHub repository](https://github.com/ReactiveBayes/RxInferExamples.jl) to get started.
-            Your contributions help make RxInfer.jl better for everyone!
-
+        write(output_path, 
+        """
+        $CONTRIBUTING_NOTE
         ---
-
-        $content""")
+        $content
+        ---
+        $CONTRIBUTING_NOTE
+        """)
         
         @info "Successfully processed $rel_path"
         return output_path
@@ -212,6 +225,11 @@ for (root, dirs, files) in walkdir(@__DIR__)
     end
 end
 
+@info """
+Found notebooks:
+$(join(["  • " * notebook for notebook in sort(notebook_files)], "\n"))
+"""
+
 # Filter notebooks if a pattern is provided
 if !isnothing(FILTER)
     original_count = length(notebook_files)
@@ -225,7 +243,10 @@ if !isnothing(FILTER)
         @error "No notebooks found matching pattern: $FILTER"
         exit(1)
     end
-    @info "Filtered notebooks: $filtered_count / $original_count match pattern '$FILTER'"
+    @info """
+    Filtered notebooks ($filtered_count / $original_count match pattern '$FILTER'):
+    $(join(["  • " * notebook for notebook in sort(notebook_files)], "\n"))
+    """
 end
 
 # Process notebooks in parallel
@@ -235,18 +256,14 @@ results = pmap(notebook -> (notebook, process_notebook(
     CACHE_DIR
 )), notebook_files)
 
-# Check for errors in output files
-final_results = [(notebook, output_path, 
-    if output_path === nothing
-        false  # Weave failed
-    else
-        !has_error_blocks(output_path)  # Check for error blocks
-    end
-) for (notebook, output_path) in results]
+is_processing_failed(output_path) = isnothing(output_path) || has_error_blocks(output_path)
 
-# Split results
-successful_notebooks = [notebook for (notebook, _, success) in final_results if success]
-failed_notebooks = [notebook for (notebook, _, success) in final_results if !success]
+# Check for errors in output files
+final_results = [(notebook, output_path, is_processing_failed(output_path)) for (notebook, output_path) in results]
+
+# Split results into successful and failed
+successful_notebooks = [notebook for (notebook, _, failed) in final_results if !failed]
+failed_notebooks = [notebook for (notebook, _, failed) in final_results if failed]
 
 @info """
 Processing Report:
@@ -254,18 +271,27 @@ Total notebooks: $(length(final_results))
 Successful: $(length(successful_notebooks))
 Failed: $(length(failed_notebooks))
 
-$(isempty(successful_notebooks) ? "" : "\nSuccessfully processed notebooks:\n" * join(["  • " * notebook for notebook in successful_notebooks], "\n"))
-$(isempty(failed_notebooks) ? "" : "\nFailed notebooks:\n" * join(["  • " * notebook for notebook in failed_notebooks], "\n"))
+$(isempty(successful_notebooks) ? "" : "Successfully processed notebooks:\n" * join(["  • " * notebook for notebook in successful_notebooks], "\n"))
+$(isempty(failed_notebooks) ? "" : "Failed notebooks:\n" * join(["  • " * notebook for notebook in failed_notebooks], "\n"))
 """
 
 if !isempty(failed_notebooks)
-    @info """
+    @warn """
     Some notebooks failed to process. This might be due to:
     1. Actual errors in the notebooks
     2. Cached results causing issues
 
     Try running 'make clean' to clear all build artifacts and cache,
     then run the build again. If the error persists, check the notebook contents.
+    """
+end
+
+if isempty(failed_notebooks)
+    @info """
+    All notebooks processed successfully! 🎉
+    
+    Next steps:
+    Run `make docs` to generate the documentation website.
     """
 end
 

@@ -1,20 +1,12 @@
 # RxInferExamples.jl
 
-This repository contains a comprehensive collection of examples for [RxInfer.jl](https://github.com/ReactiveBayes/RxInfer.jl), a Julia package for reactive message passing and probabilistic programming.
+This repository contains a collection of examples for [RxInfer.jl](https://github.com/ReactiveBayes/RxInfer.jl), a Julia package for reactive message passing and probabilistic programming.
 
 [![](https://img.shields.io/badge/docs-stable-blue.svg)](https://reactivebayes.github.io/RxInferExamples.jl/dev)
 
-Navigate to the [Examples Documentation](https://reactivebayes.github.io/RxInferExamples.jl/stable) for more information.
+Navigate to the [Examples](https://reactivebayes.github.io/RxInferExamples.jl/stable) page to check the pre-rendered examples or clone the repository and run the examples locally.
 
-## Overview
-
-The examples demonstrate various aspects of RxInfer.jl, from basic concepts to advanced applications:
-
-- **Basic Examples**: Fundamental concepts and introductory tutorials
-- **Advanced Examples**: Complex applications and advanced inference techniques
-- **Problem Specific**: Real-world applications and domain-specific models
-
-## Getting Started
+## How to run the examples locally
 
 1. Clone the repository:
    ```bash
@@ -32,18 +24,15 @@ The examples demonstrate various aspects of RxInfer.jl, from basic concepts to a
    make preview
    ```
 
+All the examples are Jupyter notebooks, which also can be run with [Jupyter](https://jupyter.org/).
+
 ## Contributing
 
-We welcome contributions! Whether you want to:
-- Fix bugs in existing examples
-- Add new examples
-- Improve documentation
-- Suggest improvements
-
-Please check our [contribution guide](https://reactivebayes.github.io/RxInferExamples.jl/stable/how_to_contribute.html) for guidelines.
+We welcome contributions! Please check our [contribution guide](https://reactivebayes.github.io/RxInferExamples.jl/stable/how_to_contribute.html) for guidelines.
 
 ## Resources
 
+- [How to Contribute](https://reactivebayes.github.io/RxInferExamples.jl/dev/how_to_contribute.html)
 - [RxInfer.jl Documentation](https://reactivebayes.github.io/RxInfer.jl/stable/)
 - [RxInfer.jl Repository](https://github.com/ReactiveBayes/RxInfer.jl)
 - [Examples Documentation](https://reactivebayes.github.io/RxInferExamples.jl/stable)
