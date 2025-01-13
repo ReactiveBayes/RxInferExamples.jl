@@ -150,6 +150,27 @@ function generate_examples_list()
         - Visualizations and results analysis
 
         $ALL_EXAMPLES_CONTRIBUTING_NOTE
+
+        ## External Resources
+
+        ```@raw html
+        <div style="margin: 1.5em 0; padding: 1.2em; border-radius: 8px; background-color: #f8f9fa; border: 1px solid #e9ecef;">
+            <h4 style="margin: 0 0 1em 0; color: #333;">Community Tutorials & Guides</h4>
+            <ul style="margin: 0; padding-left: 1.2em;">
+                <li style="margin-bottom: 0.8em;">
+                    <strong>Active Inference with RxInfer.jl</strong><br/>
+                    <span style="color: #666;">An in-depth exploration of Active Inference principles guided by 
+                    <a href="https://www.linkedin.com/in/kobusesterhuysen/">Kobus Esterhuysen</a> at 
+                    <a href="https://learnableloop.com/#category=RxInfer">Learnable Loop</a>.</span>
+                </li>
+                <li style="margin-bottom: 0.8em;">
+                    <strong>Video Tutorial Series</strong><br/>
+                    <span style="color: #666;">Comprehensive video tutorials covering RxInfer.jl's core concepts and applications by 
+                    <a href="https://www.youtube.com/@doggodotjl/search?query=RxInfer">@doggotodjl</a>.</span>
+                </li>
+            </ul>
+        </div>
+        ```
         """)
         
         # Process categories in specified order
