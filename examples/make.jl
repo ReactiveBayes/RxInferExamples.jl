@@ -21,7 +21,7 @@ end
 
 # Define build directories
 const BUILD_DIR = abspath(joinpath(@__DIR__, "..", "docs", "src", "examples"))
-const FIG_DIR   = abspath(joinpath(@__DIR__, "..", "docs", "src", "assets", "example-figures"))
+const FIG_DIR   = abspath(joinpath(@__DIR__, "..", "docs", "assets", "example-figures"))
 const CACHE_DIR = joinpath(BUILD_DIR, "_cache")
 
 # Create build directories

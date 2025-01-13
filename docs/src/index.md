@@ -6,6 +6,10 @@ Welcome to the examples gallery for [RxInfer.jl](https://github.com/ReactiveBaye
     This documentation is automatically generated from Jupyter notebooks in the repository.
     The examples are regularly tested to ensure they work with the latest version of RxInfer.jl.
 
+!!! info "For Developers"
+    If you're interested in how the examples and documentation are built,
+    check out our [Build System Documentation](how_build_works.md).
+
 ## About RxInfer.jl
 
 RxInfer.jl is a Julia package that combines message passing-based inference with reactive programming paradigms. It provides:

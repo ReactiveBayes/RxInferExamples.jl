@@ -159,6 +159,8 @@ function generate_pages()
     # Add all example pages
     append!(pages, process_directory(examples_dir))
 
+    push!(pages, "How we build the examples" => "how_build_works.md")
+
     return pages
 end
 
@@ -170,6 +172,7 @@ makedocs(
         prettyurls=get(ENV, "CI", nothing) == "true",
         example_size_threshold=200 * 1024,
         size_threshold_warn=200 * 1024,
+        inventory_version="1.0.0"
     )
 )
 
