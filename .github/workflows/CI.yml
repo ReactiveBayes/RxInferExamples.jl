@@ -38,6 +38,7 @@ jobs:
           key: ${{ github.sha }}
       - name: Build examples
         run: |
+          julia -e 'using Pkg; Pkg.add("Weave"); Pkg.precompile()'
           make examples-setup
           make examples
 
