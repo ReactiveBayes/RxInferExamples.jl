@@ -4,11 +4,11 @@
 all: examples docs
 
 # Build examples
-examples:
+examples: examples-setup
 	julia --project=examples examples/make.jl
 
 # Build specific examples (usage: make example FILTER=pattern)
-example:
+example: examples-setup
 	@if [ "$(FILTER)" = "" ]; then \
 		echo "Error: FILTER is required. Usage: make example FILTER=pattern"; \
 		exit 1; \
@@ -27,6 +27,9 @@ clean:
 # Install documentation dependencies
 docs-setup:
 	julia --project=docs -e 'using Pkg; Pkg.instantiate()'
+
+examples-setup:
+	julia --project=examples -e 'using Pkg; Pkg.instantiate()'
 
 # Preview documentation in browser
 preview:

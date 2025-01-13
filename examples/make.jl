@@ -24,9 +24,6 @@ const BUILD_DIR = abspath(joinpath(@__DIR__, "..", "docs", "src", "examples"))
 const FIG_DIR   = joinpath(BUILD_DIR, "figures")
 const CACHE_DIR = joinpath(BUILD_DIR, "_cache")
 
-# Clear previous build
-rm(BUILD_DIR; force=true, recursive=true)
-
 # Create build directories
 mkpath(BUILD_DIR)
 mkpath(FIG_DIR)
@@ -141,6 +138,25 @@ end
             cache_path=notebook_cache_dir,
             mod=mod
         )
+        # Append contribution message
+        open(output_path, "a") do io
+            write(io, """
+            
+            ---
+            
+            !!! note "Contributing"
+                This example was automatically generated from a Jupyter notebook. 
+                You can find the source code in the [RxInferExamples.jl](https://github.com/ReactiveBayes/RxInferExamples.jl) repository.
+                We welcome contributions! If you'd like to:
+                - Fix or improve this example
+                - Add a new example
+                - Report an issue
+                
+                Visit our [GitHub repository](https://github.com/ReactiveBayes/RxInferExamples.jl) to get started.
+                Your contributions help make RxInfer.jl better for everyone!
+            """)
+        end
+        
         @info "Successfully processed $rel_path"
         return output_path
     catch e
@@ -166,7 +182,9 @@ end
 if !isnothing(FILTER)
     original_count = length(notebook_files)
     notebook_files = filter(notebook_files) do notebook
-        occursin(lowercase(FILTER), lowercase(notebook))
+        # Only match against the notebook name, not the full path
+        notebook_name = basename(notebook)
+        occursin(lowercase(FILTER), lowercase(notebook_name))
     end
     filtered_count = length(notebook_files)
     if filtered_count == 0
