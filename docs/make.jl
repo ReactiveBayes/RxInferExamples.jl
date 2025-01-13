@@ -224,77 +224,58 @@ generate_examples_list()
 
 # Helper function to simplify page structure by removing redundant paths
 function simplify_page_structure(pages)
-    @info "Starting page structure simplification..."
-
-    # Helper to format page structure for logging
-    function format_structure(items, indent="")
-        result = ""
-        for item in items
-            if item isa Pair
-                title, content = item
-                if content isa Vector
-                    result *= "$(indent)$(title)/\n"
-                    result *= format_structure(content, indent * "  ")
-                else
-                    result *= "$(indent)$(title) => $(content)\n"
-                end
-            else
-                result *= "$(indent)$(item)\n"
-            end
-        end
-        return result
-    end
+    # Statistics counters
+    total_items = 0
+    simplified_items = 0
+    categories = Set{String}()
+    examples_per_category = Dict{String, Int}()
+    simplified_paths = String[]
 
     function simplify_item(item)
-        if item isa Pair
-            title, content = item
-            if content isa Vector  # It's a category with subpages
-                @info "Processing folder: $(title)"
-                # Process each item in the vector
-                simplified = []
-                for child in content
-                    if child isa Pair && child.second isa String  # It's a leaf node
-                        dir_name = basename(dirname(child.second))
-                        file_name = replace(basename(child.second), r"\.md$" => "")
-                        if dir_name == file_name
-                            @info "Simplifying path in $(title):" child.second => dir_name
-                            push!(simplified, dir_name => child.second)
-                        else
-                            push!(simplified, child)
-                        end
-                    else
-                        push!(simplified, simplify_item(child))
-                    end
-                end
-                return title => simplified
-            elseif content isa String  # It's a page
-                # If the markdown file has the same name as its directory
-                dir_name = basename(dirname(content))
-                file_name = replace(basename(content), r"\.md$" => "")
-                if dir_name == file_name
-                    @info "Simplifying redundant path:" content => dir_name
-                    return dir_name => content
+        if !(item isa Pair)
+            return item
+        end
+        
+        category, content = item
+        push!(categories, category)
+        examples_per_category[category] = 0
+        
+        if content isa Vector
+            # Process each example in the category
+            simplified = map(content) do example
+                total_items += 1
+                examples_per_category[category] += 1
+                if example isa Pair && example.second isa Vector
+                    # We found a nested structure, get the file path
+                    file_path = example.second[1].second
+                    # Keep the example name but link directly to file
+                    simplified_items += 1
+                    push!(simplified_paths, "$(category)/$(example.first)")
+                    example.first => file_path
                 else
-                    @debug "Keeping original path structure:" content
-                    return title => content
+                    example
                 end
             end
+            return category => simplified
         end
+        
         return item
     end
 
     simplified = map(simplify_item, pages)
     
     @info """
-    Page structure simplification complete:
-    • Original pages: $(length(pages))
-    • Simplified pages: $(length(simplified))
+    Page Structure Simplification Stats:
+    • Categories found: $(length(categories))
+      $(join(sort(collect(categories)), "\n  "))
+    • Total examples: $total_items
+    • Simplified paths: $simplified_items
     
-    Original structure:
-    $(format_structure(pages))
+    Examples per category:
+    $(join(["  $(cat): $(examples_per_category[cat])" for cat in sort(collect(categories))], "\n"))
     
-    Simplified structure:
-    $(format_structure(simplified))
+    Simplified examples:
+    $(join(sort(simplified_paths), "\n  "))
     """
     
     return simplified
