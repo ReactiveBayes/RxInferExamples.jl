@@ -9,18 +9,27 @@ end
 
 # Define category order (categories not in this list will be sorted alphabetically at the end)
 const ORDERED_CATEGORIES = [
-    Category("Basic Examples", """
-        Fundamental concepts and introductory tutorials. Start here if you're new to RxInfer.jl.
-        These examples cover basic probabilistic models, inference techniques, and data processing.
-        """),
-    Category("Advanced Examples", """
-        More complex applications and advanced inference techniques. These examples demonstrate
-        sophisticated models, performance optimization, and integration with other Julia packages.
-        """),
-    Category("Problem Specific", """
-        Real-world applications and domain-specific models. These examples show how RxInfer.jl
-        can be applied to specific problems like time series analysis and signal processing.
-        """)
+    Category(
+        "Basic Examples",
+        """
+Fundamental concepts and introductory tutorials. Start here if you're new to RxInfer.jl.
+These examples cover basic probabilistic models, inference techniques, and data processing.
+"""
+    ),
+    Category(
+        "Advanced Examples",
+        """
+More complex applications and advanced inference techniques. These examples demonstrate
+sophisticated models, performance optimization, and integration with other Julia packages.
+"""
+    ),
+    Category(
+        "Problem Specific",
+        """
+Real-world applications and domain-specific models. These examples show how RxInfer.jl
+can be applied to specific problems like time series analysis and signal processing.
+"""
+    )
 ]
 
 const ALL_EXAMPLES_CONTRIBUTING_NOTE = """
@@ -38,9 +47,9 @@ const ALL_EXAMPLES_CONTRIBUTING_NOTE = """
 function sort_by_ORDERED_CATEGORIES(items)
     # Create a lookup for category order
     order_lookup = Dict(category.title => i for (i, category) in enumerate(ORDERED_CATEGORIES))
-    
+
     # Sort function that uses the lookup
-    sort(items, by = item -> begin
+    sort(items, by=item -> begin
         category = item[1]  # Get category name from pair
         # Use high number for categories not in the order list
         get(order_lookup, category, length(ORDERED_CATEGORIES) + 1)
@@ -53,13 +62,13 @@ function collect_examples_metadata()
     !isdir(examples_dir) && return []
 
     metadata = []
-    
+
     # Walk through all directories
     for (root, _, files) in walkdir(examples_dir)
         # Check if there's a meta.jl file
         meta_path = joinpath(root, "meta.jl")
         md_files = filter(f -> endswith(f, ".md") && f != "index.md", files)
-        
+
         for md_file in md_files
             example_path = relpath(joinpath(root, md_file), joinpath(@__DIR__, "src"))
             meta = if isfile(meta_path)
@@ -67,16 +76,16 @@ function collect_examples_metadata()
             else
                 continue
             end
-            
+
             push!(metadata, (
-                path = example_path,
-                title = meta.title,
-                description = meta.description,
-                tags = meta.tags
+                path=example_path,
+                title=meta.title,
+                description=meta.description,
+                tags=meta.tags
             ))
         end
     end
-    
+
     return metadata
 end
 
@@ -104,7 +113,7 @@ end
 
 function style_example_card(meta)
     tags_html = join(map(style_tag, meta.tags), " ")
-    
+
     """
     ```@raw html
     <div style="margin: 1.5em 0; padding: 1em 1.2em; border-radius: 8px; 
@@ -161,94 +170,103 @@ function generate_examples_list()
     mkpath(AUTOGEN_DIR)
 
     metadata = collect_examples_metadata()
-    
+
     # Group examples by their folder path
     categories = Dict()
     for meta in metadata
         folder = splitpath(meta.path)[2]
         push!(get!(categories, folder, []), meta)
     end
-    
+
     # Generate markdown content
     output_path = joinpath(AUTOGEN_DIR, "list_of_examples.md")
     open(output_path, "w") do io
         # Add theme styles at the top
         write(io, THEME_STYLES)
 
-        write(io, """
-        # List of Examples
+        write(
+            io,
+            """
+  # List of Examples
 
-        Welcome to our curated collection of RxInfer.jl examples! Here you'll find a comprehensive set of tutorials, demonstrations, and real-world applications that showcase the power and flexibility of RxInfer.jl.
+  Welcome to our curated collection of RxInfer.jl examples! Here you'll find a comprehensive set of tutorials, demonstrations, and real-world applications that showcase the power and flexibility of RxInfer.jl.
 
-        Each example comes with:
-        - A detailed description of concepts covered
-        - Relevant tags for easy filtering
-        - Complete source code and explanations
-        - Visualizations and results analysis
+  Each example comes with:
+  - A detailed description of concepts covered
+  - Relevant tags for easy filtering
+  - Complete source code and explanations
+  - Visualizations and results analysis
 
-        $ALL_EXAMPLES_CONTRIBUTING_NOTE
+  $ALL_EXAMPLES_CONTRIBUTING_NOTE
 
-        ## External Resources
+  ## External Resources
 
-        ```@raw html
-        <div style="margin: 1.5em 0; padding: 1.2em; border-radius: 8px; 
-            background-color: var(--resources-bg-color, #f8f9fa); 
-            border: 1px solid var(--card-border-color, #e9ecef);">
-            <h4 style="margin: 0 0 1em 0; color: var(--category-text-color, #333);">Community Tutorials & Guides</h4>
-            <ul style="margin: 0; padding-left: 1.2em;">
-                <li style="margin-bottom: 0.8em;">
-                    <strong>Active Inference with RxInfer.jl</strong><br/>
-                    <span style="color: var(--text-muted-color, #666);">An in-depth exploration of Active Inference principles guided by 
-                    <a href="https://www.linkedin.com/in/kobusesterhuysen/">Kobus Esterhuysen</a> at 
-                    <a href="https://learnableloop.com/#category=RxInfer">Learnable Loop</a>.</span>
-                </li>
-                <li style="margin-bottom: 0.8em;">
-                    <strong>Video Tutorial Series</strong><br/>
-                    <span style="color: var(--text-muted-color, #666);">Comprehensive video tutorials covering RxInfer.jl's core concepts and applications by 
-                    <a href="https://www.youtube.com/@doggodotjl/search?query=RxInfer">@doggotodjl</a>.</span>
-                </li>
-            </ul>
-        </div>
-        ```
-        """)
-        
+  ```@raw html
+  <div style="margin: 1.5em 0; padding: 1.2em; border-radius: 8px; 
+      background-color: var(--resources-bg-color, #f8f9fa); 
+      border: 1px solid var(--card-border-color, #e9ecef);">
+      <h4 style="margin: 0 0 1em 0; color: var(--category-text-color, #333);">Community Tutorials & Guides</h4>
+      <ul style="margin: 0; padding-left: 1.2em;">
+          <li style="margin-bottom: 0.8em;">
+              <strong>Active Inference with RxInfer.jl</strong><br/>
+              <span style="color: var(--text-muted-color, #666);">An in-depth exploration of Active Inference principles guided by 
+              <a href="https://www.linkedin.com/in/kobusesterhuysen/">Kobus Esterhuysen</a> at 
+              <a href="https://learnableloop.com/#category=RxInfer">Learnable Loop</a>.</span>
+          </li>
+          <li style="margin-bottom: 0.8em;">
+              <strong>Video Tutorial Series</strong><br/>
+              <span style="color: var(--text-muted-color, #666);">Comprehensive video tutorials covering RxInfer.jl's core concepts and applications by 
+              <a href="https://www.youtube.com/@doggodotjl/search?query=RxInfer">@doggotodjl</a>.</span>
+          </li>
+      </ul>
+  </div>
+  ```
+  """
+        )
+
         # Process categories in specified order
         all_categories = collect(keys(categories))
-        
+
         # First, write ordered categories
         for cat in ORDERED_CATEGORIES
             if cat.title in all_categories
                 write(io, style_category_header(cat.title))
-                
+
                 # Add category description
-                write(io, """
-                ```@raw html
-                <div style="margin: -0.5em 0 2em 0; color: var(--description-text-color, #476582);">
-                    $(cat.description)
-                </div>
-                ```
-                """)
-                
+                write(
+                    io,
+                    """
+          ```@raw html
+          <div style="margin: -0.5em 0 2em 0; color: var(--description-text-color, #476582);">
+              $(cat.description)
+          </div>
+          ```
+          """
+                )
+
                 for meta in categories[cat.title]
                     write(io, style_example_card(meta))
                 end
                 delete!(categories, cat.title)
             end
         end
-        
+
         # Then write any remaining categories alphabetically
         for folder in sort(collect(keys(categories)))
             write(io, style_category_header(folder))
-            
+
             # Add a generic description for unknown categories
-            write(io, """
-            ```@raw html
-            <div style="margin: -0.5em 0 2em 0; color: #476582;">
-                Additional examples demonstrating various aspects of RxInfer.jl.
-            </div>
-            ```
-            """)
-            
+            write(
+                io,
+                """
+      ```@raw html
+      <div style="margin: -0.5em 0 2em 0; color: #476582;">
+          Additional examples demonstrating various aspects of RxInfer.jl.
+      </div>
+      ```
+      """
+            )
+
             for meta in categories[folder]
                 write(io, style_example_card(meta))
             end
@@ -267,18 +285,18 @@ function simplify_page_structure(pages)
     total_items = 0
     simplified_items = 0
     categories = Set{String}()
-    examples_per_category = Dict{String, Int}()
+    examples_per_category = Dict{String,Int}()
     simplified_paths = String[]
 
     function simplify_item(item)
         if !(item isa Pair)
             return item
         end
-        
+
         category, content = item
         push!(categories, category)
         examples_per_category[category] = 0
-        
+
         if content isa Vector
             # Process each example in the category
             simplified = map(content) do example
@@ -297,26 +315,26 @@ function simplify_page_structure(pages)
             end
             return category => simplified
         end
-        
+
         return item
     end
 
     simplified = map(simplify_item, pages)
-    
+
     @info """
     Page Structure Simplification Stats:
     • Categories found: $(length(categories))
       $(join(sort(collect(categories)), "\n  "))
     • Total examples: $total_items
     • Simplified paths: $simplified_items
-    
+
     Examples per category:
     $(join(["  $(cat): $(examples_per_category[cat])" for cat in sort(collect(categories))], "\n"))
-    
+
     Simplified examples:
     $(join(sort(simplified_paths), "\n  "))
     """
-    
+
     return simplified
 end
 
@@ -327,19 +345,19 @@ function generate_pages()
 
     # Base pages with main index and list of examples
     pages = Any[
-        "Home" => "index.md",
-        "How to contribute" => "how_to_contribute.md",
-        "List of Examples" => "autogenerated/list_of_examples.md",
+        "Home"=>"index.md",
+        "How to contribute"=>"how_to_contribute.md",
+        "List of Examples"=>"autogenerated/list_of_examples.md",
     ]
 
     # Helper function to create nested page structure
     function process_directory(dir, prefix="")
         items = []
-        
+
         # Process all markdown files in the current directory
         for entry in readdir(dir)
             path = joinpath(dir, entry)
-            
+
             if isfile(path) && endswith(entry, ".md") && entry != "index.md"
                 # Get relative path from src directory
                 rel_path = relpath(path, joinpath(@__DIR__, "src"))
@@ -354,7 +372,7 @@ function generate_pages()
                 end
             end
         end
-        
+
         return sort(items)  # Sort items within each category
     end
 
@@ -377,6 +395,7 @@ makedocs(
     pages=generate_pages(),
     format=Documenter.HTML(
         prettyurls=get(ENV, "CI", nothing) == "true",
+        assets=String["assets/theme.css", "assets/header.css", "assets/header.js"],
         example_size_threshold=200 * 1024,
         size_threshold_warn=200 * 1024,
         inventory_version="1.0.0"
