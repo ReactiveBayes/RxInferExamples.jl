@@ -1,14 +1,62 @@
 using Pkg
-
-# Ensure Weave is available
-Pkg.activate(@__DIR__)
-Pkg.instantiate()
-
 using Distributed
 using Base.Filesystem
+using ArgParse
 
 # Parse command line arguments
-const FILTER = length(ARGS) > 0 ? ARGS[1] : nothing
+function parse_commandline()
+    s = ArgParseSettings()
+
+    @add_arg_table! s begin
+        "--use-dev"
+            action = :store_true
+            help = "Use local development version of RxInfer"
+        "--rxinfer-path"
+            help = "Path to RxInfer.jl repository (overrides default ../RxInfer.jl)"
+        "filter"
+            help = "Filter pattern for notebook names"
+            required = false
+    end
+
+    return parse_args(s)
+end
+
+const ARGS = parse_commandline()
+const FILTER = get(ARGS, "filter", nothing)
+const USE_DEV = ARGS["use-dev"]
+const CUSTOM_RXINFER_PATH = get(ARGS, "rxinfer-path", nothing)
+
+const RXINFER_PATH = if USE_DEV
+    # Try to find local RxInfer development version
+    rxinfer_dev = if !isnothing(CUSTOM_RXINFER_PATH)
+        CUSTOM_RXINFER_PATH
+    else
+        joinpath(dirname(@__DIR__), "..", "RxInfer.jl")
+    end
+
+    if isdir(rxinfer_dev)
+        @info "Using local development version of RxInfer from $(rxinfer_dev)"
+        abspath(rxinfer_dev)
+    else
+        @error """
+        Could not find local RxInfer development version at $(rxinfer_dev).
+        Please either:
+        1. Clone RxInfer.jl repository next to RxInferExamples.jl
+        2. Specify path with --rxinfer-path
+        3. Remove --use-dev flag to use released version
+        """
+        exit(-1)
+    end
+else
+    nothing
+end
+
+# Activate and setup environment
+Pkg.activate(@__DIR__)
+
+Pkg.instantiate()
+
+using Base.Filesystem
 
 # Add worker processes if none exist
 if nworkers() == 1
@@ -115,7 +163,7 @@ end
 end
 
 # Function to process a single notebook
-@everywhere function process_notebook(notebook_path, build_dir, cache_dir)
+@everywhere function process_notebook(notebook_path, build_dir, cache_dir, rxinfer_path=nothing)
     # Get the notebook's directory and activate its environment
     notebook_dir = dirname(notebook_path)
     
@@ -160,6 +208,16 @@ end
     Core.eval(mod, quote
         using Pkg
         Pkg.activate(".")
+    end)
+
+    if !isnothing(rxinfer_path)
+        Core.eval(mod, quote 
+            @info "Adding development version of RxInfer to notebook environment"
+            Pkg.develop(path=$rxinfer_path)
+        end)
+    end
+
+    Core.eval(mod, quote
         Pkg.instantiate()
     end)
     
@@ -253,7 +311,8 @@ end
 results = pmap(notebook -> (notebook, process_notebook(
     joinpath(@__DIR__, notebook),
     BUILD_DIR,
-    CACHE_DIR
+    CACHE_DIR,
+    RXINFER_PATH
 )), notebook_files)
 
 is_processing_failed(output_path) = isnothing(output_path) || has_error_blocks(output_path)

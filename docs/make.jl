@@ -222,6 +222,65 @@ end
 # Generate the examples list before building docs
 generate_examples_list()
 
+# Helper function to simplify page structure by removing redundant paths
+function simplify_page_structure(pages)
+    # Statistics counters
+    total_items = 0
+    simplified_items = 0
+    categories = Set{String}()
+    examples_per_category = Dict{String, Int}()
+    simplified_paths = String[]
+
+    function simplify_item(item)
+        if !(item isa Pair)
+            return item
+        end
+        
+        category, content = item
+        push!(categories, category)
+        examples_per_category[category] = 0
+        
+        if content isa Vector
+            # Process each example in the category
+            simplified = map(content) do example
+                total_items += 1
+                examples_per_category[category] += 1
+                if example isa Pair && example.second isa Vector
+                    # We found a nested structure, get the file path
+                    file_path = example.second[1].second
+                    # Keep the example name but link directly to file
+                    simplified_items += 1
+                    push!(simplified_paths, "$(category)/$(example.first)")
+                    example.first => file_path
+                else
+                    example
+                end
+            end
+            return category => simplified
+        end
+        
+        return item
+    end
+
+    simplified = map(simplify_item, pages)
+    
+    @info """
+    Page Structure Simplification Stats:
+    • Categories found: $(length(categories))
+      $(join(sort(collect(categories)), "\n  "))
+    • Total examples: $total_items
+    • Simplified paths: $simplified_items
+    
+    Examples per category:
+    $(join(["  $(cat): $(examples_per_category[cat])" for cat in sort(collect(categories))], "\n"))
+    
+    Simplified examples:
+    $(join(sort(simplified_paths), "\n  "))
+    """
+    
+    return simplified
+end
+
 # Function to generate pages structure from examples directory
 function generate_pages()
     examples_dir = joinpath(@__DIR__, "src", "examples")
@@ -264,6 +323,8 @@ function generate_pages()
     example_pages = process_directory(examples_dir)
     # Sort categories according to ORDERED_CATEGORIES
     example_pages = sort_by_ORDERED_CATEGORIES(example_pages)
+    # Simplify page structure
+    example_pages = simplify_page_structure(example_pages)
     append!(pages, example_pages)
 
     push!(pages, "How we build the examples" => "how_build_works.md")

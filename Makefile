@@ -15,6 +15,18 @@ example: examples-setup
 	fi
 	julia --project=examples examples/make.jl $(FILTER)
 
+# Build examples with local development version of RxInfer
+examples-dev: examples-setup
+	julia --project=examples examples/make.jl --use-dev $(if $(RXINFER),--rxinfer-path=$(RXINFER),)
+
+# Build specific example with local development version of RxInfer
+example-dev: examples-setup
+	@if [ "$(FILTER)" = "" ]; then \
+		echo "Error: FILTER is required. Usage: make example-dev FILTER=pattern"; \
+		exit 1; \
+	fi
+	julia --project=examples examples/make.jl --use-dev $(if $(RXINFER),--rxinfer-path=$(RXINFER),) $(FILTER)
+
 # Build documentation
 docs: docs-setup
 	julia --project=docs docs/make.jl
@@ -42,6 +54,8 @@ help:
 	@echo "  all        - Build all examples and documentation (default)"
 	@echo "  examples   - Build all example notebooks"
 	@echo "  example    - Build specific example (usage: make example FILTER=pattern)"
+	@echo "  examples-dev - Build all examples with local RxInfer development version"
+	@echo "  example-dev  - Build specific example with local RxInfer development version"
 	@echo "  docs       - Build the documentation website"
 	@echo "  preview    - Open documentation in browser"
 	@echo "  clean      - Remove all build artifacts and caches"
@@ -52,5 +66,7 @@ help:
 	@echo ""
 	@echo "Examples:"
 	@echo "  make example FILTER=LinearRegression  # Build specific example"
+	@echo "  make example-dev FILTER=LinearRegression  # Build with local RxInfer"
+	@echo "  make example-dev FILTER=LinearRegression RXINFER=/path/to/RxInfer.jl  # Build with specific RxInfer"
 	@echo "  make clean && make all               # Clean build everything"
 	@echo "  make docs && make preview            # Build and view docs"
