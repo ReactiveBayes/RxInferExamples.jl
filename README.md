@@ -1,10 +1,15 @@
-# RxInferExamples.jl
+# A collection of examples for RxInfer.jl
+
+![](docs/src/assets/biglogo-blacktheme.svg?raw=true&sanitize=true)
+
+[![Official page](https://img.shields.io/badge/official%20page%20-RxInfer-blue)](https://reactivebayes.github.io/rxinfer-website/)
+[![Examples](https://img.shields.io/badge/examples-RxInfer-brightgreen)](https://reactivebayes.github.io/RxInfer.jl/stable/examples/overview/)
+[![Contribute a new example](https://img.shields.io/badge/Contribute-%20a%20new%20example-red)](https://reactivebayes.github.io/RxInferExamples.jl/dev/how_to_contribute/)
+[![Q&A](https://img.shields.io/badge/Q&A-RxInfer-orange)](https://github.com/reactivebayes/RxInfer.jl/discussions)
 
 This repository contains a collection of examples for [RxInfer.jl](https://github.com/ReactiveBayes/RxInfer.jl), a Julia package for reactive message passing and probabilistic programming.
 
-[![](https://img.shields.io/badge/docs-stable-blue.svg)](https://reactivebayes.github.io/RxInferExamples.jl/dev)
-
-Navigate to the [Examples](https://reactivebayes.github.io/RxInferExamples.jl/stable) page to check the pre-rendered examples or clone the repository and run the examples locally.
+Navigate to the [Examples](https://reactivebayes.github.io/RxInferExamples.jl/stable) page to check the pre-rendered examples or clone the repository and run the examples locally. Additionally, explore the official [RxInfer.jl](https://reactivebayes.github.io/RxInfer.jl/stable) documentation.
 
 ## How to run the examples locally
 
