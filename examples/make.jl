@@ -6,6 +6,7 @@ Pkg.instantiate()
 
 using Weave
 using Distributed
+using Base.Filesystem
 
 # Parse command line arguments
 const FILTER = length(ARGS) > 0 ? ARGS[1] : nothing
@@ -21,18 +22,15 @@ end
 
 # Define build directories
 const BUILD_DIR = abspath(joinpath(@__DIR__, "..", "docs", "src", "examples"))
-const FIG_DIR   = abspath(joinpath(@__DIR__, "..", "docs", "assets", "example-figures"))
 const CACHE_DIR = joinpath(BUILD_DIR, "_cache")
 
 # Create build directories
 mkpath(BUILD_DIR)
-mkpath(FIG_DIR)
 mkpath(CACHE_DIR)
 
 @info """
 Build directories:
 BUILD_DIR: $BUILD_DIR
-FIG_DIR: $FIG_DIR
 CACHE_DIR: $CACHE_DIR
 """
 
@@ -81,8 +79,40 @@ end
     return false
 end
 
+# Function to fix image paths in markdown
+@everywhere function fix_image_paths(md_path)
+    content = read(md_path, String)
+    
+    # Pattern to match markdown image syntax with absolute paths
+    # Matches both ![alt](path) and ![](path) formats
+    pattern = r"!\[(.*?)\]\((/.*?/docs/src/examples/[^\)]+)\)"
+    
+    # Replace absolute paths with relative ones
+    new_content = content
+    for m in eachmatch(pattern, content)
+        alt_text, abs_path = m.captures
+        
+        # Get the relative path from the markdown file to the image
+        md_dir = dirname(md_path)
+        img_path = normpath(abs_path)
+        rel_path = relpath(img_path, md_dir)
+        
+        @info "Converting path in $(basename(md_path)):" abs_path => rel_path
+        
+        # Replace this specific match
+        old_img = "![$(alt_text)]($(abs_path))"
+        new_img = "![$(alt_text)]($(rel_path))"
+        new_content = replace(new_content, old_img => new_img)
+    end
+    
+    # Write back only if changes were made
+    if content != new_content
+        write(md_path, new_content)
+    end
+end
+
 # Function to process a single notebook
-@everywhere function process_notebook(notebook_path, build_dir, fig_dir, cache_dir)
+@everywhere function process_notebook(notebook_path, build_dir, cache_dir)
     # Get the notebook's directory and activate its environment
     notebook_dir = dirname(notebook_path)
     
@@ -133,11 +163,15 @@ end
         weave(build_input_path;
             out_path=output_path,
             doctype="github",
-            fig_path=fig_dir,
+            fig_path=output_dir,
             cache=:all,
             cache_path=notebook_cache_dir,
             mod=mod
         )
+        
+        # Fix any absolute image paths in the generated markdown
+        fix_image_paths(output_path)
+        
         # Read the existing content
         content = read(output_path, String)
         
@@ -199,7 +233,6 @@ end
 results = pmap(notebook -> (notebook, process_notebook(
     joinpath(@__DIR__, notebook),
     BUILD_DIR,
-    FIG_DIR,
     CACHE_DIR
 )), notebook_files)
 
