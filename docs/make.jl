@@ -84,8 +84,9 @@ end
 function style_tag(tag)
     """
     <span style="display: inline-block; padding: 3px 7px; margin: 2px; 
-        background: #f3f6f9; border-radius: 3px; font-size: 0.9em; 
-        color: #476582;">
+        border-radius: 3px; font-size: 0.9em;
+        background: var(--tag-bg-color, #f3f6f9);
+        color: var(--tag-text-color, #476582);">
         $(tag)
     </span>
     """
@@ -94,7 +95,7 @@ end
 function style_category_header(category)
     """
     ```@raw html
-    <h2 style="margin-top: 2em; margin-bottom: 1em; color: #2c3e50;">
+    <h2 style="margin-top: 2em; margin-bottom: 1em; color: var(--category-text-color, #2c3e50);">
         $(titlecase(replace(category, "_" => " ")))
     </h2>
     ```
@@ -106,13 +107,15 @@ function style_example_card(meta)
     
     """
     ```@raw html
-    <div style="margin: 1.5em 0; padding: 1em 1.2em; border-radius: 8px; border: 1px solid #e9ecef;">
+    <div style="margin: 1.5em 0; padding: 1em 1.2em; border-radius: 8px; 
+        border: 1px solid var(--card-border-color, #e9ecef);
+        background: var(--card-bg-color, transparent);">
         <h3 style="margin: 0 0 0.6em 0;">
     ```
     [$(meta.title)]($(joinpath("..", meta.path)))
     ```@raw html
         </h3>
-        <p style="margin: 0 0 1em 0; line-height: 1.6;">
+        <p style="margin: 0 0 1em 0; line-height: 1.6; color: var(--text-color, inherit);">
             $(meta.description)
         </p>
         $(tags_html)
@@ -120,6 +123,37 @@ function style_example_card(meta)
     ```
     """
 end
+
+# Add CSS variables for theme support
+const THEME_STYLES = """
+```@raw html
+<style>
+    :root {
+        --tag-bg-color: #f3f6f9;
+        --tag-text-color: #476582;
+        --category-text-color: #2c3e50;
+        --card-border-color: #e9ecef;
+        --card-bg-color: transparent;
+        --text-color: inherit;
+        --resources-bg-color: #f8f9fa;
+        --text-muted-color: #666;
+        --description-text-color: #476582;
+    }
+    
+    .theme--documenter-dark {
+        --tag-bg-color: #2d2d2d;
+        --tag-text-color: #9ecbff;
+        --category-text-color: #e6e6e6;
+        --card-border-color: #404040;
+        --card-bg-color: #1f1f1f;
+        --text-color: #e6e6e6;
+        --resources-bg-color: #1f1f1f;
+        --text-muted-color: #999;
+        --description-text-color: #9ecbff;
+    }
+</style>
+```
+"""
 
 # Function to generate the list of examples page
 function generate_examples_list()
@@ -138,6 +172,9 @@ function generate_examples_list()
     # Generate markdown content
     output_path = joinpath(AUTOGEN_DIR, "list_of_examples.md")
     open(output_path, "w") do io
+        # Add theme styles at the top
+        write(io, THEME_STYLES)
+
         write(io, """
         # List of Examples
 
@@ -154,18 +191,20 @@ function generate_examples_list()
         ## External Resources
 
         ```@raw html
-        <div style="margin: 1.5em 0; padding: 1.2em; border-radius: 8px; background-color: #f8f9fa; border: 1px solid #e9ecef;">
-            <h4 style="margin: 0 0 1em 0; color: #333;">Community Tutorials & Guides</h4>
+        <div style="margin: 1.5em 0; padding: 1.2em; border-radius: 8px; 
+            background-color: var(--resources-bg-color, #f8f9fa); 
+            border: 1px solid var(--card-border-color, #e9ecef);">
+            <h4 style="margin: 0 0 1em 0; color: var(--category-text-color, #333);">Community Tutorials & Guides</h4>
             <ul style="margin: 0; padding-left: 1.2em;">
                 <li style="margin-bottom: 0.8em;">
                     <strong>Active Inference with RxInfer.jl</strong><br/>
-                    <span style="color: #666;">An in-depth exploration of Active Inference principles guided by 
+                    <span style="color: var(--text-muted-color, #666);">An in-depth exploration of Active Inference principles guided by 
                     <a href="https://www.linkedin.com/in/kobusesterhuysen/">Kobus Esterhuysen</a> at 
                     <a href="https://learnableloop.com/#category=RxInfer">Learnable Loop</a>.</span>
                 </li>
                 <li style="margin-bottom: 0.8em;">
                     <strong>Video Tutorial Series</strong><br/>
-                    <span style="color: #666;">Comprehensive video tutorials covering RxInfer.jl's core concepts and applications by 
+                    <span style="color: var(--text-muted-color, #666);">Comprehensive video tutorials covering RxInfer.jl's core concepts and applications by 
                     <a href="https://www.youtube.com/@doggodotjl/search?query=RxInfer">@doggotodjl</a>.</span>
                 </li>
             </ul>
@@ -184,7 +223,7 @@ function generate_examples_list()
                 # Add category description
                 write(io, """
                 ```@raw html
-                <div style="margin: -0.5em 0 2em 0; color: #476582;">
+                <div style="margin: -0.5em 0 2em 0; color: var(--description-text-color, #476582);">
                     $(cat.description)
                 </div>
                 ```
