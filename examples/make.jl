@@ -138,24 +138,25 @@ end
             cache_path=notebook_cache_dir,
             mod=mod
         )
-        # Append contribution message
-        open(output_path, "a") do io
-            write(io, """
+        # Read the existing content
+        content = read(output_path, String)
+        
+        # Write the contribution note at the beginning
+        write(output_path, """
+        !!! note "Contributing"
+            This example was automatically generated from a Jupyter notebook. 
+            You can find the source code in the [RxInferExamples.jl](https://github.com/ReactiveBayes/RxInferExamples.jl) repository.
+            We welcome contributions! If you'd like to:
+            - Fix or improve this example
+            - Add a new example
+            - Report an issue
             
-            ---
-            
-            !!! note "Contributing"
-                This example was automatically generated from a Jupyter notebook. 
-                You can find the source code in the [RxInferExamples.jl](https://github.com/ReactiveBayes/RxInferExamples.jl) repository.
-                We welcome contributions! If you'd like to:
-                - Fix or improve this example
-                - Add a new example
-                - Report an issue
-                
-                Visit our [GitHub repository](https://github.com/ReactiveBayes/RxInferExamples.jl) to get started.
-                Your contributions help make RxInfer.jl better for everyone!
-            """)
-        end
+            Visit our [GitHub repository](https://github.com/ReactiveBayes/RxInferExamples.jl) to get started.
+            Your contributions help make RxInfer.jl better for everyone!
+
+        ---
+
+        $content""")
         
         @info "Successfully processed $rel_path"
         return output_path
