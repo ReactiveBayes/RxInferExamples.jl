@@ -222,6 +222,84 @@ end
 # Generate the examples list before building docs
 generate_examples_list()
 
+# Helper function to simplify page structure by removing redundant paths
+function simplify_page_structure(pages)
+    @info "Starting page structure simplification..."
+
+    # Helper to format page structure for logging
+    function format_structure(items, indent="")
+        result = ""
+        for item in items
+            if item isa Pair
+                title, content = item
+                if content isa Vector
+                    result *= "$(indent)$(title)/\n"
+                    result *= format_structure(content, indent * "  ")
+                else
+                    result *= "$(indent)$(title) => $(content)\n"
+                end
+            else
+                result *= "$(indent)$(item)\n"
+            end
+        end
+        return result
+    end
+
+    function simplify_item(item)
+        if item isa Pair
+            title, content = item
+            if content isa Vector  # It's a category with subpages
+                @info "Processing folder: $(title)"
+                # Process each item in the vector
+                simplified = []
+                for child in content
+                    if child isa Pair && child.second isa String  # It's a leaf node
+                        dir_name = basename(dirname(child.second))
+                        file_name = replace(basename(child.second), r"\.md$" => "")
+                        if dir_name == file_name
+                            @info "Simplifying path in $(title):" child.second => dir_name
+                            push!(simplified, dir_name => child.second)
+                        else
+                            push!(simplified, child)
+                        end
+                    else
+                        push!(simplified, simplify_item(child))
+                    end
+                end
+                return title => simplified
+            elseif content isa String  # It's a page
+                # If the markdown file has the same name as its directory
+                dir_name = basename(dirname(content))
+                file_name = replace(basename(content), r"\.md$" => "")
+                if dir_name == file_name
+                    @info "Simplifying redundant path:" content => dir_name
+                    return dir_name => content
+                else
+                    @debug "Keeping original path structure:" content
+                    return title => content
+                end
+            end
+        end
+        return item
+    end
+
+    simplified = map(simplify_item, pages)
+    
+    @info """
+    Page structure simplification complete:
+    • Original pages: $(length(pages))
+    • Simplified pages: $(length(simplified))
+    
+    Original structure:
+    $(format_structure(pages))
+    
+    Simplified structure:
+    $(format_structure(simplified))
+    """
+    
+    return simplified
+end
+
 # Function to generate pages structure from examples directory
 function generate_pages()
     examples_dir = joinpath(@__DIR__, "src", "examples")
@@ -264,6 +342,8 @@ function generate_pages()
     example_pages = process_directory(examples_dir)
     # Sort categories according to ORDERED_CATEGORIES
     example_pages = sort_by_ORDERED_CATEGORIES(example_pages)
+    # Simplify page structure
+    example_pages = simplify_page_structure(example_pages)
     append!(pages, example_pages)
 
     push!(pages, "How we build the examples" => "how_build_works.md")
