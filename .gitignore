@@ -38,3 +38,4 @@ docs/site/
 # Package specific
 build/
 examples/build/
+examples/cache/

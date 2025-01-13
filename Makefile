@@ -14,6 +14,8 @@ docs: docs-setup
 # Clean build artifacts
 clean:
 	rm -rf docs/build
+	rm -rf examples/build
+	rm -rf examples/cache
 
 # Install documentation dependencies
 docs-setup:
