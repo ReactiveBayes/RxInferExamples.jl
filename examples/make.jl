@@ -4,7 +4,6 @@ using Pkg
 Pkg.activate(@__DIR__)
 Pkg.instantiate()
 
-using Weave
 using Distributed
 using Base.Filesystem
 
