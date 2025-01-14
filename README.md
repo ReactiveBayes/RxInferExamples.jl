@@ -33,7 +33,7 @@ All the examples are Jupyter notebooks, which also can be run with [Jupyter](htt
 
 ## Contributing
 
-We welcome contributions! Please check our [contribution guide](https://reactivebayes.github.io/RxInferExamples.jl/stable/how_to_contribute.html) for guidelines.
+We welcome contributions! Please check our [contribution guide](https://reactivebayes.github.io/RxInferExamples.jl/dev/how_to_contribute/) for guidelines.
 
 ## Resources
 
