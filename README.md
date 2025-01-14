@@ -37,7 +37,7 @@ We welcome contributions! Please check our [contribution guide](https://reactive
 
 ## Resources
 
-- [How to Contribute](https://reactivebayes.github.io/RxInferExamples.jl/dev/how_to_contribute.html)
+- [How to Contribute](https://reactivebayes.github.io/RxInferExamples.jl/dev/how_to_contribute/)
 - [RxInfer.jl Documentation](https://reactivebayes.github.io/RxInfer.jl/stable/)
 - [RxInfer.jl Repository](https://github.com/ReactiveBayes/RxInfer.jl)
 - [Examples Documentation](https://reactivebayes.github.io/RxInferExamples.jl/stable)
