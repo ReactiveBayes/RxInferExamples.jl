@@ -399,8 +399,6 @@ makedocs(
             "assets/theme.css",
             "assets/header.css",
             "assets/header.js",
-            asset("https://www.gstatic.com/dialogflow-console/fast/df-messenger/prod/v1/themes/df-messenger-default.css"),
-            asset("https://www.gstatic.com/dialogflow-console/fast/df-messenger/prod/v1/df-messenger.js"),
             "assets/chat.js"
         ],
         example_size_threshold=200 * 1024,
