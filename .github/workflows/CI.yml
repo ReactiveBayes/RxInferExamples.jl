@@ -17,6 +17,10 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ startsWith(github.ref, 'refs/pull/') }}
 
+permissions:
+  actions: write
+  contents: read
+
 jobs:
   examples:
     name: Examples
