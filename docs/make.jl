@@ -218,6 +218,11 @@ function generate_examples_list()
               <span style="color: var(--text-muted-color, #666);">Comprehensive video tutorials covering RxInfer.jl's core concepts and applications by 
               <a href="https://www.youtube.com/@doggodotjl/search?query=RxInfer">@doggotodjl</a>.</span>
           </li>
+          <li style="margin-bottom: 0.8em;">
+              <strong>Victor Flores blogpost</strong><br/>
+              <span style="color: var(--text-muted-color, #666);">A collection of projects and examples with RxInfer (but not limited to) at 
+              <a href="https://vflores-io.github.io/">vflores-io</a>.</span>
+          </li>
       </ul>
   </div>
   ```
