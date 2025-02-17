@@ -23,15 +23,20 @@ permissions:
 
 jobs:
   examples:
-    name: Examples
+    name: Examples (Julia - ${{ matrix.version }})
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        version:
+          - '1.10'
+          - '1.11'
     permissions:
       contents: write
     steps:
       - uses: actions/checkout@v4
       - uses: julia-actions/setup-julia@v2
         with:
-          version: '1.11'
+          version: ${{ matrix.version }}
       - uses: julia-actions/cache@v1
       - uses: actions/cache@v3
         id: examples
@@ -55,8 +60,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: julia-actions/setup-julia@v2
-        with:
-          version: '1.11'
       - uses: actions/cache@v3
         id: examples
         with:
