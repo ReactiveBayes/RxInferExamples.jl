@@ -435,7 +435,41 @@ makedocs(
     )
 )
 
-# Function to inject meta tags into HTML files
+# Function to find corresponding meta.jl for an HTML file
+function find_meta_file(html_path, examples_dir)
+    dir_path = dirname(html_path)
+    base_name = basename(html_path)
+    
+    # Try direct meta.jl in the same directory
+    meta_path = joinpath(dir_path, "meta.jl")
+    if isfile(meta_path)
+        return meta_path
+    end
+    
+    # If it's index.html, check parent directory name
+    if base_name == "index.html"
+        parent_dir = basename(dir_path)
+        grandparent_dir = dirname(dir_path)
+        
+        # Try meta.jl in parent directory
+        meta_path = joinpath(grandparent_dir, "meta.jl")
+        if isfile(meta_path)
+            return meta_path
+        end
+        
+        # If parent directory name matches its containing directory
+        if basename(grandparent_dir) == parent_dir
+            # Try one level up
+            meta_path = joinpath(dirname(grandparent_dir), "meta.jl")
+            if isfile(meta_path)
+                return meta_path
+            end
+        end
+    end
+    
+    return nothing
+end
+
 function inject_meta_tags()
     build_dir = joinpath(@__DIR__, "build")
     examples_dir = joinpath(build_dir, "examples")
@@ -498,10 +532,10 @@ function inject_meta_tags()
                 filepath = joinpath(root, file)
                 @info "Processing HTML file: $(relpath(filepath, examples_dir))"
                 
-                # Look for meta.jl in the same directory as the HTML file
-                meta_path = joinpath(root, "meta.jl")
+                # Find corresponding meta.jl
+                meta_path = find_meta_file(filepath, examples_dir)
                 
-                if !isfile(meta_path)
+                if meta_path === nothing
                     @info "No meta.jl found for $(file)"
                     continue
                 end
