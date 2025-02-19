@@ -406,6 +406,7 @@ makedocs(
             "assets/header.js",
             "assets/chat.js"
         ],
+        analytics="G-ETRVWRSC6H",
         example_size_threshold=200 * 1024,
         size_threshold_warn=200 * 1024,
         inventory_version="1.0.0"
