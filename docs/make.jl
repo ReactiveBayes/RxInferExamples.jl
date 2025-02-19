@@ -425,7 +425,8 @@ makedocs(
             "assets/theme.css",
             "assets/header.css",
             "assets/header.js",
-            "assets/chat.js"
+            "assets/chat.js",
+            "assets/favicon.ico"
         ],
         analytics="G-ETRVWRSC6H",
         example_size_threshold=200 * 1024,
