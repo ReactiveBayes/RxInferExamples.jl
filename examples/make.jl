@@ -221,6 +221,13 @@ end
     Core.eval(mod, quote
         Pkg.instantiate()
     end)
+
+    Core.eval(mod, quote
+        envio = open(joinpath($output_dir, "env.log"), "w")
+        Pkg.status(io = envio)
+        flush(envio)
+        close(envio)
+    end)
     
     @info "Processing $rel_path..."
     try
@@ -252,6 +259,22 @@ end
             Visit our [GitHub repository](https://github.com/ReactiveBayes/RxInferExamples.jl) to get started.
             Together we can make [RxInfer.jl](https://github.com/ReactiveBayes/RxInfer.jl) even better! 💪
         """
+
+        # Read the environment log content
+        env_log_content = read(joinpath(output_dir, "env.log"), String)
+        
+        ENVIRONMENT_NOTE = """
+        !!! compat "Environment"
+            This example was executed in a clean, isolated environment. Below are the exact package versions used:
+            
+            For reproducibility:
+            - Use the same package versions when running locally
+            - Report any issues with package compatibility
+
+        ```
+        $(env_log_content)
+        ```
+        """
         
         # Write the contribution note at the beginning
         write(output_path, 
@@ -261,6 +284,8 @@ end
         $content
         ---
         $CONTRIBUTING_NOTE
+        ---
+        $ENVIRONMENT_NOTE
         """)
         
         @info "Successfully processed $rel_path"
