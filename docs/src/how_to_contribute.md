@@ -23,6 +23,12 @@ Each example at the very least should have a clear, descriptive title, a `meta.j
 3. **Content Structure**
    The notebook should have a clear introduction and problem description, model specification with explanations, inference procedure details, results analysis and visualization, and comprehensive comments for readability.
 
+4. **Self-Contained Code**
+   - Examples must be fully self-contained without using `include()` statements
+   - All code should be directly in the notebook cells
+   - Do not reference external Julia files
+   - Users should be able to reproduce examples by simply copying and pasting from the documentation
+
 ## Mathematical Content
 
 !!! note
