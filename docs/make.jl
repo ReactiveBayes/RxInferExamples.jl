@@ -439,24 +439,24 @@ makedocs(
 function find_meta_file(html_path, examples_dir)
     dir_path = dirname(html_path)
     base_name = basename(html_path)
-    
+
     # Try direct meta.jl in the same directory
     meta_path = joinpath(dir_path, "meta.jl")
     if isfile(meta_path)
         return meta_path
     end
-    
+
     # If it's index.html, check parent directory name
     if base_name == "index.html"
         parent_dir = basename(dir_path)
         grandparent_dir = dirname(dir_path)
-        
+
         # Try meta.jl in parent directory
         meta_path = joinpath(grandparent_dir, "meta.jl")
         if isfile(meta_path)
             return meta_path
         end
-        
+
         # If parent directory name matches its containing directory
         if basename(grandparent_dir) == parent_dir
             # Try one level up
@@ -466,7 +466,7 @@ function find_meta_file(html_path, examples_dir)
             end
         end
     end
-    
+
     return nothing
 end
 
@@ -481,29 +481,29 @@ function inject_meta_tags()
 
     processed_count = 0
     success_count = 0
-    
+
     # Sitemap URL
     sitemap_url = "https://reactivebayes.github.io/RxInferExamples.jl/dev/sitemap.xml"
-    
+
     # Process root index.html first
     root_index = joinpath(build_dir, "index.html")
     if isfile(root_index)
         @info "Processing root index.html"
         processed_count += 1
-        
+
         content = read(root_index, String)
         meta_tags = String[]
-        
+
         # Add default meta tags for root
         push!(meta_tags, """<meta property="og:title" content="RxInfer.jl Examples">""")
         push!(meta_tags, """<meta name="description" content="Collection of examples and tutorials for RxInfer.jl - a Julia package for message passing inference in probabilistic models">""")
         push!(meta_tags, """<meta property="og:description" content="Collection of examples and tutorials for RxInfer.jl - a Julia package for message passing inference in probabilistic models">""")
         push!(meta_tags, """<meta name="keywords" content="$(join(DEFAULT_META_TAGS, ", "))">""")
         push!(meta_tags, """<link rel="sitemap" type="application/xml" title="Sitemap" href="$(sitemap_url)">""")
-        
+
         meta_html = join(meta_tags, "\n    ")
         new_content = replace(content, "</head>" => "\n    $(meta_html)\n    </head>"; count=1)
-        
+
         if new_content != content
             write(root_index, new_content)
             success_count += 1
@@ -512,14 +512,14 @@ function inject_meta_tags()
             @warn "Could not find </head> tag in root index.html"
         end
     end
-    
+
     # Process examples directory
     for (root, dirs, files) in walkdir(examples_dir)
         # Filter out ignored directories
         filter!(d -> !(d in IGNORED_DIRECTORIES), dirs)
-        
-        @info "Scanning directory: $(relpath(root, examples_dir))" num_files=length(files) subdirs=dirs
-        
+
+        @info "Scanning directory: $(relpath(root, examples_dir))" num_files = length(files) subdirs = dirs
+
         for file in files
             if endswith(file, ".html")
                 # Skip if current directory is in ignored list
@@ -531,22 +531,22 @@ function inject_meta_tags()
                 processed_count += 1
                 filepath = joinpath(root, file)
                 @info "Processing HTML file: $(relpath(filepath, examples_dir))"
-                
+
                 # Find corresponding meta.jl
                 meta_path = find_meta_file(filepath, examples_dir)
-                
+
                 if meta_path === nothing
                     @info "No meta.jl found for $(file)"
                     continue
                 end
-                
+
                 @info "Found meta.jl: $(relpath(meta_path, examples_dir))"
-                
+
                 # Load metadata if exists
                 meta = try
                     include(meta_path)
                 catch e
-                    @warn "Failed to load metadata from $meta_path" exception=e
+                    @warn "Failed to load metadata from $meta_path" exception = e
                     nothing
                 end
 
@@ -555,41 +555,41 @@ function inject_meta_tags()
                     continue
                 end
 
-                @info "Loaded metadata for $(file)" title=meta.title tags=join(meta.tags, ", ")
-                
+                @info "Loaded metadata for $(file)" title = meta.title tags = join(meta.tags, ", ")
+
                 # Read HTML content
                 content = read(filepath, String)
-                
+
                 # Prepare meta tags
                 meta_tags = String[]
-                
+
                 # Add title meta if available
                 if meta.title !== nothing
                     push!(meta_tags, """<meta property="og:title" content="$(meta.title) - RxInfer Examples">""")
                 end
-                
+
                 # Add description meta if available
                 if meta.description !== nothing
                     push!(meta_tags, """<meta name="description" content="$(meta.description)">""")
                     push!(meta_tags, """<meta property="og:description" content="$(meta.description)">""")
                 end
-                
+
                 # Add keywords meta if available
                 if !isempty(meta.tags)
                     all_tags = unique([DEFAULT_META_TAGS; meta.tags])
                     push!(meta_tags, """<meta name="keywords" content="$(join(all_tags, ", "))">""")
                 end
-                
+
                 # Add sitemap link to meta tags
                 push!(meta_tags, """<link rel="sitemap" type="application/xml" title="Sitemap" href="$(sitemap_url)">""")
-                
+
                 # Only proceed if we have meta tags to inject
                 if !isempty(meta_tags)
                     meta_html = join(meta_tags, "\n    ")
-                    
+
                     # Replace </head> with meta tags + </head>
                     new_content = replace(content, "</head>" => "\n    $(meta_html)\n    </head>"; count=1)
-                    
+
                     if new_content != content
                         # Write back to file
                         write(filepath, new_content)
@@ -602,7 +602,7 @@ function inject_meta_tags()
             end
         end
     end
-    
+
     @info """
     Meta tags injection completed:
     • Total HTML files processed: $processed_count
@@ -615,9 +615,9 @@ end
 function generate_sitemap()
     build_dir = joinpath(@__DIR__, "build")
     base_url = "https://reactivebayes.github.io/RxInferExamples.jl/dev"
-    
+
     @info "Starting sitemap generation"
-    
+
     # Collect all HTML files
     html_files = String[]
     for (root, _, files) in walkdir(build_dir)
@@ -625,39 +625,39 @@ function generate_sitemap()
         if any(ignored -> occursin(ignored, relpath(root, build_dir)), IGNORED_DIRECTORIES)
             continue
         end
-        
+
         for file in files
             if endswith(file, ".html")
                 push!(html_files, relpath(joinpath(root, file), build_dir))
             end
         end
     end
-    
+
     # Generate sitemap content
     sitemap_content = """
     <?xml version="1.0" encoding="UTF-8"?>
     <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     """
-    
+
     for file in sort(html_files)
         # Convert file path to URL, removing .html extension
         url_path = replace(file, r"index\.html$" => "")  # Remove index.html completely
         url_path = replace(url_path, r"\.html$" => "")   # Remove .html from other files
         url_path = strip(url_path, '/')                  # Remove trailing slash
-        
+
         # Construct full URL
         full_url = if isempty(url_path)
             base_url
         else
             joinpath(base_url, url_path)
         end
-        
+
         # Get last modification date
         lastmod = Dates.format(Dates.now(), "yyyy-mm-ddTHH:MM:SSz")
-        
+
         priority = 1.0
         frequency = "weekly"
-        
+
         sitemap_content *= """
             <url>
                 <loc>$(full_url)</loc>
@@ -667,13 +667,13 @@ function generate_sitemap()
             </url>
         """
     end
-    
+
     sitemap_content *= "\n</urlset>"
-    
+
     # Write sitemap
     sitemap_path = joinpath(build_dir, "sitemap.xml")
     write(sitemap_path, sitemap_content)
-    
+
     @info """
     Sitemap generation completed:
     • Total URLs: $(length(html_files))
@@ -689,6 +689,8 @@ if get(ENV, "CI", nothing) == "true"
     deploydocs(
         repo="github.com/ReactiveBayes/RxInferExamples.jl.git",
         devbranch="main",
-        forcepush=true
+        forcepush=true,
+        versions=nothing,
+        cname="examples.rxinfer.ml"
     )
 end
