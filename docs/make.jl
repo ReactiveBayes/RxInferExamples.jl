@@ -491,7 +491,7 @@ function inject_meta_tags()
     success_count = 0
 
     # Sitemap URL
-    sitemap_url = "https://reactivebayes.github.io/RxInferExamples.jl/dev/sitemap.xml"
+    sitemap_url = "https://examples.rxinfer.ml/sitemap.xml"
 
     # Process root index.html first
     root_index = joinpath(build_dir, "index.html")
@@ -622,7 +622,7 @@ end
 # Function to generate sitemap.xml
 function generate_sitemap()
     build_dir = joinpath(@__DIR__, "build")
-    base_url = "https://reactivebayes.github.io/RxInferExamples.jl/dev"
+    base_url = "https://examples.rxinfer.ml"
 
     @info "Starting sitemap generation"
 
