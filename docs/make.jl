@@ -693,6 +693,31 @@ end
 inject_meta_tags()
 generate_sitemap()
 
+# Print resulting file structure
+function print_dir_structure(dir, prefix="")
+    # Get all markdown files in current directory
+    html_files = filter(f -> endswith(f, ".html"), readdir(dir))
+    subdirs = sort(filter(d -> isdir(joinpath(dir, d)) && !startswith(d, "_"), readdir(dir)))
+
+    # Print current directory if it has markdown files
+    @info "$(prefix)📁 $(basename(dir))/"
+    if !isempty(html_files)
+        for file in sort(html_files)
+            @info "$(prefix)  📄 $file"
+        end
+    end
+
+    # Always process subdirectories if they exist
+    for subdir in subdirs
+        print_dir_structure(joinpath(dir, subdir), prefix * "  ")
+    end
+end
+
+@info """
+Generated website structure:
+"""
+print_dir_structure(joinpath(@__DIR__, "build"))
+
 if get(ENV, "CI", nothing) == "true"
     deploydocs(
         repo="github.com/ReactiveBayes/RxInferExamples.jl.git",
