@@ -436,7 +436,7 @@ makedocs(
             "assets/chat.js",
             "assets/favicon.ico"
         ],
-        analytics="G-ETRVWRSC6H",
+        analytics="G-GMFX620VEP",
         example_size_threshold=200 * 1024,
         size_threshold_warn=200 * 1024,
         inventory_version="1.0.0"
