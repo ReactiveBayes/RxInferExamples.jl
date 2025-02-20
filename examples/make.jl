@@ -68,7 +68,7 @@ end
 @everywhere using Pkg
 
 # Define build directories
-const BUILD_DIR = abspath(joinpath(@__DIR__, "..", "docs", "src", "examples"))
+const BUILD_DIR = abspath(joinpath(@__DIR__, "..", "docs", "src", "categories"))
 const CACHE_DIR = joinpath(BUILD_DIR, "_cache")
 
 # Create build directories if dont exist
@@ -136,7 +136,7 @@ end
     
     # Pattern to match markdown image syntax with absolute paths
     # Matches both ![alt](path) and ![](path) formats
-    pattern = r"!\[(.*?)\]\((/.*?/docs/src/examples/[^\)]+)\)"
+    pattern = r"!\[(.*?)\]\((/.*?/docs/src/categories/[^\)]+)\)"
     
     # Replace absolute paths with relative ones
     new_content = content
@@ -166,13 +166,14 @@ end
 @everywhere function process_notebook(notebook_path, build_dir, cache_dir, rxinfer_path=nothing)
     # Get the notebook's directory and activate its environment
     notebook_dir = dirname(notebook_path)
+    notebook_name = basename(notebook_path)
     
     # Setup paths
-    input_path = abspath(notebook_path)
     rel_path = relpath(notebook_path, @__DIR__)
-    output_path = joinpath(build_dir, replace(rel_path, ".ipynb" => ".md"))
+    output_path = joinpath(build_dir, dirname(rel_path), "index.md")
+    output_path = replace(lowercase(output_path), " " => "_")
     output_dir = dirname(output_path)
-    build_input_path = joinpath(build_dir, rel_path)
+    build_input_path = joinpath(output_dir, notebook_name)
     
     @info """
     Notebook directory: $notebook_dir
