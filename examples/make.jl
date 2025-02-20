@@ -172,8 +172,7 @@ end
 
     # Setup paths
     rel_path = relpath(notebook_path, @__DIR__)
-    output_path = joinpath(build_dir, dirname(rel_path), "index.md")
-    output_path = replace(lowercase(output_path), " " => "_")
+    output_path = joinpath(build_dir, replace(lowercase(rel_path), " " => "_"), "index.md")
     output_dir = dirname(output_path)
     build_input_path = joinpath(output_dir, notebook_name)
 
