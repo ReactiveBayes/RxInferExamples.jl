@@ -50,14 +50,14 @@ end
     end 
     
     for k in 1:n_states+1
-        H[k] ~ MvNormalMeanCovariance(zeros(n_latent^2), diageye(n_latent^2))
+        H[k] ~ MvNormalMeanCovariance(0.01*ones(n_latent^2), diageye(n_latent^2))
         Λ[k] ~ Wishart(n_latent+2, diageye(n_latent))
     end
     P ~ DirichletCollection(α)
     ϕ ~ MvNormalMeanCovariance(zeros(n_latent*n_states), diageye(n_latent*n_states))
     ## States Initialisation 
     x[1] ~ MvNormalMeanCovariance(zeros(n_latent), diageye(n_latent))
-    s[1] ~ Categorical(ones(n_states+1)/(n_states+1))
+    # s[1] ~ Categorical(ones(n_states+1)/(n_states+1))
     for t in eachindex(obs)  
         ## Recurrent Layer
         if n_states == 1
@@ -65,7 +65,7 @@ end
         else
             u[t] ~ ContinuousTransition(x[t], ϕ, w) where {meta = CTMeta(transformation2)}
         end     
-        s[t+1] ~ MultinomialPolya(1, u[t]) where {dependencies = RequireMessageFunctionalDependencies(ψ = convert(promote_variate_type(typeof(η), NormalWeightedMeanPrecision), η, Ψ))}   
+        s[t] ~ MultinomialPolya(1, u[t]) where {dependencies = RequireMessageFunctionalDependencies(ψ = convert(promote_variate_type(typeof(η), NormalWeightedMeanPrecision), η, Ψ))}   
         s[t+1] ~ DiscreteTransition(s[t], P)
         ##Transition Layer
         A[t] ~ MagicMixture(switch=s[t+1], inputs=H)
