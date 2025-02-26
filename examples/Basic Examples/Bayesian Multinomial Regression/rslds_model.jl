@@ -99,7 +99,7 @@ end;
 
 
 
-function fit_rslds(data,n_states,n_latent;iterations = 60, η = nothing, Ψ = nothing, hyperparameters  = nothing, progress = false)
+function fit_rslds(data,n_states,n_latent,n_obs;iterations = 60, η = nothing, Ψ = nothing, hyperparameters  = nothing, progress = false)
   
     n_states = n_states - 1
 
@@ -123,12 +123,12 @@ function fit_rslds(data,n_states,n_latent;iterations = 60, η = nothing, Ψ = no
     end
     model = rslds_model_learning( n_states = n_states, n_latent = n_latent, η = η, Ψ = Ψ, hyperparameters = hyperparameters)
     constraints = rslds_learning_constraints()
-    initmarginals = rslds_learning_initmarginals(n_states, n_latent, length(data[1]))
+    initmarginals = rslds_learning_initmarginals(n_states, n_latent, n_obs)
     
     init_result = infer(model = model,data = (obs =data, ), constraints = constraints, initialization = initmarginals,iterations = iterations,
     showprogress = progress,
     returnvars = KeepEach(),
-    free_energy = true,
+    # free_energy = true,
     # addons = (AddonMemory(),),
     # postprocess = NoopPostprocess(),
     # callbacks = (on_marginal_update = onmarginalupdate, ),

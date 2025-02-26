@@ -11,10 +11,26 @@ hyperparameters = RSLDSHyperparameters(
     Ψ_R = 0.1diageye(2),
     ν_R = 1.0,
     α = [100.0 1.0; 1.0 100.0],
-    C = 1.0*[1 0 0 0 0 0; 0 1 0 0 0 0]
+    C = 1.0*[1 0 ; 0 1 ]
 )   
-rslds_result = fit_rslds([y_drone[:, t] for t in 1:100], 2, 6; iterations = 40, hyperparameters = hyperparameters, progress = true)
-plot(rslds_result.free_energy[3:end])
+observations = Vector{Union{Missing, Vector{Float64}}}(undef, 1000)
+observations[1:650] = y[1:650]
+observations[651:1000] .= missing
+rslds_result = fit_rslds(observations, 2, 2, 2; iterations = 80, hyperparameters = hyperparameters, progress = true)
+
+scatter(states_to_categorical(rslds_result.posteriors[:s][end]), label="Estimated States", color="blue", linewidth=2)
+
+predictions = rslds_result.predictions[:obs][end]
+
+m_predictions = mean.(predictions)
+var_predictions = var.(predictions)
+
+
+reshape.(mean.(rslds_result.posteriors[:H][end]), 2,2)
+reshape.(mean.(rslds_result.posteriors[:Λ][end]), 2,2)
+mean(rslds_result.posteriors[:ϕ][end])
+plot(getindex.(m_predictions, 2)[1:1000], ribbon = getindex.(var_predictions, 2), label="Predictions", color="blue", linewidth=2)
+plot!(getindex.(y, 2)[1:1000], label="Observations", color="black", linewidth=2)
 
 plot(y_drone[1,:], y_drone[2,:], label="Observations", color="black", linewidth=2)
 scatter(states_to_categorical(rslds_result.posteriors[:s][end]), label="Estimated States", color="blue", linewidth=2)
