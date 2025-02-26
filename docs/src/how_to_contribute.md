@@ -73,6 +73,9 @@ return (
 
 ## Testing Your Example
 
+!!! note
+    Note that building the examples locally requires `Weave.jl` package to be installed globally in your Julia environment. Use `julia -e 'using Pkg; Pkg.add("Weave")'` to install it.
+
 1. **Local Testing**
    ```bash
    # Test all examples
@@ -88,10 +91,23 @@ return (
    make preview
    ```
 
-2. **Common Issues**
+2. **Build Caching**
+   
+   The build system caches the results of example compilation. If you make changes to an example and still see old errors after rebuilding:
+   
+   ```bash
+   # Clear all build caches and artifacts
+   make clean
+   
+   # Then rebuild
+   make examples
+   ```
+
+3. **Common Issues**
    - Ensure all dependencies are in Project.toml
    - Verify plots display correctly
    - Test with a clean environment
+   - If errors persist after fixing, run `make clean` to clear cached builds
 
 ## Important Notes
 

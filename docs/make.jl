@@ -429,6 +429,7 @@ makedocs(
     pages=generate_pages(),
     format=Documenter.HTML(
         prettyurls=get(ENV, "CI", nothing) == "true",
+        canonical="https://examples.rxinfer.ml",
         assets=[
             "assets/theme.css",
             "assets/header.css",
@@ -439,7 +440,9 @@ makedocs(
         analytics="G-GMFX620VEP",
         example_size_threshold=200 * 1024,
         size_threshold_warn=200 * 1024,
-        inventory_version="1.0.0"
+        inventory_version="1.0.0",
+        description = "A repository of examples and tutorials for RxInfer.jl, a Julia package for reactive message passing inference in probabilistic models.",
+        footer = "Created in [BIASlab](https://biaslab.github.io/), maintained by [ReactiveBayes](https://github.com/ReactiveBayes), powered by [Documenter.jl](https://github.com/JuliaDocs/Documenter.jl) and the [Julia Programming Language](https://julialang.org/)."
     )
 )
 
