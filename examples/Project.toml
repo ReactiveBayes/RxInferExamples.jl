@@ -1,4 +1,5 @@
 [deps]
 ArgParse = "c7e460c6-2fb9-53a9-8c5b-16f535851c63"
+PGFPlotsX = "8314cec4-20b6-5062-9cdb-752b83310925"
 Serialization = "9e88b42a-f829-5b0c-bbe9-9e923198166b"
 Weave = "44d3d7a6-8a23-5bf8-98c5-b353f8df5ec9"
