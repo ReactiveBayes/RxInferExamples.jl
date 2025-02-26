@@ -87,34 +87,19 @@ CACHE_DIR: $CACHE_DIR
 @everywhere function copy_files(src_dir, dst_dir; exclude=[])
     # Create destination directory if it doesn't exist
     mkpath(dst_dir)
-    
-    @info "Copying files from $(src_dir) to $(dst_dir)"
 
     # Copy all files except those in exclude list
     for item in readdir(src_dir; join=true)
-        # Get base name for comparison with exclude list
-        item_basename = basename(item)
-        
-        if item_basename in exclude
-            @info "Skipping excluded file: $(item_basename)"
-            continue
-        end
+        basename(item) in exclude && continue
 
         if isfile(item)
-            dst = joinpath(dst_dir, item_basename)
-            @info "Copying file: $(item_basename)"
+            dst = joinpath(dst_dir, basename(item))
+            @info "Copying file: $(basename(item))"
             cp(item, dst; force=true)
         elseif isdir(item)
-            # Skip copying if the directory is already an absolute path
-            # This prevents recursive copying of absolute paths
-            if startswith(item_basename, "/")
-                @warn "Skipping directory with absolute path: $(item_basename)"
-                continue
-            end
-            
             # Recursively copy subdirectories
-            dst_subdir = joinpath(dst_dir, item_basename)
-            copy_files(item, dst_subdir; exclude=exclude)
+            dst_subdir = joinpath(dst_dir, basename(item))
+            copy_files(item, dst_subdir; exclude)
         end
     end
 end
@@ -179,15 +164,6 @@ end
     end
 end
 
-# Function to normalize a path and ensure it uses only relative components
-@everywhere function safe_path_component(path_component)
-    # Remove any absolute path components
-    safe_component = replace(path_component, r"^/" => "")
-    # Replace any directory traversal
-    safe_component = replace(safe_component, r"\.\." => "parent")
-    return safe_component
-end
-
 # Function to process a single notebook
 @everywhere function process_notebook(notebook_path, build_dir, cache_dir, rxinfer_path=nothing)
     # Get the notebook's directory and activate its environment
@@ -196,10 +172,7 @@ end
 
     # Setup paths
     rel_path = relpath(notebook_path, @__DIR__)
-    
-    # Use safe path components to avoid absolute path issues
-    category_dir = safe_path_component(replace(lowercase(dirname(rel_path)), " " => "_"))
-    output_path = joinpath(build_dir, category_dir, "index.md")
+    output_path = joinpath(build_dir, replace(lowercase(dirname(rel_path)), " " => "_"), "index.md")
     output_dir = dirname(output_path)
     build_input_path = joinpath(output_dir, notebook_name)
 
@@ -222,7 +195,7 @@ end
     """
 
     # Create notebook-specific cache directory
-    notebook_cache_dir = joinpath(cache_dir, safe_path_component(dirname(rel_path)))
+    notebook_cache_dir = joinpath(cache_dir, dirname(rel_path))
     mkpath(notebook_cache_dir)
 
     # Change to output directory before activating
