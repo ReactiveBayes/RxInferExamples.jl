@@ -13,10 +13,10 @@ hyperparameters = RSLDSHyperparameters(
     α = [100.0 1.0; 1.0 100.0],
     C = 1.0*[1 0 ; 0 1 ]
 )   
-observations = Vector{Union{Missing, Vector{Float64}}}(undef, 1000)
-observations[1:650] = y[1:650]
-observations[651:1000] .= missing
-rslds_result = fit_rslds(observations, 2, 2, 2; iterations = 80, hyperparameters = hyperparameters, progress = true)
+# observations = Vector{Union{Missing, Vector{Float64}}}(undef, 1000)
+# observations[1:650] = y[1:650]
+# observations[651:1000] .= missing
+rslds_result = fit_rslds(y, 2, 2, 2; iterations = 80, hyperparameters = hyperparameters, progress = true)
 
 scatter(states_to_categorical(rslds_result.posteriors[:s][end]), label="Estimated States", color="blue", linewidth=2)
 

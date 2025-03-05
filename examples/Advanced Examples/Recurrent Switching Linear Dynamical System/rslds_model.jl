@@ -1,3 +1,4 @@
+include("extensions.jl")
 import ExponentialFamily: softmax
 
 function create_P_matrix(n_states)
@@ -57,7 +58,6 @@ end
     ϕ ~ MvNormalMeanCovariance(zeros(n_latent*n_states), diageye(n_latent*n_states))
     ## States Initialisation 
     x[1] ~ MvNormalMeanCovariance(zeros(n_latent), diageye(n_latent))
-    # s[1] ~ Categorical(ones(n_states+1)/(n_states+1))
     for t in eachindex(obs)  
         ## Recurrent Layer
         if n_states == 1
@@ -125,7 +125,7 @@ function fit_rslds(data,n_states,n_latent,n_obs;iterations = 60, η = nothing, �
     constraints = rslds_learning_constraints()
     initmarginals = rslds_learning_initmarginals(n_states, n_latent, n_obs)
     
-    init_result = infer(model = model,data = (obs =data, ), constraints = constraints, initialization = initmarginals,iterations = iterations,
+    init_result = infer(model = model,data = (obs=data, ), constraints = constraints, initialization = initmarginals,iterations = iterations,
     showprogress = progress,
     returnvars = KeepEach(),
     # free_energy = true,
