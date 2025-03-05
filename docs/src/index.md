@@ -16,7 +16,7 @@ RxInfer.jl is a Julia package that combines message passing-based inference with
 - Support for both online and offline inference
 - Integration with the Julia ecosystem
 
-Read more about RxInfer.jl in the [RxInfer.jl Documentation](https://reactivebayes.github.io/RxInfer.jl/stable/).
+Read more about RxInfer.jl in the [RxInfer.jl Documentation](https://docs.rxinfer.ml).
 
 ## Examples
 
@@ -55,7 +55,7 @@ make preview
 ## Resources
 
 - [How to Contribute](how_to_contribute.md)
-- [RxInfer.jl Documentation](https://reactivebayes.github.io/RxInfer.jl/stable/)
+- [RxInfer.jl Documentation](https://docs.rxinfer.ml)
 - [RxInfer.jl GitHub Repository](https://github.com/ReactiveBayes/RxInfer.jl)
 - [Julia Documentation](https://docs.julialang.org)
 

@@ -23,6 +23,12 @@ Each example at the very least should have a clear, descriptive title, a `meta.j
 3. **Content Structure**
    The notebook should have a clear introduction and problem description, model specification with explanations, inference procedure details, results analysis and visualization, and comprehensive comments for readability.
 
+4. **Self-Contained Code**
+   - Examples must be fully self-contained without using `include()` statements
+   - All code should be directly in the notebook cells
+   - Do not reference external Julia files
+   - Users should be able to reproduce examples by simply copying and pasting from the documentation
+
 ## Mathematical Content
 
 !!! note
@@ -67,6 +73,9 @@ return (
 
 ## Testing Your Example
 
+!!! note
+    Note that building the examples locally requires `Weave.jl` package to be installed globally in your Julia environment. Use `julia -e 'using Pkg; Pkg.add("Weave")'` to install it.
+
 1. **Local Testing**
    ```bash
    # Test all examples
@@ -82,10 +91,23 @@ return (
    make preview
    ```
 
-2. **Common Issues**
+2. **Build Caching**
+   
+   The build system caches the results of example compilation. If you make changes to an example and still see old errors after rebuilding:
+   
+   ```bash
+   # Clear all build caches and artifacts
+   make clean
+   
+   # Then rebuild
+   make examples
+   ```
+
+3. **Common Issues**
    - Ensure all dependencies are in Project.toml
    - Verify plots display correctly
    - Test with a clean environment
+   - If errors persist after fixing, run `make clean` to clear cached builds
 
 ## Important Notes
 

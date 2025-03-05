@@ -50,6 +50,12 @@ The notebook processing system:
 - Fixes absolute paths to use relative paths
 - Adds contribution notes automatically
 
+!!! warning "Self-Contained Examples"
+    Examples must be self-contained and cannot use `include()` statements. All code must be directly in the notebook cells to ensure:
+    - Examples are reproducible by copying and pasting
+    - The build system can properly process all code
+    - Documentation remains consistent across different environments
+
 For auxiliary file handling, the system copies all supporting files like data files while excluding Manifest.toml files. The original directory structure is maintained throughout this process.
 
 The error handling system checks for error blocks in the output, reports any failed conversions, and provides detailed context when errors occur to help with debugging.
