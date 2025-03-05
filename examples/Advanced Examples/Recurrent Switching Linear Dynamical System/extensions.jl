@@ -1,46 +1,36 @@
 using ExponentialFamily, RxInfer, BayesBase
-import ReactiveMP: AbstractFactorNode, NodeInterface, IndexedNodeInterface, FactorNodeActivationOptions, Marginalisation, Deterministic, PredefinedNodeFunctionalForm,FunctionalDependencies, collect_functional_dependencies, activate!, functional_dependencies, collect_latest_messages, collect_latest_marginals
+import ReactiveMP: AbstractFactorNode, NodeInterface, IndexedNodeInterface, FactorNodeActivationOptions, Marginalisation, Deterministic, PredefinedNodeFunctionalForm,FunctionalDependencies, collect_functional_dependencies
 import ExponentialFamily: getnaturalparameters, exponential_family_typetag
-export MagicMixture, MagicMixtureNode
+export Gate, GateNode
 
 # Mixture Functional Form
-struct MagicMixture{N} end
+struct Gate{N} end
 
-ReactiveMP.as_node_symbol(::Type{<:MagicMixture}) = :MagicMixture
+ReactiveMP.as_node_symbol(::Type{<:Gate}) = :Gate
 
-interfaces(::Type{<:MagicMixture}) = Val((:out, :switch, :inputs))
-alias_interface(::Type{<:MagicMixture}, ::Int64, name::Symbol) = name
-is_predefined_node(::Type{<:MagicMixture}) = PredefinedNodeFunctionalForm()
-sdtype(::Type{<:MagicMixture}) = Deterministic()
-collect_factorisation(::Type{<:MagicMixture}, factorization) = MagicMixtureNodeFactorisation()
+interfaces(::Type{<:Gate}) = Val((:out, :switch, :inputs))
+alias_interface(::Type{<:Gate}, ::Int64, name::Symbol) = name
+is_predefined_node(::Type{<:Gate}) = PredefinedNodeFunctionalForm()
+sdtype(::Type{<:Gate}) = Deterministic()
+collect_factorisation(::Type{<:Gate}, factorization) = GateNodeFactorisation()
 
-struct MagicMixtureNodeFactorisation end
+struct GateNodeFactorisation end
 
-struct MagicMixtureNode{N} <: AbstractFactorNode
-    """
-        MagicMixtureNode{N}
-
-    A factor node that represents a magic mixture model with N components that under the hood performs Bayesian model comparison.
-
-    # Interfaces
-    - `:out`: The output interface representing the magic mixture distribution
-    - `:switch`: The switch interface representing the selector variable
-    - `:inputs`: The inputs interface representing the input distributions
-    """     
-
+struct GateNode{N} <: AbstractFactorNode
+  
     out    :: NodeInterface
     switch :: NodeInterface
     inputs :: NTuple{N, IndexedNodeInterface}
 end 
 
-functionalform(factornode::MagicMixtureNode{N}) where {N} = MagicMixture{N}
-getinterfaces(factornode::MagicMixtureNode) = (factornode.out, factornode.switch, factornode.inputs...)
-sdtype(factornode::MagicMixtureNode) = Deterministic()
+functionalform(factornode::GateNode{N}) where {N} = Gate{N}
+getinterfaces(factornode::GateNode) = (factornode.out, factornode.switch, factornode.inputs...)
+sdtype(factornode::GateNode) = Deterministic()
 
-interfaceindices(factornode::MagicMixtureNode, iname::Symbol)                       = (interfaceindex(factornode, iname),)
-interfaceindices(factornode::MagicMixtureNode, inames::NTuple{N, Symbol}) where {N} = map(iname -> interfaceindex(factornode, iname), inames)
+interfaceindices(factornode::GateNode, iname::Symbol)                       = (interfaceindex(factornode, iname),)
+interfaceindices(factornode::GateNode, inames::NTuple{N, Symbol}) where {N} = map(iname -> interfaceindex(factornode, iname), inames)
 
-function interfaceindex(factornode::MagicMixtureNode, iname::Symbol)
+function interfaceindex(factornode::GateNode, iname::Symbol)
     if iname === :out
         return 1
     elseif iname === :switch
@@ -50,35 +40,35 @@ function interfaceindex(factornode::MagicMixtureNode, iname::Symbol)
     end
 end
 
-function factornode(::Type{<:MagicMixture}, interfaces, factorization)
+function factornode(::Type{<:Gate}, interfaces, factorization)
     outinterface = interfaces[findfirst(((name, variable),) -> name == :out, interfaces)]
     switchinterface = interfaces[findfirst(((name, variable),) -> name == :switch, interfaces)]
     inputinterfaces = filter(((name, variable),) -> name == :inputs, interfaces)
     N = length(inputinterfaces)
-    return MagicMixtureNode(NodeInterface(outinterface...), NodeInterface(switchinterface...), ntuple(i -> IndexedNodeInterface(i, NodeInterface(inputinterfaces[i]...)), N))
+    return GateNode(NodeInterface(outinterface...), NodeInterface(switchinterface...), ntuple(i -> IndexedNodeInterface(i, NodeInterface(inputinterfaces[i]...)), N))
     
 end
 
-struct MagicMixtureNodeInboundInterfaces end
+struct GateNodeInboundInterfaces end
 
-getinboundinterfaces(::MagicMixtureNode) = MagicMixtureNodeInboundInterfaces()
-clustername(::MagicMixtureNodeInboundInterfaces) = :switch_inputs
+getinboundinterfaces(::GateNode) = GateNodeInboundInterfaces()
+clustername(::GateNodeInboundInterfaces) = :switch_inputs
 
 
-struct MagicMixtureNodeFunctionalDependencies <: FunctionalDependencies end
+struct GateNodeFunctionalDependencies <: FunctionalDependencies end
 
-collect_functional_dependencies(::MagicMixtureNode, ::Nothing) = MagicMixtureNodeFunctionalDependencies()
-collect_functional_dependencies(::MagicMixtureNode, ::MagicMixtureNodeFunctionalDependencies) = MagicMixtureNodeFunctionalDependencies()
-collect_functional_dependencies(::MagicMixtureNode, ::Any) =
-    error("The functional dependencies for MagicMixtureNode must be either `Nothing` or `MagicMixtureNodeFunctionalDependencies`")
+collect_functional_dependencies(::GateNode, ::Nothing) = GateNodeFunctionalDependencies()
+collect_functional_dependencies(::GateNode, ::GateNodeFunctionalDependencies) = GateNodeFunctionalDependencies()
+collect_functional_dependencies(::GateNode, ::Any) =
+    error("The functional dependencies for GateNode must be either `Nothing` or `GateNodeFunctionalDependencies`")
 
-function activate!(factornode::MagicMixtureNode, options::FactorNodeActivationOptions)
+function activate!(factornode::GateNode, options::FactorNodeActivationOptions)
     dependencies = collect_functional_dependencies(factornode, getdependecies(options))
     return activate!(dependencies, factornode, options)
 end
 
 
-function functional_dependencies(::MagicMixtureNodeFunctionalDependencies, factornode::MagicMixtureNode{N}, interface, iindex::Int) where {N}
+function functional_dependencies(::GateNodeFunctionalDependencies, factornode::GateNode{N}, interface, iindex::Int) where {N}
     message_dependencies = if iindex === 1
         # output depends on input messages:
         (factornode.inputs, )
@@ -102,14 +92,14 @@ function functional_dependencies(::MagicMixtureNodeFunctionalDependencies, facto
         # k'th input depends on:
         (factornode.switch,)
     else
-        error("Bad index in functional_dependencies for MagicMixtureNode")
+        error("Bad index in functional_dependencies for GateNode")
     end
 
     return message_dependencies, marginal_dependencies
 end
 
 
-function collect_latest_messages(::MagicMixtureNodeFunctionalDependencies, factornode::MagicMixtureNode{N}, messages::Tuple{NodeInterface}) where {N}
+function collect_latest_messages(::GateNodeFunctionalDependencies, factornode::GateNode{N}, messages::Tuple{NodeInterface}) where {N}
     outputinterface = messages[1]
 
     msgs_names = Val{(name(outputinterface),)}()
@@ -117,7 +107,7 @@ function collect_latest_messages(::MagicMixtureNodeFunctionalDependencies, facto
     return msgs_names, msgs_observable
 end
 
-function collect_latest_marginals(::MagicMixtureNodeFunctionalDependencies, factornode::MagicMixtureNode{N}, marginals::Tuple{NodeInterface}) where {N}
+function collect_latest_marginals(::GateNodeFunctionalDependencies, factornode::GateNode{N}, marginals::Tuple{NodeInterface}) where {N}
     switchinterface = marginals[1]
 
     marginal_names = Val{(name(switchinterface),)}()
@@ -128,7 +118,7 @@ function collect_latest_marginals(::MagicMixtureNodeFunctionalDependencies, fact
     return marginal_names, marginal_observable
 end
 
-function collect_latest_marginals(::MagicMixtureNodeFunctionalDependencies, factornode::MagicMixtureNode{N}, marginals::NTuple{N,IndexedNodeInterface}) where {N}
+function collect_latest_marginals(::GateNodeFunctionalDependencies, factornode::GateNode{N}, marginals::NTuple{N,IndexedNodeInterface}) where {N}
     inputsinterfaces = marginals
     
     marginal_names = Val{(name(first(inputsinterfaces)),)}()
@@ -137,7 +127,7 @@ function collect_latest_marginals(::MagicMixtureNodeFunctionalDependencies, fact
     return marginal_names, marginal_observable
 end
 
-function collect_latest_messages(::MagicMixtureNodeFunctionalDependencies, factornode::MagicMixtureNode{N}, messages::Tuple{NodeInterface, NTuple{N, IndexedNodeInterface}}) where {N}
+function collect_latest_messages(::GateNodeFunctionalDependencies, factornode::GateNode{N}, messages::Tuple{NodeInterface, NTuple{N, IndexedNodeInterface}}) where {N}
     output_or_switch_interface = messages[1]
     inputsinterfaces = messages[2]
 
@@ -154,7 +144,7 @@ function collect_latest_messages(::MagicMixtureNodeFunctionalDependencies, facto
     return msgs_names, msgs_observable
 end
 
-function collect_latest_messages(::MagicMixtureNodeFunctionalDependencies, factornode::MagicMixtureNode{N}, messages::Tuple{NTuple{N,IndexedNodeInterface}}) where {N}
+function collect_latest_messages(::GateNodeFunctionalDependencies, factornode::GateNode{N}, messages::Tuple{NTuple{N,IndexedNodeInterface}}) where {N}
     inputsinterfaces = messages[1]
     
     msgs_names = Val{(name(first(inputsinterfaces)),)}()
@@ -164,8 +154,8 @@ function collect_latest_messages(::MagicMixtureNodeFunctionalDependencies, facto
 end
 
 
-marginalrule(fform::Type{<:MagicMixture}, on::Val{:switch_inputs}, mnames::Any, messages::Any, qnames::Nothing, marginals::Nothing, meta::Nothing, __node::Any) = begin
-    m_out = getdata(messages[1])
+marginalrule(fform::Type{<:Gate}, on::Val{:switch_inputs}, mnames::Any, messages::Any, qnames::Nothing, marginals::Nothing, meta::Nothing, __node::Any) = begin
+    # m_out = getdata(messages[1])
     m_switch = getdata(messages[2])
     m_inputs = getdata.(messages[3:end])
 
@@ -173,19 +163,19 @@ marginalrule(fform::Type{<:MagicMixture}, on::Val{:switch_inputs}, mnames::Any, 
     return FactorizedJoint((m_inputs..., m_switch))
 end
 
-@rule MagicMixture(:out, Marginalisation) (q_switch::Any, m_inputs::ManyOf{N, Any}) where {N} = begin
+@rule Gate(:out, Marginalisation) (q_switch::Any, m_inputs::ManyOf{N, Any}) where {N} = begin
     return MixtureDistribution(collect(m_inputs), probvec(q_switch))
 end
 
 
-@rule MagicMixture(:switch, Marginalisation) (m_out::Any, m_inputs::ManyOf{N, Any}) where {N} = begin
+@rule Gate(:switch, Marginalisation) (m_out::Any, m_inputs::ManyOf{N, Any}) where {N} = begin
     logscales = map(input -> compute_logscale(prod(GenericProd(),m_out,input), m_out, input), m_inputs)
     p = softmax(collect(logscales))
     return Multinomial(1, p)
 end
 
 
-@rule MagicMixture((:inputs, k), Marginalisation) (m_out::Any, q_switch::Any,) = begin
+@rule Gate((:inputs, k), Marginalisation) (m_out::Any, q_switch::Any,) = begin
     z = probvec(q_switch)[k]
     ef_out = convert(ExponentialFamilyDistribution, m_out)
     η      = getnaturalparameters(ef_out)

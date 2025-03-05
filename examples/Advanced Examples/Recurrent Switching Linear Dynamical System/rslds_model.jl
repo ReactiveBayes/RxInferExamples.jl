@@ -68,8 +68,8 @@ end
         s[t] ~ MultinomialPolya(1, u[t]) where {dependencies = RequireMessageFunctionalDependencies(ψ = convert(promote_variate_type(typeof(η), NormalWeightedMeanPrecision), η, Ψ))}   
         s[t+1] ~ DiscreteTransition(s[t], P)
         ##Transition Layer
-        A[t] ~ MagicMixture(switch=s[t+1], inputs=H)
-        B[t] ~ MagicMixture(switch=s[t+1], inputs=Λ)
+        A[t] := Gate(switch=s[t+1], inputs=H)
+        B[t] := Gate(switch=s[t+1], inputs=Λ)
         x[t+1] ~ ContinuousTransition(x[t], A[t], B[t]) where {meta = CTMeta(transformation)}
         ## Observation Layer
         obs[t] ~ MvNormalMeanCovariance(C*x[t+1], Ψ_R)
