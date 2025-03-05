@@ -1,5 +1,8 @@
-using ExponentialFamily, RxInfer, BayesBase
-import ReactiveMP: AbstractFactorNode, NodeInterface, IndexedNodeInterface, FactorNodeActivationOptions, Marginalisation, Deterministic, PredefinedNodeFunctionalForm,FunctionalDependencies, collect_functional_dependencies
+using ExponentialFamily, RxInfer, BayesBase, GraphPPL
+import ReactiveMP: AbstractFactorNode, NodeInterface, IndexedNodeInterface, FactorNodeActivationOptions, Marginalisation,
+ Deterministic, PredefinedNodeFunctionalForm,FunctionalDependencies, collect_functional_dependencies, activate!, functional_dependencies, 
+ collect_latest_messages, collect_latest_marginals, marginalrule, rule, name, getinboundinterfaces, clustername, getdependecies,
+ messagein, ManyOf, getvariable
 import ExponentialFamily: getnaturalparameters, exponential_family_typetag
 export Gate, GateNode
 
@@ -7,30 +10,28 @@ export Gate, GateNode
 struct Gate{N} end
 
 ReactiveMP.as_node_symbol(::Type{<:Gate}) = :Gate
-
-interfaces(::Type{<:Gate}) = Val((:out, :switch, :inputs))
-alias_interface(::Type{<:Gate}, ::Int64, name::Symbol) = name
-is_predefined_node(::Type{<:Gate}) = PredefinedNodeFunctionalForm()
-sdtype(::Type{<:Gate}) = Deterministic()
-collect_factorisation(::Type{<:Gate}, factorization) = GateNodeFactorisation()
+ReactiveMP.interfaces(::Type{<:Gate}) = Val((:out, :switch, :inputs))
+ReactiveMP.alias_interface(::Type{<:Gate}, ::Int64, name::Symbol) = name
+ReactiveMP.is_predefined_node(::Type{<:Gate}) = ReactiveMP.PredefinedNodeFunctionalForm()
+ReactiveMP.sdtype(::Type{<:Gate}) = ReactiveMP.Deterministic()
+ReactiveMP.collect_factorisation(::Type{<:Gate}, factorization) = GateNodeFactorisation()
 
 struct GateNodeFactorisation end
 
-struct GateNode{N} <: AbstractFactorNode
-  
-    out    :: NodeInterface
-    switch :: NodeInterface
-    inputs :: NTuple{N, IndexedNodeInterface}
+struct GateNode{N} <: ReactiveMP.AbstractFactorNode
+    out    :: ReactiveMP.NodeInterface
+    switch :: ReactiveMP.NodeInterface
+    inputs :: NTuple{N, ReactiveMP.IndexedNodeInterface}
 end 
 
-functionalform(factornode::GateNode{N}) where {N} = Gate{N}
-getinterfaces(factornode::GateNode) = (factornode.out, factornode.switch, factornode.inputs...)
-sdtype(factornode::GateNode) = Deterministic()
+ReactiveMP.functionalform(factornode::GateNode{N}) where {N} = Gate{N}
+ReactiveMP.getinterfaces(factornode::GateNode) = (factornode.out, factornode.switch, factornode.inputs...)
+ReactiveMP.sdtype(factornode::GateNode) = ReactiveMP.Deterministic()
 
-interfaceindices(factornode::GateNode, iname::Symbol)                       = (interfaceindex(factornode, iname),)
-interfaceindices(factornode::GateNode, inames::NTuple{N, Symbol}) where {N} = map(iname -> interfaceindex(factornode, iname), inames)
+ReactiveMP.interfaceindices(factornode::GateNode, iname::Symbol)                       = (ReactiveMP.interfaceindex(factornode, iname),)
+ReactiveMP.interfaceindices(factornode::GateNode, inames::NTuple{N, Symbol}) where {N} = map(iname -> ReactiveMP.interfaceindex(factornode, iname), inames)
 
-function interfaceindex(factornode::GateNode, iname::Symbol)
+ReactiveMP.interfaceindex(factornode::GateNode, iname::Symbol) = begin
     if iname === :out
         return 1
     elseif iname === :switch
@@ -40,35 +41,35 @@ function interfaceindex(factornode::GateNode, iname::Symbol)
     end
 end
 
-function factornode(::Type{<:Gate}, interfaces, factorization)
+ReactiveMP.factornode(::Type{<:Gate}, interfaces, factorization) = begin
     outinterface = interfaces[findfirst(((name, variable),) -> name == :out, interfaces)]
     switchinterface = interfaces[findfirst(((name, variable),) -> name == :switch, interfaces)]
     inputinterfaces = filter(((name, variable),) -> name == :inputs, interfaces)
     N = length(inputinterfaces)
-    return GateNode(NodeInterface(outinterface...), NodeInterface(switchinterface...), ntuple(i -> IndexedNodeInterface(i, NodeInterface(inputinterfaces[i]...)), N))
+    return GateNode(ReactiveMP.NodeInterface(outinterface...), ReactiveMP.NodeInterface(switchinterface...), ntuple(i -> ReactiveMP.IndexedNodeInterface(i, ReactiveMP.NodeInterface(inputinterfaces[i]...)), N))
     
 end
 
 struct GateNodeInboundInterfaces end
 
-getinboundinterfaces(::GateNode) = GateNodeInboundInterfaces()
-clustername(::GateNodeInboundInterfaces) = :switch_inputs
+ReactiveMP.getinboundinterfaces(::GateNode) = GateNodeInboundInterfaces()
+ReactiveMP.clustername(::GateNodeInboundInterfaces) = :switch_inputs
 
 
 struct GateNodeFunctionalDependencies <: FunctionalDependencies end
 
-collect_functional_dependencies(::GateNode, ::Nothing) = GateNodeFunctionalDependencies()
-collect_functional_dependencies(::GateNode, ::GateNodeFunctionalDependencies) = GateNodeFunctionalDependencies()
-collect_functional_dependencies(::GateNode, ::Any) =
+ReactiveMP.collect_functional_dependencies(::GateNode, ::Nothing) = GateNodeFunctionalDependencies()
+ReactiveMP.collect_functional_dependencies(::GateNode, ::GateNodeFunctionalDependencies) = GateNodeFunctionalDependencies()
+ReactiveMP.collect_functional_dependencies(::GateNode, ::Any) =
     error("The functional dependencies for GateNode must be either `Nothing` or `GateNodeFunctionalDependencies`")
 
-function activate!(factornode::GateNode, options::FactorNodeActivationOptions)
-    dependencies = collect_functional_dependencies(factornode, getdependecies(options))
-    return activate!(dependencies, factornode, options)
+ReactiveMP.activate!(factornode::GateNode, options::FactorNodeActivationOptions) = begin
+    dependencies = ReactiveMP.collect_functional_dependencies(factornode, ReactiveMP.getdependecies(options))
+    return ReactiveMP.activate!(dependencies, factornode, options)
 end
 
 
-function functional_dependencies(::GateNodeFunctionalDependencies, factornode::GateNode{N}, interface, iindex::Int) where {N}
+ReactiveMP.functional_dependencies(::GateNodeFunctionalDependencies, factornode::GateNode{N}, interface, iindex::Int) where {N} = begin
     message_dependencies = if iindex === 1
         # output depends on input messages:
         (factornode.inputs, )
@@ -99,7 +100,7 @@ function functional_dependencies(::GateNodeFunctionalDependencies, factornode::G
 end
 
 
-function collect_latest_messages(::GateNodeFunctionalDependencies, factornode::GateNode{N}, messages::Tuple{NodeInterface}) where {N}
+ReactiveMP.collect_latest_messages(::GateNodeFunctionalDependencies, factornode::GateNode{N}, messages::Tuple{NodeInterface}) where {N} = begin
     outputinterface = messages[1]
 
     msgs_names = Val{(name(outputinterface),)}()
@@ -107,7 +108,7 @@ function collect_latest_messages(::GateNodeFunctionalDependencies, factornode::G
     return msgs_names, msgs_observable
 end
 
-function collect_latest_marginals(::GateNodeFunctionalDependencies, factornode::GateNode{N}, marginals::Tuple{NodeInterface}) where {N}
+ReactiveMP.collect_latest_marginals(::GateNodeFunctionalDependencies, factornode::GateNode{N}, marginals::Tuple{NodeInterface}) where {N} = begin
     switchinterface = marginals[1]
 
     marginal_names = Val{(name(switchinterface),)}()
@@ -118,7 +119,7 @@ function collect_latest_marginals(::GateNodeFunctionalDependencies, factornode::
     return marginal_names, marginal_observable
 end
 
-function collect_latest_marginals(::GateNodeFunctionalDependencies, factornode::GateNode{N}, marginals::NTuple{N,IndexedNodeInterface}) where {N}
+ReactiveMP.collect_latest_marginals(::GateNodeFunctionalDependencies, factornode::GateNode{N}, marginals::NTuple{N,IndexedNodeInterface}) where {N} = begin
     inputsinterfaces = marginals
     
     marginal_names = Val{(name(first(inputsinterfaces)),)}()
@@ -127,7 +128,7 @@ function collect_latest_marginals(::GateNodeFunctionalDependencies, factornode::
     return marginal_names, marginal_observable
 end
 
-function collect_latest_messages(::GateNodeFunctionalDependencies, factornode::GateNode{N}, messages::Tuple{NodeInterface, NTuple{N, IndexedNodeInterface}}) where {N}
+ReactiveMP.collect_latest_messages(::GateNodeFunctionalDependencies, factornode::GateNode{N}, messages::Tuple{NodeInterface, NTuple{N, IndexedNodeInterface}}) where {N} = begin
     output_or_switch_interface = messages[1]
     inputsinterfaces = messages[2]
 
@@ -144,7 +145,7 @@ function collect_latest_messages(::GateNodeFunctionalDependencies, factornode::G
     return msgs_names, msgs_observable
 end
 
-function collect_latest_messages(::GateNodeFunctionalDependencies, factornode::GateNode{N}, messages::Tuple{NTuple{N,IndexedNodeInterface}}) where {N}
+ReactiveMP.collect_latest_messages(::GateNodeFunctionalDependencies, factornode::GateNode{N}, messages::Tuple{NTuple{N,IndexedNodeInterface}}) where {N} = begin
     inputsinterfaces = messages[1]
     
     msgs_names = Val{(name(first(inputsinterfaces)),)}()
@@ -154,7 +155,7 @@ function collect_latest_messages(::GateNodeFunctionalDependencies, factornode::G
 end
 
 
-marginalrule(fform::Type{<:Gate}, on::Val{:switch_inputs}, mnames::Any, messages::Any, qnames::Nothing, marginals::Nothing, meta::Nothing, __node::Any) = begin
+ReactiveMP.marginalrule(fform::Type{<:Gate}, on::Val{:switch_inputs}, mnames::Any, messages::Any, qnames::Nothing, marginals::Nothing, meta::Nothing, __node::Any) = begin
     # m_out = getdata(messages[1])
     m_switch = getdata(messages[2])
     m_inputs = getdata.(messages[3:end])
@@ -163,19 +164,19 @@ marginalrule(fform::Type{<:Gate}, on::Val{:switch_inputs}, mnames::Any, messages
     return FactorizedJoint((m_inputs..., m_switch))
 end
 
-@rule Gate(:out, Marginalisation) (q_switch::Any, m_inputs::ManyOf{N, Any}) where {N} = begin
+ReactiveMP.@rule Gate(:out, Marginalisation) (q_switch::Any, m_inputs::ManyOf{N, Any}) where {N} = begin
     return MixtureDistribution(collect(m_inputs), probvec(q_switch))
 end
 
 
-@rule Gate(:switch, Marginalisation) (m_out::Any, m_inputs::ManyOf{N, Any}) where {N} = begin
+ReactiveMP.@rule Gate(:switch, Marginalisation) (m_out::Any, m_inputs::ManyOf{N, Any}) where {N} = begin
     logscales = map(input -> compute_logscale(prod(GenericProd(),m_out,input), m_out, input), m_inputs)
     p = softmax(collect(logscales))
     return Multinomial(1, p)
 end
 
 
-@rule Gate((:inputs, k), Marginalisation) (m_out::Any, q_switch::Any,) = begin
+ReactiveMP.@rule Gate((:inputs, k), Marginalisation) (m_out::Any, q_switch::Any,) = begin
     z = probvec(q_switch)[k]
     ef_out = convert(ExponentialFamilyDistribution, m_out)
     η      = getnaturalparameters(ef_out)
@@ -185,7 +186,7 @@ end
 end
 
 
-@rule typeof(*)(:out, Marginalisation) (m_A::PointMass, m_in::MixtureDistribution, meta::Any) = begin 
+ReactiveMP.@rule typeof(*)(:out, Marginalisation) (m_A::PointMass, m_in::MixtureDistribution, meta::Any) = begin 
     comps = BayesBase.components(m_in)
     new_components = similar(comps)
     @inbounds for (i,component) in enumerate(comps)
@@ -195,7 +196,7 @@ end
     return dist
 end
 
-@rule typeof(dot)(:out, Marginalisation) (m_in1::MixtureDistribution, m_in2::PointMass, meta::Any) = begin 
+ReactiveMP.@rule typeof(dot)(:out, Marginalisation) (m_in1::MixtureDistribution, m_in2::PointMass, meta::Any) = begin 
     comps = BayesBase.components(m_in1)
     new_components = []
     @inbounds for (i, component) in enumerate(comps)
@@ -210,26 +211,28 @@ end
 
 function BayesBase.mean(mixture::MixtureDistribution)
     component_means = mean.(BayesBase.components(mixture))
-    component_weights = softmax(BayesBase.weights(mixture))
+    component_weights = BayesBase.weights(mixture)
     return mapreduce((m,w) -> w*m, +, component_means, component_weights)
-end
-
-function BayesBase.precision(mixture::MixtureDistribution)
-    component_precisions = precision.(BayesBase.components(mixture))
-    component_weights = softmax(BayesBase.weights(mixture))
-    return mapreduce((m,w) -> w*m, +, component_precisions, component_weights)
 end
 
 function BayesBase.cov(mixture::MixtureDistribution)
     component_cov = cov.(BayesBase.components(mixture))
+    component_means = mean.(BayesBase.components(mixture))
     component_weights = BayesBase.weights(mixture)
-    return mapreduce((m,w) -> w*m, +, component_cov, component_weights)
+    mixture_mean = mean(mixture)
+    return mapreduce((v,m,w) -> w*(v + m*m'), +, component_cov, component_means, component_weights) - mixture_mean*mixture_mean'    
 end
 
+BayesBase.precision(mixture::MixtureDistribution) = inv(cov(mixture))
+
 function BayesBase.var(mixture::MixtureDistribution)
-    cov = BayesBase.cov(mixture)
-    return diag(cov)
+    component_vars = var.(BayesBase.components(mixture))
+    component_means = mean.(BayesBase.components(mixture))
+    component_weights = BayesBase.weights(mixture)
+    mixture_mean = mean(mixture)
+    return mapreduce((v,m,w) -> w*(v + m.^2), +, component_vars, component_means, component_weights) - mixture_mean.^2
 end
+
 
 @rule typeof(dot)(:in1, Marginalisation) (m_out::MixtureDistribution, m_in2::PointMass, meta::Any) = begin 
     comps = BayesBase.components(m_out)
