@@ -209,30 +209,6 @@ ReactiveMP.@rule typeof(dot)(:out, Marginalisation) (m_in1::MixtureDistribution,
 end
 
 
-function BayesBase.mean(mixture::MixtureDistribution)
-    component_means = mean.(BayesBase.components(mixture))
-    component_weights = BayesBase.weights(mixture)
-    return mapreduce((m,w) -> w*m, +, component_means, component_weights)
-end
-
-function BayesBase.cov(mixture::MixtureDistribution)
-    component_cov = cov.(BayesBase.components(mixture))
-    component_means = mean.(BayesBase.components(mixture))
-    component_weights = BayesBase.weights(mixture)
-    mixture_mean = mean(mixture)
-    return mapreduce((v,m,w) -> w*(v + m*m'), +, component_cov, component_means, component_weights) - mixture_mean*mixture_mean'    
-end
-
-BayesBase.precision(mixture::MixtureDistribution) = inv(cov(mixture))
-
-function BayesBase.var(mixture::MixtureDistribution)
-    component_vars = var.(BayesBase.components(mixture))
-    component_means = mean.(BayesBase.components(mixture))
-    component_weights = BayesBase.weights(mixture)
-    mixture_mean = mean(mixture)
-    return mapreduce((v,m,w) -> w*(v + m.^2), +, component_vars, component_means, component_weights) - mixture_mean.^2
-end
-
 
 @rule typeof(dot)(:in1, Marginalisation) (m_out::MixtureDistribution, m_in2::PointMass, meta::Any) = begin 
     comps = BayesBase.components(m_out)
@@ -349,3 +325,36 @@ ExponentialFamily.probvec(d::Multinomial) = d.p
 BayesBase.entropy(d::MixtureDistribution) = mapreduce((c,w) -> w * BayesBase.entropy(c), +, d.components, d.weights)
 
 BayesBase.mean(f::F, itr::MixtureDistribution) where {F} = mapreduce((c,w) -> w * mean(f, c), +, itr.components, itr.weights)
+
+function create_P_matrix(n_switches)
+    P = zeros(n_switches, n_switches)
+    for i in 1:n_switches
+        P[i,:] = 0.5 * ones(n_switches)
+        P[i,i] = 1.0
+    end
+    return P
+end
+
+function BayesBase.mean(mixture::MixtureDistribution)
+    component_means = mean.(BayesBase.components(mixture))
+    component_weights = BayesBase.weights(mixture)
+    return mapreduce((m,w) -> w*m, +, component_means, component_weights)
+end
+
+function BayesBase.cov(mixture::MixtureDistribution)
+    component_cov = cov.(BayesBase.components(mixture))
+    component_means = mean.(BayesBase.components(mixture))
+    component_weights = BayesBase.weights(mixture)
+    mixture_mean = mean(mixture)
+    return mapreduce((v,m,w) -> w*(v + m*m'), +, component_cov, component_means, component_weights) - mixture_mean*mixture_mean'
+end
+
+BayesBase.precision(mixture::MixtureDistribution) = inv(cov(mixture))
+
+function BayesBase.var(mixture::MixtureDistribution)
+    component_vars = var.(BayesBase.components(mixture))
+    component_means = mean.(BayesBase.components(mixture))
+    component_weights = BayesBase.weights(mixture)
+    mixture_mean = mean(mixture)
+    return mapreduce((v,m,w) -> w*(v + m.^2), +, component_vars, component_means, component_weights) - mixture_mean.^2
+end
