@@ -664,7 +664,7 @@ function generate_sitemap()
         end
 
         # Get last modification date
-        lastmod = Dates.format(Dates.now(), "yyyy-mm-ddTHH:MM:SSz")
+        lastmod = Dates.format(Dates.now(), "yyyy-mm-dd")
 
         priority = 1.0
         frequency = "weekly"
