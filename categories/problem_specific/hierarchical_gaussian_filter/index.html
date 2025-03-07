@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Hierarchical Gaussian Filter · RxInfer.jl Examples</title><meta name="title" content="Hierarchical Gaussian Filter · RxInfer.jl Examples"/><meta property="og:title" content="Hierarchical Gaussian Filter · RxInfer.jl Examples"/><meta property="twitter:title" content="Hierarchical Gaussian Filter · RxInfer.jl Examples"/><meta name="description" content="A repository of examples and tutorials for RxInfer.jl, a Julia package for reactive message passing inference in probabilistic models."/><meta property="og:description" content="A repository of examples and tutorials for RxInfer.jl, a Julia package for reactive message passing inference in probabilistic models."/><meta property="twitter:description" content="A repository of examples and tutorials for RxInfer.jl, a Julia package for reactive message passing inference in probabilistic models."/><meta property="og:url" content="https://examples.rxinfer.ml/categories/problem_specific/hierarchical_gaussian_filter/"/><meta property="twitter:url" content="https://examples.rxinfer.ml/categories/problem_specific/hierarchical_gaussian_filter/"/><link rel="canonical" href="https://examples.rxinfer.ml/categories/problem_specific/hierarchical_gaussian_filter/"/><script async src="https://www.googletagmanager.com/gtag/js?id=G-GMFX620VEP"></script><script>  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-GMFX620VEP', {'page_path': location.pathname + location.search + location.hash});
+</script><script data-outdated-warner src="../../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../../assets/documenter.js"></script><script src="../../../search_index.js"></script><script src="../../../siteinfo.js"></script><script src="../../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../../assets/themeswap.js"></script><link href="../../../assets/theme.css" rel="stylesheet" type="text/css"/><link href="../../../assets/header.css" rel="stylesheet" type="text/css"/><script src="../../../assets/header.js"></script><script src="../../../assets/chat.js"></script><link href="../../../assets/favicon.ico" rel="icon" type="image/x-icon"/>
+    <meta property="og:title" content="Hierarchical Gaussian Filter - RxInfer Examples">
+    <meta name="description" content="An example of online inference procedure for Hierarchical Gaussian Filter with univariate noisy observations using Variational Message Passing algorithm. Reference: [Ismail Senoz, Online Message Passing-based Inference in the Hierarchical Gaussian Filter](https://ieeexplore.ieee.org/document/9173980).
+">
+    <meta property="og:description" content="An example of online inference procedure for Hierarchical Gaussian Filter with univariate noisy observations using Variational Message Passing algorithm. Reference: [Ismail Senoz, Online Message Passing-based Inference in the Hierarchical Gaussian Filter](https://ieeexplore.ieee.org/document/9173980).
+">
+    <meta name="keywords" content="rxinfer, julia, bayesian inference, examples, probabilistic programming, message passing, probabilistic numerics, variational inference, belief propagation, problem specific, hierarchical model, online inference, filtering">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://examples.rxinfer.ml/sitemap.xml">
+    </head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../../"><img class="docs-light-only" src="../../../assets/logo.svg" alt="RxInfer.jl Examples logo"/><img class="docs-dark-only" src="../../../assets/logo-dark.svg" alt="RxInfer.jl Examples logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../../">RxInfer.jl Examples</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../../">Home</a></li><li><a class="tocitem" href="../../../how_to_contribute/">How to contribute</a></li><li><a class="tocitem" href="../../../autogenerated/list_of_examples/">List of Examples</a></li><li><span class="tocitem">Basic Examples</span><ul><li><a class="tocitem" href="../../basic_examples/bayesian_binomial_regression/">Bayesian Binomial Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_linear_regression/">Bayesian Linear Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_multinomial_regression/">Bayesian Multinomial Regression</a></li><li><a class="tocitem" href="../../basic_examples/coin_toss_model/">Coin Toss Model</a></li><li><a class="tocitem" href="../../basic_examples/feature_functions_in_bayesian_regression/">Feature Functions In Bayesian Regression</a></li><li><a class="tocitem" href="../../basic_examples/hidden_markov_model/">Hidden Markov Model</a></li><li><a class="tocitem" href="../../basic_examples/kalman_filtering_and_smoothing/">Kalman Filtering And Smoothing</a></li><li><a class="tocitem" href="../../basic_examples/pomdp_control/">Pomdp Control</a></li><li><a class="tocitem" href="../../basic_examples/predicting_bike_rental_demand/">Predicting Bike Rental Demand</a></li></ul></li><li><span class="tocitem">Advanced Examples</span><ul><li><a class="tocitem" href="../../advanced_examples/active_inference_mountain_car/">Active Inference Mountain Car</a></li><li><a class="tocitem" href="../../advanced_examples/advanced_tutorial/">Advanced Tutorial</a></li><li><a class="tocitem" href="../../advanced_examples/assessing_people_skills/">Assessing People Skills</a></li><li><a class="tocitem" href="../../advanced_examples/chance_constraints/">Chance Constraints</a></li><li><a class="tocitem" href="../../advanced_examples/conjugate-computational_variational_message_passing/">Conjugate-Computational Variational Message Passing</a></li><li><a class="tocitem" href="../../advanced_examples/drone_dynamics/">Drone Dynamics</a></li><li><a class="tocitem" href="../../advanced_examples/global_parameter_optimisation/">Global Parameter Optimisation</a></li><li><a class="tocitem" href="../../advanced_examples/gp_regression_by_ssm/">Gp Regression By Ssm</a></li><li><a class="tocitem" href="../../advanced_examples/infinite_data_stream/">Infinite Data Stream</a></li><li><a class="tocitem" href="../../advanced_examples/multi-agent_trajectory_planning/">Multi-Agent Trajectory Planning</a></li><li><a class="tocitem" href="../../advanced_examples/nonlinear_sensor_fusion/">Nonlinear Sensor Fusion</a></li><li><a class="tocitem" href="../../advanced_examples/robotic_arm/">Robotic Arm</a></li></ul></li><li><span class="tocitem">Problem Specific</span><ul><li><a class="tocitem" href="../autoregressive_models/">Autoregressive Models</a></li><li><a class="tocitem" href="../gamma_mixture/">Gamma Mixture</a></li><li><a class="tocitem" href="../gaussian_mixture/">Gaussian Mixture</a></li><li class="is-active"><a class="tocitem" href>Hierarchical Gaussian Filter</a><ul class="internal"><li><a class="tocitem" href="#Online-learning-(Filtering)"><span>Online learning (Filtering)</span></a></li><li><a class="tocitem" href="#Offline-learning-(Smoothing)"><span>Offline learning (Smoothing)</span></a></li></ul></li><li><a class="tocitem" href="../invertible_neural_network_tutorial/">Invertible Neural Network Tutorial</a></li><li><a class="tocitem" href="../litter_model/">Litter Model</a></li><li><a class="tocitem" href="../ode_parameter_estimation/">Ode Parameter Estimation</a></li><li><a class="tocitem" href="../probit_model/">Probit Model</a></li><li><a class="tocitem" href="../rts_vs_bifm_smoothing/">Rts Vs Bifm Smoothing</a></li><li><a class="tocitem" href="../simple_nonlinear_node/">Simple Nonlinear Node</a></li><li><a class="tocitem" href="../structural_dynamics_with_augmented_kalman_filter/">Structural Dynamics With Augmented Kalman Filter</a></li><li><a class="tocitem" href="../universal_mixtures/">Universal Mixtures</a></li></ul></li><li><a class="tocitem" href="../../../how_build_works/">How we build the examples</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Problem Specific</a></li><li class="is-active"><a href>Hierarchical Gaussian Filter</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Hierarchical Gaussian Filter</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl/blob/main/docs/src/categories/problem_specific/hierarchical_gaussian_filter/index.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><div class="admonition is-info"><header class="admonition-header">Contributing</header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><h1 id="Hierarchical-Gaussian-Filter"><a class="docs-heading-anchor" href="#Hierarchical-Gaussian-Filter">Hierarchical Gaussian Filter</a><a id="Hierarchical-Gaussian-Filter-1"></a><a class="docs-heading-anchor-permalink" href="#Hierarchical-Gaussian-Filter" title="Permalink"></a></h1><p>In this demo the goal is to perform approximate variational Bayesian Inference for Univariate Hierarchical Gaussian Filter (HGF).</p><p>Simple HGF model can be defined as:</p><p class="math-container">\[\begin{aligned}
+  x^{(j)}_k &amp; \sim \, \mathcal{N}(x^{(j)}_{k - 1}, f_k(x^{(j - 1)}_k)) \\
+  y_k &amp; \sim \, \mathcal{N}(x^{(j)}_k, \tau_k)
+\end{aligned}\]</p><p>where <span>$j$</span> is an index of layer in hierarchy, <span>$k$</span> is a time step and <span>$f_k$</span> is a variance activation function. <code>RxInfer.jl</code> export Gaussian Controlled Variance (GCV) node with <span>$f_k = \exp(\kappa x + \omega)$</span> variance activation function. By default the node uses Gauss-Hermite cubature with a prespecified number of approximation points in the cubature. In this demo we also show how we can change the hyperparameters in different approximation methods (iin this case Gauss-Hermite cubature) with the help of metadata structures. Here how our model will look like with the GCV node:</p><p class="math-container">\[\begin{aligned}
+  z_k &amp; \sim \, \mathcal{N}(z_{k - 1}, \mathcal{\tau_z}) \\
+  x_k &amp; \sim \, \mathcal{N}(x_{k - 1}, \exp(\kappa z_k + \omega)) \\
+  y_k &amp; \sim \, \mathcal{N}(x_k, \mathcal{\tau_y})
+\end{aligned}\]</p><p>In this experiment we will create a single time step of the graph and perform variational message passing filtering alrogithm to estimate hidden states of the system. For a more rigorous introduction to Hierarchical Gaussian Filter we refer to <a href="https://ieeexplore.ieee.org/document/9173980">Ismail Senoz, Online Message Passing-based Inference in the Hierarchical Gaussian Filter</a> paper.</p><p>For simplicity we will consider <span>$\tau_z$</span>, <span>$\tau_y$</span>, <span>$\kappa$</span> and <span>$\omega$</span> known and fixed, but there are no principled limitations to make them random variables too.</p><p>To model this process in <code>RxInfer</code>, first, we start with importing all needed packages:</p><pre><code class="language-julia hljs">using RxInfer, BenchmarkTools, Random, Plots, StableRNGs</code></pre><p>Next step, is to generate some synthetic data:</p><pre><code class="language-julia hljs">function generate_data(rng, n, k, w, zv, yv)
+    z_prev = 0.0
+    x_prev = 0.0
+
+    z = Vector{Float64}(undef, n)
+    v = Vector{Float64}(undef, n)
+    x = Vector{Float64}(undef, n)
+    y = Vector{Float64}(undef, n)
+
+    for i in 1:n
+        z[i] = rand(rng, Normal(z_prev, sqrt(zv)))
+        v[i] = exp(k * z[i] + w)
+        x[i] = rand(rng, Normal(x_prev, sqrt(v[i])))
+        y[i] = rand(rng, Normal(x[i], sqrt(yv)))
+
+        z_prev = z[i]
+        x_prev = x[i]
+    end 
+    
+    return z, x, y
+end</code></pre><pre><code class="nohighlight hljs">generate_data (generic function with 1 method)</code></pre><pre><code class="language-julia hljs"># Seed for reproducibility
+seed = 42
+
+rng = StableRNG(seed)
+
+# Parameters of HGF process
+real_k = 1.0
+real_w = 0.0
+z_variance = abs2(0.2)
+y_variance = abs2(0.1)
+
+# Number of observations
+n = 300
+
+z, x, y = generate_data(rng, n, real_k, real_w, z_variance, y_variance);</code></pre><p>Let&#39;s plot our synthetic dataset. Lines represent our hidden states we want to estimate using noisy observations.</p><pre><code class="language-julia hljs">let 
+    pz = plot(title = &quot;Hidden States Z&quot;)
+    px = plot(title = &quot;Hidden States X&quot;)
+    
+    plot!(pz, 1:n, z, label = &quot;z_i&quot;, color = :orange)
+    plot!(px, 1:n, x, label = &quot;x_i&quot;, color = :green)
+    scatter!(px, 1:n, y, label = &quot;y_i&quot;, color = :red, ms = 2, alpha = 0.2)
+    
+    plot(pz, px, layout = @layout([ a; b ]))
+end</code></pre><p><img src="Hierarchical Gaussian Filter_4_1.png" alt/></p><h2 id="Online-learning-(Filtering)"><a class="docs-heading-anchor" href="#Online-learning-(Filtering)">Online learning (Filtering)</a><a id="Online-learning-(Filtering)-1"></a><a class="docs-heading-anchor-permalink" href="#Online-learning-(Filtering)" title="Permalink"></a></h2><p>To create a model we use the <code>@model</code> macro:</p><pre><code class="language-julia hljs"># We create a single-time step of corresponding state-space process to
+# perform online learning (filtering)
+@model function hgf(y, κ, ω, z_variance, y_variance, z_prev_mean, z_prev_var, x_prev_mean, x_prev_var)
+
+    z_prev ~ Normal(mean = z_prev_mean, variance = z_prev_var)
+    x_prev ~ Normal(mean = x_prev_mean, variance = x_prev_var)
+
+    # Higher layer is modelled as a random walk 
+    z_next ~ Normal(mean = z_prev, variance = z_variance)
+    
+    # Lower layer is modelled with `GCV` node
+    x_next ~ GCV(x_prev, z_next, κ, ω)
+    
+    # Noisy observations 
+    y ~ Normal(mean = x_next, variance = y_variance)
+end
+
+@constraints function hgfconstraints() 
+    # Mean-field factorization constraints
+    q(x_next, x_prev, z_next) = q(x_next)q(x_prev)q(z_next)
+end
+
+@meta function hgfmeta()
+    # Lets use 31 approximation points in the Gauss Hermite cubature approximation method
+    GCV() -&gt; GCVMetadata(GaussHermiteCubature(31)) 
+end</code></pre><pre><code class="nohighlight hljs">hgfmeta (generic function with 1 method)</code></pre><p>The code below uses the <code>infer</code> function from <code>RxInfer</code> to generate the message passing algorithm given the model and constraints specification.  We also specify the <code>@autoupdates</code> in order to set new priors for the next observation based on posteriors.</p><pre><code class="language-julia hljs">function run_inference(data, real_k, real_w, z_variance, y_variance)
+
+    autoupdates   = @autoupdates begin
+        # The posterior becomes the prior for the next time step
+        z_prev_mean, z_prev_var = mean_var(q(z_next))
+        x_prev_mean, x_prev_var = mean_var(q(x_next))
+    end
+
+    init = @initialization begin
+        q(x_next) = NormalMeanVariance(0.0, 5.0)
+        q(z_next) = NormalMeanVariance(0.0, 5.0)
+    end
+
+    return infer(
+        model          = hgf(κ = real_k, ω = real_w, z_variance = z_variance, y_variance = y_variance),
+        constraints    = hgfconstraints(),
+        meta           = hgfmeta(),
+        data           = (y = data, ),
+        autoupdates    = autoupdates,
+        keephistory    = length(data),
+        historyvars    = (
+            x_next = KeepLast(),
+            z_next = KeepLast()
+        ),
+        initialization = init,
+        iterations     = 5,
+        free_energy    = true,
+    )
+end</code></pre><pre><code class="nohighlight hljs">run_inference (generic function with 1 method)</code></pre><p>Everything is ready to run the algorithm. We used the online version of the algorithm, thus we need to fetch the history of the posterior estimation instead of the actual posteriors.</p><pre><code class="language-julia hljs">result = run_inference(y, real_k, real_w, z_variance, y_variance);
+
+mz = result.history[:z_next];
+mx = result.history[:x_next];</code></pre><pre><code class="language-julia hljs">let 
+    pz = plot(title = &quot;Hidden States Z&quot;)
+    px = plot(title = &quot;Hidden States X&quot;)
+    
+    plot!(pz, 1:n, z, label = &quot;z_i&quot;, color = :orange)
+    plot!(pz, 1:n, mean.(mz), ribbon = std.(mz), label = &quot;estimated z_i&quot;, color = :teal)
+    
+    plot!(px, 1:n, x, label = &quot;x_i&quot;, color = :green)
+    plot!(px, 1:n, mean.(mx), ribbon = std.(mx), label = &quot;estimated x_i&quot;, color = :violet)
+    
+    plot(pz, px, layout = @layout([ a; b ]))
+end</code></pre><p><img src="Hierarchical Gaussian Filter_8_1.png" alt/></p><p>As we can see from our plot, estimated signal resembles closely to the real hidden states with small variance. We maybe also interested in the values for Bethe Free Energy functional:</p><pre><code class="language-julia hljs">plot(result.free_energy_history, label = &quot;Bethe Free Energy&quot;)</code></pre><p><img src="Hierarchical Gaussian Filter_9_1.png" alt/></p><p>As we can see BetheFreeEnergy converges nicely to a stable point. </p><h2 id="Offline-learning-(Smoothing)"><a class="docs-heading-anchor" href="#Offline-learning-(Smoothing)">Offline learning (Smoothing)</a><a id="Offline-learning-(Smoothing)-1"></a><a class="docs-heading-anchor-permalink" href="#Offline-learning-(Smoothing)" title="Permalink"></a></h2><p>Aside from online learning, we can also perform offline learning (smoothing) with the HGF model to learn the parameters in case we have collected all the data. In this offline setting, we treat the parameters <span>$\kappa$</span> and <span>$\omega$</span> as random variables and place a prior over them. These parameters will be updated along with latent states during the inference. First, let&#39;s define the HGF model for offline learning</p><pre><code class="language-julia hljs">#Model for offline learning (smoothing)
+
+@model function hgf_smoothing(y, z_variance, y_variance)
+    # Initial states 
+    z_prev ~ Normal(mean = 0., variance = 5.0)
+    x_prev ~ Normal(mean = 0., variance = 5.0)
+
+    # Priors on κ and ω
+    κ ~ Normal(mean = 1.5, variance = 1.0)
+    ω ~ Normal(mean = 0.0, variance = 0.05)
+
+    for i in eachindex(y)
+        # Higher layer 
+        z[i] ~ Normal(mean = z_prev, variance = z_variance)
+
+        # Lower layer 
+        x[i] ~ GCV(x_prev, z[i], κ, ω)
+
+        # Noisy observations 
+        y[i] ~ Normal(mean = x[i], variance = y_variance)
+
+        # Update last/previous hidden states
+        z_prev = z[i]
+        x_prev = x[i]
+    end
+end
+
+@constraints function hgfconstraints_smoothing() 
+    #Structured mean-field factorization constraints
+    q(x_prev,x, z,κ,ω) = q(x_prev,x)q(z)q(κ)q(ω)
+end
+
+@meta function hgfmeta_smoothing()
+    # Lets use 31 approximation points in the Gauss Hermite cubature approximation method
+    GCV() -&gt; GCVMetadata(GaussHermiteCubature(31)) 
+end</code></pre><pre><code class="nohighlight hljs">hgfmeta_smoothing (generic function with 1 method)</code></pre><p>Similar to the filtering case, we use the <code>infer</code> function from <code>RxInfer</code> to implement inference. </p><pre><code class="language-julia hljs">function run_inference_smoothing(data, z_variance, y_variance)
+    @initialization function hgf_init_smoothing()
+        q(x) = NormalMeanVariance(0.0,5.0)
+        q(z) = NormalMeanVariance(0.0,5.0)
+        q(κ) = NormalMeanVariance(1.5,1.0)
+        q(ω) = NormalMeanVariance(0.0,0.05)
+    end
+
+    #Let&#39;s do inference with 20 iterations 
+    return infer(
+        model = hgf_smoothing(z_variance = z_variance, y_variance = y_variance,),
+        data = (y = data,),
+        meta = hgfmeta_smoothing(),
+        constraints = hgfconstraints_smoothing(),
+        initialization = hgf_init_smoothing(),
+        iterations = 20,
+        options = (limit_stack_depth = 100, ), 
+        returnvars = (x = KeepLast(), z = KeepLast(),ω=KeepLast(),κ=KeepLast(),),
+        free_energy = true 
+    )
+end</code></pre><pre><code class="nohighlight hljs">run_inference_smoothing (generic function with 1 method)</code></pre><p>Now we can get the result.</p><pre><code class="language-julia hljs">result_smoothing = run_inference_smoothing(y, z_variance, y_variance);
+mz_smoothing = result_smoothing.posteriors[:z];
+mx_smoothing = result_smoothing.posteriors[:x];</code></pre><pre><code class="language-julia hljs">let 
+    pz = plot(title = &quot;Hidden States Z&quot;)
+    px = plot(title = &quot;Hidden States X&quot;)
+    
+    plot!(pz, 1:n, z, label = &quot;z_i&quot;, color = :orange)
+    plot!(pz, 1:n, mean.(mz_smoothing), ribbon = std.(mz_smoothing), label = &quot;estimated z_i&quot;, color = :teal)
+    
+    plot!(px, 1:n, x, label = &quot;x_i&quot;, color = :green)
+    plot!(px, 1:n, mean.(mx_smoothing), ribbon = std.(mx_smoothing), label = &quot;estimated x_i&quot;, color = :violet)
+    
+    plot(pz, px, layout = @layout([ a; b ]))
+end</code></pre><p><img src="Hierarchical Gaussian Filter_13_1.png" alt/></p><p>As we can see from our plot, estimated signal resembles to the real hidden states and appears &quot;smoother&quot; compared to the filtering case. We may be also interested in the values for Bethe Free Energy functional:</p><pre><code class="language-julia hljs">plot(result_smoothing.free_energy, label = &quot;Bethe Free Energy&quot;)</code></pre><p><img src="Hierarchical Gaussian Filter_14_1.png" alt/></p><p>Finally, we can also extract the marginals <span>$q(\kappa)$</span> and <span>$q(\omega)$</span> to get the appropximation of these parameters.</p><pre><code class="language-julia hljs">q_κ = result_smoothing.posteriors[:κ]
+q_ω = result_smoothing.posteriors[:ω]
+
+println(&quot;Approximate value of κ: &quot;, mean(q_κ))
+println(&quot;Approximate value of ω: &quot;, mean(q_ω))</code></pre><pre><code class="nohighlight hljs">Approximate value of κ: 0.7543386579898821
+Approximate value of ω: -0.18164892866626792</code></pre><p>Let&#39;s visualize their marginal distributions.</p><pre><code class="language-julia hljs">range_w = range(-1,0.5,length = 1000)
+range_k = range(0,2,length = 1000)
+let 
+    pw = plot(title = &quot;Marginal q(w)&quot;)
+    pk = plot(title = &quot;Marginal q(k)&quot;)
+    
+    plot!(pw, range_w, (x) -&gt; pdf(q_ω, x), fillalpha=0.3, fillrange = 0, label=&quot;Posterior q(w)&quot;, c=3, legend_position=(0.1,0.95),legendfontsize=9)
+    vline!([real_w], label=&quot;Real w&quot;)
+    xlabel!(&quot;w&quot;)
+    
+    
+    plot!(pk, range_k, (x) -&gt; pdf(q_κ, x), fillalpha=0.3, fillrange = 0, label=&quot;Posterior q(k)&quot;, c=3, legend_position=(0.1,0.95),legendfontsize=9)
+    vline!([real_k], label=&quot;Real k&quot;)
+    xlabel!(&quot;k&quot;)
+    
+    plot(pk, pw, layout = @layout([ a; b ]))
+end</code></pre><p><img src="Hierarchical Gaussian Filter_16_1.png" alt/></p><p>As we can see, both the marginals <span>$q(\kappa)$</span> and <span>$q(\omega)$</span> are not quite off from the true values. Specifically, the means of <span>$q(\kappa)$</span> and <span>$q(\omega)$</span> are approximately <span>$0.75$</span> and <span>$-0.18$</span>, respectively, which are quite close to their true values. </p><hr/><div class="admonition is-info"><header class="admonition-header">Contributing</header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><div class="admonition is-compat"><header class="admonition-header">Environment</header><div class="admonition-body"><p>This example was executed in a clean, isolated environment. Below are the exact package versions used:</p><p>For reproducibility:</p><ul><li>Use the same package versions when running locally</li><li>Report any issues with package compatibility</li></ul></div></div><pre><code class="nohighlight hljs">Status `~/work/RxInferExamples.jl/RxInferExamples.jl/docs/src/categories/problem_specific/hierarchical_gaussian_filter/Project.toml`
+  [6e4b80f9] BenchmarkTools v1.6.0
+  [91a5bcdd] Plots v1.40.9
+  [86711068] RxInfer v4.2.0
+  [860ef19b] StableRNGs v1.0.2
+  [9a3f8284] Random v1.11.0
+</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../gaussian_mixture/">« Gaussian Mixture</a><a class="docs-footer-nextpage" href="../invertible_neural_network_tutorial/">Invertible Neural Network Tutorial »</a><div class="flexbox-break"></div><p class="footer-message">Created in <a href="https://biaslab.github.io/">BIASlab</a>, maintained by <a href="https://github.com/ReactiveBayes">ReactiveBayes</a>, powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.8.1 on <span class="colophon-date" title="Friday 7 March 2025 13:50">Friday 7 March 2025</span>. Using Julia version 1.11.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

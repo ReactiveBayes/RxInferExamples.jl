@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Nonlinear Sensor Fusion · RxInfer.jl Examples</title><meta name="title" content="Nonlinear Sensor Fusion · RxInfer.jl Examples"/><meta property="og:title" content="Nonlinear Sensor Fusion · RxInfer.jl Examples"/><meta property="twitter:title" content="Nonlinear Sensor Fusion · RxInfer.jl Examples"/><meta name="description" content="A repository of examples and tutorials for RxInfer.jl, a Julia package for reactive message passing inference in probabilistic models."/><meta property="og:description" content="A repository of examples and tutorials for RxInfer.jl, a Julia package for reactive message passing inference in probabilistic models."/><meta property="twitter:description" content="A repository of examples and tutorials for RxInfer.jl, a Julia package for reactive message passing inference in probabilistic models."/><meta property="og:url" content="https://examples.rxinfer.ml/categories/advanced_examples/nonlinear_sensor_fusion/"/><meta property="twitter:url" content="https://examples.rxinfer.ml/categories/advanced_examples/nonlinear_sensor_fusion/"/><link rel="canonical" href="https://examples.rxinfer.ml/categories/advanced_examples/nonlinear_sensor_fusion/"/><script async src="https://www.googletagmanager.com/gtag/js?id=G-GMFX620VEP"></script><script>  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-GMFX620VEP', {'page_path': location.pathname + location.search + location.hash});
+</script><script data-outdated-warner src="../../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../../assets/documenter.js"></script><script src="../../../search_index.js"></script><script src="../../../siteinfo.js"></script><script src="../../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../../assets/themeswap.js"></script><link href="../../../assets/theme.css" rel="stylesheet" type="text/css"/><link href="../../../assets/header.css" rel="stylesheet" type="text/css"/><script src="../../../assets/header.js"></script><script src="../../../assets/chat.js"></script><link href="../../../assets/favicon.ico" rel="icon" type="image/x-icon"/>
+    <meta property="og:title" content="Nonlinear Sensor Fusion - RxInfer Examples">
+    <meta name="description" content="Nonlinear object position identification using a sparse set of sensors
+">
+    <meta property="og:description" content="Nonlinear object position identification using a sparse set of sensors
+">
+    <meta name="keywords" content="rxinfer, julia, bayesian inference, examples, probabilistic programming, message passing, probabilistic numerics, variational inference, belief propagation, advanced examples, sensor fusion, nonlinear, sparse data">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://examples.rxinfer.ml/sitemap.xml">
+    </head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../../"><img class="docs-light-only" src="../../../assets/logo.svg" alt="RxInfer.jl Examples logo"/><img class="docs-dark-only" src="../../../assets/logo-dark.svg" alt="RxInfer.jl Examples logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../../">RxInfer.jl Examples</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../../">Home</a></li><li><a class="tocitem" href="../../../how_to_contribute/">How to contribute</a></li><li><a class="tocitem" href="../../../autogenerated/list_of_examples/">List of Examples</a></li><li><span class="tocitem">Basic Examples</span><ul><li><a class="tocitem" href="../../basic_examples/bayesian_binomial_regression/">Bayesian Binomial Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_linear_regression/">Bayesian Linear Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_multinomial_regression/">Bayesian Multinomial Regression</a></li><li><a class="tocitem" href="../../basic_examples/coin_toss_model/">Coin Toss Model</a></li><li><a class="tocitem" href="../../basic_examples/feature_functions_in_bayesian_regression/">Feature Functions In Bayesian Regression</a></li><li><a class="tocitem" href="../../basic_examples/hidden_markov_model/">Hidden Markov Model</a></li><li><a class="tocitem" href="../../basic_examples/kalman_filtering_and_smoothing/">Kalman Filtering And Smoothing</a></li><li><a class="tocitem" href="../../basic_examples/pomdp_control/">Pomdp Control</a></li><li><a class="tocitem" href="../../basic_examples/predicting_bike_rental_demand/">Predicting Bike Rental Demand</a></li></ul></li><li><span class="tocitem">Advanced Examples</span><ul><li><a class="tocitem" href="../active_inference_mountain_car/">Active Inference Mountain Car</a></li><li><a class="tocitem" href="../advanced_tutorial/">Advanced Tutorial</a></li><li><a class="tocitem" href="../assessing_people_skills/">Assessing People Skills</a></li><li><a class="tocitem" href="../chance_constraints/">Chance Constraints</a></li><li><a class="tocitem" href="../conjugate-computational_variational_message_passing/">Conjugate-Computational Variational Message Passing</a></li><li><a class="tocitem" href="../drone_dynamics/">Drone Dynamics</a></li><li><a class="tocitem" href="../global_parameter_optimisation/">Global Parameter Optimisation</a></li><li><a class="tocitem" href="../gp_regression_by_ssm/">Gp Regression By Ssm</a></li><li><a class="tocitem" href="../infinite_data_stream/">Infinite Data Stream</a></li><li><a class="tocitem" href="../multi-agent_trajectory_planning/">Multi-Agent Trajectory Planning</a></li><li class="is-active"><a class="tocitem" href>Nonlinear Sensor Fusion</a></li><li><a class="tocitem" href="../robotic_arm/">Robotic Arm</a></li></ul></li><li><span class="tocitem">Problem Specific</span><ul><li><a class="tocitem" href="../../problem_specific/autoregressive_models/">Autoregressive Models</a></li><li><a class="tocitem" href="../../problem_specific/gamma_mixture/">Gamma Mixture</a></li><li><a class="tocitem" href="../../problem_specific/gaussian_mixture/">Gaussian Mixture</a></li><li><a class="tocitem" href="../../problem_specific/hierarchical_gaussian_filter/">Hierarchical Gaussian Filter</a></li><li><a class="tocitem" href="../../problem_specific/invertible_neural_network_tutorial/">Invertible Neural Network Tutorial</a></li><li><a class="tocitem" href="../../problem_specific/litter_model/">Litter Model</a></li><li><a class="tocitem" href="../../problem_specific/ode_parameter_estimation/">Ode Parameter Estimation</a></li><li><a class="tocitem" href="../../problem_specific/probit_model/">Probit Model</a></li><li><a class="tocitem" href="../../problem_specific/rts_vs_bifm_smoothing/">Rts Vs Bifm Smoothing</a></li><li><a class="tocitem" href="../../problem_specific/simple_nonlinear_node/">Simple Nonlinear Node</a></li><li><a class="tocitem" href="../../problem_specific/structural_dynamics_with_augmented_kalman_filter/">Structural Dynamics With Augmented Kalman Filter</a></li><li><a class="tocitem" href="../../problem_specific/universal_mixtures/">Universal Mixtures</a></li></ul></li><li><a class="tocitem" href="../../../how_build_works/">How we build the examples</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Advanced Examples</a></li><li class="is-active"><a href>Nonlinear Sensor Fusion</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Nonlinear Sensor Fusion</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl/blob/main/docs/src/categories/advanced_examples/nonlinear_sensor_fusion/index.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><div class="admonition is-info"><header class="admonition-header">Contributing</header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><h1 id="Nonlinear-Sensor-Fusion"><a class="docs-heading-anchor" href="#Nonlinear-Sensor-Fusion">Nonlinear Sensor Fusion</a><a id="Nonlinear-Sensor-Fusion-1"></a><a class="docs-heading-anchor-permalink" href="#Nonlinear-Sensor-Fusion" title="Permalink"></a></h1><pre><code class="language-julia hljs">using RxInfer, Random, LinearAlgebra, Distributions, Plots, StatsPlots, Optimisers
+using DataFrames, DelimitedFiles, StableRNGs</code></pre><p>In a secret ongoing mission to Mars, NASA has deployed its custom lunar roving vehicle, called WALL-E, to explore the area and to discover hidden minerals. During one of the solar storm, WALL-E&#39;s GPS unit got damaged, preventing it from accurately locating itself. The engineers at NASA were devastated as they developed the project over the past couple of years and spend most of their funding on it. Without being able to locate WALL-E, they were unable to complete their mission.</p><p>A smart group of engineers came up with a solution to locate WALL-E. They decided to repurpose 3 nearby satelites as beacons for WALL-E, allowing it to detect its relative location to these beacons. However, these satelites were old and therefore WALL-E was only able to obtain noisy estimates of its distance to these beacons. These distances were communicated back to earth, where the engineers tried to figure our WALL-E&#39;s location. Luckily they knew the locations of these satelites and together with the noisy estimates of the distance to WALL-E they can infer the exact location of the moving WALL-E.</p><p>To illustrate these noisy measurements, the engineers decided to plot them:</p><pre><code class="language-julia hljs"># fetch measurements
+beacon_locations = readdlm(&quot;data/beacons.txt&quot;)
+distances = readdlm(&quot;data/distances.txt&quot;)
+position = readdlm(&quot;data/position.txt&quot;)
+nr_observations = size(distances, 1);</code></pre><pre><code class="language-julia hljs"># plot beacon and actual location of WALL-E
+p1 = scatter(beacon_locations[:,1], beacon_locations[:,2], markershape=:utriangle, markersize=10, legend=:topleft, label=&quot;beacon locations&quot;)
+plot!(position[1,:], position[2,:], label=&quot;actual location&quot;, linewidth=3, linestyle=:dash, arrow=(:closed, 2.0), aspect_ratio=1.0)
+xlabel!(&quot;longitude [m]&quot;), ylabel!(&quot;latitude [m]&quot;)
+
+# plot noisy distance measurements
+p2 = plot(distances, legend=:topleft, linewidth=3, label=[&quot;distance to beacon 1&quot; &quot;distance to beacon 2&quot; &quot;distance to beacon 3&quot;])
+xlabel!(&quot;time [sec]&quot;), ylabel!(&quot;distance [m]&quot;)
+
+plot(p1, p2, size=(1200, 500))</code></pre><p><img src="Nonlinear Sensor Fusion_3_1.png" alt/></p><p>In order to track the location of WALL-E based on the noisy distance measurements to the beacon, the engineers developed a probabilistic model for the movements for WALL-E and the distance measurements that followed from this. The engineers assumed that the position of WALL-E at time <span>$t$</span>, denoted by <span>$z_t$</span>, follows a 2-dimensional normal random walk:</p><p class="math-container">\[\begin{aligned}
+ &amp; p(z_t \mid z_{t - 1}) = \mathcal{N}(z_t \mid z_{t-1},~\mathrm{I}_{2}),\\
+\end{aligned}\]</p><p>where <span>$\mathrm{I}_2$</span> denotes the 2-dimensional identity matrix. From the current position of WALL-E, we specify our noisy distance measurements <span>$y_t$</span> as a noisy set of the distances between WALL-E and the beacons, specified by <span>$s_i$</span>:</p><p class="math-container">\[\begin{aligned}
+ &amp; p(y_t \mid z_t)  = \mathcal{N} \left (y_t \left \vert \begin{bmatrix} \| z_{t} - s_{1}\| \\ \|z_{t} - s_{2}\| \\ \|z_{t} - s_{3}\|\end{bmatrix}\!,~\mathrm{I}_{3}\! \right . \right)\!.
+\end{aligned}\]</p><p>The engineers are smart enough to automate the probabilistic inference procedure using <code>RxInfer.jl</code>. They specify the probabilistic model as:</p><pre><code class="language-julia hljs"># function to compute distance to beacons
+function compute_distances(z)    
+    distance1 = norm(z - beacon_locations[1,:])
+    distance2 = norm(z - beacon_locations[2,:])
+    distance3 = norm(z - beacon_locations[3,:])
+    distances = [distance1, distance2, distance3]
+end;</code></pre><pre><code class="language-julia hljs">@model function random_walk_model(y, W, R)
+    # specify initial estimates of the location
+    z[1] ~ MvNormalMeanCovariance(zeros(2), diageye(2)) 
+    y[1] ~ MvNormalMeanCovariance(compute_distances(z[1]), diageye(3))
+
+    # loop over time steps
+    for t in 2:length(y)
+
+        # specify random walk state transition model
+        z[t] ~ MvNormalMeanPrecision(z[t-1], W)
+
+        # specify non-linear distance observations model
+        y[t] ~ MvNormalMeanPrecision(compute_distances(z[t]), R)
+        
+    end
+
+end;</code></pre><p>Due to non-linearity, exact probabilistic inference is intractable in this model. Therefore we resort to Conjugate-Computational Variational Inference (CVI) following the paper <a href="https://reader.elsevier.com/reader/sd/pii/S0888613X22000950?token=EFB22E01793BD0BF73EECC9702C315644969403BD44B13FA850E9F66C8A49E88C0D5C68A9AD03301C609DA443DB33F80&amp;originRegion=eu-west-1&amp;originCreation=20221027115856">Probabilistic programming with stochastic variational message passing</a>. This requires setting the <code>@meta</code> macro in <code>RxInfer.jl</code>.</p><p>Please note that we permit improper messages within the CVI procedure in this example by providing <code>Val(false)</code> to <code>CVI</code> constructor:</p><pre><code class="language-julia hljs">    compute_distances(z) -&gt; CVI(..., Val(false), ...)</code></pre><p>This move may lead to numerical instabilities in other scenarios, however dissallowing improper messages in this case can lead to a biased estimates of posterior distribution. So, as a rule of thumb, you should try the default setting, and if it fails to find an unbiased result, enable improper messages.</p><pre><code class="language-julia hljs">@meta function random_walk_model_meta(nr_samples, nr_iterations, rng)
+    compute_distances(z) -&gt; CVI(rng, nr_samples, nr_iterations, Optimisers.Descent(0.1), ForwardDiffGrad(), 1, Val(false), false)
+end;</code></pre><p><strong>NOTE</strong>: You can try out different meta for approximating the nonlinearity, e.g.</p><pre><code class="language-julia hljs">@meta function random_walk_linear_meta()
+    compute_distances(z) -&gt; Linearization()
+end;</code></pre><pre><code class="language-julia hljs">@meta function random_walk_unscented_meta()
+    compute_distances(z) -&gt; Unscented()
+end;</code></pre><pre><code class="language-julia hljs">init = @initialization begin 
+    μ(z) = MvNormalMeanPrecision(ones(2), 0.1 * diageye(2))
+end</code></pre><pre><code class="nohighlight hljs">Initial state: 
+  μ(z) = MvNormalMeanPrecision(
+μ: [1.0, 1.0]
+Λ: [0.1 0.0; 0.0 0.1]
+)</code></pre><pre><code class="language-julia hljs">results_fast = infer(
+    model = random_walk_model(W = diageye(2), R = diageye(3)),
+    meta = random_walk_model_meta(1, 3, StableRNG(42)), # or random_walk_unscented_meta()
+    data = (y = [distances[t,:] for t in 1:nr_observations],),
+    iterations = 20,
+    free_energy = false,
+    returnvars = (z = KeepLast(),),
+    initialization = init,
+);</code></pre><pre><code class="language-julia hljs">results_accuracy = infer(
+    model = random_walk_model(W = diageye(2), R = diageye(3)),
+    meta = random_walk_model_meta(1000, 100, StableRNG(42)),
+    data = (y = [distances[t,:] for t in 1:nr_observations],),
+    iterations = 20,
+    free_energy = false,
+    returnvars = (z = KeepLast(),),
+    initialization = init,
+);</code></pre><p>After running this fast inference procedure, the engineers plot the results and evaluate the performance:</p><pre><code class="language-julia hljs"># plot beacon and actual and estimated location of WALL-E (fast inference)
+p1 = scatter(beacon_locations[:,1], beacon_locations[:,2], markershape=:utriangle, markersize=10, legend=:topleft, label=&quot;beacon locations&quot;)
+plot!(position[1,:], position[2,:], label=&quot;actual location&quot;, linewidth=3, linestyle=:dash, arrow=(:closed, 2.0), aspect_ratio=1.0)
+map(posterior -&gt; covellipse!(mean(posterior), cov(posterior), color=&quot;red&quot;, label=&quot;&quot;, n_std=2), results_fast.posteriors[:z])
+xlabel!(&quot;longitude [m]&quot;), ylabel!(&quot;latitude [m]&quot;), title!(&quot;Fast (1 sample, 3 iterations)&quot;); p1.series_list[end][:label] = &quot;estimated location ±2σ&quot;
+
+# plot beacon and actual and estimated location of WALL-E (accurate inference)
+p2 = scatter(beacon_locations[:,1], beacon_locations[:,2], markershape=:utriangle, markersize=10, legend=:topleft, label=&quot;beacon locations&quot;)
+plot!(position[1,:], position[2,:], label=&quot;actual location&quot;, linewidth=3, linestyle=:dash, arrow=(:closed, 2.0), aspect_ratio=1.0)
+map(posterior -&gt; covellipse!(mean(posterior), cov(posterior), color=&quot;red&quot;, label=&quot;&quot;, n_std=2), results_accuracy.posteriors[:z])
+xlabel!(&quot;longitude [m]&quot;), ylabel!(&quot;latitude [m]&quot;), title!(&quot;Accurate (1000 samples, 100 iterations)&quot;); p2.series_list[end][:label] = &quot;estimated location ±2σ&quot;
+
+plot(p1, p2, size=(1200, 500))</code></pre><p><img src="Nonlinear Sensor Fusion_12_1.png" alt/></p><p>The engineers were very happy with the solution, as it meant that the Mars mission could continue. However, they noted that the estimates began to deviate after WALL-E moved further away from the beacons. They deemed this was likely due to the noise in the distance measurements. Therefore, the engineers decided to adapt the model, such that they would also infer the process and observation noise precision matrices, <span>$Q$</span> and <span>$R$</span> respectively. They did this by adding Wishart priors to those matrices:</p><p class="math-container">\[\begin{aligned}
+ &amp; p(Q) = \mathcal{W}(Q \mid 3, \mathrm{I}_2), \\
+ &amp; p(R) = \mathcal{W}(R \mid 4, \mathrm{I}_3), \\
+ &amp; p(z_t \mid z_{t - 1}, Q) = \mathcal{N}(z_t \mid z_{t-1}, Q^{-1}),\\
+ &amp; p(y_t \mid z_t, R)  = \mathcal{N} \left (y_t \left \vert \begin{bmatrix} \| z_{t} - s_{1}\| \\ \|z_{t} - s_{2}\| \\ \|z_{t} - s_{3}\|\end{bmatrix}\!,~R^{-1}\! \right . \right)\!.
+\end{aligned}\]</p><pre><code class="language-julia hljs">@model function random_walk_model_wishart(y)
+    # set priors on precision matrices
+    Q ~ Wishart(3, diageye(2))
+    R ~ Wishart(4, diageye(3))
+
+    # specify initial estimates of the location
+    z[1] ~ MvNormalMeanCovariance(zeros(2), diageye(2)) 
+    y[1] ~ MvNormalMeanCovariance(compute_distances(z[1]), diageye(3))
+
+    # loop over time steps
+    for t in 2:length(y)
+
+        # specify random walk state transition model
+        z[t] ~ MvNormalMeanPrecision(z[t-1], Q)
+
+        # specify non-linear distance observations model
+        y[t] ~ MvNormalMeanPrecision(compute_distances(z[t]), R)
+        
+    end
+
+end;</code></pre><pre><code class="language-julia hljs">meta = @meta begin 
+    compute_distances(z) -&gt; CVI(StableRNG(42), 1000, 100, Optimisers.Descent(0.01), ForwardDiffGrad(), 1, Val(false), false)
+end;</code></pre><p>Because of the added complexity with the Wishart distributions, the engineers simplify the problem by employing a structured mean-field factorization:</p><pre><code class="language-julia hljs">constraints = @constraints begin
+    q(z, Q, R) = q(z)q(Q)q(R)
+end;</code></pre><pre><code class="language-julia hljs">init = @initialization begin 
+    μ(z) = MvNormalMeanPrecision(zeros(2), 0.01 * diageye(2))
+    q(R) = Wishart(4, diageye(3))
+    q(Q) = Wishart(3, diageye(2))
+end;</code></pre><p>The engineers run the inference procedure again and decide to track the inference performance using the Bethe free energy.</p><pre><code class="language-julia hljs">results_wishart = infer(
+    model = random_walk_model_wishart(),
+    data = (y = [distances[t,:] for t in 1:nr_observations],),
+    iterations = 20,
+    free_energy = true,
+    returnvars = (z = KeepLast(),),
+    constraints = constraints,
+    meta = meta,
+    initialization = init,
+);</code></pre><p>They plot the new estimates and the performance over time, and luckily WALL-E is found!</p><pre><code class="language-julia hljs"># plot beacon and actual and estimated location of WALL-E (fast inference)
+p1 = scatter(beacon_locations[:,1], beacon_locations[:,2], markershape=:utriangle, markersize=10, legend=:topleft, label=&quot;beacon locations&quot;)
+plot!(position[1,:], position[2,:], label=&quot;actual location&quot;, linewidth=3, linestyle=:dash, arrow=(:closed, 2.0), aspect_ratio=1.0)
+map(posterior -&gt; covellipse!(mean(posterior), cov(posterior), color=&quot;red&quot;, label=&quot;&quot;, n_std=2), results_wishart.posteriors[:z])
+xlabel!(&quot;longitude [m]&quot;), ylabel!(&quot;latitude [m]&quot;); p1.series_list[end][:label] = &quot;estimated location ±2σ&quot;
+
+# plot bethe free energy performance
+p2 = plot(results_wishart.free_energy[2:end], label = &quot;&quot;)
+xlabel!(&quot;iteration&quot;), ylabel!(&quot;Bethe free energy [nats]&quot;)
+
+plot(p1, p2, size=(1200, 500))</code></pre><p><img src="Nonlinear Sensor Fusion_18_1.png" alt/></p><hr/><div class="admonition is-info"><header class="admonition-header">Contributing</header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><div class="admonition is-compat"><header class="admonition-header">Environment</header><div class="admonition-body"><p>This example was executed in a clean, isolated environment. Below are the exact package versions used:</p><p>For reproducibility:</p><ul><li>Use the same package versions when running locally</li><li>Report any issues with package compatibility</li></ul></div></div><pre><code class="nohighlight hljs">Status `~/work/RxInferExamples.jl/RxInferExamples.jl/docs/src/categories/advanced_examples/nonlinear_sensor_fusion/Project.toml`
+  [a93c6f00] DataFrames v1.7.0
+  [8bb1440f] DelimitedFiles v1.9.1
+  [31c24e10] Distributions v0.25.117
+⌃ [3bd65402] Optimisers v0.3.4
+  [91a5bcdd] Plots v1.40.9
+  [86711068] RxInfer v4.2.0
+  [860ef19b] StableRNGs v1.0.2
+  [f3b207a7] StatsPlots v0.15.7
+  [37e2e46d] LinearAlgebra v1.11.0
+  [9a3f8284] Random v1.11.0
+Info Packages marked with ⌃ have new versions available and may be upgradable.
+</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../multi-agent_trajectory_planning/">« Multi-Agent Trajectory Planning</a><a class="docs-footer-nextpage" href="../robotic_arm/">Robotic Arm »</a><div class="flexbox-break"></div><p class="footer-message">Created in <a href="https://biaslab.github.io/">BIASlab</a>, maintained by <a href="https://github.com/ReactiveBayes">ReactiveBayes</a>, powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.8.1 on <span class="colophon-date" title="Friday 7 March 2025 13:50">Friday 7 March 2025</span>. Using Julia version 1.11.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

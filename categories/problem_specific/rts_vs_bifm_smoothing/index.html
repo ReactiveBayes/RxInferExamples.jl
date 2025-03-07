@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Rts Vs Bifm Smoothing · RxInfer.jl Examples</title><meta name="title" content="Rts Vs Bifm Smoothing · RxInfer.jl Examples"/><meta property="og:title" content="Rts Vs Bifm Smoothing · RxInfer.jl Examples"/><meta property="twitter:title" content="Rts Vs Bifm Smoothing · RxInfer.jl Examples"/><meta name="description" content="A repository of examples and tutorials for RxInfer.jl, a Julia package for reactive message passing inference in probabilistic models."/><meta property="og:description" content="A repository of examples and tutorials for RxInfer.jl, a Julia package for reactive message passing inference in probabilistic models."/><meta property="twitter:description" content="A repository of examples and tutorials for RxInfer.jl, a Julia package for reactive message passing inference in probabilistic models."/><meta property="og:url" content="https://examples.rxinfer.ml/categories/problem_specific/rts_vs_bifm_smoothing/"/><meta property="twitter:url" content="https://examples.rxinfer.ml/categories/problem_specific/rts_vs_bifm_smoothing/"/><link rel="canonical" href="https://examples.rxinfer.ml/categories/problem_specific/rts_vs_bifm_smoothing/"/><script async src="https://www.googletagmanager.com/gtag/js?id=G-GMFX620VEP"></script><script>  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-GMFX620VEP', {'page_path': location.pathname + location.search + location.hash});
+</script><script data-outdated-warner src="../../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../../assets/documenter.js"></script><script src="../../../search_index.js"></script><script src="../../../siteinfo.js"></script><script src="../../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../../assets/themeswap.js"></script><link href="../../../assets/theme.css" rel="stylesheet" type="text/css"/><link href="../../../assets/header.css" rel="stylesheet" type="text/css"/><script src="../../../assets/header.js"></script><script src="../../../assets/chat.js"></script><link href="../../../assets/favicon.ico" rel="icon" type="image/x-icon"/>
+    <meta property="og:title" content="RTS vs BIFM Smoothing - RxInfer Examples">
+    <meta name="description" content="This example performs BIFM Kalman smoother on a factor graph using message passing and compares it with the RTS implementation.
+">
+    <meta property="og:description" content="This example performs BIFM Kalman smoother on a factor graph using message passing and compares it with the RTS implementation.
+">
+    <meta name="keywords" content="rxinfer, julia, bayesian inference, examples, probabilistic programming, message passing, probabilistic numerics, variational inference, belief propagation, problem specific, smoothing, kalman filter, comparison">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://examples.rxinfer.ml/sitemap.xml">
+    </head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../../"><img class="docs-light-only" src="../../../assets/logo.svg" alt="RxInfer.jl Examples logo"/><img class="docs-dark-only" src="../../../assets/logo-dark.svg" alt="RxInfer.jl Examples logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../../">RxInfer.jl Examples</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../../">Home</a></li><li><a class="tocitem" href="../../../how_to_contribute/">How to contribute</a></li><li><a class="tocitem" href="../../../autogenerated/list_of_examples/">List of Examples</a></li><li><span class="tocitem">Basic Examples</span><ul><li><a class="tocitem" href="../../basic_examples/bayesian_binomial_regression/">Bayesian Binomial Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_linear_regression/">Bayesian Linear Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_multinomial_regression/">Bayesian Multinomial Regression</a></li><li><a class="tocitem" href="../../basic_examples/coin_toss_model/">Coin Toss Model</a></li><li><a class="tocitem" href="../../basic_examples/feature_functions_in_bayesian_regression/">Feature Functions In Bayesian Regression</a></li><li><a class="tocitem" href="../../basic_examples/hidden_markov_model/">Hidden Markov Model</a></li><li><a class="tocitem" href="../../basic_examples/kalman_filtering_and_smoothing/">Kalman Filtering And Smoothing</a></li><li><a class="tocitem" href="../../basic_examples/pomdp_control/">Pomdp Control</a></li><li><a class="tocitem" href="../../basic_examples/predicting_bike_rental_demand/">Predicting Bike Rental Demand</a></li></ul></li><li><span class="tocitem">Advanced Examples</span><ul><li><a class="tocitem" href="../../advanced_examples/active_inference_mountain_car/">Active Inference Mountain Car</a></li><li><a class="tocitem" href="../../advanced_examples/advanced_tutorial/">Advanced Tutorial</a></li><li><a class="tocitem" href="../../advanced_examples/assessing_people_skills/">Assessing People Skills</a></li><li><a class="tocitem" href="../../advanced_examples/chance_constraints/">Chance Constraints</a></li><li><a class="tocitem" href="../../advanced_examples/conjugate-computational_variational_message_passing/">Conjugate-Computational Variational Message Passing</a></li><li><a class="tocitem" href="../../advanced_examples/drone_dynamics/">Drone Dynamics</a></li><li><a class="tocitem" href="../../advanced_examples/global_parameter_optimisation/">Global Parameter Optimisation</a></li><li><a class="tocitem" href="../../advanced_examples/gp_regression_by_ssm/">Gp Regression By Ssm</a></li><li><a class="tocitem" href="../../advanced_examples/infinite_data_stream/">Infinite Data Stream</a></li><li><a class="tocitem" href="../../advanced_examples/multi-agent_trajectory_planning/">Multi-Agent Trajectory Planning</a></li><li><a class="tocitem" href="../../advanced_examples/nonlinear_sensor_fusion/">Nonlinear Sensor Fusion</a></li><li><a class="tocitem" href="../../advanced_examples/robotic_arm/">Robotic Arm</a></li></ul></li><li><span class="tocitem">Problem Specific</span><ul><li><a class="tocitem" href="../autoregressive_models/">Autoregressive Models</a></li><li><a class="tocitem" href="../gamma_mixture/">Gamma Mixture</a></li><li><a class="tocitem" href="../gaussian_mixture/">Gaussian Mixture</a></li><li><a class="tocitem" href="../hierarchical_gaussian_filter/">Hierarchical Gaussian Filter</a></li><li><a class="tocitem" href="../invertible_neural_network_tutorial/">Invertible Neural Network Tutorial</a></li><li><a class="tocitem" href="../litter_model/">Litter Model</a></li><li><a class="tocitem" href="../ode_parameter_estimation/">Ode Parameter Estimation</a></li><li><a class="tocitem" href="../probit_model/">Probit Model</a></li><li class="is-active"><a class="tocitem" href>Rts Vs Bifm Smoothing</a><ul class="internal"><li><a class="tocitem" href="#Import-packages"><span>Import packages</span></a></li><li><a class="tocitem" href="#Data-generation"><span>Data generation</span></a></li><li><a class="tocitem" href="#Model-specification"><span>Model specification</span></a></li><li><a class="tocitem" href="#Probabilistic-inference"><span>Probabilistic inference</span></a></li><li><a class="tocitem" href="#Experiments-for-200-observations"><span>Experiments for 200 observations</span></a></li><li><a class="tocitem" href="#Benchmark"><span>Benchmark</span></a></li></ul></li><li><a class="tocitem" href="../simple_nonlinear_node/">Simple Nonlinear Node</a></li><li><a class="tocitem" href="../structural_dynamics_with_augmented_kalman_filter/">Structural Dynamics With Augmented Kalman Filter</a></li><li><a class="tocitem" href="../universal_mixtures/">Universal Mixtures</a></li></ul></li><li><a class="tocitem" href="../../../how_build_works/">How we build the examples</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Problem Specific</a></li><li class="is-active"><a href>Rts Vs Bifm Smoothing</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Rts Vs Bifm Smoothing</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl/blob/main/docs/src/categories/problem_specific/rts_vs_bifm_smoothing/index.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><div class="admonition is-info"><header class="admonition-header">Contributing</header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><h1 id="RTS-vs-BIFM-Smoothing"><a class="docs-heading-anchor" href="#RTS-vs-BIFM-Smoothing">RTS vs BIFM Smoothing</a><a id="RTS-vs-BIFM-Smoothing-1"></a><a class="docs-heading-anchor-permalink" href="#RTS-vs-BIFM-Smoothing" title="Permalink"></a></h1><p>___Credits to Martin de Quincey___</p><p>This notebook performs Kalman smoothing on a factor graph using message passing, based on the BIFM Kalman smoother. This notebook is based on:</p><ol><li>F. Wadehn, “State Space Methods with Applications in Biomedical Signal Processing,” ETH Zurich, 2019. Accessed: Jun. 16, 2021. [Online]. Available: https://www.research-collection.ethz.ch/handle/20.500.11850/344762</li><li>H. Loeliger, L. Bruderer, H. Malmberg, F. Wadehn, and N. Zalmai, “On sparsity by NUV-EM, Gaussian message passing, and Kalman smoothing,” in 2016 Information Theory and Applications Workshop (ITA), Jan. 2016, pp. 1–10. doi: 10.1109/ITA.2016.7888168.</li></ol><p>We perform Kalman smoothing in the linear state space model, represented by:</p><p class="math-container">\[\begin{aligned}
+    Z_{k+1} &amp;= A Z_k + B U_k \\
+    Y_k &amp;= C Z_k + W_k
+\end{aligned}\]</p><p>with observations <span>$Y_k$</span>, latent states <span>$Z_k$</span> and inputs <span>$U_k$</span>. <span>$W_k$</span> is the observation noise. <span>$A \in \mathrm{R}^{n \times n}$</span>, <span>$B \in \mathrm{R}^{n \times m}$</span> and <span>$C \in \mathrm{R}^{d \times n}$</span> are the transition matrices in the model. Here <span>$n$</span>, <span>$m$</span> and <span>$d$</span> denote the dimensionality of the latent, input and output dimension, respectively.</p><p>The corresponding probabilistic model can be represented as </p><p class="math-container">\[\begin{aligned}
+        p(y,\ z,\ u)
+        &amp;= p(z_0) \prod_{k=1}^N p(y_k \mid z_k)\ p(z_k\mid z_{k-1},\ u_{k-1})\ p(u_{k-1}) \\
+        &amp;= \mathcal{N}(z_0 \mid \mu_{z_0}, \Sigma_{z_0}) \left( \prod_{k=1}^N \mathcal{N}(y_k \mid C z_k,\ \Sigma_W)\ \delta(z_k - (Az_{k-1} + Bu_{k-1})) \mathcal{N}(u_{k-1} \mid \mu_{i_{k-1}},\ \Sigma_{u_{k-1}}) \right)
+\end{aligned}\]</p><h2 id="Import-packages"><a class="docs-heading-anchor" href="#Import-packages">Import packages</a><a id="Import-packages-1"></a><a class="docs-heading-anchor-permalink" href="#Import-packages" title="Permalink"></a></h2><pre><code class="language-julia hljs">using RxInfer, Random, LinearAlgebra, BenchmarkTools, ProgressMeter, Plots, StableRNGs</code></pre><h2 id="Data-generation"><a class="docs-heading-anchor" href="#Data-generation">Data generation</a><a id="Data-generation-1"></a><a class="docs-heading-anchor-permalink" href="#Data-generation" title="Permalink"></a></h2><pre><code class="language-julia hljs">function generate_parameters(dim_out::Int64, dim_in::Int64, dim_lat::Int64; seed::Int64 = 123)
+    
+    # define noise levels
+    input_noise  = 500.0
+    output_noise = 50.0
+
+    # create random generator for reproducibility
+    rng = MersenneTwister(seed)
+
+    # generate matrices, input statistics and noise matrices
+    A      = diagm(0.8 .* ones(dim_lat) .+ 0.2 * rand(rng, dim_lat))                                            # size (dim_lat x dim_lat)
+    B      = rand(dim_lat, dim_in)                                                                              # size (dim_lat x dim_in)
+    C      = rand(dim_out, dim_lat)                                                                             # size (dim_out x dim_lat)
+    μu     = rand(dim_in) .* collect(1:dim_in)                                                                  # size (dim_in x 1)
+    Σu     = input_noise  .* collect(Hermitian(randn(rng, dim_in, dim_in) + diagm(10 .+ 10*rand(dim_in))))      # size (dim_in x dim_in)
+    Σy     = output_noise .* collect(Hermitian(randn(rng, dim_out, dim_out) + diagm(10 .+ 10*rand(dim_out))))   # size (dim_out x dim_out)
+    Wu     = inv(Σu)
+    Wy     = inv(Σy)
+    
+    # return parameters
+    return A, B, C, μu, Σu, Σy, Wu, Wy
+
+end;</code></pre><pre><code class="language-julia hljs">function generate_data(nr_samples::Int64, A::Array{Float64,2}, B::Array{Float64,2}, C::Array{Float64,2}, μu::Array{Float64,1}, Σu::Array{Float64,2}, Σy::Array{Float64,2}; seed::Int64 = 123)
+        
+    # create random data generator
+    rng = StableRNG(seed)
+    
+    # preallocate space for variables
+    z = Vector{Vector{Float64}}(undef, nr_samples)
+    y = Vector{Vector{Float64}}(undef, nr_samples)
+    u = rand(rng, MvNormal(μu, Σu), nr_samples)&#39;
+    
+    # set initial value of latent states
+    z_prev = zeros(size(A,1))
+    
+    # generate data
+    for i in 1:nr_samples
+
+        # generate new latent state
+        z[i] = A * z_prev + B * u[i,:]
+
+        # generate new observation
+        y[i] = C * z[i] + rand(rng, MvNormal(zeros(dim_out), Σy))
+        
+        # generate new observation
+        z_prev .= z[i]
+        
+    end
+    
+    # return generated data
+    return z, y, u
+    
+end</code></pre><pre><code class="nohighlight hljs">generate_data (generic function with 1 method)</code></pre><pre><code class="language-julia hljs"># specify settings
+nr_samples = 200
+dim_out = 3
+dim_in = 3
+dim_lat = 25
+
+# generate parameters
+A, B, C, μu, Σu, Σy, Wu, Wy = generate_parameters(dim_out, dim_in, dim_lat);
+            
+# generate data
+data_z, data_y, data_u = generate_data(nr_samples, A, B, C, μu, Σu, Σy);
+
+# visualise data
+p = Plots.plot(xlabel = &quot;sample&quot;, ylabel = &quot;observations&quot;)
+# plot each dimension independently
+for i in 1:dim_out
+    Plots.scatter!(p, getindex.(data_y, i), label = &quot;y_$i&quot;, alpha = 0.5, ms = 2)
+end
+p</code></pre><p><img src="RTS vs BIFM Smoothing_4_1.png" alt/></p><h2 id="Model-specification"><a class="docs-heading-anchor" href="#Model-specification">Model specification</a><a id="Model-specification-1"></a><a class="docs-heading-anchor-permalink" href="#Model-specification" title="Permalink"></a></h2><pre><code class="language-julia hljs">@model function RTS_smoother(y, A, B, C, μu, Wu, Wy)
+    
+    # fetch dimensionality
+    dim_lat = size(A, 1)
+    dim_out = size(C, 1)
+    
+    # set initial hidden state
+    z_prev ~ MvNormal(mean = zeros(dim_lat), precision = 1e-5*diagm(ones(dim_lat)))
+
+    # loop through observations
+    for i in eachindex(y)
+
+        # specify input as random variable
+        u[i] ~ MvNormal(mean = μu, precision = Wu)
+        
+        # specify updated hidden state
+        z[i] ~ A * z_prev + B * u[i]
+        
+        # specify observation
+        y[i] ~ MvNormal(mean = C * z[i], precision = Wy)
+        
+        # update last/previous hidden state
+        z_prev = z[i]
+
+    end
+end</code></pre><pre><code class="language-julia hljs">@model function BIFM_smoother(y, A, B, C, μu, Wu, Wy)
+
+    # fetch dimensionality
+    dim_lat = size(A, 1)
+    
+    # set priors
+    z_prior ~ MvNormal(mean = zeros(dim_lat), precision = 1e-5*diagm(ones(dim_lat)))
+    z[1]  ~ BIFMHelper(z_prior)
+    
+    # loop through observations
+    for i in eachindex(y)
+
+        # specify input as random variable
+        u[i]   ~ MvNormal(mean = μu, precision = Wu)
+
+        # specify observation
+        yt[i]  ~ BIFM(u[i], z[i], new(z[i+1])) where { meta = BIFMMeta(A, B, C) }
+        y[i]   ~ MvNormal(mean = yt[i], precision = Wy)
+    end
+    
+    # set final value
+    z[end] ~ MvNormal(mean = zeros(dim_lat), precision = zeros(dim_lat, dim_lat))
+end
+
+@constraints function bifm_constraint()
+    q(z_prior,z) = q(z_prior)q(z)
+end</code></pre><pre><code class="nohighlight hljs">bifm_constraint (generic function with 1 method)</code></pre><h2 id="Probabilistic-inference"><a class="docs-heading-anchor" href="#Probabilistic-inference">Probabilistic inference</a><a id="Probabilistic-inference-1"></a><a class="docs-heading-anchor-permalink" href="#Probabilistic-inference" title="Permalink"></a></h2><pre><code class="language-julia hljs">function inference_RTS(data_y, A, B, C, μu, Wu, Wy)
+    
+    # In this task the inference is unstable and can diverge
+    meta = @meta begin 
+        *() -&gt; ReactiveMP.MatrixCorrectionTools.ClampSingularValues(tiny, Inf)
+    end
+    
+    result = infer(
+        model      = RTS_smoother(A = A, B = B, C = C, μu = μu, Wu = Wu, Wy = Wy),
+        data       = (y = data_y, ),
+        returnvars = (z = KeepLast(), u = KeepLast()),
+        meta = meta
+    )
+    qs = result.posteriors
+    return (qs[:z], qs[:u])
+end</code></pre><pre><code class="nohighlight hljs">inference_RTS (generic function with 1 method)</code></pre><pre><code class="language-julia hljs">function inference_BIFM(data_y, A, B, C, μu, Wu, Wy)
+    result = infer(
+        model      = BIFM_smoother(A = A, B = B, C = C, μu = μu, Wu = Wu, Wy = Wy),
+        data       = (y = data_y, ),
+        constraints = bifm_constraint(),
+        returnvars = (z = KeepLast(), u = KeepLast())
+    )
+    qs = result.posteriors
+    return (qs[:z], qs[:u])
+end</code></pre><pre><code class="nohighlight hljs">inference_BIFM (generic function with 1 method)</code></pre><h2 id="Experiments-for-200-observations"><a class="docs-heading-anchor" href="#Experiments-for-200-observations">Experiments for 200 observations</a><a id="Experiments-for-200-observations-1"></a><a class="docs-heading-anchor-permalink" href="#Experiments-for-200-observations" title="Permalink"></a></h2><pre><code class="language-julia hljs">z_BIFM, u_BIFM = inference_BIFM(data_y, A, B, C, μu, Wu, Wy)
+z_RTS, u_RTS = inference_RTS(data_y, A, B, C, μu, Wu, Wy);</code></pre><pre><code class="language-julia hljs">ax1 = Plots.plot(title = &quot;RTS smoother&quot;, xlabel = &quot;sample&quot;, ylabel = &quot;latent state z&quot;)
+ax2 = Plots.plot(title = &quot;BIFM smoother&quot;, xlabel = &quot;sample&quot;, ylabel = &quot;latent state z&quot;)
+
+mz_RTS = mean.(z_RTS)
+mz_BIFM = mean.(z_BIFM)
+
+# Do not plot all latent states, otherwise the output is just too cluttered
+# The main idea here is to check that both algorithms return the (approximately) same output
+for i in 1:5
+    Plots.scatter!(ax1, getindex.(data_z, i), alpha = 0.1, ms = 2, color = :blue, label = nothing)
+    Plots.plot!(ax1, getindex.(mz_RTS, i), label = nothing)
+    Plots.scatter!(ax2, getindex.(data_z, i), alpha = 0.1, ms = 2, color = :blue, label = nothing)    
+    Plots.plot!(ax2, getindex.(mz_BIFM, i), label = nothing)
+end
+
+Plots.plot(ax1, ax2, layout = @layout([ a; b ]))</code></pre><p><img src="RTS vs BIFM Smoothing_10_1.png" alt/></p><pre><code class="language-julia hljs">ax1 = Plots.plot(title = &quot;RTS smoother&quot;, xlabel = &quot;sample&quot;, ylabel = &quot;latent state u&quot;)
+ax2 = Plots.plot(title = &quot;BIFM smoother&quot;, xlabel = &quot;sample&quot;, ylabel = &quot;latent state u&quot;)
+
+rdata_u = collect(eachrow(data_u))
+mu_RTS = mean.(u_RTS)
+mu_BIFM = mean.(u_BIFM)
+
+# Do not plot all latent states, otherwise the output is just too cluttered
+# The main idea here is to check that both algorithms return the (approximately) same output
+for i in 1:1
+    Plots.scatter!(ax1, getindex.(rdata_u, i), alpha = 0.1, ms = 2, color = :blue, label = nothing)
+    Plots.plot!(ax1, getindex.(mu_RTS, i), label = nothing)
+    Plots.scatter!(ax2, getindex.(rdata_u, i), alpha = 0.1, ms = 2, color = :blue, label = nothing)    
+    Plots.plot!(ax2, getindex.(mu_BIFM, i), label = nothing)
+end
+
+Plots.plot(ax1, ax2, layout = @layout([ a; b ]))</code></pre><p><img src="RTS vs BIFM Smoothing_11_1.png" alt/></p><h2 id="Benchmark"><a class="docs-heading-anchor" href="#Benchmark">Benchmark</a><a id="Benchmark-1"></a><a class="docs-heading-anchor-permalink" href="#Benchmark" title="Permalink"></a></h2><pre><code class="language-julia hljs"># This example runs in our documentation pipeline, benchmark executes approximatelly in 20 minutes so we bypass it in the documentation
+# For those who are interested in exact benchmark numbers clone this example and set `run_benchmark = true`
+run_benchmark = false
+
+if run_benchmark
+    trials_range = 30
+    trials_n = 500
+    trials_RTS  = Array{BenchmarkTools.Trial, 1}(undef, trials_range)
+    trials_BIFM = Array{BenchmarkTools.Trial, 1}(undef, trials_range)
+
+
+    @showprogress for k = 1 : trials_range
+
+        # generate parameters
+        local A, B, C, μu, Σu, Σy, Wu, Wy = generate_parameters(3, 3, k);
+                    
+        # generate data|
+        local data_z, data_y, data_u = generate_data(trials_n, A, B, C, μu, Σu, Σy);
+
+        # run inference
+        trials_RTS[k] = @benchmark inference_RTS($data_y, $A, $B, $C, $μu, $Wu, $Wy)
+        trials_BIFM[k] = @benchmark inference_BIFM($data_y, $A, $B, $C, $μu, $Wu, $Wy)
+
+    end
+
+    m_RTS = [median(trials_RTS[k].times) for k=1:trials_range] ./ 1e9
+    q1_RTS = [quantile(trials_RTS[k].times, 0.25) for k=1:trials_range] ./ 1e9
+    q3_RTS = [quantile(trials_RTS[k].times, 0.75) for k=1:trials_range] ./ 1e9
+    m_BIFM = [median(trials_BIFM[k].times) for k=1:trials_range] ./ 1e9
+    q1_BIFM = [quantile(trials_BIFM[k].times, 0.25) for k=1:trials_range] ./ 1e9
+    q3_BIFM = [quantile(trials_BIFM[k].times, 0.75) for k=1:trials_range] ./ 1e9;
+
+    p = Plots.plot(ylabel = &quot;duration [sec]&quot;, xlabel = &quot;latent state dimension&quot;, title = &quot;Benchmark&quot;, yscale = :log)
+    p = Plots.plot!(p, m_RTS, ribbon = ((q1_RTS .- q3_RTS) ./ 2), color = &quot;blue&quot;, label = &quot;mean (RTS)&quot;)
+    p = Plots.plot!(p, 1:trials_range, m_BIFM, ribbon = ((q1_BIFM .- q3_BIFM) ./ 2), color = &quot;orange&quot;, label = &quot;mean (BIFM)&quot;)
+    Plots.savefig(p, &quot;rts_bifm_benchmark.png&quot;)
+    p
+end</code></pre><p><img src="rts_bifm_benchmark.png" alt/></p><hr/><div class="admonition is-info"><header class="admonition-header">Contributing</header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><div class="admonition is-compat"><header class="admonition-header">Environment</header><div class="admonition-body"><p>This example was executed in a clean, isolated environment. Below are the exact package versions used:</p><p>For reproducibility:</p><ul><li>Use the same package versions when running locally</li><li>Report any issues with package compatibility</li></ul></div></div><pre><code class="nohighlight hljs">Status `~/work/RxInferExamples.jl/RxInferExamples.jl/docs/src/categories/problem_specific/rts_vs_bifm_smoothing/Project.toml`
+  [6e4b80f9] BenchmarkTools v1.6.0
+  [91a5bcdd] Plots v1.40.9
+  [92933f4c] ProgressMeter v1.10.2
+  [86711068] RxInfer v4.2.0
+  [860ef19b] StableRNGs v1.0.2
+  [37e2e46d] LinearAlgebra v1.11.0
+  [9a3f8284] Random v1.11.0
+</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../probit_model/">« Probit Model</a><a class="docs-footer-nextpage" href="../simple_nonlinear_node/">Simple Nonlinear Node »</a><div class="flexbox-break"></div><p class="footer-message">Created in <a href="https://biaslab.github.io/">BIASlab</a>, maintained by <a href="https://github.com/ReactiveBayes">ReactiveBayes</a>, powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.8.1 on <span class="colophon-date" title="Friday 7 March 2025 13:50">Friday 7 March 2025</span>. Using Julia version 1.11.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

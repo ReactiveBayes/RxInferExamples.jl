@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Drone Dynamics · RxInfer.jl Examples</title><meta name="title" content="Drone Dynamics · RxInfer.jl Examples"/><meta property="og:title" content="Drone Dynamics · RxInfer.jl Examples"/><meta property="twitter:title" content="Drone Dynamics · RxInfer.jl Examples"/><meta name="description" content="A repository of examples and tutorials for RxInfer.jl, a Julia package for reactive message passing inference in probabilistic models."/><meta property="og:description" content="A repository of examples and tutorials for RxInfer.jl, a Julia package for reactive message passing inference in probabilistic models."/><meta property="twitter:description" content="A repository of examples and tutorials for RxInfer.jl, a Julia package for reactive message passing inference in probabilistic models."/><meta property="og:url" content="https://examples.rxinfer.ml/categories/advanced_examples/drone_dynamics/"/><meta property="twitter:url" content="https://examples.rxinfer.ml/categories/advanced_examples/drone_dynamics/"/><link rel="canonical" href="https://examples.rxinfer.ml/categories/advanced_examples/drone_dynamics/"/><script async src="https://www.googletagmanager.com/gtag/js?id=G-GMFX620VEP"></script><script>  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-GMFX620VEP', {'page_path': location.pathname + location.search + location.hash});
+</script><script data-outdated-warner src="../../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../../assets/documenter.js"></script><script src="../../../search_index.js"></script><script src="../../../siteinfo.js"></script><script src="../../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../../assets/themeswap.js"></script><link href="../../../assets/theme.css" rel="stylesheet" type="text/css"/><link href="../../../assets/header.css" rel="stylesheet" type="text/css"/><script src="../../../assets/header.js"></script><script src="../../../assets/chat.js"></script><link href="../../../assets/favicon.ico" rel="icon" type="image/x-icon"/>
+    <meta property="og:title" content="Drone Dynamics - RxInfer Examples">
+    <meta name="description" content="This example shows how to use RxInfer.jl automated inference to simulate drone dynamics.
+">
+    <meta property="og:description" content="This example shows how to use RxInfer.jl automated inference to simulate drone dynamics.
+">
+    <meta name="keywords" content="rxinfer, julia, bayesian inference, examples, probabilistic programming, message passing, probabilistic numerics, variational inference, belief propagation, advanced examples">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://examples.rxinfer.ml/sitemap.xml">
+    </head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../../"><img class="docs-light-only" src="../../../assets/logo.svg" alt="RxInfer.jl Examples logo"/><img class="docs-dark-only" src="../../../assets/logo-dark.svg" alt="RxInfer.jl Examples logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../../">RxInfer.jl Examples</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../../">Home</a></li><li><a class="tocitem" href="../../../how_to_contribute/">How to contribute</a></li><li><a class="tocitem" href="../../../autogenerated/list_of_examples/">List of Examples</a></li><li><span class="tocitem">Basic Examples</span><ul><li><a class="tocitem" href="../../basic_examples/bayesian_binomial_regression/">Bayesian Binomial Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_linear_regression/">Bayesian Linear Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_multinomial_regression/">Bayesian Multinomial Regression</a></li><li><a class="tocitem" href="../../basic_examples/coin_toss_model/">Coin Toss Model</a></li><li><a class="tocitem" href="../../basic_examples/feature_functions_in_bayesian_regression/">Feature Functions In Bayesian Regression</a></li><li><a class="tocitem" href="../../basic_examples/hidden_markov_model/">Hidden Markov Model</a></li><li><a class="tocitem" href="../../basic_examples/kalman_filtering_and_smoothing/">Kalman Filtering And Smoothing</a></li><li><a class="tocitem" href="../../basic_examples/pomdp_control/">Pomdp Control</a></li><li><a class="tocitem" href="../../basic_examples/predicting_bike_rental_demand/">Predicting Bike Rental Demand</a></li></ul></li><li><span class="tocitem">Advanced Examples</span><ul><li><a class="tocitem" href="../active_inference_mountain_car/">Active Inference Mountain Car</a></li><li><a class="tocitem" href="../advanced_tutorial/">Advanced Tutorial</a></li><li><a class="tocitem" href="../assessing_people_skills/">Assessing People Skills</a></li><li><a class="tocitem" href="../chance_constraints/">Chance Constraints</a></li><li><a class="tocitem" href="../conjugate-computational_variational_message_passing/">Conjugate-Computational Variational Message Passing</a></li><li class="is-active"><a class="tocitem" href>Drone Dynamics</a><ul class="internal"><li><a class="tocitem" href="#Defining-structures"><span>Defining structures</span></a></li><li><a class="tocitem" href="#Model-specification"><span>Model specification</span></a></li><li><a class="tocitem" href="#Probabilistic-inference"><span>Probabilistic inference</span></a></li><li><a class="tocitem" href="#Plotting"><span>Plotting</span></a></li><li><a class="tocitem" href="#3D-Drone-Extension"><span>3D Drone Extension</span></a></li></ul></li><li><a class="tocitem" href="../global_parameter_optimisation/">Global Parameter Optimisation</a></li><li><a class="tocitem" href="../gp_regression_by_ssm/">Gp Regression By Ssm</a></li><li><a class="tocitem" href="../infinite_data_stream/">Infinite Data Stream</a></li><li><a class="tocitem" href="../multi-agent_trajectory_planning/">Multi-Agent Trajectory Planning</a></li><li><a class="tocitem" href="../nonlinear_sensor_fusion/">Nonlinear Sensor Fusion</a></li><li><a class="tocitem" href="../robotic_arm/">Robotic Arm</a></li></ul></li><li><span class="tocitem">Problem Specific</span><ul><li><a class="tocitem" href="../../problem_specific/autoregressive_models/">Autoregressive Models</a></li><li><a class="tocitem" href="../../problem_specific/gamma_mixture/">Gamma Mixture</a></li><li><a class="tocitem" href="../../problem_specific/gaussian_mixture/">Gaussian Mixture</a></li><li><a class="tocitem" href="../../problem_specific/hierarchical_gaussian_filter/">Hierarchical Gaussian Filter</a></li><li><a class="tocitem" href="../../problem_specific/invertible_neural_network_tutorial/">Invertible Neural Network Tutorial</a></li><li><a class="tocitem" href="../../problem_specific/litter_model/">Litter Model</a></li><li><a class="tocitem" href="../../problem_specific/ode_parameter_estimation/">Ode Parameter Estimation</a></li><li><a class="tocitem" href="../../problem_specific/probit_model/">Probit Model</a></li><li><a class="tocitem" href="../../problem_specific/rts_vs_bifm_smoothing/">Rts Vs Bifm Smoothing</a></li><li><a class="tocitem" href="../../problem_specific/simple_nonlinear_node/">Simple Nonlinear Node</a></li><li><a class="tocitem" href="../../problem_specific/structural_dynamics_with_augmented_kalman_filter/">Structural Dynamics With Augmented Kalman Filter</a></li><li><a class="tocitem" href="../../problem_specific/universal_mixtures/">Universal Mixtures</a></li></ul></li><li><a class="tocitem" href="../../../how_build_works/">How we build the examples</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Advanced Examples</a></li><li class="is-active"><a href>Drone Dynamics</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Drone Dynamics</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl/blob/main/docs/src/categories/advanced_examples/drone_dynamics/index.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><div class="admonition is-info"><header class="admonition-header">Contributing</header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><h1 id="Drone-Dynamics"><a class="docs-heading-anchor" href="#Drone-Dynamics">Drone Dynamics</a><a id="Drone-Dynamics-1"></a><a class="docs-heading-anchor-permalink" href="#Drone-Dynamics" title="Permalink"></a></h1><blockquote><p><strong>Note:</strong> These examples demonstrate the use of RxInfer for motion planning. The animations show the inferred trajectories from probabilistic inference, rather than simulated executions. For more realistic simulations, especially in the 3D drone example, the model would need to be extended with a reactive environment that responds to the drone&#39;s actions during plan execution. If you&#39;re interested in collaborating on a more realistic implementation, please open a <a href="https://github.com/orgs/ReactiveBayes/discussions">discussion</a> and let&#39;s work on it together!</p></blockquote><pre><code class="language-julia hljs">using RxInfer, LinearAlgebra</code></pre><h2 id="Defining-structures"><a class="docs-heading-anchor" href="#Defining-structures">Defining structures</a><a id="Defining-structures-1"></a><a class="docs-heading-anchor-permalink" href="#Defining-structures" title="Permalink"></a></h2><pre><code class="language-julia hljs">&quot;&quot;&quot;
+    Environment(; gravitational_constant::Float64 = 9.81)
+
+This structure contains the properties of the environment.
+&quot;&quot;&quot;
+Base.@kwdef struct Environment
+    gravitational_constant::Float64 = 9.81
+end
+get_gravity(env::Environment) = env.gravitational_constant</code></pre><pre><code class="nohighlight hljs">get_gravity (generic function with 1 method)</code></pre><pre><code class="language-julia hljs">&quot;&quot;&quot;
+    Drone(mass, inertia, radius, force_limit)
+
+This structure contains the properties of the drone.
+&quot;&quot;&quot;
+Base.@kwdef struct Drone
+    mass::Float64
+    inertia::Float64
+    radius::Float64
+    force_limit::Float64
+end
+get_mass(drone::Drone) = drone.mass
+get_properties(drone::Drone) = (drone.mass, drone.inertia, drone.radius, drone.force_limit)</code></pre><pre><code class="nohighlight hljs">get_properties (generic function with 1 method)</code></pre><pre><code class="language-julia hljs">&quot;&quot;&quot;
+    State(x, y, vx, vy, 𝜃, 𝜔)
+
+This structure contains the state of the drone. It contains the position, velocity, and orientation of the drone.
+&quot;&quot;&quot;
+struct State
+    x::Float64
+    y::Float64
+    vx::Float64
+    vy::Float64
+    𝜃::Float64
+    𝜔::Float64
+end
+get_state(state::State) = (state.x, state.y, state.vx, state.vy, state.𝜃, state.𝜔)</code></pre><pre><code class="nohighlight hljs">get_state (generic function with 1 method)</code></pre><h2 id="Model-specification"><a class="docs-heading-anchor" href="#Model-specification">Model specification</a><a id="Model-specification-1"></a><a class="docs-heading-anchor-permalink" href="#Model-specification" title="Permalink"></a></h2><pre><code class="language-julia hljs">&quot;&quot;&quot;
+    state_transition(state, actions, drone, environment, dt)
+
+This function computes the next state of the drone given the current state, the actions, the drone properties and the environment properties.
+&quot;&quot;&quot;
+function state_transition(state, actions, drone::Drone, environment::Environment, dt)
+
+    # extract drone properties
+    m, I, r, limit  = get_properties(drone)
+
+    # extract environment properties
+    g = get_gravity(environment)
+
+    # extract feasible actions
+    Fl, Fr   = clamp.(actions, 0, limit)
+        
+    # extract state properties
+    x, y, vx, vy, θ, ω = state
+
+    # compute forces and torques
+    Fg = m * g
+    Fy = (Fl + Fr) * cos(θ) - Fg
+    Fx = (Fl + Fr) * sin(θ)
+    𝜏  = (Fl - Fr) * r
+
+    # compute movements
+    ax = Fx / m
+    ay = Fy / m
+    vx_new = vx + ax * dt
+#     vy_new = vx + ay * dt # old version
+    vy_new = vy + ay * dt   # new version
+    x_new  = x + vx * dt + ax * dt^2 / 2
+    y_new  = y + vy * dt + ay * dt^2 / 2
+        
+    # compute rotations
+    α = 𝜏 / I
+    ω_new = ω + α * dt
+    θ_new = θ + ω * dt + α * dt^2 / 2
+	
+    return [x_new, y_new, vx_new, vy_new, θ_new, ω_new]
+
+end</code></pre><pre><code class="nohighlight hljs">Main.anonymous.state_transition</code></pre><pre><code class="language-julia hljs">@model function drone_model(drone, environment, initial_state, goal, horizon, dt)	
+
+	# extract environment properties
+	g = get_gravity(environment)
+
+	# extract drone properties
+	m = get_mass(drone)
+
+	# initial state prior
+	s[1] ~ MvNormal(mean = initial_state, covariance = 1e-5 * I)
+
+	for i in 1:horizon
+
+		# prior on actions (mean compensates for gravity)
+		u[i] ~ MvNormal(μ = [m * g / 2, m * g / 2], Σ = diageye(2))
+
+		# state transition
+		s[i + 1] ~ MvNormal(
+            μ = state_transition(s[i], u[i], drone, environment, dt), 
+			Σ = 1e-10 * I
+		)
+	end
+	
+	s[end] ~ MvNormal(mean = goal, covariance = 1e-5 * diageye(6))
+
+end</code></pre><h2 id="Probabilistic-inference"><a class="docs-heading-anchor" href="#Probabilistic-inference">Probabilistic inference</a><a id="Probabilistic-inference-1"></a><a class="docs-heading-anchor-permalink" href="#Probabilistic-inference" title="Permalink"></a></h2><pre><code class="language-julia hljs">@meta function drone_meta()
+
+	# approximate the state transition function using the Unscented transform
+	state_transition() -&gt; Unscented()
+
+end</code></pre><pre><code class="nohighlight hljs">drone_meta (generic function with 1 method)</code></pre><pre><code class="language-julia hljs">function move_to_target(drone::Drone, env::Environment, start::State, target, horizon, dt)
+
+    results = infer(
+        model = drone_model(
+            drone = drone, 
+            environment = env,
+            horizon = horizon,
+            dt = dt
+        ),
+        data  = (
+            initial_state = collect(get_state(start)), 
+            goal = [target[1], target[2], 0, 0, 0, 0],
+        ),
+        meta  = drone_meta(),
+        returnvars = (s = KeepLast(), u = KeepLast())
+    )
+
+    return results
+
+end</code></pre><pre><code class="nohighlight hljs">move_to_target (generic function with 1 method)</code></pre><pre><code class="language-julia hljs">drone = Drone(
+    mass = 1,
+    inertia = 1,
+    radius = 0.2,
+    force_limit = 15.0
+)
+
+env = Environment()
+
+start = State(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+
+target = [-0.8, 0.6]
+
+results = move_to_target(drone, env, start, target, 40, 0.05)</code></pre><pre><code class="nohighlight hljs">Inference results:
+  Posteriors       | available for (s, u)</code></pre><h2 id="Plotting"><a class="docs-heading-anchor" href="#Plotting">Plotting</a><a id="Plotting-1"></a><a class="docs-heading-anchor-permalink" href="#Plotting" title="Permalink"></a></h2><pre><code class="language-julia hljs">using Plots</code></pre><pre><code class="language-julia hljs">function plot_drone!(p, drone::Drone, state::State; color = :black)
+    x, y, x_a, y_a, θ, ω = get_state(state)
+    _, _, radius, _ = get_properties(drone)
+    dx = radius * cos(θ)
+    dy = radius * sin(θ)
+
+    drone_position = [ x ], [ y ]
+    drone_engines  = [ x - dx, x + dx ], [ y + dy, y - dy ]
+    drone_coordinates = [ x - dx, x, x + dx ], [ y + dy, y, y - dy ]
+
+    rotation_matrix = [ cos(-θ) -sin(-θ); sin(-θ) cos(-θ) ]
+    engine_shape = [ -1 0 1; 1 -1 1 ]
+    drone_shape  = [ -2 -2 2 2 ; -1 1 1 -1 ]
+    
+    engine_shape = rotation_matrix * engine_shape
+    drone_shape  = rotation_matrix * drone_shape
+    engine_marker = Shape(engine_shape[1, :], engine_shape[2, :])
+    drone_marker  = Shape(drone_shape[1, :], drone_shape[2, :])
+    
+    scatter!(p, drone_position[1], drone_position[2]; color = color, label = false, marker = drone_marker)
+    scatter!(p, drone_engines[1], drone_engines[2]; color = color, label = false, marker = engine_marker, ms = 10)
+    plot!(p, drone_coordinates; color = color, label = false)
+
+    return p
+end</code></pre><pre><code class="nohighlight hljs">plot_drone! (generic function with 1 method)</code></pre><pre><code class="language-julia hljs">function animate_drone(drone::Drone, target, results::InferenceResult)
+
+    states = hcat(map(p -&gt; mean(p), results.posteriors[:s])...)
+    
+
+    animation = @animate for k in 1:size(states,2)
+
+        # plot target
+        p = scatter([target[1]], [target[2]], label = &quot;target&quot;; color = :red)
+
+        # plot drone
+        plot_drone!(p, drone, State(states[:, k]...))
+
+        xlims!(-1.5, 1.5)
+        ylims!(-1.5, 1.5)
+    
+    end
+
+    gif(animation, &quot;drone.gif&quot;, show_msg = false)
+
+    nothing
+end</code></pre><pre><code class="nohighlight hljs">animate_drone (generic function with 1 method)</code></pre><pre><code class="language-julia hljs">animate_drone(drone, target, results)</code></pre><p><img src="drone.gif" alt/></p><pre><code class="language-julia hljs">let 
+    inferred_angle_mean = map(p -&gt; mean(p)[5], results.posteriors[:s])
+    inferred_angle_std  = map(p -&gt; std(p)[5],  results.posteriors[:s])
+    plot(inferred_angle_mean; ribbon = inferred_angle_std, fillalpha = 0.2, label = &quot;inferred angle&quot;, size=(600,300))
+end</code></pre><p><img src="Drone Dynamics_14_1.png" alt/></p><pre><code class="language-julia hljs">let 
+    inferred_forces_mean = hcat(map(p -&gt; mean(p), results.posteriors[:u])...)&#39;
+    inferred_forces_std  = hcat(map(p -&gt; sqrt.(var(p)),  results.posteriors[:u])...)&#39;
+    plot(inferred_forces_mean[:,1]; ribbon = inferred_forces_std[:,1], fillalpha = 0.2, label = &quot;Fl&quot;, size=(600,300))
+    plot!(inferred_forces_mean[:,2]; ribbon = inferred_forces_std[:,2], fillalpha = 0.2, label = &quot;Fr&quot;, size=(600,300))
+    
+    hline!([get_mass(drone) * get_gravity(env) / 2], label = &quot;Fg/2&quot;)
+end</code></pre><p><img src="Drone Dynamics_15_1.png" alt/></p><h2 id="3D-Drone-Extension"><a class="docs-heading-anchor" href="#3D-Drone-Extension">3D Drone Extension</a><a id="3D-Drone-Extension-1"></a><a class="docs-heading-anchor-permalink" href="#3D-Drone-Extension" title="Permalink"></a></h2><p>This section extends our 2D drone model into three-dimensional space, allowing for full spatial navigation. The model includes:</p><ul><li>6 degrees of freedom (position and orientation)</li><li>Four-motor configuration</li><li>Basic aerodynamic forces</li></ul><blockquote><p><strong>Note:</strong> This implementation is a simplified model intended for educational purposes. While it captures the fundamental dynamics of a quadcopter, it omits advanced aerodynamic effects and motor dynamics for clarity.</p></blockquote><pre><code class="language-julia hljs"># Extended Drone structure for 4 motors
+Base.@kwdef struct Drone3D
+    mass::Float64
+    inertia::Matrix{Float64}  # 3x3 inertia matrix
+    radius::Float64
+    arm_length::Float64
+    force_limit::Float64
+end</code></pre><pre><code class="nohighlight hljs">Main.anonymous.Drone3D</code></pre><pre><code class="language-julia hljs">function get_properties(drone::Drone3D)
+    return (
+        drone.mass,
+        drone.inertia,
+        drone.radius,
+        drone.arm_length,
+        drone.force_limit
+    )
+end</code></pre><pre><code class="nohighlight hljs">get_properties (generic function with 2 methods)</code></pre><pre><code class="language-julia hljs"># Extended State for 3D
+struct State3D
+    x::Float64   # position
+    y::Float64
+    z::Float64
+    vx::Float64  # velocity
+    vy::Float64
+    vz::Float64
+    ϕ::Float64   # roll
+    θ::Float64   # pitch
+    ψ::Float64   # yaw
+    ωx::Float64  # angular velocity
+    ωy::Float64
+    ωz::Float64
+end</code></pre><pre><code class="language-julia hljs">function get_state(state::State3D)
+    return (
+        state.x, state.y, state.z,
+        state.vx, state.vy, state.vz,
+        state.ϕ, state.θ, state.ψ,
+        state.ωx, state.ωy, state.ωz
+    )
+end</code></pre><pre><code class="nohighlight hljs">get_state (generic function with 2 methods)</code></pre><pre><code class="language-julia hljs">&quot;&quot;&quot;
+    rotation_matrix(ψ, θ, ϕ)
+
+Create a 3D rotation matrix from yaw (ψ), pitch (θ), and roll (ϕ) angles.
+&quot;&quot;&quot;
+function rotation_matrix(ψ, θ, ϕ)
+    # Rotation matrices for each axis
+    Rz = [cos(ψ) -sin(ψ) 0;
+          sin(ψ)  cos(ψ) 0;
+          0       0      1]
+    
+    Ry = [cos(θ)  0  sin(θ);
+          0       1  0;
+         -sin(θ)  0  cos(θ)]
+    
+    Rx = [1  0       0;
+          0  cos(ϕ) -sin(ϕ);
+          0  sin(ϕ)  cos(ϕ)]
+    
+    # Combined rotation matrix (ZYX order)
+    return Rz * Ry * Rx
+end</code></pre><pre><code class="nohighlight hljs">Main.anonymous.rotation_matrix</code></pre><pre><code class="language-julia hljs">&quot;&quot;&quot;
+    state_transition_3d(state, actions, drone, environment, dt)
+
+Compute the next state of the 3D drone given current state and four motor forces.
+&quot;&quot;&quot;
+function state_transition_3d(state, actions, drone::Drone3D, environment::Environment, dt)
+    # Extract properties
+    m, I, r, L, limit = get_properties(drone)
+    g = get_gravity(environment)
+    
+    # Clamp motor forces
+    F1, F2, F3, F4 = clamp.(actions, 0, limit)
+    
+    # Extract state
+    x, y, z, vx, vy, vz, ϕ, θ, ψ, ωx, ωy, ωz = state
+    
+    # Current rotation matrix
+    R = rotation_matrix(ψ, θ, ϕ)
+    
+    # Total thrust force in body frame
+    F_total = sum([F1, F2, F3, F4])
+    
+    # Compute torques
+    τx = L * (F2 - F4)  # roll torque
+    τy = L * (F1 - F3)   # pitch torque
+    τz = (F1 + F3 - F2 - F4) * r  # yaw torque
+    
+    # Forces in world frame
+    F_world = R * [0, 0, F_total]
+    
+    # Accelerations
+    ax = F_world[1] / m
+    ay = F_world[2] / m
+    az = F_world[3] / m - g
+    
+    # Angular accelerations
+    α = I \ ([τx, τy, τz] - cross([ωx, ωy, ωz], I * [ωx, ωy, ωz]))
+    
+    # Update velocities
+    vx_new = vx + ax * dt
+    vy_new = vy + ay * dt
+    vz_new = vz + az * dt
+    
+    # Update positions
+    x_new = x + vx * dt + ax * dt^2 / 2
+    y_new = y + vy * dt + ay * dt^2 / 2
+    z_new = z + vz * dt + az * dt^2 / 2
+    
+    # Update angular velocities
+    ωx_new = ωx + α[1] * dt
+    ωy_new = ωy + α[2] * dt
+    ωz_new = ωz + α[3] * dt
+    
+    # Update angles
+    ϕ_new = ϕ + ωx * dt + α[1] * dt^2 / 2
+    θ_new = θ + ωy * dt + α[2] * dt^2 / 2
+    ψ_new = ψ + ωz * dt + α[3] * dt^2 / 2
+    
+    return [
+        x_new, y_new, z_new,
+        vx_new, vy_new, vz_new,
+        ϕ_new, θ_new, ψ_new,
+        ωx_new, ωy_new, ωz_new
+    ]
+end</code></pre><pre><code class="nohighlight hljs">Main.anonymous.state_transition_3d</code></pre><pre><code class="language-julia hljs">@model function drone_model_3d(drone, environment, initial_state, goal, horizon, dt)
+    # Extract properties
+    g = get_gravity(environment)
+    m = drone.mass
+    
+    # Initial state prior
+    s[1] ~ MvNormal(mean = initial_state, covariance = 1e-5 * I)
+    
+    for i in 1:horizon
+        # Prior on motor actions (mean compensates for gravity)
+        hover_force = m * g / 4
+        u[i] ~ MvNormal(μ = [hover_force, hover_force, hover_force, hover_force], Σ = diageye(4))
+        
+        # State transition
+        s[i + 1] ~ MvNormal(
+            μ = state_transition_3d(s[i], u[i], drone, environment, dt),
+            Σ = 1e-10 * I
+        )
+    end
+    
+    s[end] ~ MvNormal(mean = goal, covariance = 1e-5 * diageye(12))
+end</code></pre><pre><code class="language-julia hljs">@meta function drone_meta_3d()
+    state_transition_3d() -&gt; Unscented()
+end</code></pre><pre><code class="nohighlight hljs">drone_meta_3d (generic function with 1 method)</code></pre><pre><code class="language-julia hljs">function move_to_target_3d(drone::Drone3D, env::Environment, start::State3D, target, horizon, dt)
+    results = infer(
+        model = drone_model_3d(
+            drone = drone,
+            environment = env,
+            horizon = horizon,
+            dt = dt
+        ),
+        data = (
+            initial_state = collect(get_state(start)),
+            goal = [target[1], target[2], target[3], 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        ),
+        meta = drone_meta_3d(),
+        returnvars = (s = KeepLast(), u = KeepLast())
+    )
+    
+    return results
+end</code></pre><pre><code class="nohighlight hljs">move_to_target_3d (generic function with 1 method)</code></pre><pre><code class="language-julia hljs">function move_through_waypoints(drone::Drone3D, env::Environment, start::State3D, waypoints, steps_per_segment=40, dt=0.05)
+    current_state = start
+    all_results = []
+    all_states = []
+    
+    # Move through each waypoint
+    for (i, target) in enumerate(waypoints)
+        println(&quot;Moving to waypoint $i: $target&quot;)
+        
+        # Get results for this segment
+        results = move_to_target_3d(drone, env, current_state, target, steps_per_segment, dt)
+        push!(all_results, results)
+        
+        # Extract final state for next segment
+        final_states = hcat(map(p -&gt; mean(p), results.posteriors[:s])...)
+        final_state = State3D(final_states[:, end]...)
+        push!(all_states, final_states)
+        
+        # Update current state
+        current_state = final_state
+    end
+    
+    # Combine all states for animation
+    combined_states = hcat(all_states...)
+    
+    return combined_states, waypoints
+end</code></pre><pre><code class="nohighlight hljs">move_through_waypoints (generic function with 3 methods)</code></pre><pre><code class="language-julia hljs"># Visualization function for 3D drone
+function plot_drone_3d!(p, drone::Drone3D, state::State3D; color=:black)
+    x, y, z, _, _, _, ϕ, θ, ψ, _, _, _ = get_state(state)
+    _, _, radius, arm_length, _ = get_properties(drone)
+    
+    # Create rotation matrix
+    R = rotation_matrix(ψ, θ, ϕ)
+    
+    # Define arm endpoints in body frame (relative to center)
+    arm_endpoints = [
+        [arm_length, 0, 0],   # Right arm (X configuration)
+        [0, arm_length, 0],   # Front arm
+        [-arm_length, 0, 0],  # Left arm
+        [0, -arm_length, 0]   # Back arm
+    ]
+    
+    # Transform arm endpoints to world frame
+    world_endpoints = []
+    for endpoint in arm_endpoints
+        # Convert endpoint to column vector for matrix multiplication
+        endpoint_vec = reshape(endpoint, :, 1)
+        # Apply rotation and translation
+        world_point = R * endpoint_vec + [x, y, z]
+        push!(world_endpoints, vec(world_point))
+    end
+    
+    # Plot center
+    scatter!(p, [x], [y], [z], color=color, label=false, markersize=5)
+    
+    # Plot arms and motors
+    for endpoint in world_endpoints
+        # Draw arm
+        plot!(p, [x, endpoint[1]], [y, endpoint[2]], [z, endpoint[3]], 
+              color=color, label=false, linewidth=2)
+        # Draw motor
+        scatter!(p, [endpoint[1]], [endpoint[2]], [endpoint[3]], 
+                color=color, label=false, markersize=3)
+    end
+end</code></pre><pre><code class="nohighlight hljs">plot_drone_3d! (generic function with 1 method)</code></pre><pre><code class="language-julia hljs">function animate_drone_3d_multi(drone::Drone3D, states, targets; fps=30)
+    # Note: The rain animation is purely for visualization aesthetics
+    # and does not affect the drone&#39;s dynamics or trajectory planning
+    
+    # Create initial rain streaks
+    function generate_raindrops(n=50)
+        x = 4 * rand(n) .- 2  # range [-2, 2]
+        y = 4 * rand(n) .- 2
+        z1 = 2 .+ 4 * rand(n)  # start higher up to have some offscreen
+        z2 = z1 .- 0.3  # fixed length rain streaks
+        return (x, y, z1, z2)
+    end
+    
+    # Initialize raindrops
+    raindrops = generate_raindrops()
+    
+    animation = @animate for k in 1:size(states,2)
+        # Update raindrop positions
+        fall_speed = 0.1
+        z1 = raindrops[3] .- fall_speed
+        z2 = raindrops[4] .- fall_speed
+        
+        # Regenerate raindrops that have fallen below view
+        below_view = findall(z2 .&lt;= -2)
+        if !isempty(below_view)
+            new_drops = generate_raindrops(length(below_view))
+            raindrops[1][below_view] = new_drops[1]
+            raindrops[2][below_view] = new_drops[2]
+            z1[below_view] = new_drops[3]
+            z2[below_view] = new_drops[4]
+        end
+        
+        # Update raindrops state
+        raindrops = (raindrops[1], raindrops[2], z1, z2)
+        
+        p = plot3d(
+            xlims=(-2, 2), ylims=(-2, 2), zlims=(-2, 2),
+            xlabel=&quot;X&quot;, ylabel=&quot;Y&quot;, zlabel=&quot;Z&quot;,
+            camera=(45, 30),
+            title=&quot;Multi-Waypoint Drone Flight&quot;,
+            background=:white
+        )
+        
+        # Draw rain streaks
+        for i in 1:length(raindrops[1])
+            if raindrops[4][i] &gt; -2  # only draw if in view
+                plot!(p, [raindrops[1][i], raindrops[1][i]], 
+                        [raindrops[2][i], raindrops[2][i]], 
+                        [raindrops[3][i], raindrops[4][i]],
+                     color=:grey, 
+                     linestyle=:dash,
+                     alpha=0.6,
+                     legend=false,
+                     linewidth=1)
+            end
+        end
+        
+        # Plot all targets
+        for (i, target) in enumerate(targets)
+            scatter!(p, [target[1]], [target[2]], [target[3]], 
+                    label=i == 1 ? &quot;waypoints&quot; : false, 
+                    color=:red,
+                    markersize=i == 1 ? 5 : 3)
+            
+            # Connect waypoints with lines
+            if i &gt; 1
+                prev_target = targets[i-1]
+                plot!(p, [prev_target[1], target[1]], 
+                         [prev_target[2], target[2]], 
+                         [prev_target[3], target[3]],
+                     color=:red, linestyle=:dash, label=false, linewidth=1)
+            end
+        end
+        
+        # Plot drone
+        plot_drone_3d!(p, drone_3d, State3D(states[:, k]...))
+        
+        # Add trajectory trace (last 100 points)
+        trace_start = max(1, k-100)
+        if k &gt; 1
+            plot!(p, states[1,trace_start:k], states[2,trace_start:k], states[3,trace_start:k],
+                  color=:blue, label=false, linewidth=1, linealpha=0.5)
+        end
+    end
+
+    gif(animation, &quot;drone_3d_multi.gif&quot;, fps=fps, show_msg = false)
+
+    nothing
+end</code></pre><pre><code class="nohighlight hljs">animate_drone_3d_multi (generic function with 1 method)</code></pre><pre><code class="language-julia hljs"># Create drone instance
+drone_3d = Drone3D(
+    mass = 1.0,
+    inertia = diagm([0.1, 0.1, 0.15]),  # 3×3 diagonal inertia matrix
+    radius = 0.1,
+    arm_length = 0.2,
+    force_limit = 15.0
+)
+
+env = Environment()
+
+# Initial state
+start = State3D(
+    0.0, 0.0, 0.0,  # position (x, y, z)
+    0.0, 0.0, 0.0,  # velocity (vx, vy, vz)
+    0.0, 0.0, 0.0,  # orientation (ϕ, θ, ψ)
+    0.0, 0.0, 0.0   # angular velocity (ωx, ωy, ωz)
+)
+
+# Define a sequence of waypoints for a square pattern
+waypoints = [
+    [1.0, 1.0, 1.0],    # Front-right corner
+    [-1.0, 1.0, 1.0],   # Front-left corner
+    [-1.0, -1.0, 1.0],  # Back-left corner
+    [1.0, -1.0, 1.0],   # Back-right corner
+    [0.0, 0.0, 0.0]     # Land at center
+]
+
+# Run simulation through all waypoints
+combined_states, targets = move_through_waypoints(drone_3d, env, start, waypoints);</code></pre><pre><code class="nohighlight hljs">Moving to waypoint 1: [1.0, 1.0, 1.0]
+Moving to waypoint 2: [-1.0, 1.0, 1.0]
+Moving to waypoint 3: [-1.0, -1.0, 1.0]
+Moving to waypoint 4: [1.0, -1.0, 1.0]
+Moving to waypoint 5: [0.0, 0.0, 0.0]</code></pre><pre><code class="language-julia hljs">animate_drone_3d_multi(drone_3d, combined_states, targets)</code></pre><p><img src="drone_3d_multi.gif" alt/></p><hr/><div class="admonition is-info"><header class="admonition-header">Contributing</header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><div class="admonition is-compat"><header class="admonition-header">Environment</header><div class="admonition-body"><p>This example was executed in a clean, isolated environment. Below are the exact package versions used:</p><p>For reproducibility:</p><ul><li>Use the same package versions when running locally</li><li>Report any issues with package compatibility</li></ul></div></div><pre><code class="nohighlight hljs">Status `~/work/RxInferExamples.jl/RxInferExamples.jl/docs/src/categories/advanced_examples/drone_dynamics/Project.toml`
+  [91a5bcdd] Plots v1.40.9
+  [86711068] RxInfer v4.2.0
+  [37e2e46d] LinearAlgebra v1.11.0
+</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../conjugate-computational_variational_message_passing/">« Conjugate-Computational Variational Message Passing</a><a class="docs-footer-nextpage" href="../global_parameter_optimisation/">Global Parameter Optimisation »</a><div class="flexbox-break"></div><p class="footer-message">Created in <a href="https://biaslab.github.io/">BIASlab</a>, maintained by <a href="https://github.com/ReactiveBayes">ReactiveBayes</a>, powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.8.1 on <span class="colophon-date" title="Friday 7 March 2025 13:50">Friday 7 March 2025</span>. Using Julia version 1.11.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

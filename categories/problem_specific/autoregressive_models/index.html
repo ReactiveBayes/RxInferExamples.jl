@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Autoregressive Models · RxInfer.jl Examples</title><meta name="title" content="Autoregressive Models · RxInfer.jl Examples"/><meta property="og:title" content="Autoregressive Models · RxInfer.jl Examples"/><meta property="twitter:title" content="Autoregressive Models · RxInfer.jl Examples"/><meta name="description" content="A repository of examples and tutorials for RxInfer.jl, a Julia package for reactive message passing inference in probabilistic models."/><meta property="og:description" content="A repository of examples and tutorials for RxInfer.jl, a Julia package for reactive message passing inference in probabilistic models."/><meta property="twitter:description" content="A repository of examples and tutorials for RxInfer.jl, a Julia package for reactive message passing inference in probabilistic models."/><meta property="og:url" content="https://examples.rxinfer.ml/categories/problem_specific/autoregressive_models/"/><meta property="twitter:url" content="https://examples.rxinfer.ml/categories/problem_specific/autoregressive_models/"/><link rel="canonical" href="https://examples.rxinfer.ml/categories/problem_specific/autoregressive_models/"/><script async src="https://www.googletagmanager.com/gtag/js?id=G-GMFX620VEP"></script><script>  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-GMFX620VEP', {'page_path': location.pathname + location.search + location.hash});
+</script><script data-outdated-warner src="../../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../../assets/documenter.js"></script><script src="../../../search_index.js"></script><script src="../../../siteinfo.js"></script><script src="../../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../../assets/themeswap.js"></script><link href="../../../assets/theme.css" rel="stylesheet" type="text/css"/><link href="../../../assets/header.css" rel="stylesheet" type="text/css"/><script src="../../../assets/header.js"></script><script src="../../../assets/chat.js"></script><link href="../../../assets/favicon.ico" rel="icon" type="image/x-icon"/>
+    <meta property="og:title" content="Autoregressive Models - RxInfer Examples">
+    <meta name="description" content="An example of Bayesian treatment of latent AR and ARMA models. Reference: [Albert Podusenko, Message Passing-Based Inference for Time-Varying Autoregressive Models](https://www.mdpi.com/1099-4300/23/6/683).
+">
+    <meta property="og:description" content="An example of Bayesian treatment of latent AR and ARMA models. Reference: [Albert Podusenko, Message Passing-Based Inference for Time-Varying Autoregressive Models](https://www.mdpi.com/1099-4300/23/6/683).
+">
+    <meta name="keywords" content="rxinfer, julia, bayesian inference, examples, probabilistic programming, message passing, probabilistic numerics, variational inference, belief propagation, problem specific, time series, arma, latent variables">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://examples.rxinfer.ml/sitemap.xml">
+    </head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../../"><img class="docs-light-only" src="../../../assets/logo.svg" alt="RxInfer.jl Examples logo"/><img class="docs-dark-only" src="../../../assets/logo-dark.svg" alt="RxInfer.jl Examples logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../../">RxInfer.jl Examples</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../../">Home</a></li><li><a class="tocitem" href="../../../how_to_contribute/">How to contribute</a></li><li><a class="tocitem" href="../../../autogenerated/list_of_examples/">List of Examples</a></li><li><span class="tocitem">Basic Examples</span><ul><li><a class="tocitem" href="../../basic_examples/bayesian_binomial_regression/">Bayesian Binomial Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_linear_regression/">Bayesian Linear Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_multinomial_regression/">Bayesian Multinomial Regression</a></li><li><a class="tocitem" href="../../basic_examples/coin_toss_model/">Coin Toss Model</a></li><li><a class="tocitem" href="../../basic_examples/feature_functions_in_bayesian_regression/">Feature Functions In Bayesian Regression</a></li><li><a class="tocitem" href="../../basic_examples/hidden_markov_model/">Hidden Markov Model</a></li><li><a class="tocitem" href="../../basic_examples/kalman_filtering_and_smoothing/">Kalman Filtering And Smoothing</a></li><li><a class="tocitem" href="../../basic_examples/pomdp_control/">Pomdp Control</a></li><li><a class="tocitem" href="../../basic_examples/predicting_bike_rental_demand/">Predicting Bike Rental Demand</a></li></ul></li><li><span class="tocitem">Advanced Examples</span><ul><li><a class="tocitem" href="../../advanced_examples/active_inference_mountain_car/">Active Inference Mountain Car</a></li><li><a class="tocitem" href="../../advanced_examples/advanced_tutorial/">Advanced Tutorial</a></li><li><a class="tocitem" href="../../advanced_examples/assessing_people_skills/">Assessing People Skills</a></li><li><a class="tocitem" href="../../advanced_examples/chance_constraints/">Chance Constraints</a></li><li><a class="tocitem" href="../../advanced_examples/conjugate-computational_variational_message_passing/">Conjugate-Computational Variational Message Passing</a></li><li><a class="tocitem" href="../../advanced_examples/drone_dynamics/">Drone Dynamics</a></li><li><a class="tocitem" href="../../advanced_examples/global_parameter_optimisation/">Global Parameter Optimisation</a></li><li><a class="tocitem" href="../../advanced_examples/gp_regression_by_ssm/">Gp Regression By Ssm</a></li><li><a class="tocitem" href="../../advanced_examples/infinite_data_stream/">Infinite Data Stream</a></li><li><a class="tocitem" href="../../advanced_examples/multi-agent_trajectory_planning/">Multi-Agent Trajectory Planning</a></li><li><a class="tocitem" href="../../advanced_examples/nonlinear_sensor_fusion/">Nonlinear Sensor Fusion</a></li><li><a class="tocitem" href="../../advanced_examples/robotic_arm/">Robotic Arm</a></li></ul></li><li><span class="tocitem">Problem Specific</span><ul><li class="is-active"><a class="tocitem" href>Autoregressive Models</a><ul class="internal"><li><a class="tocitem" href="#The-Mathematics-Behind-Autoregressive-Models"><span>The Mathematics Behind Autoregressive Models</span></a></li><li><a class="tocitem" href="#Starting-Simple:-From-Synthetic-to-Real-World-Data"><span>Starting Simple: From Synthetic to Real-World Data</span></a></li><li><a class="tocitem" href="#Model-Specification:-Translating-Theory-to-Code"><span>Model Specification: Translating Theory to Code</span></a></li><li class="toplevel"><a class="tocitem" href="#Prediction-with-Autoregressive-Models"><span>Prediction with Autoregressive Models</span></a></li><li><a class="tocitem" href="#Example-with-Sinusoidal-Autoregressive-Pattern"><span>Example with Sinusoidal Autoregressive Pattern</span></a></li><li class="toplevel"><a class="tocitem" href="#Stock-Prices-Dataset"><span>Stock Prices Dataset</span></a></li><li class="toplevel"><a class="tocitem" href="#Autoregressive-Moving-Average-Model"><span>Autoregressive Moving Average Model</span></a></li><li><a class="tocitem" href="#Mathematical-Formulation-of-ARMA-Model"><span>Mathematical Formulation of ARMA Model</span></a></li><li><a class="tocitem" href="#Intractabilities-in-ARMA-model"><span>Intractabilities in ARMA model</span></a></li></ul></li><li><a class="tocitem" href="../gamma_mixture/">Gamma Mixture</a></li><li><a class="tocitem" href="../gaussian_mixture/">Gaussian Mixture</a></li><li><a class="tocitem" href="../hierarchical_gaussian_filter/">Hierarchical Gaussian Filter</a></li><li><a class="tocitem" href="../invertible_neural_network_tutorial/">Invertible Neural Network Tutorial</a></li><li><a class="tocitem" href="../litter_model/">Litter Model</a></li><li><a class="tocitem" href="../ode_parameter_estimation/">Ode Parameter Estimation</a></li><li><a class="tocitem" href="../probit_model/">Probit Model</a></li><li><a class="tocitem" href="../rts_vs_bifm_smoothing/">Rts Vs Bifm Smoothing</a></li><li><a class="tocitem" href="../simple_nonlinear_node/">Simple Nonlinear Node</a></li><li><a class="tocitem" href="../structural_dynamics_with_augmented_kalman_filter/">Structural Dynamics With Augmented Kalman Filter</a></li><li><a class="tocitem" href="../universal_mixtures/">Universal Mixtures</a></li></ul></li><li><a class="tocitem" href="../../../how_build_works/">How we build the examples</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Problem Specific</a></li><li class="is-active"><a href>Autoregressive Models</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Autoregressive Models</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl/blob/main/docs/src/categories/problem_specific/autoregressive_models/index.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><div class="admonition is-info"><header class="admonition-header">Contributing</header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><h1 id="Autoregressive-Models"><a class="docs-heading-anchor" href="#Autoregressive-Models">Autoregressive Models</a><a id="Autoregressive-Models-1"></a><a class="docs-heading-anchor-permalink" href="#Autoregressive-Models" title="Permalink"></a></h1><p>Ever wondered how financial analysts predict tomorrow&#39;s stock prices, how meteorologists forecast next week&#39;s weather, or how engineers anticipate system failures before they happen? Welcome to the fascinating world of <strong>autoregressive models</strong> – the mathematical engines that power predictions when the future depends on the past.</p><p>In this hands-on example, we&#39;ll dive into the elegant framework of Bayesian autoregressive modeling using RxInfer.jl, a powerful probabilistic programming library that makes complex inference tasks surprisingly accessible. Unlike traditional approaches that give you a single prediction, our Bayesian approach provides complete predictive distributions, capturing the uncertainty that&#39;s inherent in any real-world forecast.</p><p>You&#39;ll discover how to:</p><ul><li>Create and understand AR models through a Bayesian lens with RxInfer.jl and <code>@model</code> macro</li><li>Generate synthetic data to test your inference algorithms</li><li>Perform automated variational Bayesian inference with RxInfer.jl</li><li>Make probabilistic predictions with quantified uncertainty</li><li>Apply these techniques to real-world stock price data</li><li>As a bonus we implement a simple version of ARMA models</li></ul><p>Whether you&#39;re predicting financial markets, analyzing sensor readings, modeling climate patterns, or exploring any time-dependent phenomenon, the techniques you&#39;ll learn here provide a robust foundation for sophisticated time series analysis using autoregressive models.</p><h2 id="The-Mathematics-Behind-Autoregressive-Models"><a class="docs-heading-anchor" href="#The-Mathematics-Behind-Autoregressive-Models">The Mathematics Behind Autoregressive Models</a><a id="The-Mathematics-Behind-Autoregressive-Models-1"></a><a class="docs-heading-anchor-permalink" href="#The-Mathematics-Behind-Autoregressive-Models" title="Permalink"></a></h2><p>At their core, autoregressive (AR) models capture a fundamental principle: the future depends on the past. But how do we translate this intuition into mathematical precision? Let&#39;s build the framework together.</p><p>Imagine we&#39;re tracking a variable over time - stock prices, temperature readings, or any quantity that evolves sequentially. In an AR model, we express the current value as a function of its previous values, plus some random noise. This elegantly captures both deterministic patterns and inherent uncertainty.</p><p>In our Bayesian formulation, we model this process as:</p><p class="math-container">\[\begin{aligned}
+p(\gamma) &amp;= \Gamma(\gamma|a, b),\\
+p(\mathbf{\theta}) &amp;= \mathcal{N}(\mathbf{\theta}|\mathbf{\mu}, \Sigma),\\
+p(x_t|\mathbf{x}_{t-1:t-k}) &amp;= \mathcal{N}(x_t|\mathbf{\theta}^{T}\mathbf{x}_{t-1:t-k}, \gamma^{-1}),\\
+p(y_t|x_t) &amp;= \mathcal{N}(y_t|x_t, \tau^{-1}),
+\end{aligned}\]</p><p>Here&#39;s what this means in plain language:</p><ul><li><p class="math-container">\[x_t\]</p>represents our system&#39;s true state at time <span>$t$</span></li><li><p class="math-container">\[\mathbf{x}_{t-1:t-k}\]</p>captures the sequence of <span>$k$</span> previous states</li><li><p class="math-container">\[\mathbf{\theta}\]</p>holds the &quot;memory coefficients&quot; - how much each past state influences the present</li><li><p class="math-container">\[\gamma\]</p>controls the randomness in state transitions (higher values mean less randomness)</li><li><p class="math-container">\[y_t\]</p>is what we actually observe, which includes some measurement noise controlled by <span>$\tau$</span></li></ul><p>It&#39;s worth noting that this particular formulation is a <strong>latent autoregressive model</strong>, where the AR process (<span>$x_t$</span>) is hidden behind the likelihood function. In classical AR models, the states are directly observed without this additional observation layer. This latent structure gives us more flexibility in modeling real-world phenomena where measurements contain noise or where the underlying process isn&#39;t directly observable.</p><p>The beauty of this formulation is that it handles both the &quot;signal&quot; (predictable patterns) and the &quot;noise&quot; (random fluctuations) in a principled way.</p><p>For readers interested in the deeper theoretical foundations, we recommend <a href="https://www.mdpi.com/1099-4300/23/6/683">Albert Podusenko&#39;s excellent work on Message Passing-Based Inference for Time-Varying Autoregressive Models</a>.</p><p>Now, let&#39;s translate this mathematical framework into code and see it in action!</p><pre><code class="language-julia hljs">using RxInfer, Distributions, LinearAlgebra, Plots, StableRNGs, DataFrames, CSV, Dates</code></pre><h2 id="Starting-Simple:-From-Synthetic-to-Real-World-Data"><a class="docs-heading-anchor" href="#Starting-Simple:-From-Synthetic-to-Real-World-Data">Starting Simple: From Synthetic to Real-World Data</a><a id="Starting-Simple:-From-Synthetic-to-Real-World-Data-1"></a><a class="docs-heading-anchor-permalink" href="#Starting-Simple:-From-Synthetic-to-Real-World-Data" title="Permalink"></a></h2><p>In our code implementation, we begin by generating synthetic data using predefined sets of coefficients for autoregressive models with orders 1, 2, and 5.</p><p>Starting with synthetic data offers several advantages:</p><ul><li><strong>Ground Truth</strong>: We know the exact coefficients that generated the data, making it possible to evaluate how well our inference algorithms recover these parameters.</li><li><strong>Control</strong>: We can test our models under different noise levels, sample sizes, and process specifications without the complexity of real-world data.</li><li><strong>Learning Progression</strong>: By beginning with synthetic examples, we can build intuition about how AR models behave before tackling the messier challenges of real data.</li></ul><p>Later in the example, we&#39;ll transition to real-world stock price data, where the true generative process is unknown.</p><pre><code class="language-julia hljs"># The following coefficients correspond to stable poles
+coefs_ar_1 = [-0.27002517200218096]
+coefs_ar_2 = [0.4511170798064709, -0.05740081602446657]
+coefs_ar_5 = [0.10699399235785655, -0.5237303489793305, 0.3068897071844715, -0.17232255282458891, 0.13323964347539288];</code></pre><p>The coefficients we&#39;ve selected aren&#39;t arbitrary - they&#39;re carefully chosen to ensure stability in our autoregressive processes. In signal processing and time series analysis, <em>stable poles</em> refer to coefficients that keep the AR process from exploding or diverging over time. Mathematically, this means that the roots of the AR characteristic polynomial must lie inside the unit circle in the complex plane. For example, in a first-order AR model where <span>$x_t = \theta x_{t-1} + \varepsilon_t$</span>, we need <span>$|\theta| &lt; 1$</span> to ensure stability. For higher-order models, the constraints become more complex, but the principle remains the same: without stability, our models would produce unrealistic, explosive behavior.</p><pre><code class="language-julia hljs">function generate_synthetic_dataset(; n, θ, γ = 1.0, τ = 1.0, rng = StableRNG(42), states1 = randn(rng, length(θ)))
+    order = length(θ)
+
+    # Convert precision parameters to standard deviation
+    τ_std = sqrt(inv(τ))
+
+    # Initialize states and observations
+    states       = Vector{Vector{Float64}}(undef, n + 3order)
+    observations = Vector{Float64}(undef, n + 3order)
+
+    # `NormalMeanPrecision` is exported by `RxInfer.jl`
+    # and is a part of `ExponentialFamily.jl`
+    states[1]       = states1
+    observations[1] = rand(rng, NormalMeanPrecision(states[1][1], γ))
+    
+    for i in 2:(n + 3order)
+        previous_state  = states[i - 1]
+        transition      = dot(θ, previous_state)
+        next_x          = rand(rng, NormalMeanPrecision(transition, τ))
+        states[i]       = vcat(next_x, previous_state[1:end-1])
+        observations[i] = rand(rng, NormalMeanPrecision(next_x, γ))
+    end
+    
+    return states[1+3order:end], observations[1+3order:end]
+end</code></pre><pre><code class="nohighlight hljs">generate_synthetic_dataset (generic function with 1 method)</code></pre><p>We can now generate several synthetic datasets and plot them to see how they look like:</p><pre><code class="language-julia hljs">function plot_synthetic_dataset(; dataset, title)
+    states, observations = dataset
+    p = plot(first.(states), label = &quot;Hidden states&quot;, title = title)
+    p = scatter!(p, observations, label = &quot;Observations&quot;)
+    return p
+end</code></pre><pre><code class="nohighlight hljs">plot_synthetic_dataset (generic function with 1 method)</code></pre><pre><code class="language-julia hljs">dataset_1 = generate_synthetic_dataset(n = 100, θ = coefs_ar_1)
+dataset_2 = generate_synthetic_dataset(n = 100, θ = coefs_ar_2)
+dataset_5 = generate_synthetic_dataset(n = 100, θ = coefs_ar_5)
+
+p1 = plot_synthetic_dataset(dataset = dataset_1, title = &quot;AR(1)&quot;)
+p2 = plot_synthetic_dataset(dataset = dataset_2, title = &quot;AR(2)&quot;)
+p3 = plot_synthetic_dataset(dataset = dataset_5, title = &quot;AR(5)&quot;)
+
+plot(p1, p2, p3, layout = @layout([ a b ; c ]))</code></pre><p><img src="Autoregressive Models_5_1.png" alt/></p><h2 id="Model-Specification:-Translating-Theory-to-Code"><a class="docs-heading-anchor" href="#Model-Specification:-Translating-Theory-to-Code">Model Specification: Translating Theory to Code</a><a id="Model-Specification:-Translating-Theory-to-Code-1"></a><a class="docs-heading-anchor-permalink" href="#Model-Specification:-Translating-Theory-to-Code" title="Permalink"></a></h2><p>With our synthetic data ready, we now tackle the critical step of encoding our autoregressive model as a probabilistic program in RxInfer. This translation from mathematical notation to executable code is where the power of probabilistic programming truly shines.</p><pre><code class="language-julia hljs">@model function lar_multivariate(y, order, γ)
+    # `c` is a unit vector of size `order` with first element equal to 1
+    c = ReactiveMP.ar_unit(Multivariate, order)
+    
+    τ  ~ Gamma(α = 1.0, β = 1.0)
+    θ  ~ MvNormal(mean = zeros(order), precision = diageye(order))
+    x0 ~ MvNormal(mean = zeros(order), precision = diageye(order))
+    
+    x_prev = x0
+    
+    for i in eachindex(y)
+ 
+        x[i] ~ AR(x_prev, θ, τ) 
+        y[i] ~ Normal(mean = dot(c, x[i]), precision = γ)
+        
+        x_prev = x[i]
+    end
+end</code></pre><h3 id="Constraints-specification"><a class="docs-heading-anchor" href="#Constraints-specification">Constraints specification</a><a id="Constraints-specification-1"></a><a class="docs-heading-anchor-permalink" href="#Constraints-specification" title="Permalink"></a></h3><p>Bayesian inference for complex models often requires approximations. Our code uses variational inference with a specific factorization constraint:</p><pre><code class="language-julia hljs">@constraints function ar_constraints() 
+    q(x0, x, θ, τ) = q(x0, x)q(θ)q(τ)
+end</code></pre><pre><code class="nohighlight hljs">ar_constraints (generic function with 1 method)</code></pre><p>This constraint defines how we&#39;ll approximate the joint posterior:</p><ul><li>We factorize it into three independent components</li><li>States <code>(x0, x)</code> remain jointly distributed, preserving temporal dependencies</li><li>Model parameters <code>(θ, τ)</code> are separated from states and each other</li><li>Each component can be updated independently during inference</li></ul><p>This factorization balances statistical accuracy with computational efficiency and allows RxInfer to apply efficient message-passing algorithms while maintaining the most important dependencies in the model.</p><h3 id="Meta-specification"><a class="docs-heading-anchor" href="#Meta-specification">Meta specification</a><a id="Meta-specification-1"></a><a class="docs-heading-anchor-permalink" href="#Meta-specification" title="Permalink"></a></h3><p>The @meta block in RxInfer provides essential configuration information to specific nodes in your probabilistic model. In short, it tells RxInfer how to customize inference algorithms, what approximation methods to use, and allows to specify extra computational parameters for custom complex factor nodes. </p><pre><code class="language-julia hljs">@meta function ar_meta(order)
+    AR() -&gt; ARMeta(Multivariate, order, ARsafe())
+end</code></pre><pre><code class="nohighlight hljs">ar_meta (generic function with 1 method)</code></pre><p>For autoregressive models, this block tells RxInfer:</p><ul><li>Which type of AR process to use (Univariate/Multivariate)</li><li>The order of the process (how many past values influence the current one)</li><li>Any stability constraints to apply during inference</li></ul><p>For more information about specific arguments refer to the <code>AR</code> node documentation. For more information on meta blocks, see the <a href="https://docs.rxinfer.ml/stable/manuals/meta-specification/">RxInfer.jl documentation</a>.</p><h3 id="Initialization-specification"><a class="docs-heading-anchor" href="#Initialization-specification">Initialization specification</a><a id="Initialization-specification-1"></a><a class="docs-heading-anchor-permalink" href="#Initialization-specification" title="Permalink"></a></h3><p>The @initialization block in RxInfer specifies the initial marginal distributions for the model parameters. This is crucial for the convergence of inference algorithms, especially for complex models like autoregressive processes.</p><p>For our autoregressive models, we initialize:</p><pre><code class="language-julia hljs">@initialization function ar_init(order)
+    q(τ) = GammaShapeRate(1.0, 1.0)
+    q(θ) = MvNormalMeanPrecision(zeros(order), diageye(order))
+end</code></pre><pre><code class="nohighlight hljs">ar_init (generic function with 1 method)</code></pre><h3 id="Inference"><a class="docs-heading-anchor" href="#Inference">Inference</a><a id="Inference-1"></a><a class="docs-heading-anchor-permalink" href="#Inference" title="Permalink"></a></h3><p>With our model defined, constraints established, and meta configurations in place, we&#39;re now at the exciting moment of truth - running Bayesian inference on our latent autoregressive model!</p><pre><code class="language-julia hljs">real_θ = coefs_ar_5
+real_τ = 0.5
+real_γ = 2.0
+
+order = length(real_θ)
+n     = 500 
+
+states, observations = generate_synthetic_dataset(n = n, θ = real_θ, τ = real_τ, γ = real_γ)
+
+result = infer(
+    model          = lar_multivariate(order = order, γ = real_γ), 
+    data           = (y = observations, ),
+    constraints    = ar_constraints(),
+    meta           = ar_meta(order),
+    initialization = ar_init(order),
+    options        = (limit_stack_depth = 500, ),
+    returnvars     = (x = KeepLast(), τ = KeepEach(), θ = KeepEach()),
+    free_energy    = true,
+    iterations     = 20
+)</code></pre><pre><code class="nohighlight hljs">Inference results:
+  Posteriors       | available for (τ, θ, x)
+  Free Energy:     | Real[1575.77, 1261.1, 1056.63, 1011.25, 1001.28, 997.4
+91, 995.92, 995.375, 995.066, 994.961, 994.913, 994.833, 994.899, 994.864, 
+994.834, 994.894, 994.872, 994.88, 994.897, 994.913]</code></pre><p>Now that our inference procedure has completed, we&#39;ve obtained posterior distributions for all our model parameters and latent states. The AR coefficients, precision parameters, and hidden state sequence have all been inferred from the data, with complete uncertainty quantification.</p><pre><code class="language-julia hljs">mean(result.posteriors[:θ][end])</code></pre><pre><code class="nohighlight hljs">5-element Vector{Float64}:
+  0.06182696232009309
+ -0.5172296604873058
+  0.18038487975628942
+ -0.1591736495117487
+  0.0966030389097711</code></pre><pre><code class="language-julia hljs">cov(result.posteriors[:θ][end])</code></pre><pre><code class="nohighlight hljs">5×5 Matrix{Float64}:
+  0.0019919    -9.0483e-5     0.00100443  -0.000263633   0.000309501
+ -9.0483e-5     0.00194875   -9.51917e-5   0.000858899  -0.000261436
+  0.00100443   -9.51917e-5    0.00241975  -9.69051e-5    0.00100208
+ -0.000263633   0.000858899  -9.69051e-5   0.00195085   -9.23067e-5
+  0.000309501  -0.000261436   0.00100208  -9.23067e-5    0.00199453</code></pre><pre><code class="language-julia hljs">real_θ</code></pre><pre><code class="nohighlight hljs">5-element Vector{Float64}:
+  0.10699399235785655
+ -0.5237303489793305
+  0.3068897071844715
+ -0.17232255282458891
+  0.13323964347539288</code></pre><p>But numbers alone don&#39;t tell the full story. Let&#39;s visualize these results to better understand what our model has captured. By plotting the inferred latent states against our observations, we can see how well our model has filtered out the noise to reveal the underlying process dynamics.</p><pre><code class="language-julia hljs">posterior_states       = result.posteriors[:x]
+posterior_τ            = result.posteriors[:τ]
+
+p1 = plot(first.(states), label=&quot;Hidden state&quot;)
+p1 = scatter!(p1, observations, label=&quot;Observations&quot;)
+p1 = plot!(p1, first.(mean.(posterior_states)), ribbon = 3first.(std.(posterior_states)), label=&quot;Inferred states (+-3σ)&quot;, legend = :bottomright)
+p1 = lens!(p1, [20, 40], [-2, 2], inset = (1, bbox(0.2, 0.0, 0.4, 0.4)))
+
+p2 = plot(mean.(posterior_τ), ribbon = 3std.(posterior_τ), label = &quot;Inferred τ (+-3σ)&quot;, legend = :topright)
+p2 = plot!([ real_τ ], seriestype = :hline, label = &quot;Real τ&quot;)
+
+
+plot(p1, p2, layout = @layout([ a; b ]))</code></pre><p><img src="Autoregressive Models_14_1.png" alt/></p><p>When performing variational inference in RxInfer, the Bethe Free Energy (BFE) graph is a crucial diagnostic tool that reveals the convergence properties of our inference algorithm.</p><p>The Bethe Free Energy represents the objective function being minimized during variational inference. On the graph:</p><ul><li>The vertical axis shows the BFE value (lower is better)</li><li>The horizontal axis shows iteration number</li><li>The downward slope indicates the algorithm is improving its approximation</li><li>A plateau signals convergence - the point where additional iterations yield minimal improvement</li></ul><pre><code class="language-julia hljs">plot(result.free_energy, label = &quot;Bethe Free Energy&quot;)</code></pre><p><img src="Autoregressive Models_15_1.png" alt/></p><p>For autoregressive models specifically, the BFE graph helps us:</p><ul><li>Confirm convergence: Ensuring our parameter and state estimates are reliable</li><li>Detect inference challenges: Slow convergence may indicate model misspecification</li><li>Compare models: Different AR orders or constraints can be compared by their final BFE values</li></ul><p>A sharply decreasing curve that quickly plateaus suggests efficient, successful inference In contrast, a slowly decreasing or unstable curve might indicate challenges with our model specification or data characteristics.</p><p>It is also interesting to plot the convergence of our AR coefficients:</p><pre><code class="language-julia hljs">posterior_coefficients = result.posteriors[:θ]
+
+pθ = []
+cθ = Plots.palette(:tab10)
+
+θms = mean.(posterior_coefficients)
+θvs = 3std.(posterior_coefficients)
+
+for i in 1:length(first(θms))
+    push!(pθ, plot(getindex.(θms, i), ribbon = getindex.(θvs, i), label = &quot;Estimated θ[$i]&quot;, color = cθ[i]))
+end
+
+for i in 1:length(real_θ)
+    plot!(pθ[i], [ real_θ[i] ], seriestype = :hline, label = &quot;Real θ[$i]&quot;, color = cθ[i], linewidth = 2)
+end
+
+plot(pθ..., size = (800, 300), legend = :bottomright)</code></pre><p><img src="Autoregressive Models_16_1.png" alt/></p><p>The inference process has successfully recovered the key parameters of our autoregressive model with good precision. Looking at the plots, we can see well-formed posterior distributions for both our AR coefficients (θ) and precision parameters (τ). The visualization reveals not just point estimates, but complete distributions that capture the remaining uncertainty in each parameter. </p><h1 id="Prediction-with-Autoregressive-Models"><a class="docs-heading-anchor" href="#Prediction-with-Autoregressive-Models">Prediction with Autoregressive Models</a><a id="Prediction-with-Autoregressive-Models-1"></a><a class="docs-heading-anchor-permalink" href="#Prediction-with-Autoregressive-Models" title="Permalink"></a></h1><p>In the next section, we&#39;ll put our inferred model to the ultimate test: prediction. Having captured the underlying dynamics of our time series through Bayesian inference, we can now use these posterior distributions to forecast future values with quantified uncertainty. </p><p>It&#39;s worth emphasizing that in our latent autoregressive model, we&#39;re predicting the hidden state process rather than directly observed values. This is a more challenging task than prediction in classical AR models where states are directly observed. We must account for both the uncertainty in the AR dynamics and the additional uncertainty introduced by the observation model.</p><p>RxInfer makes this process remarkably straightforward, allowing us to propagate our beliefs about model parameters and states forward in time. The resulting predictive distributions will show not just what we expect to happen next, but how confident we should be in those expectations.</p><h2 id="Example-with-Sinusoidal-Autoregressive-Pattern"><a class="docs-heading-anchor" href="#Example-with-Sinusoidal-Autoregressive-Pattern">Example with Sinusoidal Autoregressive Pattern</a><a id="Example-with-Sinusoidal-Autoregressive-Pattern-1"></a><a class="docs-heading-anchor-permalink" href="#Example-with-Sinusoidal-Autoregressive-Pattern" title="Permalink"></a></h2><p>For this demonstration, we&#39;ll use a sinusoidal-like signal to test our predictive capabilities. This choice is particularly meaningful since sinusoidal patterns <a href="https://stats.stackexchange.com/questions/268426/reproducing-sinusoid-with-autoregressive-discrete-model">can be perfectly generated</a> by second-order autoregressive processes with specific coefficients.</p><pre><code class="language-julia hljs">function generate_sinusoidal_coefficients(; f) 
+    a1 = 2cos(2pi*f)
+    a2 = -1
+    return [a1, a2]
+end</code></pre><pre><code class="nohighlight hljs">generate_sinusoidal_coefficients (generic function with 1 method)</code></pre><p>The signal then would look something like:</p><pre><code class="language-julia hljs"># Generate coefficients
+predictions_coefficients = generate_sinusoidal_coefficients(f = 0.03)
+
+# Generate dataset
+predictions_dataset = generate_synthetic_dataset(n = 350, θ = predictions_coefficients, τ = 1.0, γ = 0.01)
+
+# Plot dataset
+plot_synthetic_dataset(dataset = predictions_dataset, title = &quot;Sinusoidal AR(2)&quot;)</code></pre><p><img src="Autoregressive Models_18_1.png" alt/></p><p>We can use the same model as before to automatically infer the coefficients of the sinusoidal pattern and predict the future values in the following way:</p><pre><code class="language-julia hljs">number_of_predictions = 100
+
+predictions_states, predictions_observations = predictions_dataset
+
+# We inject `missing` values to the observations to simulate 
+# the future values that we want to predict
+predictions_observations_with_predictions = vcat(
+    predictions_observations,
+    [ missing for _ in 1:number_of_predictions ]
+)
+
+# It is better to use `UnfactorizedData` for prediction
+predictions_result = infer(
+    model          = lar_multivariate(order = 2, γ = 0.01), 
+    data           = (y = UnfactorizedData(predictions_observations_with_predictions), ),
+    constraints    = ar_constraints(),
+    meta           = ar_meta(2),
+    initialization = ar_init(2),
+    options        = (limit_stack_depth = 500, ),
+    returnvars     = (x = KeepLast(), τ = KeepEach(), θ = KeepEach()),
+    free_energy    = false,
+    iterations     = 20
+)</code></pre><pre><code class="nohighlight hljs">Inference results:
+  Posteriors       | available for (τ, θ, x)
+  Predictions      | available for (y)</code></pre><p><strong>Note</strong>: In the current version of RxInfer, the <code>free_energy</code> option is not supported for prediction. Thus we explicitly set it to <code>false</code>. However, we already verified that the inference procedure converges to the correct coefficients with the previous example.</p><h3 id="Prediction-results"><a class="docs-heading-anchor" href="#Prediction-results">Prediction results</a><a id="Prediction-results-1"></a><a class="docs-heading-anchor-permalink" href="#Prediction-results" title="Permalink"></a></h3><p>We first can check if the inference procedure has converged to the correct coefficients:</p><pre><code class="language-julia hljs"># Extract the inferred coefficients (mean of posterior)
+inferred_coefficients = predictions_result.posteriors[:θ][end]
+
+println(&quot;True coefficients: &quot;, predictions_coefficients)
+println(&quot;Inferred coefficients (mean value): &quot;, mean(inferred_coefficients))
+
+μ_true = predictions_coefficients
+μ_inferred = mean(inferred_coefficients)
+
+# Create grid of points
+x = range(μ_true[1]-0.025, μ_true[1]+0.025, length=100)
+y = range(μ_true[2]-0.025, μ_true[2]+0.025, length=100)
+
+# Create contour plot
+coefficients_plot = contour(x, y, (x, y) -&gt; pdf(inferred_coefficients, [x, y]), 
+    fill=true, 
+    title=&quot;True vs Inferred AR Coefficients&quot;,
+    xlabel=&quot;θ₁&quot;,
+    ylabel=&quot;θ₂&quot;,
+    levels = 14, 
+    color=:turbo,
+    colorbar = false
+)
+
+# Add point for true coefficients
+scatter!(coefficients_plot, [μ_true[1]], [μ_true[2]], 
+    label=&quot;True coefficients&quot;,
+    marker=:star,
+    markersize=20,
+    color=:red
+)
+
+# Add point for inferred mean
+scatter!(coefficients_plot, [μ_inferred[1]], [μ_inferred[2]], 
+    label=&quot;Inferred mean&quot;,
+    markersize=8,
+    color=:white
+)</code></pre><pre><code class="nohighlight hljs">True coefficients: [1.9645745014573774, -1.0]
+Inferred coefficients (mean value): [1.9607030557929608, -0.997248085033154
+8]</code></pre><p><img src="Autoregressive Models_20_1.png" alt/></p><p>Now let&#39;s visualize our prediction results to see how well our model captures the underlying temporal patterns. By plotting the predicted values against the actual test data, we can immediately assess the quality of our forecasts. Pay special attention to the confidence intervals (shaded regions) surrounding our predictions – these represent our model&#39;s uncertainty with propagated uncertainty from the inferred coefficients. </p><pre><code class="language-julia hljs">predictions_posterior_states = predictions_result.predictions[:y][end]
+
+predictions_posterior_states_mean = mean.(predictions_posterior_states)
+predictions_posterior_states_std = std.(predictions_posterior_states)
+
+pred_p = scatter(predictions_observations, label=&quot;Observations&quot;, ms=2)
+pred_p = plot!(pred_p, predictions_posterior_states_mean, ribbon=3predictions_posterior_states_std, label=&quot;Predictions&quot;)</code></pre><p><img src="Autoregressive Models_21_1.png" alt/></p><p>Wide intervals suggest high uncertainty, while narrow ones indicate confidence in specific outcomes. When forecasting with AR models, several limitations deserve attention. First, AR models inherently assume that future patterns will resemble past ones - a tenuous assumption during regime changes or external shocks. Second, uncertainty compounds rapidly with prediction horizon; while one-step-ahead forecasts may appear precise, multi-step predictions quickly develop wide confidence intervals that reflect the model&#39;s decreasing predictive power.</p><p>To put it in the comparison, we could also use the inferred parameters to predict the future values using the inferred coefficients and the precision parameter. This approach however, will not yield the uncertainty estimates that we get from the inference procedure.</p><pre><code class="language-julia hljs">function predict_manual(; number_of_predictions, coefficients, precision, first_state, rng = StableRNG(42))
+    states = [ first_state ]
+    for i in 1:(number_of_predictions + 1)
+        next_x     = rand(rng, NormalMeanPrecision(dot(coefficients, states[end]), precision))
+        next_state = vcat(next_x, states[end][1:end-1])
+        push!(states, next_state)
+    end
+    return states[2:end]
+end</code></pre><pre><code class="nohighlight hljs">predict_manual (generic function with 1 method)</code></pre><pre><code class="language-julia hljs">predicted_manually = predict_manual(; 
+    number_of_predictions = number_of_predictions, 
+    coefficients = predictions_coefficients, 
+    precision = 0.1, 
+    first_state = predictions_states[end]
+)
+
+plot(1:length(predictions_states), first.(predictions_states), label = &quot;Real state&quot;)
+scatter!(1:length(predictions_observations), first.(predictions_observations), label = &quot;Observations&quot;, ms = 2)
+plot!((length(predictions_observations)+1):length(predictions_observations) + number_of_predictions + 1, first.(predicted_manually), label = &quot;Predictions manually&quot;)</code></pre><p><img src="Autoregressive Models_23_1.png" alt/></p><p>Let&#39;s plot both predictions together to see the difference:</p><pre><code class="language-julia hljs">pred_p_manual = scatter(predictions_observations, label=&quot;Observations&quot;, ms=2)
+pred_p_manual = plot!(pred_p_manual, predictions_posterior_states_mean, ribbon=3predictions_posterior_states_std, label=&quot;Predictions&quot;)
+pred_p_manual = plot!(pred_p_manual, (length(predictions_observations)+1):length(predictions_observations) + number_of_predictions + 1, first.(predicted_manually), label = &quot;Predictions manual&quot;)</code></pre><p><img src="Autoregressive Models_24_1.png" alt/></p><p>We can see that manual prediction calculations, while computationally simpler, lack the crucial uncertainty quantification that we get from a proper Bayesian inference procedure. Additionally, the predictive power of an AR process directly relates to its order N - higher orders can capture more complex temporal dependencies and longer memory effects, but at the cost of potential overfitting. An AR(2) process can only predict based on the immediate previous observation, creating simple exponential trends, while an AR(5) can detect and forecast more intricate patterns like seasonal oscillations or cyclical behaviors. However, this improved predictive power comes with diminishing returns as N increases, requiring careful model selection to balance complexity against generalization ability for optimal forecasting performance.</p><h1 id="Stock-Prices-Dataset"><a class="docs-heading-anchor" href="#Stock-Prices-Dataset">Stock Prices Dataset</a><a id="Stock-Prices-Dataset-1"></a><a class="docs-heading-anchor-permalink" href="#Stock-Prices-Dataset" title="Permalink"></a></h1><p>Stock prices make for a challenging but instructive test case. They&#39;re notoriously difficult to predict, but often exhibit both short-term momentum (AR components) and characteristic responses to market shocks (MA components). We will use American Airlines stock data downloaded from <a href="https://www.kaggle.com/code/purvasingh/time-series-analysis-with-arma-and-arima/data?select=all_stocks_5yr.csv">Kaggle</a></p><pre><code class="language-julia hljs">x_df = CSV.read(&quot;aal_stock.csv&quot;, DataFrame)</code></pre><pre><code class="nohighlight hljs">1259×7 DataFrame
+  Row │ date        open     high     low      close    volume    Name
+      │ Date        Float64  Float64  Float64  Float64  Int64     String3
+──────┼───────────────────────────────────────────────────────────────────
+    1 │ 2013-02-08    15.07    15.12   14.63     14.75   8407500  AAL
+    2 │ 2013-02-11    14.89    15.01   14.26     14.46   8882000  AAL
+    3 │ 2013-02-12    14.45    14.51   14.1      14.27   8126000  AAL
+    4 │ 2013-02-13    14.3     14.94   14.25     14.66  10259500  AAL
+    5 │ 2013-02-14    14.94    14.96   13.16     13.99  31879900  AAL
+    6 │ 2013-02-15    13.93    14.61   13.93     14.5   15628000  AAL
+    7 │ 2013-02-19    14.33    14.56   14.08     14.26  11354400  AAL
+    8 │ 2013-02-20    14.17    14.26   13.15     13.33  14725200  AAL
+  ⋮   │     ⋮          ⋮        ⋮        ⋮        ⋮        ⋮         ⋮
+ 1253 │ 2018-01-30    52.45    53.05   52.36     52.59   4741808  AAL
+ 1254 │ 2018-01-31    53.08    54.71   53.0      54.32   5962937  AAL
+ 1255 │ 2018-02-01    54.0     54.64   53.59     53.88   3623078  AAL
+ 1256 │ 2018-02-02    53.49    53.99   52.03     52.1    5109361  AAL
+ 1257 │ 2018-02-05    51.99    52.39   49.75     49.76   6878284  AAL
+ 1258 │ 2018-02-06    49.32    51.5    48.79     51.18   6782480  AAL
+ 1259 │ 2018-02-07    50.91    51.98   50.89     51.4    4845831  AAL
+                                                         1244 rows omitted</code></pre><pre><code class="language-julia hljs"># We will use &quot;close&quot; column
+x_data = filter(!ismissing, x_df[:, 5])
+
+# Plot data
+plot(x_data, xlabel=&quot;Day&quot;, ylabel=&quot;Price&quot;, label=&quot;Close&quot;)</code></pre><p><img src="Autoregressive Models_26_1.png" alt/></p><h3 id="Preparing-the-dataset-for-inference-and-prediction"><a class="docs-heading-anchor" href="#Preparing-the-dataset-for-inference-and-prediction">Preparing the dataset for inference and prediction</a><a id="Preparing-the-dataset-for-inference-and-prediction-1"></a><a class="docs-heading-anchor-permalink" href="#Preparing-the-dataset-for-inference-and-prediction" title="Permalink"></a></h3><p>To validate the inference and prediction results we will also split our dataset into two parts &quot;observed&quot; and &quot;to_predict&quot;, which commonly also reffered as to &quot;train&quot; and &quot;test&quot; sets.</p><pre><code class="language-julia hljs">observed_size = length(x_data) - 50
+
+# Observed part
+x_observed    = Float64.(x_data[1:observed_size])
+
+# We need to predict this part
+x_to_predict   = Float64.(x_data[observed_size+1:end])
+
+x_observed_length   = length(x_observed)
+x_to_predict_length = length(x_to_predict)
+
+plot(1:x_observed_length, x_observed, label = &quot;Observed signal&quot;)
+plot!((x_observed_length + 1):(x_observed_length + x_to_predict_length), x_to_predict, label = &quot;To predict&quot;)</code></pre><p><img src="Autoregressive Models_27_1.png" alt/></p><p>We can use the same model as before for the stock prices dataset. Let&#39;s however put the model to the ultimate test and use <code>AR(50)</code> to predict the future values. </p><pre><code class="language-julia hljs">stock_observations_with_predictions = vcat(
+    x_observed,
+    [ missing for _ in 1:length(x_to_predict) ]
+)
+
+stock_predictions_result = infer(
+    model          = lar_multivariate(order = 50, γ = 1.0), 
+    data           = (y = UnfactorizedData(stock_observations_with_predictions), ),
+    constraints    = ar_constraints(),
+    meta           = ar_meta(50),
+    initialization = ar_init(50),
+    options        = (limit_stack_depth = 500, ),
+    returnvars     = (x = KeepLast(), τ = KeepEach(), θ = KeepEach()),
+    free_energy    = false,
+    iterations     = 20
+)</code></pre><pre><code class="nohighlight hljs">Inference results:
+  Posteriors       | available for (τ, θ, x)
+  Predictions      | available for (y)</code></pre><pre><code class="language-julia hljs">plot(1:x_observed_length, x_observed, label = &quot;Observed signal&quot;)
+plot!((x_observed_length + 1):(x_observed_length + x_to_predict_length), x_to_predict, label = &quot;To predict&quot;)
+
+stock_predictions = stock_predictions_result.predictions[:y][end]
+
+plot!(mean.(stock_predictions), ribbon = std.(stock_predictions), label = &quot;Predictions&quot;)</code></pre><p><img src="Autoregressive Models_29_1.png" alt/></p><p>We can also plot it against the hidden states in the model and using only the first component of the hidden state:</p><pre><code class="language-julia hljs">plot(1:x_observed_length, x_observed, label = &quot;Observed signal&quot;)
+plot!((x_observed_length + 1):(x_observed_length + x_to_predict_length), x_to_predict, label = &quot;To predict&quot;)
+
+stock_hidden_states = stock_predictions_result.posteriors[:x]
+
+plot!(first.(mean.(stock_hidden_states)), ribbon = first.(std.(stock_hidden_states)), label = &quot;x[1]&quot;)</code></pre><p><img src="Autoregressive Models_30_1.png" alt/></p><h1 id="Autoregressive-Moving-Average-Model"><a class="docs-heading-anchor" href="#Autoregressive-Moving-Average-Model">Autoregressive Moving Average Model</a><a id="Autoregressive-Moving-Average-Model-1"></a><a class="docs-heading-anchor-permalink" href="#Autoregressive-Moving-Average-Model" title="Permalink"></a></h1><p>As a final touch, we will implement a <strong>fully Bayesian</strong> version of ARMA model. Autoregressive Moving Average (ARMA) models represent a powerful synthesis of two fundamental time series components: the autoregressive (AR) part, which captures how current values depend on past observations, and the moving average (MA) part, which models the persistence of random shocks. This combination makes ARMA models particularly well-suited for financial data like stock prices, where both momentum effects (AR) and reaction to news or market shocks (MA) influence price movements. In this example, we&#39;ll see how Bayesian inference with RxInfer can reveal these underlying dynamics while quantifying our uncertainty every step of the way.</p><h2 id="Mathematical-Formulation-of-ARMA-Model"><a class="docs-heading-anchor" href="#Mathematical-Formulation-of-ARMA-Model">Mathematical Formulation of ARMA Model</a><a id="Mathematical-Formulation-of-ARMA-Model-1"></a><a class="docs-heading-anchor-permalink" href="#Mathematical-Formulation-of-ARMA-Model" title="Permalink"></a></h2><p>Bayesian <a href="https://en.wikipedia.org/wiki/Autoregressive%E2%80%93moving-average_model#Applications">ARMA model</a> can be effectively implemeted in <strong>RxInfer.jl</strong>. For theoretical details on Varitional Inference for ARMA model, we refer the reader to the following <a href="https://ieeexplore.ieee.org/document/7798432">paper</a>.  The Bayesian ARMA model can be written as follows:</p><p class="math-container">\[\begin{aligned}
+e_t &amp;\sim \mathcal{N}(0, \gamma^{-1}) \\
+\theta &amp;\sim \mathcal{N}(\mathbf{0}, \mathbf{I}) \\
+\eta &amp;\sim \mathcal{N}(\mathbf{0}, \mathbf{I}) \\
+\mathbf{h}_0 &amp;\sim \mathcal{N}\left(\begin{bmatrix}
+e_{-1} \\
+e_{-2}
+\end{bmatrix}, \mathbf{I}\right) \\
+\mathbf{h}_t &amp;= \mathbf{S}\mathbf{h}_{t-1} + \mathbf{c} e_{t-1} \\
+\mathbf{x}_t &amp;= \boldsymbol{\theta}^\top\mathbf{x}_{t-1} + \boldsymbol{\eta}^\top\mathbf{h}_{t} + e_t 
+\end{aligned}\]</p><p>where shift matrix <span>$\mathbf{S}$</span> is defined as</p><p class="math-container">\[\begin{aligned}
+\mathbf{S} = \begin{pmatrix}
+0 &amp; 0 \\
+1 &amp; 0 
+\end{pmatrix}
+\end{aligned}\]</p><pre><code class="language-julia hljs">function shift(dim)
+    S = Matrix{Float64}(I, dim, dim)
+    for i in dim:-1:2
+        S[i,:] = S[i-1, :]
+    end
+    S[1, :] = zeros(dim)
+    return S
+end</code></pre><pre><code class="nohighlight hljs">shift (generic function with 1 method)</code></pre><pre><code class="language-julia hljs">shift(2)</code></pre><pre><code class="nohighlight hljs">2×2 Matrix{Float64}:
+ 0.0  0.0
+ 1.0  0.0</code></pre><p>and unit vector <span>$\mathbf{c}$</span>: </p><p class="math-container">\[\begin{aligned}
+\mathbf{c}=[1, 0]
+\end{aligned}\]</p><p>when MA order is <span>$2$</span>. In this way, <span>$\mathbf{h}_t$</span> containing errors <span>$e_t$</span> can be viewed as hidden state.</p><h2 id="Intractabilities-in-ARMA-model"><a class="docs-heading-anchor" href="#Intractabilities-in-ARMA-model">Intractabilities in ARMA model</a><a id="Intractabilities-in-ARMA-model-1"></a><a class="docs-heading-anchor-permalink" href="#Intractabilities-in-ARMA-model" title="Permalink"></a></h2><p>In short, the Bayesian ARMA model has two intractabilities: </p><ul><li>induced by the multiplication of two Gaussian RVs, i.e., <span>$\boldsymbol{\eta}^\top\mathbf{h}_{t}$</span>, </li><li>induced by errors <span>$e_t$</span> that prevents analytical update of precision parameter <span>$\gamma$</span> (this can be easily seen when constructing the Factor Graph, i.e. there is a loop). </li></ul><p>Both problems can be easily resolved in <strong>RxInfer.jl</strong>, by creating a hybrid inference algorithm based on Loopy Variational Message Passing.</p><h3 id="ARMA-model-specification"><a class="docs-heading-anchor" href="#ARMA-model-specification">ARMA model specification</a><a id="ARMA-model-specification-1"></a><a class="docs-heading-anchor-permalink" href="#ARMA-model-specification" title="Permalink"></a></h3><p>The model specification is the trickiest part of this implementation. Note how we need to carefully define the relationship between observed values, latent states, and error terms. The ARMA model&#39;s loops create inference challenges that wouldn&#39;t exist in simpler models - this is why we need to specify proper initialization and factorization constraints to avoid convergence problems. For the <code>@meta</code> we will simply reuse the previously defined <code>ar_meta</code> function.</p><pre><code class="language-julia hljs">@model function ARMA(x, x_prev, priors, p_order, q_order)
+    
+    # arguments
+    c = zeros(q_order); c[1] = 1.0;
+    S = shift(q_order); # MA
+
+    # set priors
+    γ    ~ priors[:γ]
+    η    ~ priors[:η]
+    θ    ~ priors[:θ]
+    τ    ~ priors[:τ]
+    
+    h[1] ~ priors[:h]
+    z[1] ~ AR(h[1], η, τ)
+    e[1] ~ Normal(mean = 0.0, precision = γ)
+    x[1] ~ dot(c, z[1]) + dot(θ, x_prev[1]) + e[1]
+
+    for t in 1:length(x)-1
+        h[t+1] ~ S * h[t] + c * e[t]
+        z[t+1] ~ AR(h[t+1], η, τ)
+        e[t+1] ~ Normal(mean = 0.0, precision = γ)
+        x[t+1] ~ dot(c, z[t+1]) + dot(θ, x_prev[t+1]) + e[t+1]
+    end
+end
+
+@constraints function arma_constraints()
+    q(z, h, η, τ, γ,e) = q(z, h)q(η)q(τ)q(γ)q(e)
+end
+
+@initialization function arma_initialization(priors) 
+    q(h)   = priors[:h]
+    μ(h)   = priors[:h]
+    q(γ)   = priors[:γ]
+    q(τ)   = priors[:τ]
+    q(η)   = priors[:η]
+    q(θ)   = priors[:θ]
+end</code></pre><pre><code class="nohighlight hljs">arma_initialization (generic function with 1 method)</code></pre><pre><code class="language-julia hljs">p_order = 10 # AR
+q_order = 4  # MA</code></pre><pre><code class="nohighlight hljs">4</code></pre><h3 id="Inference-with-ARMA-model"><a class="docs-heading-anchor" href="#Inference-with-ARMA-model">Inference with ARMA model</a><a id="Inference-with-ARMA-model-1"></a><a class="docs-heading-anchor-permalink" href="#Inference-with-ARMA-model" title="Permalink"></a></h3><p>Now, everything should be ready for the <code>infer</code> call from <code>RxInfer</code> on the stock prices dataset defined earlier.</p><pre><code class="language-julia hljs">priors  = (
+    h = MvNormalMeanPrecision(zeros(q_order), diageye(q_order)),
+    γ = GammaShapeRate(1e4, 1.0),
+    τ = GammaShapeRate(1e2, 1.0),
+    η = MvNormalMeanPrecision(ones(q_order), diageye(q_order)),
+    θ = MvNormalMeanPrecision(zeros(p_order), diageye(p_order))
+)
+
+arma_x_data = Float64.(x_data[p_order+1:end])[1:observed_size]
+arma_x_prev_data = [Float64.(x_data[i+p_order-1:-1:i]) for i in 1:length(x_data)-p_order][1:observed_size]
+
+result = infer(
+    model = ARMA(priors=priors, p_order = p_order, q_order = q_order), 
+    data  = (x = arma_x_data, x_prev = arma_x_prev_data),
+    initialization = arma_initialization(priors),
+    constraints    = arma_constraints(),
+    meta           = ar_meta(q_order),
+    returnvars     = KeepLast(),
+    iterations     = 20,
+    options        = (limit_stack_depth = 400, ),
+)</code></pre><pre><code class="nohighlight hljs">Inference results:
+  Posteriors       | available for (γ, e, τ, h, z, θ, η)</code></pre><pre><code class="language-julia hljs">plot(mean.(result.posteriors[:e]), ribbon = var.(result.posteriors[:e][end]), label = &quot;eₜ&quot;)</code></pre><p><img src="Autoregressive Models_36_1.png" alt/></p><p>What we&#39;ve seen in this example is more than just a stock price forecast - it&#39;s a demonstration of how modern probabilistic programming with RxInfer enables sophisticated time series modeling with relatively concise code. The same techniques can be applied across domains from economics to engineering, wherever systems exhibit both memory effects and response to external shocks. And most importantly, the Bayesian approach gives us a principled way to quantify uncertainty in our predictions - essential for robust decision-making in any domain.</p><hr/><div class="admonition is-info"><header class="admonition-header">Contributing</header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><div class="admonition is-compat"><header class="admonition-header">Environment</header><div class="admonition-body"><p>This example was executed in a clean, isolated environment. Below are the exact package versions used:</p><p>For reproducibility:</p><ul><li>Use the same package versions when running locally</li><li>Report any issues with package compatibility</li></ul></div></div><pre><code class="nohighlight hljs">Status `~/work/RxInferExamples.jl/RxInferExamples.jl/docs/src/categories/problem_specific/autoregressive_models/Project.toml`
+  [6e4b80f9] BenchmarkTools v1.6.0
+  [336ed68f] CSV v0.10.15
+  [a93c6f00] DataFrames v1.7.0
+  [31c24e10] Distributions v0.25.117
+  [91a5bcdd] Plots v1.40.9
+  [86711068] RxInfer v4.2.0
+  [860ef19b] StableRNGs v1.0.2
+  [37e2e46d] LinearAlgebra v1.11.0
+  [9a3f8284] Random v1.11.0
+</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../advanced_examples/robotic_arm/">« Robotic Arm</a><a class="docs-footer-nextpage" href="../gamma_mixture/">Gamma Mixture »</a><div class="flexbox-break"></div><p class="footer-message">Created in <a href="https://biaslab.github.io/">BIASlab</a>, maintained by <a href="https://github.com/ReactiveBayes">ReactiveBayes</a>, powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.8.1 on <span class="colophon-date" title="Friday 7 March 2025 13:50">Friday 7 March 2025</span>. Using Julia version 1.11.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

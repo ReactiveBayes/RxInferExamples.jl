@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Bayesian Multinomial Regression · RxInfer.jl Examples</title><meta name="title" content="Bayesian Multinomial Regression · RxInfer.jl Examples"/><meta property="og:title" content="Bayesian Multinomial Regression · RxInfer.jl Examples"/><meta property="twitter:title" content="Bayesian Multinomial Regression · RxInfer.jl Examples"/><meta name="description" content="A repository of examples and tutorials for RxInfer.jl, a Julia package for reactive message passing inference in probabilistic models."/><meta property="og:description" content="A repository of examples and tutorials for RxInfer.jl, a Julia package for reactive message passing inference in probabilistic models."/><meta property="twitter:description" content="A repository of examples and tutorials for RxInfer.jl, a Julia package for reactive message passing inference in probabilistic models."/><meta property="og:url" content="https://examples.rxinfer.ml/categories/basic_examples/bayesian_multinomial_regression/"/><meta property="twitter:url" content="https://examples.rxinfer.ml/categories/basic_examples/bayesian_multinomial_regression/"/><link rel="canonical" href="https://examples.rxinfer.ml/categories/basic_examples/bayesian_multinomial_regression/"/><script async src="https://www.googletagmanager.com/gtag/js?id=G-GMFX620VEP"></script><script>  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-GMFX620VEP', {'page_path': location.pathname + location.search + location.hash});
+</script><script data-outdated-warner src="../../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../../assets/documenter.js"></script><script src="../../../search_index.js"></script><script src="../../../siteinfo.js"></script><script src="../../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../../assets/themeswap.js"></script><link href="../../../assets/theme.css" rel="stylesheet" type="text/css"/><link href="../../../assets/header.css" rel="stylesheet" type="text/css"/><script src="../../../assets/header.js"></script><script src="../../../assets/chat.js"></script><link href="../../../assets/favicon.ico" rel="icon" type="image/x-icon"/>
+    <meta property="og:title" content="Bayesian Multinomial Regression - RxInfer Examples">
+    <meta name="description" content="    An introductory tutorial to Bayesian multinomial regression with RxInfer. 
+    Learn how to model categorical outcomes using multinomial regression with proper Bayesian inference.
+    The example demonstrates the use of Expectation Propagation (EP) algorithm and Polya-Gamma augmentation.
+">
+    <meta property="og:description" content="    An introductory tutorial to Bayesian multinomial regression with RxInfer. 
+    Learn how to model categorical outcomes using multinomial regression with proper Bayesian inference.
+    The example demonstrates the use of Expectation Propagation (EP) algorithm and Polya-Gamma augmentation.
+">
+    <meta name="keywords" content="rxinfer, julia, bayesian inference, examples, probabilistic programming, message passing, probabilistic numerics, variational inference, belief propagation, basic examples, regression, multivariate, expectation propagation, polya-gamma">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://examples.rxinfer.ml/sitemap.xml">
+    </head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../../"><img class="docs-light-only" src="../../../assets/logo.svg" alt="RxInfer.jl Examples logo"/><img class="docs-dark-only" src="../../../assets/logo-dark.svg" alt="RxInfer.jl Examples logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../../">RxInfer.jl Examples</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../../">Home</a></li><li><a class="tocitem" href="../../../how_to_contribute/">How to contribute</a></li><li><a class="tocitem" href="../../../autogenerated/list_of_examples/">List of Examples</a></li><li><span class="tocitem">Basic Examples</span><ul><li><a class="tocitem" href="../bayesian_binomial_regression/">Bayesian Binomial Regression</a></li><li><a class="tocitem" href="../bayesian_linear_regression/">Bayesian Linear Regression</a></li><li class="is-active"><a class="tocitem" href>Bayesian Multinomial Regression</a><ul class="internal"><li><a class="tocitem" href="#Model-Description"><span>Model Description</span></a></li><li><a class="tocitem" href="#Implementation"><span>Implementation</span></a></li></ul></li><li><a class="tocitem" href="../coin_toss_model/">Coin Toss Model</a></li><li><a class="tocitem" href="../feature_functions_in_bayesian_regression/">Feature Functions In Bayesian Regression</a></li><li><a class="tocitem" href="../hidden_markov_model/">Hidden Markov Model</a></li><li><a class="tocitem" href="../kalman_filtering_and_smoothing/">Kalman Filtering And Smoothing</a></li><li><a class="tocitem" href="../pomdp_control/">Pomdp Control</a></li><li><a class="tocitem" href="../predicting_bike_rental_demand/">Predicting Bike Rental Demand</a></li></ul></li><li><span class="tocitem">Advanced Examples</span><ul><li><a class="tocitem" href="../../advanced_examples/active_inference_mountain_car/">Active Inference Mountain Car</a></li><li><a class="tocitem" href="../../advanced_examples/advanced_tutorial/">Advanced Tutorial</a></li><li><a class="tocitem" href="../../advanced_examples/assessing_people_skills/">Assessing People Skills</a></li><li><a class="tocitem" href="../../advanced_examples/chance_constraints/">Chance Constraints</a></li><li><a class="tocitem" href="../../advanced_examples/conjugate-computational_variational_message_passing/">Conjugate-Computational Variational Message Passing</a></li><li><a class="tocitem" href="../../advanced_examples/drone_dynamics/">Drone Dynamics</a></li><li><a class="tocitem" href="../../advanced_examples/global_parameter_optimisation/">Global Parameter Optimisation</a></li><li><a class="tocitem" href="../../advanced_examples/gp_regression_by_ssm/">Gp Regression By Ssm</a></li><li><a class="tocitem" href="../../advanced_examples/infinite_data_stream/">Infinite Data Stream</a></li><li><a class="tocitem" href="../../advanced_examples/multi-agent_trajectory_planning/">Multi-Agent Trajectory Planning</a></li><li><a class="tocitem" href="../../advanced_examples/nonlinear_sensor_fusion/">Nonlinear Sensor Fusion</a></li><li><a class="tocitem" href="../../advanced_examples/robotic_arm/">Robotic Arm</a></li></ul></li><li><span class="tocitem">Problem Specific</span><ul><li><a class="tocitem" href="../../problem_specific/autoregressive_models/">Autoregressive Models</a></li><li><a class="tocitem" href="../../problem_specific/gamma_mixture/">Gamma Mixture</a></li><li><a class="tocitem" href="../../problem_specific/gaussian_mixture/">Gaussian Mixture</a></li><li><a class="tocitem" href="../../problem_specific/hierarchical_gaussian_filter/">Hierarchical Gaussian Filter</a></li><li><a class="tocitem" href="../../problem_specific/invertible_neural_network_tutorial/">Invertible Neural Network Tutorial</a></li><li><a class="tocitem" href="../../problem_specific/litter_model/">Litter Model</a></li><li><a class="tocitem" href="../../problem_specific/ode_parameter_estimation/">Ode Parameter Estimation</a></li><li><a class="tocitem" href="../../problem_specific/probit_model/">Probit Model</a></li><li><a class="tocitem" href="../../problem_specific/rts_vs_bifm_smoothing/">Rts Vs Bifm Smoothing</a></li><li><a class="tocitem" href="../../problem_specific/simple_nonlinear_node/">Simple Nonlinear Node</a></li><li><a class="tocitem" href="../../problem_specific/structural_dynamics_with_augmented_kalman_filter/">Structural Dynamics With Augmented Kalman Filter</a></li><li><a class="tocitem" href="../../problem_specific/universal_mixtures/">Universal Mixtures</a></li></ul></li><li><a class="tocitem" href="../../../how_build_works/">How we build the examples</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Basic Examples</a></li><li class="is-active"><a href>Bayesian Multinomial Regression</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Bayesian Multinomial Regression</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl/blob/main/docs/src/categories/basic_examples/bayesian_multinomial_regression/index.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><div class="admonition is-info"><header class="admonition-header">Contributing</header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><h1 id="Bayesian-Multinomial-Regression"><a class="docs-heading-anchor" href="#Bayesian-Multinomial-Regression">Bayesian Multinomial Regression</a><a id="Bayesian-Multinomial-Regression-1"></a><a class="docs-heading-anchor-permalink" href="#Bayesian-Multinomial-Regression" title="Permalink"></a></h1><p>This notebook is an introductory tutorial to Bayesian multinomial regression with <code>RxInfer</code>.</p><pre><code class="language-julia hljs">using RxInfer, Plots, StableRNGs, Distributions, ExponentialFamily, StatsPlots
+import ExponentialFamily: softmax</code></pre><h2 id="Model-Description"><a class="docs-heading-anchor" href="#Model-Description">Model Description</a><a id="Model-Description-1"></a><a class="docs-heading-anchor-permalink" href="#Model-Description" title="Permalink"></a></h2><p>The key innovation in Linderman et al. (2015) is extending the Pólya-gamma augmentation scheme to the multinomial case. This allows us to transform the non-conjugate multinomial likelihood into a conditionally conjugate form by introducing auxiliary Pólya-gamma random variables.</p><p>The multinomial regression model with Pólya-gamma augmentation can be written as: <span>$p(y | \psi, N) = \text{Multinomial}(y |N, \psi)$</span></p><p>where:</p><ul><li><p class="math-container">\[y\]</p>is a <span>$K$</span>-dimensional vector of count data with <span>$N$</span> total counts</li><li><p class="math-container">\[\psi\]</p>is a <span>$K-1$</span> -dimensional Gaussian random variable</li></ul><h2 id="Implementation"><a class="docs-heading-anchor" href="#Implementation">Implementation</a><a id="Implementation-1"></a><a class="docs-heading-anchor-permalink" href="#Implementation" title="Permalink"></a></h2><p>In this notebook, we will implement the Pólya-gamma augmented Bayesian multinomial regression model with <code>RxInfer</code> by performing inference using message passing to estimate the posterior distribution of the regression coefficients</p><pre><code class="language-julia hljs">function generate_multinomial_data(rng=StableRNG(123);N = 3, k=3, nsamples = 1000)
+    Ψ = randn(rng, k)
+    p = softmax(Ψ)
+    X = rand(rng, Multinomial(N, p), nsamples)
+    X= [X[:,i] for i in 1:size(X,2)];
+    return X, Ψ,p
+end</code></pre><pre><code class="nohighlight hljs">generate_multinomial_data (generic function with 2 methods)</code></pre><pre><code class="language-julia hljs">nsamples = 5000
+N = 30
+k = 40
+X, Ψ, p = generate_multinomial_data(N=N,k=k,nsamples=nsamples);</code></pre><p>The <code>MultinomialPolya</code> factor node is used to model the likelihood of the multinomial distribution. </p><p>Due to non-conjugacy of the likelihood and the prior distribution, we need to use a more complex inference algorithm. RxInfer provides an Expectation Propagation (EP) [2] algorithm to infer the posterior distribution. Due to EP&#39;s approximation, we need to specify an inbound message for the regression coefficients while using the <code>MultinomialPolya</code> factor node. This feature is implemented in the <code>dependencies</code> keyword argument during the creation of the <code>MultinomialPolya</code> factor node. <code>ReactiveMP.jl</code> provides a <code>RequireMessageFunctionalDependencies</code> type that is used to specify the inbound message for the regression coefficients <code>ψ</code>. Refer to the ReactiveMP.jl documentation for more information.</p><pre><code class="language-julia hljs">@model function multinomial_model(obs, N, ξ_ψ, W_ψ)
+    ψ ~ MvNormalWeightedMeanPrecision(ξ_ψ, W_ψ)
+    obs .~ MultinomialPolya(N, ψ) where {dependencies = RequireMessageFunctionalDependencies(ψ = MvNormalWeightedMeanPrecision(ξ_ψ, W_ψ))}
+end</code></pre><pre><code class="language-julia hljs">result = infer(
+    model = multinomial_model(ξ_ψ=zeros(k-1), W_ψ=rand(Wishart(3, diageye(k-1))), N=N),
+    data = (obs=X, ),
+    iterations = 50,
+    free_energy = true,
+    showprogress = true,
+    options = (
+        limit_stack_depth = 100,
+    )
+)</code></pre><pre><code class="nohighlight hljs">Inference results:
+  Posteriors       | available for (ψ)
+  Free Energy:     | Real[4.46569e5, 2.92801e5, 2.38339e5, 2.12674e5, 1.986
+37e5, 1.90206e5, 1.848e5, 1.81164e5, 1.78623e5, 1.76795e5  …  170370.0, 1.7
+0363e5, 1.70357e5, 1.70352e5, 1.70347e5, 1.70343e5, 1.70339e5, 1.70335e5, 1
+.70332e5, 1.7033e5]</code></pre><pre><code class="language-julia hljs">plot(result.free_energy[1:end], 
+     title=&quot;Free Energy Over Iterations&quot;,
+     xlabel=&quot;Iteration&quot;,
+     ylabel=&quot;Free Energy&quot;,
+     linewidth=2,
+     legend=false,
+     grid=true,
+     )</code></pre><p><img src="Bayesian Multinomial Regression_6_1.png" alt/></p><pre><code class="language-julia hljs">predictive = @call_rule MultinomialPolya(:x, Marginalisation) (q_N = PointMass(N), q_ψ = result.posteriors[:ψ][end], meta = MultinomialPolyaMeta(21))
+println(&quot;Estimated data generation probabilities: $(predictive.p)&quot;)
+println(&quot;True data generation probabilities: $(p)&quot;)</code></pre><pre><code class="nohighlight hljs">Estimated data generation probabilities: [0.012500686564987495, 0.027222779
+00084117, 0.004699975812457014, 0.012715794706234148, 0.01343997388970624, 
+0.03792000859746627, 0.007973570601243232, 0.006729078538004615, 0.00593368
+6957322783, 0.003816497551554285, 0.0058806593671880385, 0.0039974531316937
+76, 0.004388139203563341, 0.035958777048946795, 0.1090325848597523, 0.07242
+206459021783, 0.026377221984298385, 0.023972029170301216, 0.009937834641641
+273, 0.008905008531579302, 0.03980039778709284, 0.005572704945257927, 0.008
+25741961798846, 0.026366017090935612, 0.006346868933117693, 0.0082611150956
+53505, 0.0096309915856949, 0.007347285740612368, 0.01752974964548303, 0.006
+740949114795702, 0.008695006289290104, 0.0038444249798769555, 0.01125914772
+1232581, 0.010519245544783038, 0.09451624739892181, 0.043478352423226146, 0
+.13221749436096303, 0.027359828232099287, 0.030887113219550014, 0.067545815
+5244256]
+True data generation probabilities: [0.012475572764691347, 0.02759115956301
+153, 0.004030932560100506, 0.013008651265311708, 0.012888510278451618, 0.03
+7656116813111006, 0.007242363105598982, 0.006930069564505769, 0.00538389836
+228327, 0.0036198124274772225, 0.005212387391120808, 0.003185556887255863, 
+0.003820168769118259, 0.036849638787622915, 0.109428569898501, 0.0726075387
+5224316, 0.026079268674281158, 0.024477855252934583, 0.010207778995219957, 
+0.008532295265944583, 0.040242532118754906, 0.005181587450423221, 0.0082073
+91370854009, 0.02741148713822125, 0.006623087410725917, 0.00836770271463416
+2, 0.009668643362989908, 0.007171783607096945, 0.016985615150215773, 0.0070
+80691453323701, 0.008297044496975403, 0.0037359000700039487, 0.011142755810
+390478, 0.010256554277897088, 0.09528238587772694, 0.04369806970660494, 0.1
+3308101804159636, 0.02665693577960761, 0.030479170124456504, 0.069201498658
+71575]</code></pre><pre><code class="language-julia hljs">mse = mean((predictive.p - p).^2);
+println(&quot;MSE between estimated and true data generation probabilities: $mse&quot;)</code></pre><pre><code class="nohighlight hljs">MSE between estimated and true data generation probabilities: 2.98495795366
+75624e-7</code></pre><pre><code class="language-julia hljs">@model function multinomial_regression(obs, N, X, ϕ, ξβ, Wβ)
+    β ~ MvNormalWeightedMeanPrecision(ξβ, Wβ)
+    for i in eachindex(obs)
+        Ψ[i] := ϕ(X[i])*β
+        obs[i] ~ MultinomialPolya(N, Ψ[i]) where {dependencies = RequireMessageFunctionalDependencies(ψ = MvNormalWeightedMeanPrecision(zeros(length(obs[i])-1), diageye(length(obs[i])-1)))}
+    end
+end</code></pre><pre><code class="language-julia hljs">function generate_regression_data(rng=StableRNG(123);ϕ = identity,N = 3, k=5, nsamples = 1000)
+    β = randn(rng, k)
+    X = randn(rng, nsamples, k, k)
+    X = [X[i,:,:] for i in 1:size(X,1)];
+    Ψ = ϕ.(X)
+    p = map(x -&gt; logistic_stick_breaking(x*β), Ψ)
+    return map(x -&gt; rand(rng, Multinomial(N, x)), p), X, β, p
+end</code></pre><pre><code class="nohighlight hljs">generate_regression_data (generic function with 2 methods)</code></pre><pre><code class="language-julia hljs">ϕ = x -&gt; sin(x)
+obs_regression, X_regression, β_regression, p_regression = generate_regression_data(;nsamples = 5000, ϕ = ϕ);</code></pre><pre><code class="language-julia hljs">reg_results = infer(  
+    model = multinomial_regression(N = 3, ϕ = ϕ, ξβ = zeros(5), Wβ = rand(Wishart(5, diageye(5)))),
+    data = (obs=obs_regression,X = X_regression ),
+    iterations = 20,
+    free_energy = true,
+    showprogress = true,
+    returnvars = KeepLast(),
+    options = (
+        limit_stack_depth = 100,
+    ) 
+)</code></pre><pre><code class="nohighlight hljs">Inference results:
+  Posteriors       | available for (Ψ, β)
+  Free Energy:     | Real[11949.4, 11582.8, 11500.3, 11479.2, 11473.5, 1147
+1.9, 11471.5, 11471.4, 11471.3, 11471.3, 11471.3, 11471.3, 11471.3, 11471.3
+, 11471.3, 11471.3, 11471.3, 11471.3, 11471.3, 11471.3]</code></pre><pre><code class="language-julia hljs">println(&quot;estimated β: with mean and covariance: $(mean_cov(reg_results.posteriors[:β]))&quot;)
+println(&quot;true β: $(β_regression)&quot;)</code></pre><pre><code class="nohighlight hljs">estimated β: with mean and covariance: ([-0.1144092413087327, 0.66349791558
+68727, -1.2548462408421799, -0.08411743180486715, -0.08041448211760642], [0
+.0001479134617400009 -2.2254992794110347e-6 3.5326895793662317e-6 -1.636271
+6267793924e-6 3.2368276753396337e-6; -2.2254992794110347e-6 0.0001517406001
+5081057 -1.934396255761039e-5 -1.8052859239320158e-7 1.302935356075217e-6; 
+3.5326895793662317e-6 -1.934396255761039e-5 0.00017983156037404286 4.302103
+577558996e-6 5.863091423296406e-7; -1.6362716267793924e-6 -1.80528592393201
+58e-7 4.302103577558996e-6 0.0001401108971022439 3.2303464025294458e-6; 3.2
+368276753396337e-6 1.302935356075217e-6 5.863091423296406e-7 3.230346402529
+4458e-6 0.00013947656440207074])
+true β: [-0.12683768965424458, 0.6668851724871252, -1.2566124895590247, -0.
+08499562516549662, -0.094274004848194]</code></pre><pre><code class="language-julia hljs">plot(reg_results.free_energy,
+title=&quot;Free Energy Over Iterations&quot;,
+xlabel=&quot;Iteration&quot;,
+ylabel=&quot;Free Energy&quot;,
+linewidth=2,
+legend=false,
+grid=true,)</code></pre><p><img src="Bayesian Multinomial Regression_14_1.png" alt/></p><pre><code class="language-julia hljs">mse_β =  mean((mean(reg_results.posteriors[:β]) - β_regression).^2)
+println(&quot;MSE of β estimate: $mse_β&quot;)</code></pre><pre><code class="nohighlight hljs">MSE of β estimate: 7.238341320268984e-5</code></pre><p>We can visualize how the logistic stick-breaking transformation of the simplex coordinates of the regression coefficients affects the prior distribution of the regression coefficients and vice versa since the logistic stick-breaking transformation is invertible.</p><pre><code class="language-julia hljs">
+# Previous helper functions remain the same
+σ(x) = 1 / (1 + exp(-x))
+σ_inv(x) = log(x / (1 - x))
+
+function jacobian_det(π)
+    K = length(π)
+    det = 1.0
+    for k in 1:(K-1)
+        num = 1 - sum(π[1:(k-1)])
+        den = π[k] * (1 - sum(π[1:k]))
+        det *= num / den
+    end
+    return det
+end
+
+function ψ_to_π(ψ::Vector{Float64})
+    K = length(ψ) + 1
+    π = zeros(K)
+    for k in 1:(K-1)
+        π[k] = σ(ψ[k]) * (1 - sum(π[1:(k-1)]))
+    end
+    π[K] = 1 - sum(π[1:(K-1)])
+    return π
+end
+
+function π_to_ψ(π)
+    K = length(π)
+    ψ = zeros(K-1)
+    ψ[1] = σ_inv(π[1])
+    for k in 2:(K-1)
+        ψ[k] = σ_inv(π[k] / (1 - sum(π[1:(k-1)])))
+    end
+    return ψ
+end
+
+# Function to compute density in simplex coordinates
+function compute_simplex_density(x::Float64, y::Float64, Σ::Matrix{Float64})
+    # Check if point is inside triangle
+    if y &lt; 0 || y &gt; 1 || x &lt; 0 || x &gt; 1 || (x + y) &gt; 1
+        return 0.0
+    end
+    
+    # Convert from simplex coordinates to π
+    π1 = x
+    π2 = y
+    π3 = 1 - x - y
+    
+    try
+        ψ = π_to_ψ([π1, π2, π3])
+        # Compute Gaussian density
+        dist = MvNormal(zeros(2), Σ)
+        return pdf(dist, ψ) * abs(jacobian_det([π1, π2, π3]))
+    catch
+        return 0.0
+    end
+   
+end
+
+function plot_transformed_densities()
+    # Create three different covariance matrices
+    ###For higher variances values needs scaling for proper visualization.
+    σ² = 1.0
+    Σ_corr = [σ² 0.9σ²; 0.9σ² σ²]
+    Σ_anticorr = [σ² -0.9σ²; -0.9σ² σ²]
+    Σ_uncorr = [σ² 0.0; 0.0 σ²]
+    
+    # Plot Gaussian densities
+    ψ1, ψ2 = range(-4sqrt(σ²), 4sqrt(σ²), length=500), range(-4sqrt(σ²), 4sqrt(σ²), length=100)
+    
+    p1 = contour(ψ1, ψ2, (x,y) -&gt; pdf(MvNormal(zeros(2), Σ_corr), [x,y]),
+                 title=&quot;Correlated Prior&quot;, xlabel=&quot;ψ₁&quot;, ylabel=&quot;ψ₂&quot;)
+    p2 = contour(ψ1, ψ2, (x,y) -&gt; pdf(MvNormal(zeros(2), Σ_anticorr), [x,y]),
+                 title=&quot;Anti-correlated Prior&quot;, xlabel=&quot;ψ₁&quot;, ylabel=&quot;ψ₂&quot;)
+    p3 = contour(ψ1, ψ2, (x,y) -&gt; pdf(MvNormal(zeros(2), Σ_uncorr), [x,y]),
+                 title=&quot;Uncorrelated Prior&quot;, xlabel=&quot;ψ₁&quot;, ylabel=&quot;ψ₂&quot;)
+    
+    # Plot simplex densities
+    n_points = 500
+    x = range(0, 1, length=n_points)
+    y = range(0, 1, length=n_points)
+    
+    # Plot simplices
+    p4 = contour(x, y, (x,y) -&gt; compute_simplex_density(x, y, Σ_corr),
+                 title=&quot;Correlated Simplex&quot;)
+    
+    # Add simplex boundaries and median lines
+    plot!(p4, [0,1,0,0], [0,0,1,0], color=:black, label=&quot;&quot;)  # Triangle boundaries
+    
+    p5 = contour(x, y, (x,y) -&gt; compute_simplex_density(x, y, Σ_anticorr),
+                 title=&quot;Anti-correlated Simplex&quot;)
+    plot!(p5, [0,1,0,0], [0,0,1,0], color=:black, label=&quot;&quot;)
+    
+    p6 = contour(x, y, (x,y) -&gt; compute_simplex_density(x, y, Σ_uncorr),
+                 title=&quot;Uncorrelated Simplex&quot;)
+    plot!(p6, [0,1,0,0], [0,0,1,0], color=:black, label=&quot;&quot;)
+    
+    # Combine all plots
+    plot(p1, p2, p3, p4, p5, p6, layout=(2,3), size=(900,600))
+end
+
+# Generate the plots
+plot_transformed_densities()</code></pre><p><img src="Bayesian Multinomial Regression_16_1.png" alt/></p><hr/><div class="admonition is-info"><header class="admonition-header">Contributing</header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><div class="admonition is-compat"><header class="admonition-header">Environment</header><div class="admonition-body"><p>This example was executed in a clean, isolated environment. Below are the exact package versions used:</p><p>For reproducibility:</p><ul><li>Use the same package versions when running locally</li><li>Report any issues with package compatibility</li></ul></div></div><pre><code class="nohighlight hljs">Status `~/work/RxInferExamples.jl/RxInferExamples.jl/docs/src/categories/basic_examples/bayesian_multinomial_regression/Project.toml`
+  [31c24e10] Distributions v0.25.117
+  [62312e5e] ExponentialFamily v2.0.1
+  [91a5bcdd] Plots v1.40.9
+  [86711068] RxInfer v4.2.0
+  [860ef19b] StableRNGs v1.0.2
+  [f3b207a7] StatsPlots v0.15.7
+</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../bayesian_linear_regression/">« Bayesian Linear Regression</a><a class="docs-footer-nextpage" href="../coin_toss_model/">Coin Toss Model »</a><div class="flexbox-break"></div><p class="footer-message">Created in <a href="https://biaslab.github.io/">BIASlab</a>, maintained by <a href="https://github.com/ReactiveBayes">ReactiveBayes</a>, powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.8.1 on <span class="colophon-date" title="Friday 7 March 2025 13:50">Friday 7 March 2025</span>. Using Julia version 1.11.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

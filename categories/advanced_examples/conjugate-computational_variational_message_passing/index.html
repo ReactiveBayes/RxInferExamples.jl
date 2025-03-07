@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Conjugate-Computational Variational Message Passing · RxInfer.jl Examples</title><meta name="title" content="Conjugate-Computational Variational Message Passing · RxInfer.jl Examples"/><meta property="og:title" content="Conjugate-Computational Variational Message Passing · RxInfer.jl Examples"/><meta property="twitter:title" content="Conjugate-Computational Variational Message Passing · RxInfer.jl Examples"/><meta name="description" content="A repository of examples and tutorials for RxInfer.jl, a Julia package for reactive message passing inference in probabilistic models."/><meta property="og:description" content="A repository of examples and tutorials for RxInfer.jl, a Julia package for reactive message passing inference in probabilistic models."/><meta property="twitter:description" content="A repository of examples and tutorials for RxInfer.jl, a Julia package for reactive message passing inference in probabilistic models."/><meta property="og:url" content="https://examples.rxinfer.ml/categories/advanced_examples/conjugate-computational_variational_message_passing/"/><meta property="twitter:url" content="https://examples.rxinfer.ml/categories/advanced_examples/conjugate-computational_variational_message_passing/"/><link rel="canonical" href="https://examples.rxinfer.ml/categories/advanced_examples/conjugate-computational_variational_message_passing/"/><script async src="https://www.googletagmanager.com/gtag/js?id=G-GMFX620VEP"></script><script>  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-GMFX620VEP', {'page_path': location.pathname + location.search + location.hash});
+</script><script data-outdated-warner src="../../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../../assets/documenter.js"></script><script src="../../../search_index.js"></script><script src="../../../siteinfo.js"></script><script src="../../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../../assets/themeswap.js"></script><link href="../../../assets/theme.css" rel="stylesheet" type="text/css"/><link href="../../../assets/header.css" rel="stylesheet" type="text/css"/><script src="../../../assets/header.js"></script><script src="../../../assets/chat.js"></script><link href="../../../assets/favicon.ico" rel="icon" type="image/x-icon"/>
+    <meta property="og:title" content="Conjugate-Computational Variational Message Passing (CVI) - RxInfer Examples">
+    <meta name="description" content="This example provides an extensive tutorial for the non-conjugate message-passing based inference by exploiting the local CVI approximation.
+">
+    <meta property="og:description" content="This example provides an extensive tutorial for the non-conjugate message-passing based inference by exploiting the local CVI approximation.
+">
+    <meta name="keywords" content="rxinfer, julia, bayesian inference, examples, probabilistic programming, message passing, probabilistic numerics, variational inference, belief propagation, advanced examples, cvi, non conjugate, tutorial">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://examples.rxinfer.ml/sitemap.xml">
+    </head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../../"><img class="docs-light-only" src="../../../assets/logo.svg" alt="RxInfer.jl Examples logo"/><img class="docs-dark-only" src="../../../assets/logo-dark.svg" alt="RxInfer.jl Examples logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../../">RxInfer.jl Examples</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../../">Home</a></li><li><a class="tocitem" href="../../../how_to_contribute/">How to contribute</a></li><li><a class="tocitem" href="../../../autogenerated/list_of_examples/">List of Examples</a></li><li><span class="tocitem">Basic Examples</span><ul><li><a class="tocitem" href="../../basic_examples/bayesian_binomial_regression/">Bayesian Binomial Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_linear_regression/">Bayesian Linear Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_multinomial_regression/">Bayesian Multinomial Regression</a></li><li><a class="tocitem" href="../../basic_examples/coin_toss_model/">Coin Toss Model</a></li><li><a class="tocitem" href="../../basic_examples/feature_functions_in_bayesian_regression/">Feature Functions In Bayesian Regression</a></li><li><a class="tocitem" href="../../basic_examples/hidden_markov_model/">Hidden Markov Model</a></li><li><a class="tocitem" href="../../basic_examples/kalman_filtering_and_smoothing/">Kalman Filtering And Smoothing</a></li><li><a class="tocitem" href="../../basic_examples/pomdp_control/">Pomdp Control</a></li><li><a class="tocitem" href="../../basic_examples/predicting_bike_rental_demand/">Predicting Bike Rental Demand</a></li></ul></li><li><span class="tocitem">Advanced Examples</span><ul><li><a class="tocitem" href="../active_inference_mountain_car/">Active Inference Mountain Car</a></li><li><a class="tocitem" href="../advanced_tutorial/">Advanced Tutorial</a></li><li><a class="tocitem" href="../assessing_people_skills/">Assessing People Skills</a></li><li><a class="tocitem" href="../chance_constraints/">Chance Constraints</a></li><li class="is-active"><a class="tocitem" href>Conjugate-Computational Variational Message Passing</a><ul class="internal"><li><a class="tocitem" href="#An-example:-nonlinear-dynamical-system"><span>An example: nonlinear dynamical system</span></a></li><li><a class="tocitem" href="#Requirements"><span>Requirements</span></a></li><li><a class="tocitem" href="#Extensions"><span>Extensions</span></a></li></ul></li><li><a class="tocitem" href="../drone_dynamics/">Drone Dynamics</a></li><li><a class="tocitem" href="../global_parameter_optimisation/">Global Parameter Optimisation</a></li><li><a class="tocitem" href="../gp_regression_by_ssm/">Gp Regression By Ssm</a></li><li><a class="tocitem" href="../infinite_data_stream/">Infinite Data Stream</a></li><li><a class="tocitem" href="../multi-agent_trajectory_planning/">Multi-Agent Trajectory Planning</a></li><li><a class="tocitem" href="../nonlinear_sensor_fusion/">Nonlinear Sensor Fusion</a></li><li><a class="tocitem" href="../robotic_arm/">Robotic Arm</a></li></ul></li><li><span class="tocitem">Problem Specific</span><ul><li><a class="tocitem" href="../../problem_specific/autoregressive_models/">Autoregressive Models</a></li><li><a class="tocitem" href="../../problem_specific/gamma_mixture/">Gamma Mixture</a></li><li><a class="tocitem" href="../../problem_specific/gaussian_mixture/">Gaussian Mixture</a></li><li><a class="tocitem" href="../../problem_specific/hierarchical_gaussian_filter/">Hierarchical Gaussian Filter</a></li><li><a class="tocitem" href="../../problem_specific/invertible_neural_network_tutorial/">Invertible Neural Network Tutorial</a></li><li><a class="tocitem" href="../../problem_specific/litter_model/">Litter Model</a></li><li><a class="tocitem" href="../../problem_specific/ode_parameter_estimation/">Ode Parameter Estimation</a></li><li><a class="tocitem" href="../../problem_specific/probit_model/">Probit Model</a></li><li><a class="tocitem" href="../../problem_specific/rts_vs_bifm_smoothing/">Rts Vs Bifm Smoothing</a></li><li><a class="tocitem" href="../../problem_specific/simple_nonlinear_node/">Simple Nonlinear Node</a></li><li><a class="tocitem" href="../../problem_specific/structural_dynamics_with_augmented_kalman_filter/">Structural Dynamics With Augmented Kalman Filter</a></li><li><a class="tocitem" href="../../problem_specific/universal_mixtures/">Universal Mixtures</a></li></ul></li><li><a class="tocitem" href="../../../how_build_works/">How we build the examples</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Advanced Examples</a></li><li class="is-active"><a href>Conjugate-Computational Variational Message Passing</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Conjugate-Computational Variational Message Passing</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl/blob/main/docs/src/categories/advanced_examples/conjugate-computational_variational_message_passing/index.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><div class="admonition is-info"><header class="admonition-header">Contributing</header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><h1 id="Conjugate-Computational-Variational-Message-Passing-(CVI)"><a class="docs-heading-anchor" href="#Conjugate-Computational-Variational-Message-Passing-(CVI)">Conjugate-Computational Variational Message Passing (CVI)</a><a id="Conjugate-Computational-Variational-Message-Passing-(CVI)-1"></a><a class="docs-heading-anchor-permalink" href="#Conjugate-Computational-Variational-Message-Passing-(CVI)" title="Permalink"></a></h1><pre><code class="language-julia hljs">using RxInfer, Random, LinearAlgebra, Plots, Optimisers, StableRNGs, SpecialFunctions</code></pre><p>In this notebook, the usage of Conjugate-NonConjugate Variational Inference (CVI) will be described. The implementation of CVI follows the paper <a href="https://reader.elsevier.com/reader/sd/pii/S0888613X22000950?token=EFB22E01793BD0BF73EECC9702C315644969403BD44B13FA850E9F66C8A49E88C0D5C68A9AD03301C609DA443DB33F80&amp;originRegion=eu-west-1&amp;originCreation=20221027115856">Probabilistic programming with stochastic variational message passing</a>.</p><p>This notebook will first describe an example in which CVI is used, then it discusses several limitations, followed by an explanation on how to extend upon CVI.</p><h2 id="An-example:-nonlinear-dynamical-system"><a class="docs-heading-anchor" href="#An-example:-nonlinear-dynamical-system">An example: nonlinear dynamical system</a><a id="An-example:-nonlinear-dynamical-system-1"></a><a class="docs-heading-anchor-permalink" href="#An-example:-nonlinear-dynamical-system" title="Permalink"></a></h2><p>A group of researchers is performing a tracking experiment on some moving object along a 1-dimensional trajectory. The object is moving at a constant velocity, meaning that its position increases constantly over time. However, the researchers do not have access to the absolute position <span>$z_t$</span> at time <span>$t$</span>. Instead they have access to the observed squared distance <span>$y_t$</span> between the object and some reference point <span>$s$</span>. Because of budget cuts, the servo moving the object and the measurement devices are quite outdated and therefore lead to noisy measurements:</p><pre><code class="language-julia hljs"># data generating process
+nr_observations = 50
+reference_point = 53
+hidden_location = collect(1:nr_observations) + rand(StableRNG(124), NormalMeanVariance(0.0, sqrt(5)), nr_observations)
+measurements = (hidden_location .- reference_point).^2 + rand(MersenneTwister(124), NormalMeanVariance(0.0, 5), nr_observations);</code></pre><pre><code class="language-julia hljs"># plot hidden location and reference frame
+p1 = plot(1:nr_observations, hidden_location, linewidth=3, legend=:topleft, label=&quot;hidden location&quot;)
+hline!([reference_point], linewidth=3, label=&quot;reference point&quot;)
+xlabel!(&quot;time [sec]&quot;), ylabel!(&quot;location [cm]&quot;)
+
+# plot measurements
+p2 = scatter(1:nr_observations, measurements, linewidth=3, label=&quot;measurements&quot;)
+xlabel!(&quot;time [sec]&quot;), ylabel!(&quot;squared distance [cm2]&quot;)
+
+plot(p1, p2, size=(1200, 500))</code></pre><p><img src="Conjugate-Computational Variational Message Passing_3_1.png" alt/></p><p>The researchers are interested in quantifying this noise and in tracking the unobserved location of the object. As a result of this uncertainty, the researchers employ a probabilistic modeling approach. They formulate the probabilistic model</p><p class="math-container">\[\begin{aligned}
+ p(\tau) &amp; = \Gamma(\tau \mid \alpha_{\tau}, \beta_{\tau}),\\
+ p(\gamma) &amp; = \Gamma(\gamma \mid \alpha_{\gamma}, \beta_{\gamma}),\\
+ p(z_t \mid z_{t - 1}, \tau) &amp; = \mathcal{N}(z_t \mid z_{t - 1} + 1, \tau^{-1}),\\
+ p(y_t \mid z_t, \gamma) &amp; = \mathcal{N}(y_t \mid (z_t - s)^2, \gamma^{-1}),
+\end{aligned}\]</p><p>where the researchers put priors on the process and measurement noise parameters, <span>$\tau$</span> and <span>$\gamma$</span>, respectively. They do this, because they do not know the accuracy of their devices.</p><p>The researchers have recently heard of this cool probabilistic programming package <code>RxInfer.jl</code>. They decided to give it a try and create the above model as follows:</p><pre><code class="language-julia hljs">function compute_squared_distance(z)
+    (z - reference_point)^2
+end;</code></pre><pre><code class="language-julia hljs">@model function measurement_model(y)
+
+    # set priors on precision parameters
+    τ ~ Gamma(shape = 0.01, rate = 0.01)
+    γ ~ Gamma(shape = 0.01, rate = 0.01)
+    
+    # specify estimate of initial location
+    z[1] ~ Normal(mean = 0, precision = τ)
+    y[1] ~ Normal(mean = compute_squared_distance(z[1]), precision = γ)
+
+    # loop over observations
+    for t in 2:length(y)
+
+        # specify state transition model
+        z[t] ~ Normal(mean = z[t-1] + 1, precision = τ)
+
+        # specify non-linear observation model
+        y[t] ~ Normal(mean = compute_squared_distance(z[t]), precision = γ)
+        
+    end
+
+end</code></pre><p>But here is the problem, our <code>compute_squared_distance</code> function is already compelx enough such that the exact Bayesian inference is intractable in this model. But the researchers knew that the <code>RxInfer.jl</code> supports a various collection of approximation methods for exactly such cases. One of these approximations is called CVI. CVI allows us to perform probabilistic inference around the non-linear measurement function. In general, for any (non-)linear relationship <code>y = f(x1, x2, ..., xN)</code> CVI can be employed, by specifying the function <code>f</code> and by adding this relationship inside the <code>@model</code> macro as <code>y ~ f(x1, x2, ...,xN)</code>. The <code>@model</code> macro will generate a factor node with node function <code>p(y | x1, x2, ..., xN) = δ(y - f(x1, x2, ...,xN))</code>.</p><p>The use of this non-linearity requires us to specify that we would like to use CVI. This can be done by specifying the metadata using the <code>@meta</code> macro as:</p><pre><code class="language-julia hljs">@meta function measurement_meta(rng, nr_samples, nr_iterations, optimizer)
+    compute_squared_distance() -&gt; CVI(rng, nr_samples, nr_iterations, optimizer)
+end;</code></pre><p>In general, for any (non-)linear function <code>f()</code>, CVI can be enabled with the <code>@meta</code> macro as:</p><pre><code class="language-julia hljs">@meta function model_meta(...)
+    f() -&gt; CVI(args...)
+end</code></pre><p>See <code>?CVI</code> for more information about the <code>args...</code>.</p><p>In our model, the <code>z</code> variables are connected to the non-linear node function. So in order to run probabilstic inference with <code>CVI</code> we need to enforce a constraint on the joint posterior distribution. Specifically, we need to create a factorization in which the variables that are directly connected to non-linearities are assumed to be independent from the rest of the variables.</p><p>In the above example, we will assume the following posterior factorization:</p><pre><code class="language-julia hljs">@constraints function measurement_constraints()
+    q(z, τ, γ) = q(z)q(τ)q(γ)
+end;</code></pre><p>This constraint can be explained by the set of two constraints, one for getting CVI to run, and one for assuming a mean-field factorization around the normal node as </p><pre><code class="language-julia hljs">@constraints function posterior_constraints() begin
+    q(z, γ) = q(z)q(γ) # CVI
+    q(z, τ) = q(z)q(τ) # the mean-field assumption around normal node
+end</code></pre><p>Because the engineers are using <code>RxInfer.jl</code>, they can automate the inference procedure. They track the inference performance using the Bethe free energy.</p><pre><code class="language-julia hljs">initialization = @initialization begin
+    μ(z) = NormalMeanVariance(0, 5)
+    q(z) = NormalMeanVariance(0, 5)
+    q(τ) = GammaShapeRate(1e-12, 1e-3)
+    q(γ) = GammaShapeRate(1e-12, 1e-3)
+end
+
+results = infer(
+    model = measurement_model(),
+    data = (y = measurements,),
+    iterations = 50,
+    free_energy = true,
+    returnvars = (z = KeepLast(),),
+    constraints = measurement_constraints(),
+    meta = measurement_meta(StableRNG(42), 1000, 1000, Optimisers.Descent(0.001)),
+    initialization = initialization
+)</code></pre><pre><code class="nohighlight hljs">Inference results:
+  Posteriors       | available for (z)
+  Free Energy:     | Real[506.224, 327.426, 325.122, 320.962, 315.966, 312.
+922, 311.014, 309.621, 308.792, 308.776  …  306.958, 306.514, 306.427, 306.
+842, 306.876, 306.751, 306.631, 306.762, 306.91, 306.734]</code></pre><pre><code class="language-julia hljs"># plot estimates for location
+p1 = plot(collect(1:nr_observations), hidden_location, label = &quot;hidden location&quot;, legend=:topleft, linewidth=3, color = :red)
+plot!(map(mean, results.posteriors[:z]), label = &quot;estimated location (±2σ)&quot;, ribbon = map(x -&gt; 2*std(x), results.posteriors[:z]), fillalpha=0.5, linewidth=3, color = :orange)
+xlabel!(&quot;time [sec]&quot;), ylabel!(&quot;location [cm]&quot;)
+
+# plot Bethe free energy
+p2 = plot(results.free_energy, linewidth=3, label = &quot;&quot;)
+xlabel!(&quot;iteration&quot;), ylabel!(&quot;Bethe free energy [nats]&quot;)
+
+plot(p1, p2, size = (1200, 500))</code></pre><p><img src="Conjugate-Computational Variational Message Passing_9_1.png" alt/></p><h2 id="Requirements"><a class="docs-heading-anchor" href="#Requirements">Requirements</a><a id="Requirements-1"></a><a class="docs-heading-anchor-permalink" href="#Requirements" title="Permalink"></a></h2><p>There are several main requirements for the <code>CVI</code> procedure to satisfy:</p><ol><li>The <code>out</code> interface of the non-linearity must be independently factorized with respect to other variables in the model.</li><li>The messages on input interfaces (<code>x1, x2, ..., xN</code>) are required to be from the exponential family of distributions.</li></ol><p>In <code>RxInfer</code>, you can satisfy the first requirement by using appropriate factor nodes (<code>Normal</code>, <code>Gamma</code>, <code>Bernoulli</code>, etc) and second requirement by specifying the <code>@constraints</code> macro. In general you can specify this procedure as</p><pre><code class="language-julia hljs">@model function model(...)
+    ...
+    y ~ f(x1, x2, ..., xN)
+    ... ~ Node2(z1,..., y, zM) # some node that is using the out interface of the non-linearity
+    ... 
+end
+
+@constraints function constraints_meta() begin
+    q(y, z1, ..., zn) = q(y)q(z1,...,zM)
+    ...
+end;
+
+@meta function model_meta(...)
+    f() -&gt; CVI(rng, nr_samples, nr_iterations, optimizer))
+end</code></pre><p>Note that not all exponential family distributions are implemented.</p><h2 id="Extensions"><a class="docs-heading-anchor" href="#Extensions">Extensions</a><a id="Extensions-1"></a><a class="docs-heading-anchor-permalink" href="#Extensions" title="Permalink"></a></h2><h3 id="Using-a-custom-optimizer"><a class="docs-heading-anchor" href="#Using-a-custom-optimizer">Using a custom optimizer</a><a id="Using-a-custom-optimizer-1"></a><a class="docs-heading-anchor-permalink" href="#Using-a-custom-optimizer" title="Permalink"></a></h3><p><code>CVI</code> only supports <code>Optimisers</code> optimizers out of the box.</p><p>Below an explanation on how to extend to it to a custom optimizer.</p><p>Suppose we have <code>CustomDescent</code> structure which we want to use inside <code>CVI</code> for optimization.</p><p>To do so, we need to implement <code>ReactiveMP.cvi_update!(opt::CustomDescent, λ, ∇)</code>.</p><p><code>ReactiveMP.cvi_update!</code> incapsulates the gradient step:</p><ol><li><code>opt</code> is used to select your optimizer structure</li><li><code>λ</code> is the current value</li><li><code>∇</code> is a gradient value computed inside <code>CVI</code>.</li></ol><pre><code class="language-julia hljs">struct CustomDescent 
+    learning_rate::Float64
+end
+
+# Must return an optimizer and its initial state
+function ReactiveMP.cvi_setup(opt::CustomDescent, q)
+     return (opt, nothing)
+end
+
+# Must return an updated (opt, state) and an updated λ (can use new_λ for inplace operation)
+function ReactiveMP.cvi_update!(opt_and_state::Tuple{CustomDescent, Nothing}, new_λ, λ, ∇)
+    opt, _ = opt_and_state
+    λ̂ = vec(λ) - (opt.learning_rate .* vec(∇))
+    copyto!(new_λ, λ̂)
+    return opt_and_state, new_λ
+end</code></pre><p>Let&#39;s try to apply it to a model: <span>$\begin{aligned}  p(x) &amp; = \mathcal{N}(0, 1),\\
+ p(y_{i}\mid x) &amp; = \mathcal{N}(y_i \mid x^2, 1),\\
+\end{aligned}$</span></p><p>Let&#39;s generate some synthetic data for the model</p><pre><code class="language-julia hljs"># generate data
+y = rand(StableRNG(123), NormalMeanVariance(19^2, 10), 1000)
+histogram(y)</code></pre><p><img src="Conjugate-Computational Variational Message Passing_11_1.png" alt/></p><p>Again we can create the corresponding model as:</p><pre><code class="language-julia hljs"># specify non-linearity
+f(x) = x ^ 2
+
+# specify model
+@model function normal_square_model(y)
+    # describe prior on latent state, we set an arbitrary prior 
+    # in a positive domain
+    x ~ Normal(mean = 5, precision = 1e-3)
+    # transform latent state
+    mean := f(x)
+    # observation model
+    y .~ Normal(mean = mean, precision = 0.1)
+end
+
+# specify meta
+@meta function normal_square_meta(rng, nr_samples, nr_iterations, optimizer)
+    f() -&gt;  CVI(rng, nr_samples, nr_iterations, optimizer)
+end</code></pre><pre><code class="nohighlight hljs">normal_square_meta (generic function with 1 method)</code></pre><p>We will use the <code>inference</code> function from <code>ReactiveMP</code> to run inference, where we provide an instance of the <code>CustomDescent</code> structure in our <code>meta</code> macro function:</p><pre><code class="language-julia hljs">res = infer(
+    model = normal_square_model(),
+    data = (y = y,),
+    iterations = 5,
+    free_energy = true,
+    meta = normal_square_meta(StableRNG(123), 1000, 1000, CustomDescent(0.001)),
+    free_energy_diagnostics = nothing
+)
+
+mean(res.posteriors[:x][end])</code></pre><pre><code class="nohighlight hljs">18.992828536095285</code></pre><p>The mean inferred value of <code>x</code> is indeed close to <code>19</code>, which was used to generate the data. Inference is working! </p><pre><code class="language-julia hljs">p1 = plot(mean.(res.posteriors[:x]), ribbon = 3std.(res.posteriors[:x]), label = &quot;Posterior estimation&quot;, ylim = (0, 40))
+p2 = plot(res.free_energy, label = &quot;Bethe Free Energy&quot;)
+
+plot(p1, p2, layout = @layout([ a b ]))</code></pre><p><img src="Conjugate-Computational Variational Message Passing_14_1.png" alt/></p><p><strong>Note</strong>: <span>$x^2$</span> can not be inverted; the sign information can be lost: -19 and 19 are both equally good solutions.</p><hr/><div class="admonition is-info"><header class="admonition-header">Contributing</header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><div class="admonition is-compat"><header class="admonition-header">Environment</header><div class="admonition-body"><p>This example was executed in a clean, isolated environment. Below are the exact package versions used:</p><p>For reproducibility:</p><ul><li>Use the same package versions when running locally</li><li>Report any issues with package compatibility</li></ul></div></div><pre><code class="nohighlight hljs">Status `~/work/RxInferExamples.jl/RxInferExamples.jl/docs/src/categories/advanced_examples/conjugate-computational_variational_message_passing/Project.toml`
+⌃ [3bd65402] Optimisers v0.3.4
+  [91a5bcdd] Plots v1.40.9
+  [86711068] RxInfer v4.2.0
+  [276daf66] SpecialFunctions v2.5.0
+  [860ef19b] StableRNGs v1.0.2
+  [37e2e46d] LinearAlgebra v1.11.0
+  [9a3f8284] Random v1.11.0
+Info Packages marked with ⌃ have new versions available and may be upgradable.
+</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../chance_constraints/">« Chance Constraints</a><a class="docs-footer-nextpage" href="../drone_dynamics/">Drone Dynamics »</a><div class="flexbox-break"></div><p class="footer-message">Created in <a href="https://biaslab.github.io/">BIASlab</a>, maintained by <a href="https://github.com/ReactiveBayes">ReactiveBayes</a>, powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.8.1 on <span class="colophon-date" title="Friday 7 March 2025 13:50">Friday 7 March 2025</span>. Using Julia version 1.11.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

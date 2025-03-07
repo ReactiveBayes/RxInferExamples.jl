@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Feature Functions In Bayesian Regression · RxInfer.jl Examples</title><meta name="title" content="Feature Functions In Bayesian Regression · RxInfer.jl Examples"/><meta property="og:title" content="Feature Functions In Bayesian Regression · RxInfer.jl Examples"/><meta property="twitter:title" content="Feature Functions In Bayesian Regression · RxInfer.jl Examples"/><meta name="description" content="A repository of examples and tutorials for RxInfer.jl, a Julia package for reactive message passing inference in probabilistic models."/><meta property="og:description" content="A repository of examples and tutorials for RxInfer.jl, a Julia package for reactive message passing inference in probabilistic models."/><meta property="twitter:description" content="A repository of examples and tutorials for RxInfer.jl, a Julia package for reactive message passing inference in probabilistic models."/><meta property="og:url" content="https://examples.rxinfer.ml/categories/basic_examples/feature_functions_in_bayesian_regression/"/><meta property="twitter:url" content="https://examples.rxinfer.ml/categories/basic_examples/feature_functions_in_bayesian_regression/"/><link rel="canonical" href="https://examples.rxinfer.ml/categories/basic_examples/feature_functions_in_bayesian_regression/"/><script async src="https://www.googletagmanager.com/gtag/js?id=G-GMFX620VEP"></script><script>  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-GMFX620VEP', {'page_path': location.pathname + location.search + location.hash});
+</script><script data-outdated-warner src="../../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../../assets/documenter.js"></script><script src="../../../search_index.js"></script><script src="../../../siteinfo.js"></script><script src="../../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../../assets/themeswap.js"></script><link href="../../../assets/theme.css" rel="stylesheet" type="text/css"/><link href="../../../assets/header.css" rel="stylesheet" type="text/css"/><script src="../../../assets/header.js"></script><script src="../../../assets/chat.js"></script><link href="../../../assets/favicon.ico" rel="icon" type="image/x-icon"/>
+    <meta property="og:title" content="Feature Functions in Bayesian Regression - RxInfer Examples">
+    <meta name="description" content="An example of Bayesian inference in a parametric Gaussian regression model.
+Based on "Probabilistic Numerics: Computation as Machine Learning" by Hennig, Osborne and Kersting.
+">
+    <meta property="og:description" content="An example of Bayesian inference in a parametric Gaussian regression model.
+Based on "Probabilistic Numerics: Computation as Machine Learning" by Hennig, Osborne and Kersting.
+">
+    <meta name="keywords" content="rxinfer, julia, bayesian inference, examples, probabilistic programming, message passing, probabilistic numerics, variational inference, belief propagation, regression, basis functions, parametric">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://examples.rxinfer.ml/sitemap.xml">
+    </head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../../"><img class="docs-light-only" src="../../../assets/logo.svg" alt="RxInfer.jl Examples logo"/><img class="docs-dark-only" src="../../../assets/logo-dark.svg" alt="RxInfer.jl Examples logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../../">RxInfer.jl Examples</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../../">Home</a></li><li><a class="tocitem" href="../../../how_to_contribute/">How to contribute</a></li><li><a class="tocitem" href="../../../autogenerated/list_of_examples/">List of Examples</a></li><li><span class="tocitem">Basic Examples</span><ul><li><a class="tocitem" href="../bayesian_binomial_regression/">Bayesian Binomial Regression</a></li><li><a class="tocitem" href="../bayesian_linear_regression/">Bayesian Linear Regression</a></li><li><a class="tocitem" href="../bayesian_multinomial_regression/">Bayesian Multinomial Regression</a></li><li><a class="tocitem" href="../coin_toss_model/">Coin Toss Model</a></li><li class="is-active"><a class="tocitem" href>Feature Functions In Bayesian Regression</a><ul class="internal"><li><a class="tocitem" href="#Dataset:-Noisy-Observations-in-the-Real-World"><span>Dataset: Noisy Observations in the Real World</span></a></li><li><a class="tocitem" href="#Bayesian-Inference-with-RxInfer"><span>Bayesian Inference with RxInfer</span></a></li><li><a class="tocitem" href="#How-to-choose-basis-functions?"><span>How to choose basis functions?</span></a></li><li><a class="tocitem" href="#Polynomials:-The-Building-Blocks-of-Function-Approximation"><span>Polynomials: The Building Blocks of Function Approximation</span></a></li><li><a class="tocitem" href="#Trigonometric-Functions:-Catch-Some-Waves"><span>Trigonometric Functions: Catch Some Waves</span></a></li><li><a class="tocitem" href="#Comparing-Model-Performance-via-Log-Evidence"><span>Comparing Model Performance via Log-Evidence</span></a></li><li><a class="tocitem" href="#Switch-Functions:-A-Binary-Approach-to-Basis-Functions"><span>Switch Functions: A Binary Approach to Basis Functions</span></a></li><li><a class="tocitem" href="#Step-Functions:-A-Binary-Leap-Forward"><span>Step Functions: A Binary Leap Forward</span></a></li><li><a class="tocitem" href="#Linear-Basis-Functions:-A-Classic-Twist"><span>Linear Basis Functions: A Classic Twist</span></a></li><li><a class="tocitem" href="#Absolute-Exponential-Functions:-Elegantly-Decaying-Distance"><span>Absolute Exponential Functions: Elegantly Decaying Distance</span></a></li><li><a class="tocitem" href="#Squared-Exponential-Functions:-The-Gaussian-Bell-Curves"><span>Squared Exponential Functions: The Gaussian Bell Curves</span></a></li><li><a class="tocitem" href="#Sigmoid-Functions:-The-Neural-Network&#39;s-Activation"><span>Sigmoid Functions: The Neural Network&#39;s Activation</span></a></li><li><a class="tocitem" href="#The-Power-of-Combination:-Using-Different-Classes-of-Basis-Functions-Together"><span>The Power of Combination: Using Different Classes of Basis Functions Together</span></a></li><li><a class="tocitem" href="#Performance:-The-Need-for-Speed!"><span>Performance: The Need for Speed! 🏎️</span></a></li></ul></li><li><a class="tocitem" href="../hidden_markov_model/">Hidden Markov Model</a></li><li><a class="tocitem" href="../kalman_filtering_and_smoothing/">Kalman Filtering And Smoothing</a></li><li><a class="tocitem" href="../pomdp_control/">Pomdp Control</a></li><li><a class="tocitem" href="../predicting_bike_rental_demand/">Predicting Bike Rental Demand</a></li></ul></li><li><span class="tocitem">Advanced Examples</span><ul><li><a class="tocitem" href="../../advanced_examples/active_inference_mountain_car/">Active Inference Mountain Car</a></li><li><a class="tocitem" href="../../advanced_examples/advanced_tutorial/">Advanced Tutorial</a></li><li><a class="tocitem" href="../../advanced_examples/assessing_people_skills/">Assessing People Skills</a></li><li><a class="tocitem" href="../../advanced_examples/chance_constraints/">Chance Constraints</a></li><li><a class="tocitem" href="../../advanced_examples/conjugate-computational_variational_message_passing/">Conjugate-Computational Variational Message Passing</a></li><li><a class="tocitem" href="../../advanced_examples/drone_dynamics/">Drone Dynamics</a></li><li><a class="tocitem" href="../../advanced_examples/global_parameter_optimisation/">Global Parameter Optimisation</a></li><li><a class="tocitem" href="../../advanced_examples/gp_regression_by_ssm/">Gp Regression By Ssm</a></li><li><a class="tocitem" href="../../advanced_examples/infinite_data_stream/">Infinite Data Stream</a></li><li><a class="tocitem" href="../../advanced_examples/multi-agent_trajectory_planning/">Multi-Agent Trajectory Planning</a></li><li><a class="tocitem" href="../../advanced_examples/nonlinear_sensor_fusion/">Nonlinear Sensor Fusion</a></li><li><a class="tocitem" href="../../advanced_examples/robotic_arm/">Robotic Arm</a></li></ul></li><li><span class="tocitem">Problem Specific</span><ul><li><a class="tocitem" href="../../problem_specific/autoregressive_models/">Autoregressive Models</a></li><li><a class="tocitem" href="../../problem_specific/gamma_mixture/">Gamma Mixture</a></li><li><a class="tocitem" href="../../problem_specific/gaussian_mixture/">Gaussian Mixture</a></li><li><a class="tocitem" href="../../problem_specific/hierarchical_gaussian_filter/">Hierarchical Gaussian Filter</a></li><li><a class="tocitem" href="../../problem_specific/invertible_neural_network_tutorial/">Invertible Neural Network Tutorial</a></li><li><a class="tocitem" href="../../problem_specific/litter_model/">Litter Model</a></li><li><a class="tocitem" href="../../problem_specific/ode_parameter_estimation/">Ode Parameter Estimation</a></li><li><a class="tocitem" href="../../problem_specific/probit_model/">Probit Model</a></li><li><a class="tocitem" href="../../problem_specific/rts_vs_bifm_smoothing/">Rts Vs Bifm Smoothing</a></li><li><a class="tocitem" href="../../problem_specific/simple_nonlinear_node/">Simple Nonlinear Node</a></li><li><a class="tocitem" href="../../problem_specific/structural_dynamics_with_augmented_kalman_filter/">Structural Dynamics With Augmented Kalman Filter</a></li><li><a class="tocitem" href="../../problem_specific/universal_mixtures/">Universal Mixtures</a></li></ul></li><li><a class="tocitem" href="../../../how_build_works/">How we build the examples</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Basic Examples</a></li><li class="is-active"><a href>Feature Functions In Bayesian Regression</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Feature Functions In Bayesian Regression</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl/blob/main/docs/src/categories/basic_examples/feature_functions_in_bayesian_regression/index.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><div class="admonition is-info"><header class="admonition-header">Contributing</header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><h1 id="Feature-Functions-in-Bayesian-Regression"><a class="docs-heading-anchor" href="#Feature-Functions-in-Bayesian-Regression">Feature Functions in Bayesian Regression</a><a id="Feature-Functions-in-Bayesian-Regression-1"></a><a class="docs-heading-anchor-permalink" href="#Feature-Functions-in-Bayesian-Regression" title="Permalink"></a></h1><p>This notebook demonstrates how we can use probabilistic methods to learn and predict continuous functions from noisy data.</p><p>This example is inspired by Chapter 4.1 <em>Regression</em> from the excellent book <em>Probabilistic Numerics</em> by Phillip Hennig, Michael A. Osborn, and Hans P. Kersting. We&#39;ll take their theoretical foundations and bring them to life with practical code examples.</p><p>The code and narrative in this notebook is written by Dmitry Bagaev (<a href="https://github.com/bvdmitri">GitHub</a>, <a href="https://linkedin.com/bvdmitri">LinkedIn</a>). While some explanations draw from the book&#39;s content, we&#39;ll focus on building intuition through interactive examples and visualizations.</p><p>By the end of this notebook, you&#39;ll understand:</p><ul><li>The power of linear regression with basis functions</li><li>How to handle uncertainty in your predictions</li><li>Practical implementation using Julia and RxInfer.jl</li></ul><p>We start by importing all required packages for this example, the primary of which is of course <strong>RxInfer</strong>!</p><pre><code class="language-julia hljs">using RxInfer, StableRNGs, LinearAlgebra, Plots, DataFrames</code></pre><p>Gaussian distributions (multivariate) assign probability density to vectors of real numbers - think of them as sophisticated probability maps for multiple variables at once. In numerical applications, we often encounter real-valued functions <span>$f : \mathbb{X} \rightarrow R$</span> over some input domain <span>$\mathbb{X}$</span> (imagine predicting house prices based on features like size and location).</p><p>A interesting way to use the Gaussian inference framework is to assume that <span>$f$</span> can be written as a weighted sum over a finite number <span>$F$</span> of feature functions <span>$[\phi_i : \mathbb{X} \rightarrow \mathbb{R}]_{i=1,..,F}$</span> (much like how a house price might be a weighted combination of its features, e.g. size, number of floors, number of rooms, etc..):</p><p class="math-container">\[\begin{align}
+f(x) = \sum_{i=1}^{F} \phi_i(x)\omega_i =: \Phi^T_x \omega \,\,\, \mathrm{where} \,\, \omega \in \mathbb{R}^F
+\end{align}\]</p><p>As discussed in the Probabilistic Numerics book, uncertainty is a fundamental aspect of numerical computations. When we perform regression, we are essentially solving an inverse problem - trying to infer the underlying function from noisy observations. This inherently involves uncertainty for several reasons:</p><ol><li>Our observations usually contain noise and measurement errors</li><li>We have a finite number of samples, leaving gaps in our knowledge</li><li>The true function may be more complex than our model can capture</li></ol><p>By modeling uncertainty explicitly through a Gaussian distribution over the weights <span>$\omega$</span>, we can:</p><ul><li>Quantify our confidence in predictions</li><li>Make more robust decisions by accounting for uncertainty</li><li>Detect when we&#39;re extrapolating beyond our data</li><li>Propagate uncertainty on the next step in our Machine Learning pipeline</li></ul><p>Mathematically, we express this uncertainty as:</p><p class="math-container">\[\begin{align}
+p(\omega) = \mathcal{N}(\omega \vert \mu, \Sigma)
+\end{align}\]</p><p>Where <span>$\mu$</span> represents our best estimate of the weights and <span>$\Sigma$</span> captures our uncertainty about them.</p><h2 id="Dataset:-Noisy-Observations-in-the-Real-World"><a class="docs-heading-anchor" href="#Dataset:-Noisy-Observations-in-the-Real-World">Dataset: Noisy Observations in the Real World</a><a id="Dataset:-Noisy-Observations-in-the-Real-World-1"></a><a class="docs-heading-anchor-permalink" href="#Dataset:-Noisy-Observations-in-the-Real-World" title="Permalink"></a></h2><p>In real-world scenarios, we rarely have access to perfect measurements. Instead, we collect observations <span>$Y := [y_1, \cdots , y_N ] \in \mathbb{R}$</span> that are corrupted by Gaussian noise - a common and mathematically convenient way to model measurement uncertainty. These noisy samples of our target function <span>$f$</span> are taken at specific input locations <span>$X$</span>, with the noise characterized by a covariance matrix <span>$\Lambda ∈ \mathbb{R}^{N×N}$</span>. This setup mirrors many practical applications, from sensor measurements to experimental data collection.</p><p>Let&#39;s assume we have collected noisy measurenets <span>$Y$</span> at locations <span>$X$</span>:</p><pre><code class="language-julia hljs">N = 40
+Λ = I
+X = range(-8, 8, length=N)
+
+rng = StableRNG(42)
+
+# Arbitrary non-linear function, which is hidden
+f(x) = -((-x / 3)^3 - (-x / 2)^2 + x + 10) 
+
+Y = rand(rng, MvNormalMeanCovariance(f.(X), Λ))
+
+# Can be loaded from a file or a database
+df = DataFrame(X = X, Y = Y)</code></pre><pre><code class="nohighlight hljs">40×2 DataFrame
+ Row │ X         Y
+     │ Float64   Float64
+─────┼────────────────────
+   1 │ -8.0      -5.63321
+   2 │ -7.58974  -3.75472
+   3 │ -7.17949  -2.26681
+   4 │ -6.76923  -1.95387
+   5 │ -6.35897  -2.92934
+   6 │ -5.94872  -2.31714
+   7 │ -5.53846  -4.10432
+   8 │ -5.12821  -4.08565
+  ⋮  │    ⋮         ⋮
+  34 │  5.53846  -1.5234
+  35 │  5.94872   0.98319
+  36 │  6.35897   3.86051
+  37 │  6.76923   4.48039
+  38 │  7.17949   8.71697
+  39 │  7.58974  12.703
+  40 │  8.0      19.0635
+           25 rows omitted</code></pre><h3 id="Train-and-Test-Dataset-Configurations"><a class="docs-heading-anchor" href="#Train-and-Test-Dataset-Configurations">Train &amp; Test Dataset Configurations</a><a id="Train-and-Test-Dataset-Configurations-1"></a><a class="docs-heading-anchor-permalink" href="#Train-and-Test-Dataset-Configurations" title="Permalink"></a></h3><p>To thoroughly evaluate our model&#39;s performance and robustness, we&#39;ll create three distinct train-test splits of our data. This approach helps us understand how well our model generalizes to different regions of the input space and whether it can effectively capture the underlying patterns regardless of which portions of the data it learns from.</p><p>We&#39;ll explore the following configurations:</p><ol><li>Forward Split: Uses the first half for training and second half for testing, evaluating the model&#39;s ability to extrapolate to higher x-values</li><li>Reverse Split: Uses the first half for testing and second half for training, testing extrapolation to lower x-values</li><li>Interleaved Split: Uses first and last quarters for training and middle portion for testing, assessing interpolation capabilities</li></ol><p>These diverse splits will help reveal any biases in our model and ensure it performs consistently across different regions of the input space. They also allow us to evaluate both interpolation (predicting within the training range) and extrapolation (predicting outside the training range) capabilities.</p><pre><code class="language-julia hljs"># Split data into train/test sets
+# Forward split - first half train, second half test
+dataset_1 = let mid = N ÷ 2
+    (
+        y_train = Y[1:mid], x_train = X[1:mid],
+        y_test = Y[mid+1:end], x_test = X[mid+1:end]
+    )
+end
+
+# Reverse split - first half test, second half train  
+dataset_2 = let mid = N ÷ 2
+    (
+        y_test = Y[1:mid], x_test = X[1:mid],
+        y_train = Y[mid+1:end], x_train = X[mid+1:end]
+    )
+end
+
+# Interleaved split - first/last quarters train, middle half test
+dataset_3 = let q1 = N ÷ 4, q3 = 3N ÷ 4
+    (
+        y_train = [Y[1:q1]..., Y[q3+1:end]...],
+        x_train = [X[1:q1]..., X[q3+1:end]...],
+        y_test = Y[q1+1:q3],
+        x_test = X[q1+1:q3]
+    )
+end
+
+datasets = [dataset_1, dataset_2, dataset_3]
+
+# Create visualization for each dataset split
+ps = map(enumerate(datasets)) do (i, dataset)
+    p = plot(
+        xlim = (-10, 10), 
+        ylim = (-30, 30),
+        title = &quot;Dataset $i&quot;,
+        xlabel = &quot;x&quot;,
+        ylabel = &quot;y&quot;
+    )
+    scatter!(p, 
+        dataset[:x_train], dataset[:y_train],
+        yerror = Λ,
+        label = &quot;Train dataset&quot;,
+        color = :blue,
+        markersize = 4
+    )
+    scatter!(p,
+        dataset[:x_test], dataset[:y_test], 
+        yerror = Λ,
+        label = &quot;Test dataset&quot;,
+        color = :red,
+        markersize = 4
+    )
+    return p
+end
+
+plot(ps..., size = (1200, 400), layout = @layout([a b c]))</code></pre><p><img src="Feature Functions in Bayesian Regression_3_1.png" alt/></p><p>The datasets above provide nonlinear data with independent and identically distributed (i.i.d.) Gaussian observation noise, where we set the noise covariance <span>$Λ = I$</span> (identity matrix).</p><h2 id="Bayesian-Inference-with-RxInfer"><a class="docs-heading-anchor" href="#Bayesian-Inference-with-RxInfer">Bayesian Inference with RxInfer</a><a id="Bayesian-Inference-with-RxInfer-1"></a><a class="docs-heading-anchor-permalink" href="#Bayesian-Inference-with-RxInfer" title="Permalink"></a></h2><p>Our exciting challenge is to uncover the probability distribution over the parameter vector <span>$\omega$</span>, given our basis functions <span>$\phi$</span> and observed data points <span>$(X,Y)$</span>. To tackle this, we&#39;ll harness the power of probabilistic programming by constructing an elegant generative <em>model</em> using RxInfer&#39;s <code>@model</code> macro. The beauty of this approach lies in its simplicity - we can express our entire model in just a few lines of code:</p><pre><code class="language-julia hljs">@model function parametric_regression(ϕs, x, y, μ, Σ, Λ)
+    # Prior distribution over parameters ω
+    ω ~ MvNormal(mean = μ, covariance = Σ)
+    
+    # Design matrix Φₓ where each element is ϕᵢ(xⱼ)
+    Φₓ = [ϕ(xᵢ) for xᵢ in x, ϕ in ϕs]
+    
+    # Likelihood of observations y given parameters ω
+    y ~ MvNormal(mean = Φₓ * ω, covariance = Λ)
+end</code></pre><p>Let&#39;s break down the key components of our probabilistic model:</p><ul><li><p class="math-container">\[\phi\mathrm{s}\]</p>contains our basis functions <span>$\phi_i$</span> - these are the building blocks of our model</li><li><p class="math-container">\[x\]</p>holds the input locations <span>$X$</span> where we&#39;ve made observations. Think of these as the points along the x-axis where we&#39;ve collected data, like timestamps or spatial coordinates.</li><li><p class="math-container">\[y\]</p>contains our noisy measurements at each location in <span>$X$</span>.</li><li><p class="math-container">\[\mu\]</p>defines our prior beliefs about the average values of the parameters <span>$\omega$</span>. Setting <span>$\mu = 0$</span> indicates we believe the parameters are centered around zero before seeing any data.</li><li><p class="math-container">\[\Sigma\]</p>encodes our uncertainty about <span>$\omega$</span> before seeing data. A larger <span>$\Sigma$</span> means we&#39;re more uncertain, while smaller values indicate stronger prior beliefs.</li><li><p class="math-container">\[\Lambda\]</p>represents the noise in our observations. For example, <span>$\Lambda = 0.1I$</span> suggests our measurements have small, independent Gaussian noise, while larger values indicate noisier data.</li></ul><p>To put this model to work, we&#39;ll use RxInfer&#39;s powerful <code>infer</code> function. Here&#39;s how:</p><pre><code class="language-julia hljs">function infer_ω(; ϕs, x, y)
+    # Create probabilistic model, 
+    # RxInfer will construct the graph of this model auutomatically
+    model = parametric_regression(
+        ϕs = ϕs, 
+        μ  = zeros(length(ϕs)),
+        Σ  = I,
+        Λ  = I,
+        x  = x
+    )
+
+    # Let RxInfer do all the math for you
+    result = infer(
+        model = model, 
+        data  = (y = y,)
+    )
+
+    # Return posterior over ω
+    return result.posteriors[:ω]
+end</code></pre><pre><code class="nohighlight hljs">infer_ω (generic function with 1 method)</code></pre><h2 id="How-to-choose-basis-functions?"><a class="docs-heading-anchor" href="#How-to-choose-basis-functions?">How to choose basis functions?</a><a id="How-to-choose-basis-functions?-1"></a><a class="docs-heading-anchor-permalink" href="#How-to-choose-basis-functions?" title="Permalink"></a></h2><p>Just like how choosing between pizza toppings can make or break your dinner, the choice of basis functions <span>$\phi_i$</span>  can dramatically impact our results! Think of basis functions as the building blocks of our mathematical LEGO set -  pick the wrong pieces and your model might end up looking more like abstract art than a useful predictor.</p><p>Why does this matter? Because these functions are the &quot;vocabulary&quot; our model uses to describe the patterns in our data. Choose a too-simple vocabulary and your model will sound like a caveman (&quot;data go up, data go down&quot;). Choose one that&#39;s  too complex and it might start speaking mathematical gibberish!</p><p>Let&#39;s embark on a thrilling journey through different datasets with various basis function choices. We&#39;ll create a  handy function that will:</p><ol><li>Take our basis functions for a test drive 🚗</li><li>Run inference on multiple datasets defined above</li><li>Create beautiful plots that would make any statistician swoon</li></ol><p>(RxInfer makes it so easy to perform Bayesian inference so I have more time to make beautiful plots!)</p><pre><code class="language-julia hljs">function plot_inference_results_for(; ϕs, datasets, title = &quot;&quot;, rng = StableRNG(42))
+    # Create main plot showing basis functions
+    p1 = plot(
+        title = &quot;Basis functions: $(title)&quot;, 
+        xlabel = &quot;x&quot;,
+        ylabel = &quot;y&quot;,
+        xlim = (-5, 5), 
+        ylim = (-10, 10),
+        legend = :outertopleft,
+        grid = true,
+        fontfamily = &quot;Computer Modern&quot;
+    )
+
+    # Plot basis functions in gray
+    plot_ϕ!(p1, ϕs, color = :gray, alpha = 0.5, 
+            labels = [&quot;ϕ$i&quot; for _ in 1:1, i in 1:length(ϕs)])
+    
+    # Add examples with random ω values
+    plot_ϕ!(p1, ϕs, randn(rng, length(ϕs), 3), 
+            linewidth = 2)
+
+    # Create subplot for each dataset
+    ps = map(enumerate(datasets)) do (i, dataset)
+        p2 = plot(
+            title = &quot;Dataset #$(i): $(title)&quot;,
+            xlabel = &quot;x&quot;,
+            ylabel = &quot;y&quot;, 
+            xlim = (-10, 10),
+            ylim = (-25, 25),
+            grid = true,
+            fontfamily = &quot;Computer Modern&quot;
+        )
+
+        # Infer posterior over ω
+        ωs = infer_ω(
+            ϕs = ϕs, 
+            x = dataset[:x_train], 
+            y = dataset[:y_train]
+        )
+
+        # Plot posterior mean
+        plot_ϕ!(p2, ϕs, mean(ωs),
+                linewidth = 3,
+                color = :green,
+                labels = &quot;Posterior mean&quot;)
+
+        # Plot posterior samples
+        plot_ϕ!(p2, ϕs, rand(ωs, 15),
+                linewidth = 1,
+                color = :gray,
+                alpha = 0.4,
+                labels = nothing)
+
+        # Add data points
+        scatter!(p2, dataset[:x_train], dataset[:y_train],
+                yerror = Λ,
+                label = &quot;Training data&quot;,
+                color = :royalblue,
+                markersize = 4)
+        scatter!(p2, dataset[:x_test], dataset[:y_test],
+                yerror = Λ,
+                label = &quot;Test data&quot;, 
+                color = :crimson,
+                markersize = 4)
+
+        return p2
+    end
+
+    # Combine all plots
+    plot(p1, ps..., 
+         size = (1000, 800),
+         margin = 5Plots.mm,
+         layout = (2,2))
+end
+
+# Helper function to plot basis functions
+function plot_ϕ!(p, ϕs; rl = -10, rr = 10, kwargs...)
+    xs = range(rl, rr, length = 200)
+    ys = [ϕ(x) for x in xs, ϕ in ϕs]
+    plot!(p, xs, ys; kwargs...)
+end
+
+# Helper function to plot function with given weights
+function plot_ϕ!(p, ϕs, ωs; rl = -10, rr = 10, kwargs...)
+    xs = range(rl, rr, length = 200)
+    ys = [ϕ(x) for x in xs, ϕ in ϕs]
+    yr = ys * ωs
+    labels = [&quot;Sample $i&quot; for _ in 1:1, i in 1:size(ωs,2)]
+    plot!(p, xs, yr, labels = labels; kwargs...)
+end</code></pre><pre><code class="nohighlight hljs">plot_ϕ! (generic function with 2 methods)</code></pre><p>Phew! We&#39;ve finally escaped the plotting purgatory - you know it&#39;s bad when the visualization code is longer than the actual inference code! But fear not, dear reader, for we&#39;re about to dive into the juicy stuff. Grab your statistical popcorn, because the real fun is about to begin!</p><h2 id="Polynomials:-The-Building-Blocks-of-Function-Approximation"><a class="docs-heading-anchor" href="#Polynomials:-The-Building-Blocks-of-Function-Approximation">Polynomials: The Building Blocks of Function Approximation</a><a id="Polynomials:-The-Building-Blocks-of-Function-Approximation-1"></a><a class="docs-heading-anchor-permalink" href="#Polynomials:-The-Building-Blocks-of-Function-Approximation" title="Permalink"></a></h2><p>Let&#39;s start our exploration with one of the most fundamental and elegant choices for basis functions: polynomials. These simple yet powerful functions form the backbone of many approximation techniques in mathematics and machine learning.</p><p>For our polynomial basis functions <span>$\phi_i$</span>, we&#39;ll use the classic form:</p><p class="math-container">\[\begin{align}
+\phi_i(x) = x^i
+\end{align}\]</p><p>where <span>$i$</span> represents the degree of each polynomial term. This gives us a sequence of increasingly complex functions: constant (<span>$x^0 = 1$</span>), linear (<span>$x^1$</span>), quadratic (<span>$x^2$</span>), cubic (<span>$x^3$</span>), and so on. When combined with appropriate weights <span>$\omega$</span>, these basis functions can approximate a wide variety of smooth functions - a result famously known as the Weierstrass approximation theorem.</p><p>Let&#39;s witness the magic of RxInfer as it efficiently infers the posterior distribution over the weights <span>$\omega$</span> using these polynomial basis functions. The beauty of this approach lies in how it automatically determines the contribution of each polynomial term to fit our data.</p><pre><code class="language-julia hljs">plot_inference_results_for(
+    title    = &quot;polynomials&quot;,
+    datasets = datasets,
+    ϕs       = [ (x) -&gt; x ^ i for i in 0:5 ], 
+)</code></pre><p><img src="Feature Functions in Bayesian Regression_7_1.png" alt/></p><p>Let&#39;s break down what we&#39;re seeing in these fascinating plots! The first plot (in gray) reveals our polynomial basis functions in their raw form - from constant to quintic terms. Overlaid on these are some example functions generated by combining these basis functions with random weights ω, giving us a glimpse of the expressive power of polynomial approximation.</p><p>The subsequent plots demonstrate how our model performs inference on different datasets. Notice how the posterior distribution (shown by the shaded region) adapts to capture the uncertainty in different regions of the input space. It&#39;s particularly interesting to observe how the model&#39;s predictions change when faced with different training and test sets - a beautiful illustration of how the learning process is influenced by the data we feed it.</p><p>While polynomials have served us well here, they&#39;re just one tool in our mathematical toolbox. Ready to explore some alternative basis functions that might capture different aspects of our target function? Let&#39;s dive into some exciting alternatives!</p><h2 id="Trigonometric-Functions:-Catch-Some-Waves"><a class="docs-heading-anchor" href="#Trigonometric-Functions:-Catch-Some-Waves">Trigonometric Functions: Catch Some Waves</a><a id="Trigonometric-Functions:-Catch-Some-Waves-1"></a><a class="docs-heading-anchor-permalink" href="#Trigonometric-Functions:-Catch-Some-Waves" title="Permalink"></a></h2><p>While polynomials are great (and we love them dearly), sometimes life isn&#39;t just about going up and down in straight-ish lines. Sometimes, we need to embrace our inner surfer and catch some waves! Enter trigonometric functions - the mathematical world&#39;s answer to the question &quot;What if everything just went round and round?&quot;</p><p>Trigonometric functions, particularly <code>sin</code> and <code>cos</code>, have been the backbone of mathematical analysis since ancient times. From describing planetary motions to analyzing sound waves, these periodic functions have a special place in the mathematician&#39;s heart. Their ability to represent cyclic patterns makes them particularly powerful for approximating periodic phenomena - something our polynomial friends from earlier might struggle with (imagine a polynomial trying to do the wave at a sports event - awkward!).</p><p>For our basis functions, we&#39;ll use scaled versions of sine and cosine:</p><p class="math-container">\[\begin{align}
+\phi_i(x) &amp;= \mathrm{sin}(\frac{x}{i}) 
+\end{align}\]</p><p class="math-container">\[\begin{align}
+\phi_i(x) &amp;= \mathrm{cos}(\frac{x}{i})
+\end{align}\]</p><p>where <span>$i$</span> acts as a frequency scaling factor. As <span>$i$</span> increases, our waves become more stretched out, giving us different frequencies to work with. Think of it as having an orchestra where each instrument plays the same tune but at different tempos!</p><p>Let&#39;s start by riding the sine wave alone (no cosine jealousy please!) for <span>$i = 1:5$</span>. Will these wavy functions give our polynomial predecessors a run for their money? Let&#39;s find out!</p><pre><code class="language-julia hljs">plot_inference_results_for(
+    title    = &quot;trigonometric sin&quot;,
+    datasets = datasets,
+    ϕs       = [ (x) -&gt; sin(x / i) for i in 1:8 ], 
+)</code></pre><p><img src="Feature Functions in Bayesian Regression_8_1.png" alt/></p><p>Now let&#39;s examine the results using cosine basis functions</p><pre><code class="language-julia hljs">plot_inference_results_for(
+    title    = &quot;trigonometric cos&quot;,
+    datasets = datasets,
+    ϕs       = [ (x) -&gt; cos(x / i) for i in 1:8 ], 
+)</code></pre><p><img src="Feature Functions in Bayesian Regression_9_1.png" alt/></p><p>And for our grand finale, let&#39;s combine both sin and cos - because two waves are better than one! (Just don&#39;t tell that to particle-wave duality...)</p><pre><code class="language-julia hljs">plot_inference_results_for(
+    title    = &quot;trigonometric sin &amp; cos&quot;,
+    datasets = datasets,
+    ϕs       = [
+        [ (x) -&gt; sin(x / i) for i in 1:4 ]...,
+        [ (x) -&gt; cos(x / i) for i in 1:4 ]...,
+    ], 
+)</code></pre><p><img src="Feature Functions in Bayesian Regression_10_1.png" alt/></p><p>Incredible! RxInfer proved to be quite the adaptable fellow - it handled these different basis functions without missing a beat. The results speak for themselves: our sine and cosine tag team performed remarkably well for this example. I guess you could say they really found their wavelength!</p><h2 id="Comparing-Model-Performance-via-Log-Evidence"><a class="docs-heading-anchor" href="#Comparing-Model-Performance-via-Log-Evidence">Comparing Model Performance via Log-Evidence</a><a id="Comparing-Model-Performance-via-Log-Evidence-1"></a><a class="docs-heading-anchor-permalink" href="#Comparing-Model-Performance-via-Log-Evidence" title="Permalink"></a></h2><p>Now that we&#39;ve explored different basis functions, let&#39;s quantitatively evaluate their performance using Free Energy, also known as negative log-evidence or negative Evidence Lower BOund (ELBO). RxInfer can compute Free Energy values when requested, which serve as a principled way to compare different models.</p><p>Free Energy has several important properties:</p><ul><li>It acts as a proxy for negative log model evidence P(y|model)</li><li>Lower values indicate better model fit, balancing complexity and data fit</li><li>It automatically implements Occam&#39;s Razor by penalizing overly complex models</li></ul><p>For example, if we have:</p><ul><li>Model A: Free Energy = 100</li><li>Model B: Free Energy = 50</li></ul><p>Then Model B provides a better explanation of the data, as exp(-50) &gt; exp(-100).</p><p>Let&#39;s analyze the Free Energy values for our polynomial and trigonometric basis functions to determine which model class provides the best explanation of our data. We&#39;ll check:</p><ol><li>Pure sine basis functions</li><li>Pure cosine basis functions  </li><li>Combined sine and cosine basis functions</li></ol><p>This will help us quantitatively validate our earlier visual assessments.</p><pre><code class="language-julia hljs"># Combine the function definition with the usage
+function infer_ω_but_return_free_energy(; ϕs, x, y)
+    result = infer(
+        model = parametric_regression(
+            ϕs = ϕs, 
+            μ  = zeros(length(ϕs)),
+            Σ  = I,
+            Λ  = I,
+            x  = x
+        ), 
+        data  = (y = y,),
+        free_energy = true
+    )
+    return first(result.free_energy)
+end
+
+dfs = map(enumerate(datasets)) do (i, dataset)
+    # Generate basis functions
+    sin_bases = [(x) -&gt; sin(x / i) for i in 1:8]
+    cos_bases = [(x) -&gt; cos(x / i) for i in 1:8]
+    combined_bases = [
+        [(x) -&gt; sin(x / i) for i in 1:4]...,
+        [(x) -&gt; cos(x / i) for i in 1:4]...
+    ]
+
+    # Calculate free energy for each basis
+    energies = [
+        infer_ω_but_return_free_energy(ϕs=sin_bases, x=dataset[:x_train], y=dataset[:y_train]),
+        infer_ω_but_return_free_energy(ϕs=cos_bases, x=dataset[:x_train], y=dataset[:y_train]),
+        infer_ω_but_return_free_energy(ϕs=combined_bases, x=dataset[:x_train], y=dataset[:y_train])
+    ]
+
+    # Create DataFrame row
+    DataFrame(
+        dataset = fill(i, 3),
+        fns = [:sin, :cos, :sin_cos],
+        free_energy = energies
+    )
+end
+
+vcat(dfs...)</code></pre><pre><code class="nohighlight hljs">9×3 DataFrame
+ Row │ dataset  fns      free_energy
+     │ Int64    Symbol   Float64
+─────┼────────────────────────────────
+   1 │       1  sin       74.4889
+   2 │       1  cos       47.0473
+   3 │       1  sin_cos   95.6676
+   4 │       2  sin      366.386
+   5 │       2  cos      349.413
+   6 │       2  sin_cos    5.96904e10
+   7 │       3  sin      104.042
+   8 │       3  cos      163.047
+   9 │       3  sin_cos   84.0258</code></pre><p>The results demonstrate that the choice of basis functions plays a significant role, as evidenced by the varying values of the Free Energy function. For dataset 1, cosine-based basis functions perform better than both sine-based and combined sine-cosine basis functions. Meanwhile, for dataset 3, the combination of sine and cosine basis functions yields superior results.</p><p>However, why limit ourselves to polynomials and trigonometric functions? Let&#39;s explore other possibilities!</p><h2 id="Switch-Functions:-A-Binary-Approach-to-Basis-Functions"><a class="docs-heading-anchor" href="#Switch-Functions:-A-Binary-Approach-to-Basis-Functions">Switch Functions: A Binary Approach to Basis Functions</a><a id="Switch-Functions:-A-Binary-Approach-to-Basis-Functions-1"></a><a class="docs-heading-anchor-permalink" href="#Switch-Functions:-A-Binary-Approach-to-Basis-Functions" title="Permalink"></a></h2><p>Let&#39;s explore an intriguing and perhaps unconventional choice for basis functions: the <em>switch</em> functions. These functions, despite their simplicity, can be remarkably effective in certain scenarios.</p><p>A switch function essentially divides the input space into two regions, outputting either +1 or -1 based on which side of a threshold the input falls. Mathematically, we define it as:</p><p class="math-container">\[\begin{align}
+\phi_i(x) = \mathrm{sign}(x - i)
+\end{align}\]</p><p>where <span>$i$</span> serves as the threshold point. The function returns +1 when <span>$x &gt; i$</span> and -1 when <span>$x &lt; i$</span>. This creates a sharp &quot;switch&quot; at <span>$x = i$</span>, hence the name.</p><p>What makes these functions particularly interesting is their ability to capture discontinuities and sharp transitions in the data. By combining multiple switch functions with different threshold points, we can approximate complex patterns through a series of binary decisions.</p><p>Let&#39;s see how these switch functions perform on our datasets!</p><pre><code class="language-julia hljs">plot_inference_results_for(
+    title    = &quot;switches&quot;,
+    datasets = datasets,
+    ϕs       = [ (x) -&gt; sign(x - i) for i in -8:8 ], 
+)</code></pre><p><img src="Feature Functions in Bayesian Regression_12_1.png" alt/></p><h2 id="Step-Functions:-A-Binary-Leap-Forward"><a class="docs-heading-anchor" href="#Step-Functions:-A-Binary-Leap-Forward">Step Functions: A Binary Leap Forward</a><a id="Step-Functions:-A-Binary-Leap-Forward-1"></a><a class="docs-heading-anchor-permalink" href="#Step-Functions:-A-Binary-Leap-Forward" title="Permalink"></a></h2><p>Let&#39;s explore another fascinating class of basis functions: step functions. Also known as Heaviside functions, these elegant mathematical constructs make a dramatic jump from 0 to 1 at a specific threshold point.</p><p>Mathematically, we define our step basis functions as:</p><p class="math-container">\[\begin{align}
+\phi_i(x) = \mathbb{I}(x - i &gt; 0)
+\end{align}\]</p><p>where <span>$\mathbb{I}$</span> is the indicator function that equals 1 when its argument is true and 0 otherwise. Unlike the switch functions we saw earlier, step functions provide a unidirectional transition, making them particularly useful for modeling data with distinct regimes or threshold effects.</p><pre><code class="language-julia hljs">plot_inference_results_for(
+    title    = &quot;steps&quot;,
+    datasets = datasets,
+    ϕs       = [ (x) -&gt; ifelse(x - i &gt; 0, 1.0, 0.0) for i in -8:8 ], 
+)</code></pre><p><img src="Feature Functions in Bayesian Regression_13_1.png" alt/></p><h2 id="Linear-Basis-Functions:-A-Classic-Twist"><a class="docs-heading-anchor" href="#Linear-Basis-Functions:-A-Classic-Twist">Linear Basis Functions: A Classic Twist</a><a id="Linear-Basis-Functions:-A-Classic-Twist-1"></a><a class="docs-heading-anchor-permalink" href="#Linear-Basis-Functions:-A-Classic-Twist" title="Permalink"></a></h2><p>Here&#39;s an intriguing proposition: what if we used linear functions as our basis functions in linear regression? While it might sound redundant at first, this approach offers a fascinating perspective. By centering linear functions at different points, we create a rich set of features that can capture both local and global trends in our data.</p><p>The basis functions take the form:</p><p class="math-container">\[\begin{align}
+\phi_i(x) = \vert x - i \vert
+\end{align}\]</p><p>where each function measures the absolute distance from a reference point <span>$i$</span>. This creates a V-shaped function centered at each point, allowing us to model both increasing and decreasing trends with remarkable flexibility.</p><pre><code class="language-julia hljs">plot_inference_results_for(
+    title    = &quot;linears&quot;,
+    datasets = datasets,
+    ϕs       = [ (x) -&gt; abs(x - i) for i in -8:8 ], 
+)</code></pre><p><img src="Feature Functions in Bayesian Regression_14_1.png" alt/></p><h2 id="Absolute-Exponential-Functions:-Elegantly-Decaying-Distance"><a class="docs-heading-anchor" href="#Absolute-Exponential-Functions:-Elegantly-Decaying-Distance">Absolute Exponential Functions: Elegantly Decaying Distance</a><a id="Absolute-Exponential-Functions:-Elegantly-Decaying-Distance-1"></a><a class="docs-heading-anchor-permalink" href="#Absolute-Exponential-Functions:-Elegantly-Decaying-Distance" title="Permalink"></a></h2><p>Let&#39;s venture into the realm of absolute exponential functions, a fascinating class of basis functions that elegantly capture the notion of distance-based influence. These functions, also known as Laplace kernels in some contexts, decay exponentially with the absolute distance from their center points.</p><p>The mathematical formulation reveals their elegant simplicity:</p><p class="math-container">\[\begin{align}
+\phi_i(x) = e^{-\vert x - i \vert}
+\end{align}\]</p><p>This expression creates a peaked function that reaches its maximum of 1 at x = i and smoothly decays in both directions, providing a natural way to model localized influences that diminish with distance.</p><pre><code class="language-julia hljs">plot_inference_results_for(
+    title    = &quot;abs exps&quot;,
+    datasets = datasets,
+    ϕs       = [ (x) -&gt; exp(-abs(x - i)) for i in -8:8 ], 
+)</code></pre><p><img src="Feature Functions in Bayesian Regression_15_1.png" alt/></p><h2 id="Squared-Exponential-Functions:-The-Gaussian-Bell-Curves"><a class="docs-heading-anchor" href="#Squared-Exponential-Functions:-The-Gaussian-Bell-Curves">Squared Exponential Functions: The Gaussian Bell Curves</a><a id="Squared-Exponential-Functions:-The-Gaussian-Bell-Curves-1"></a><a class="docs-heading-anchor-permalink" href="#Squared-Exponential-Functions:-The-Gaussian-Bell-Curves" title="Permalink"></a></h2><p>Let&#39;s explore another one of the most elegant and widely-used basis functions in machine learning - the squared exponential, also known as the Gaussian or radial basis function. These functions create perfect bell curves that smoothly decay in all directions from their centers.</p><p>The mathematical form reveals their graceful symmetry:</p><p class="math-container">\[\begin{align}
+\phi_i(x) = e^{-(x - i)^2}
+\end{align}\]</p><p>These functions have remarkable properties - they&#39;re infinitely differentiable and create ultra-smooth interpolations between points. Their rapid decay also provides natural localization, making them excellent choices for capturing both local and global patterns in data.</p><pre><code class="language-julia hljs">plot_inference_results_for(
+    title    = &quot;sqrt exps&quot;,
+    datasets = datasets,
+    ϕs       = [ (x) -&gt; exp(-(x - i) ^ 2) for i in -8:8 ], 
+)</code></pre><p><img src="Feature Functions in Bayesian Regression_16_1.png" alt/></p><h2 id="Sigmoid-Functions:-The-Neural-Network&#39;s-Activation"><a class="docs-heading-anchor" href="#Sigmoid-Functions:-The-Neural-Network&#39;s-Activation">Sigmoid Functions: The Neural Network&#39;s Activation</a><a id="Sigmoid-Functions:-The-Neural-Network&#39;s-Activation-1"></a><a class="docs-heading-anchor-permalink" href="#Sigmoid-Functions:-The-Neural-Network&#39;s-Activation" title="Permalink"></a></h2><p>The sigmoid function, a cornerstone of neural network architectures, offers another fascinating basis for our exploration. This S-shaped curve elegantly transitions between two asymptotic values, creating a smooth, differentiable &quot;step&quot; that&#39;s invaluable in modeling transitions and decision boundaries.</p><p>The mathematical elegance of the sigmoid reveals itself in its formula:</p><p class="math-container">\[\begin{align}
+\phi_i(x) = \frac{1}{1 + e^{-3(x - 1)}}
+\end{align}\]</p><p>This function&#39;s graceful transition from 0 to 1 makes it particularly well-suited for capturing threshold phenomena and modeling probability-like quantities. Its bounded nature also provides natural regularization, preventing the explosive growth that can plague polynomial bases.</p><pre><code class="language-julia hljs">plot_inference_results_for(
+    title    = &quot;sigmoids&quot;,
+    datasets = datasets,
+    ϕs       = [ (x) -&gt; 1 / (1 + exp(-3 * (x - i))) for i in -8:8 ], 
+)</code></pre><p><img src="Feature Functions in Bayesian Regression_17_1.png" alt/></p><h2 id="The-Power-of-Combination:-Using-Different-Classes-of-Basis-Functions-Together"><a class="docs-heading-anchor" href="#The-Power-of-Combination:-Using-Different-Classes-of-Basis-Functions-Together">The Power of Combination: Using Different Classes of Basis Functions Together</a><a id="The-Power-of-Combination:-Using-Different-Classes-of-Basis-Functions-Together-1"></a><a class="docs-heading-anchor-permalink" href="#The-Power-of-Combination:-Using-Different-Classes-of-Basis-Functions-Together" title="Permalink"></a></h2><p>What if we could harness the unique strengths of different basis functions we&#39;ve explored? By combining polynomials, trigonometric functions, squared exponentials, and sigmoids, we can create an incredibly flexible and expressive basis that captures both global trends and local patterns. The polynomials can handle overall growth patterns, trigonometric functions can capture periodic behavior, squared exponentials can provide smooth local interpolation, and sigmoids can model sharp transitions. This combined approach leverages the best of each basis function family, potentially leading to more robust and accurate predictions. And here how easy it is to do so!</p><pre><code class="language-julia hljs"># Combine all basis functions we&#39;ve explored into one powerful basis
+combined_basis = vcat(
+    # Polynomials (from first example)
+    [ (x) -&gt; x ^ i for i in 0:5 ],
+    
+    # Trigonometric functions (from second example) 
+    [ (x) -&gt; sin(i*x) for i in 1:3 ],
+    [ (x) -&gt; cos(i*x) for i in 1:3 ],
+    
+    # Squared exponentials (from seventh example)
+    [ (x) -&gt; exp(-(x - i)^2) for i in -8:8 ],
+    
+    # Sigmoids (from eighth example)
+    [ (x) -&gt; 1 / (1 + exp(-3 * (x - i))) for i in -8:8 ]
+)
+
+plot_inference_results_for(
+    title    = &quot;combined&quot;,
+    datasets = datasets,
+    ϕs       = combined_basis, 
+)</code></pre><p><img src="Feature Functions in Bayesian Regression_18_1.png" alt/></p><p>Now that we&#39;ve combined these different basis functions, it&#39;s interesting to explore how this powerful ensemble performs on our complete dataset. By visualizing the posterior distribution over functions induced by this combined basis, we can see how it leverages the unique characteristics of each basis type - the global trends captured by polynomials, the periodic patterns from trigonometric functions, the local smoothness from squared exponentials, and the sharp transitions enabled by sigmoids. Let&#39;s plot the results to see this rich expressiveness in action.</p><pre><code class="language-julia hljs">combined_basis_ωs_all_data = infer_ω(ϕs = combined_basis, x = X, y = Y)
+
+# Left plot - local region
+p1 = plot(
+    title = &quot;Local region&quot;,
+    xlabel = &quot;x&quot;,
+    ylabel = &quot;y&quot;,
+    xlim = (-10, 10),
+    ylim = (-20, 20),
+    grid = true
+)
+
+# Plot posterior mean
+plot_ϕ!(p1, combined_basis, mean(combined_basis_ωs_all_data),
+    rl = -10,
+    rr = 10,
+    linewidth = 3,
+    color     = :green,
+    labels    = &quot;Posterior mean&quot;
+)
+
+# Plot posterior samples (in gray)
+plot_ϕ!(p1, combined_basis, rand(combined_basis_ωs_all_data, 50),
+    rl = -10,
+    rr = 10,
+    linewidth = 1,
+    color     = :gray,
+    alpha     = 0.4,
+    labels    = nothing
+)
+
+# Plot data points
+scatter!(p1, X, Y,
+    yerror     = Λ,
+    label      = &quot;Data&quot;,
+    color      = :royalblue,
+    markersize = 4
+)
+
+# Right plot - bigger region
+p2 = plot(
+    title = &quot;Extended region&quot;,
+    xlabel = &quot;x&quot;,
+    ylabel = &quot;y&quot;,
+    xlim = (-30, 30),
+    ylim = (-75, 75),
+    grid = true
+)
+
+# Plot posterior mean
+plot_ϕ!(p2, combined_basis, mean(combined_basis_ωs_all_data),
+    rl = -30,
+    rr = 30,
+    linewidth = 3,
+    color     = :green,
+    labels    = &quot;Posterior mean&quot;
+)
+
+# Plot posterior samples (in gray)
+plot_ϕ!(p2, combined_basis, rand(combined_basis_ωs_all_data, 50),
+    rl = -30,
+    rr = 30,
+    linewidth = 1,
+    color     = :gray,
+    alpha     = 0.4,
+    labels    = nothing
+)
+
+# Plot data points
+scatter!(p2, X, Y,
+    label      = &quot;Data&quot;, 
+    color      = :royalblue,
+    markersize = 2
+)
+
+p = plot(p1, p2, layout=(1,2), size=(1000,400), fontfamily = &quot;Computer Modern&quot;)</code></pre><p><img src="Feature Functions in Bayesian Regression_19_1.png" alt/></p><p>The plot above beautifully demonstrates the expressive power of combining multiple basis functions. The posterior mean (shown in green) captures both the global trend and local variations in the data with remarkable accuracy. The gray lines, representing samples from the posterior distribution, illustrate the model&#39;s uncertainty - tighter in regions with more data points and wider in sparse regions. This combined basis approach leverages the strengths of each basis type: polynomials handle the overall trend, trigonometric functions capture periodic components, and localized basis functions manage fine details. The result is a flexible and robust model that adapts well to the complex patterns in our dataset.</p><h2 id="Performance:-The-Need-for-Speed!"><a class="docs-heading-anchor" href="#Performance:-The-Need-for-Speed!">Performance: The Need for Speed! 🏎️</a><a id="Performance:-The-Need-for-Speed!-1"></a><a class="docs-heading-anchor-permalink" href="#Performance:-The-Need-for-Speed!" title="Permalink"></a></h2><p>Alright, we&#39;ve been having a blast playing with different basis functions, and RxInfer has been crunching those posterior calculations faster than you can say &quot;Bayesian inference&quot;. But just how zippy is it really? Let&#39;s put our mathematical hot rod through its paces with our trusty polynomial basis functions and see what kind of speed records we can break! 🏁</p><pre><code class="language-julia hljs">using BenchmarkTools</code></pre><p>In Julia, benchmarking is made easy with the BenchmarkTools package. The @benchmark macro runs the given expression multiple times to get statistically meaningful results. It provides detailed statistics about execution time, memory allocations, and garbage collection overhead. The output shows minimum, maximum, median and mean execution times, along with a nice histogram visualization of the timing distribution.</p><pre><code class="language-julia hljs">@benchmark infer_ω(ϕs = $([ (x) -&gt; x ^ i for i in 0:5 ]), x = $(datasets[1][:x_train]), y = $(datasets[1][:y_train]))</code></pre><pre><code class="nohighlight hljs">BenchmarkTools.Trial: 10000 samples with 1 evaluation per sample.
+ Range (min … max):  185.386 μs …  1.102 ms  ┊ GC (min … max): 0.00% … 0.00
+%
+ Time  (median):     222.271 μs              ┊ GC (median):    0.00%
+ Time  (mean ± σ):   228.912 μs ± 30.132 μs  ┊ GC (mean ± σ):  0.00% ± 0.00
+%
+
+      ▁       ▃▆███▇▅▁                                          
+  ▁▂▆██▆▅▄▃▄▅██████████▆▅▆▅▅▅▄▄▄▃▃▃▂▃▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▁▁ ▃
+  185 μs          Histogram: frequency by time          317 μs &lt;
+
+ Memory estimate: 86.23 KiB, allocs estimate: 1499.</code></pre><p>Let&#39;s benchmark inference on a larger dataset with 10,000 datapoints to test scalability.</p><pre><code class="language-julia hljs">N_benchmark = 10_000
+X_benchmark = range(-8, 8, length=N_benchmark)
+Y_benchmark = rand(rng, MvNormalMeanCovariance(f.(X_benchmark), Λ));
+
+@benchmark infer_ω(ϕs = $([ (x) -&gt; x ^ i for i in 0:5 ]), x = $(X_benchmark), y = $(Y_benchmark))</code></pre><pre><code class="nohighlight hljs">BenchmarkTools.Trial: 9 samples with 1 evaluation per sample.
+ Range (min … max):  609.232 ms … 627.891 ms  ┊ GC (min … max): 0.00% … 0.0
+0%
+ Time  (median):     615.494 ms               ┊ GC (median):    0.00%
+ Time  (mean ± σ):   616.916 ms ±   6.692 ms  ┊ GC (mean ± σ):  0.00% ± 0.0
+0%
+
+  ▁▁        ▁      ▁  █                     ▁        ▁        ▁  
+  ██▁▁▁▁▁▁▁▁█▁▁▁▁▁▁█▁▁█▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁█▁▁▁▁▁▁▁▁█▁▁▁▁▁▁▁▁█ ▁
+  609 ms           Histogram: frequency by time          628 ms &lt;
+
+ Memory estimate: 1.15 MiB, allocs estimate: 1503.</code></pre><p>And that&#39;s a wrap! From exploring different basis functions (polynomials, trigonometric functions, and even those fancy sigmoids) to performing lightning-fast Bayesian inference, we&#39;ve seen how RxInfer handles parametric Gaussian regression with style. The benchmarks don&#39;t lie - processing 10,000 datapoints in a blast while keeping memory usage lean? That&#39;s not just fast, that&#39;s &quot;blink and you&#39;ll miss it&quot; fast! </p><p>Throughout this notebook, we&#39;ve gone from basic data generation to sophisticated model inference, all while keeping things both mathematically rigorous and computationally efficient. Whether you&#39;re a Bayesian enthusiast or just someone who appreciates elegant mathematical machinery, this journey through parametric Gaussian regression shows that probabilistic programming doesn&#39;t have to be slow or memory-hungry.</p><p>Thanks again to the authors of &quot;Probabilistic Numerics: Computation as Machine Learning&quot; for providing the theoretical foundations and inspiration for this notebook!</p><hr/><div class="admonition is-info"><header class="admonition-header">Contributing</header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><div class="admonition is-compat"><header class="admonition-header">Environment</header><div class="admonition-body"><p>This example was executed in a clean, isolated environment. Below are the exact package versions used:</p><p>For reproducibility:</p><ul><li>Use the same package versions when running locally</li><li>Report any issues with package compatibility</li></ul></div></div><pre><code class="nohighlight hljs">Status `~/work/RxInferExamples.jl/RxInferExamples.jl/docs/src/categories/basic_examples/feature_functions_in_bayesian_regression/Project.toml`
+  [6e4b80f9] BenchmarkTools v1.6.0
+  [a93c6f00] DataFrames v1.7.0
+  [91a5bcdd] Plots v1.40.9
+  [86711068] RxInfer v4.2.0
+  [860ef19b] StableRNGs v1.0.2
+  [37e2e46d] LinearAlgebra v1.11.0
+  [9a3f8284] Random v1.11.0
+</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../coin_toss_model/">« Coin Toss Model</a><a class="docs-footer-nextpage" href="../hidden_markov_model/">Hidden Markov Model »</a><div class="flexbox-break"></div><p class="footer-message">Created in <a href="https://biaslab.github.io/">BIASlab</a>, maintained by <a href="https://github.com/ReactiveBayes">ReactiveBayes</a>, powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.8.1 on <span class="colophon-date" title="Friday 7 March 2025 13:50">Friday 7 March 2025</span>. Using Julia version 1.11.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
