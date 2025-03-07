@@ -11,6 +11,9 @@ function parse_commandline()
         "--use-dev"
         action = :store_true
         help = "Use local development version of RxInfer"
+        "--use-cache"
+        action = :store_true
+        help = "Use cached results for notebooks"
         "--rxinfer-path"
         help = "Path to RxInfer.jl repository (overrides default ../RxInfer.jl)"
         "filter"
@@ -24,6 +27,7 @@ end
 const ARGS = parse_commandline()
 const FILTER = get(ARGS, "filter", nothing)
 const USE_DEV = ARGS["use-dev"]
+const USE_CACHE = ARGS["use-cache"]
 const CUSTOM_RXINFER_PATH = get(ARGS, "rxinfer-path", nothing)
 
 const RXINFER_PATH = if USE_DEV
@@ -236,7 +240,7 @@ end
             out_path=output_path,
             doctype="github",
             fig_path=output_dir,
-            cache=:all,
+            cache=ifelse($USE_CACHE, :all, :refresh),
             cache_path=notebook_cache_dir,
             mod=mod
         )
