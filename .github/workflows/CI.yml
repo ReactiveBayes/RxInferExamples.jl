@@ -25,6 +25,8 @@ jobs:
   examples:
     name: Examples (Julia - ${{ matrix.version }})
     runs-on: ubuntu-latest
+    # Set maximum runtime for this job to 30 minutes
+    timeout-minutes: 30
     strategy:
       matrix:
         version:
@@ -56,6 +58,8 @@ jobs:
   docs:
     name: Documentation
     runs-on: ubuntu-latest
+    # Set maximum runtime for this job to 15 minutes
+    timeout-minutes: 15
     needs: examples
     permissions:
       contents: write
