@@ -3,33 +3,13 @@
 # Default target
 all: examples docs
 
-# Build examples
+# Build examples (optionally with a filter)
 examples: examples-setup
-	julia --project=examples examples/make.jl
-
-# Build specific examples (usage: make example FILTER=pattern)
-example: examples-setup
-	@if [ "$(FILTER)" = "" ]; then \
-		echo "Error: FILTER is required. Usage: make example FILTER=pattern"; \
-		exit 1; \
-	fi
-	julia --project=examples examples/make.jl $(FILTER)
+	julia --project=examples examples/make.jl $(if $(FILTER),$(FILTER),) $(if $(USE_CACHE),--use-cache,)
 
 # Build examples with local development version of RxInfer
 examples-dev: examples-setup
-	julia --project=examples examples/make.jl --use-dev $(if $(RXINFER),--rxinfer-path=$(RXINFER),)
-
-# Build specific example with local development version of RxInfer
-example-dev: examples-setup
-	@if [ "$(FILTER)" = "" ]; then \
-		echo "Error: FILTER is required. Usage: make example-dev FILTER=pattern"; \
-		exit 1; \
-	fi
-	julia --project=examples examples/make.jl --use-dev $(if $(RXINFER),--rxinfer-path=$(RXINFER),) $(FILTER)
-
-# Build documentation
-docs: docs-setup
-	julia --project=docs docs/make.jl
+	julia --project=examples examples/make.jl --use-dev $(if $(RXINFER),--rxinfer-path=$(RXINFER),) $(if $(FILTER),$(FILTER),) $(if $(USE_CACHE),--use-cache,)
 
 # Clean build artifacts
 clean:
@@ -47,6 +27,10 @@ examples-setup:
 	@echo "Note: Example builds are cached. If you experience persistent errors, run 'make clean' first."
 	julia --project=examples -e 'using Pkg; Pkg.instantiate()'
 
+# Build documentation
+docs: docs-setup
+	julia --project=docs docs/make.jl
+
 # Preview documentation in browser
 preview:
 	open docs/build/index.html
@@ -55,10 +39,8 @@ preview:
 help:
 	@echo "Available targets:"
 	@echo "  all        - Build all examples and documentation (default)"
-	@echo "  examples   - Build all example notebooks"
-	@echo "  example    - Build specific example (usage: make example FILTER=pattern)"
-	@echo "  examples-dev - Build all examples with local RxInfer development version"
-	@echo "  example-dev  - Build specific example with local RxInfer development version"
+	@echo "  examples   - Build all examples or a specific example (usage: make examples [FILTER=pattern] [USE_CACHE=true/false])"
+	@echo "  examples-dev - Build examples with local RxInfer development version (usage: make examples-dev [FILTER=pattern] [USE_CACHE=true/false])"
 	@echo "  docs       - Build the documentation website"
 	@echo "  preview    - Open documentation in browser"
 	@echo "  clean      - Remove all build artifacts and caches"
@@ -70,12 +52,17 @@ help:
 	@echo "Requirements:"
 	@echo "  Weave.jl must be installed globally for examples to build."
 	@echo "  Install with: julia -e 'using Pkg; Pkg.add(\"Weave\")'"
-	@echo "  Example builds are cached by default. If you fix an example but still see errors,"
-	@echo "  run 'make clean' to clear the cache before rebuilding."
+	@echo "  If you fix an example but still see errors,"
+	@echo "     run 'make clean' to clear the cache before rebuilding."
 	@echo ""
 	@echo "Examples:"
-	@echo "  make example FILTER=LinearRegression  # Build specific example"
-	@echo "  make example-dev FILTER=LinearRegression  # Build with local RxInfer"
-	@echo "  make example-dev FILTER=LinearRegression RXINFER=/path/to/RxInfer.jl  # Build with specific RxInfer"
-	@echo "  make clean && make all               # Clean build everything"
-	@echo "  make docs && make preview            # Build and view docs"
+	@echo "  make examples                                  # Build all examples"
+	@echo "  make examples FILTER=Coin                      # Build specific example"
+	@echo "  make examples USE_CACHE=true                   # Build all examples with caching"
+	@echo "  make examples USE_CACHE=false                  # Build all examples without caching"
+	@echo "  make examples-dev                              # Build all examples with local RxInfer"
+	@echo "  make examples-dev FILTER=Coin                  # Build specific example with local RxInfer"
+	@echo "  make examples-dev RXINFER=/path/to/RxInfer.jl  # Build with specific RxInfer at path"
+	@echo "  make examples-dev USE_CACHE=false              # Build all examples with local RxInfer without caching"
+	@echo "  make clean && make all                         # Clean build everything"
+	@echo "  make docs && make preview                      # Build and view docs"
