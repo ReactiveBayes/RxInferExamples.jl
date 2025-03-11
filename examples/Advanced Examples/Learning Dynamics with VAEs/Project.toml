@@ -1,0 +1,6 @@
+[deps]
+AutoEncoderToolkit = "1575904b-3569-468b-ae7a-8569c4d6dae9"
+CUDA = "052768ef-5323-5732-b1bb-66c8b64840ba"
+Flux = "587475ba-b771-5e3f-ad9e-33799f191a9c"
+JLD2 = "033835bb-8acc-5ee8-8aae-3f567f8a3819"
+MLDatasets = "eb30cadb-4394-5ae3-aed4-317e484a6458"
