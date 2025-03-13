@@ -438,7 +438,7 @@ makedocs(
     pages=generate_pages(),
     format=Documenter.HTML(
         prettyurls=get(ENV, "CI", nothing) == "true",
-        canonical="https://examples.rxinfer.ml",
+        canonical="https://examples.rxinfer.com",
         assets=[
             "assets/theme.css",
             "assets/header.css",
@@ -503,7 +503,7 @@ function inject_meta_tags()
     success_count = 0
 
     # Sitemap URL
-    sitemap_url = "https://examples.rxinfer.ml/sitemap.xml"
+    sitemap_url = "https://examples.rxinfer.com/sitemap.xml"
 
     # Process root index.html first
     root_index = joinpath(build_dir, "index.html")
@@ -634,7 +634,7 @@ end
 # Function to generate sitemap.xml
 function generate_sitemap()
     build_dir = joinpath(@__DIR__, "build")
-    base_url = "https://examples.rxinfer.ml"
+    base_url = "https://examples.rxinfer.com"
 
     @info "Starting sitemap generation"
 
@@ -673,7 +673,7 @@ function generate_sitemap()
         end
 
         # Get last modification date
-        lastmod = Dates.format(Dates.now(), "yyyy-mm-ddTHH:MM:SSz")
+        lastmod = Dates.format(Dates.now(), "yyyy-mm-dd")
 
         priority = 1.0
         frequency = "weekly"
@@ -736,6 +736,6 @@ if get(ENV, "CI", nothing) == "true"
         devbranch="main",
         forcepush=true,
         versions=nothing,
-        cname="examples.rxinfer.ml"
+        cname="examples.rxinfer.com"
     )
 end
