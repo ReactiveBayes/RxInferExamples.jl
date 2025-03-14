@@ -11,9 +11,6 @@ function parse_commandline()
         "--use-dev"
         action = :store_true
         help = "Use local development version of RxInfer"
-        "--use-cache"
-        action = :store_true
-        help = "Use cached results for notebooks"
         "--rxinfer-path"
         help = "Path to RxInfer.jl repository (overrides default ../RxInfer.jl)"
         "filter"
@@ -27,7 +24,6 @@ end
 const ARGS = parse_commandline()
 const FILTER = get(ARGS, "filter", nothing)
 const USE_DEV = ARGS["use-dev"]
-const USE_CACHE = ARGS["use-cache"]
 const CUSTOM_RXINFER_PATH = get(ARGS, "rxinfer-path", nothing)
 
 const RXINFER_PATH = if USE_DEV
@@ -168,6 +164,40 @@ end
     end
 end
 
+# Function to replace hidden block markers with HTML details tags
+@everywhere function replace_hidden_blocks(content)
+    # Pattern to match code blocks with hidden block markers
+    # This regex captures: 
+    # - The opening code fence (```julia)
+    # - The hidden block start marker and its summary text
+    # - The code content
+    # - The hidden block end marker
+    # - The closing code fence (```)
+    pattern = r"(```[a-z]*\n)### EXAMPLE_HIDDEN_BLOCK_START\((.*?)\) ###(.*?)### EXAMPLE_HIDDEN_BLOCK_END ###\n(```)"s
+    
+    # Replace the matched pattern with HTML details tags around the code block
+    new_content = replace(content, pattern => s -> begin
+        matches = match(pattern, s)
+        
+        code_fence_open = matches.captures[1]  # ```julia\n
+        summary_text = matches.captures[2]     # The summary text
+        code_content = matches.captures[3]     # The code between markers
+        code_fence_close = matches.captures[4] # ```
+        
+        """
+```@raw html
+<details><summary>Hidden block of <b>$(summary_text)</b> - click to expand</summary>
+```
+$(code_fence_open)$(code_content)$(code_fence_close)
+```@raw html
+</details>
+<br>
+```"""
+    end)
+    
+    return new_content
+end
+
 # Function to process a single notebook
 @everywhere function process_notebook(notebook_path, build_dir, cache_dir, rxinfer_path=nothing)
     # Get the notebook's directory and activate its environment
@@ -240,7 +270,7 @@ end
             out_path=output_path,
             doctype="github",
             fig_path=output_dir,
-            cache=ifelse($USE_CACHE, :all, :refresh),
+            cache=:all,
             cache_path=notebook_cache_dir,
             mod=mod
         )
@@ -250,6 +280,9 @@ end
 
         # Read the existing content
         content = read(output_path, String)
+        
+        # Replace hidden block markers with HTML details tags
+        content = replace_hidden_blocks(content)
 
         CONTRIBUTING_NOTE = """
         !!! note "Contributing"
