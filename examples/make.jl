@@ -236,6 +236,12 @@ end
 
     @info "Processing $rel_path..."
     try
+        if !isfile(joinpath(output_dir, "meta.jl"))
+            error("The example is missing a meta.jl file. See contributing guide for more information.")
+        end
+
+        meta = include(joinpath(output_dir, "meta.jl"))
+
         weave(build_input_path;
             out_path=output_path,
             doctype="github",
@@ -250,6 +256,17 @@ end
 
         # Read the existing content
         content = read(output_path, String)
+
+        EXAMPLE_METADATA = """
+        ```@meta
+        EditURL="https://github.com/ReactiveBayes/RxInferExamples.jl"
+        Description=\"\"\"
+        $(meta.title) with RxInfer.jl
+        $(meta.description)
+        Check more examples and tutorials at https://examples.rxinfer.com
+        \"\"\"
+        ```
+        """
 
         CONTRIBUTING_NOTE = """
         !!! note "Contributing"
@@ -284,6 +301,7 @@ end
         # Write the contribution note at the beginning
         write(output_path,
             """
+            $EXAMPLE_METADATA
             $CONTRIBUTING_NOTE
             ---
             $content

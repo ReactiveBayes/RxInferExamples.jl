@@ -38,7 +38,7 @@ Navigate to the [Examples](https://examples.rxinfer.com) page to check the pre-r
    ```
 
 > [!NOTE]  
-> Example builds are cached. If you make changes to an example and still see old errors after rebuilding, try clearing the cache first with the `make clean` command.
+> If you make changes to an example and still see old errors after rebuilding, try clearing the cache first with the `make clean` command.
 
 All the examples are Jupyter notebooks, which also can be run with [Jupyter](https://jupyter.org/).
 
