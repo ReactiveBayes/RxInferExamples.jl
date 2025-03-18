@@ -33,6 +33,15 @@ sophisticated models, performance optimization, and integration with other Julia
 Real-world applications and domain-specific models. These examples show how RxInfer.jl
 can be applied to specific problems like time series analysis and signal processing.
 """
+    ),
+    Category(
+        "Experimental Examples",
+        "experimental_examples",
+        """
+Experimental examples and proof-of-concepts. These examples are not yet ready for
+production use but are useful for research and development. They also usually require 
+additional patches to RxInfer.jl to work.
+"""
     )
 ]
 

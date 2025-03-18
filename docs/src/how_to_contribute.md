@@ -51,6 +51,34 @@ Each example at the very least should have a clear, descriptive title, a `meta.j
    - Separate display equations with empty lines
    - Inline equations use single `$...$`, e.g. `$$a + b$$` and not `$$ a + b $$`
 
+## Hidden/Collapsible Code Blocks
+
+You can hide complex or supplementary code blocks behind collapsible sections to improve readability while still making all code available to users.
+
+1. **Creating Hidden Blocks**
+   To create a collapsible code block, add special marker comments within your code blocks:
+   ```julia
+   ### EXAMPLE_HIDDEN_BLOCK_START(Custom summary text) ###
+   # This code will be hidden by default
+   function complex_function()
+       # Implementation details
+       return result
+   end
+
+   nothing # to suppress the output in the notebook
+   ### EXAMPLE_HIDDEN_BLOCK_END ###
+   ```
+   Important to note that these comments must be on the first and the last line of the code block respectively. If you want to suppress the output of the code block entirely, add `nothing` at the end of the code block.
+
+2. **Best Practices**
+   - Use hidden blocks for implementation details that would distract from the main tutorial flow
+   - Provide a descriptive summary that explains what the hidden code does
+   - Ensure the code within hidden blocks still runs correctly - it just gets hidden in the display
+   - Use for auxiliary functions, data processing, or complex implementations
+
+3. **Result in Documentation**
+   The code block will be rendered as a collapsible "details" element with your custom summary text as the clickable header.
+
 ## Visualization and figures
 
 - All plots rendered with `Plots.jl` should display automatically
