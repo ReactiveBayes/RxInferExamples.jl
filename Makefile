@@ -24,7 +24,7 @@ docs-setup:
 examples-setup:
 	@echo "Note: Building examples requires Weave.jl to be installed globally."
 	@echo "If not installed, run: julia -e 'using Pkg; Pkg.add(\"Weave\")'"
-	@echo "Note: Example builds are cached. If you experience persistent errors, run 'make clean' first."
+	@echo "Note: If you experience persistent errors, try 'make clean' before rebuilding the examples."
 	julia --project=examples -e 'using Pkg; Pkg.instantiate()'
 
 # Build documentation
