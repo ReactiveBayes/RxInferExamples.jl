@@ -2,3 +2,21 @@
 Observation MSE: 4.2223
 Inference MSE: 0.9841
 Improvement: 76.69%
+
+=== Neural Network Parameters ===
+Number of parameters: 12
+Mean parameter value: 0.3017
+Parameter value range: [-0.0161, 1.3054]
+Parameter change summary:
+  Mean absolute change: 0.4514
+  Max absolute change: 0.813
+
+=== Uncertainty Analysis ===
+Mean uncertainty (std dev):
+  x dimension: 0.8122
+  y dimension: 0.8165
+  z dimension: 0.8145
+Max uncertainty (std dev):
+  x dimension: 1.0144
+  y dimension: 0.9952
+  z dimension: 1.0112

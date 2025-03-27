@@ -8,10 +8,13 @@ using RxInfer, Flux, Random, Plots, LinearAlgebra, StableRNGs, ForwardDiff
 # Also import Distributions for the posterior visualization
 using Distributions
 
-# Create output directory for saving plots
+# Create output directory for saving plots and animations
 const OUTPUT_DIR = joinpath(@__DIR__, "output_images")
+const ANIMATION_DIR = joinpath(OUTPUT_DIR, "animations")
 mkpath(OUTPUT_DIR)
+mkpath(ANIMATION_DIR)
 println("Saving visualizations to: $OUTPUT_DIR")
+println("Saving animations to: $ANIMATION_DIR")
 
 # Lorenz system equations to be used to generate dataset
 Base.@kwdef mutable struct Lorenz
@@ -652,3 +655,301 @@ catch e
 end
 
 println("\nAll visualizations saved to: $OUTPUT_DIR")
+
+# Function to create animated 3D trajectory
+function animate_3d_trajectory(result, true_signal, noisy_signal; filename="3d_trajectory.gif", fps=15)
+    println("\nCreating 3D trajectory animation...")
+    
+    # Extract means and variances
+    means = mean.(result.posteriors[:x])
+    stds = [sqrt.(diag(cov(post))) for post in result.posteriors[:x]]
+    
+    # Extract coordinates
+    x_mean = getindex.(means, 1)
+    y_mean = getindex.(means, 2)
+    z_mean = getindex.(means, 3)
+    
+    # True signal coordinates
+    true_x = getindex.(true_signal, 1)
+    true_y = getindex.(true_signal, 2)
+    true_z = getindex.(true_signal, 3)
+    
+    # Noisy signal coordinates
+    noisy_x = getindex.(noisy_signal, 1)
+    noisy_y = getindex.(noisy_signal, 2)
+    noisy_z = getindex.(noisy_signal, 3)
+    
+    # Determine axis limits
+    x_lim = (min(minimum(x_mean), minimum(true_x), minimum(noisy_x)) * 1.1,
+             max(maximum(x_mean), maximum(true_x), maximum(noisy_x)) * 1.1)
+    y_lim = (min(minimum(y_mean), minimum(true_y), minimum(noisy_y)) * 1.1,
+             max(maximum(y_mean), maximum(true_y), maximum(noisy_y)) * 1.1)
+    z_lim = (min(minimum(z_mean), minimum(true_z), minimum(noisy_z)) * 1.1,
+             max(maximum(z_mean), maximum(true_z), maximum(noisy_z)) * 1.1)
+    
+    # Create animation
+    anim = @animate for t in 1:length(means)
+        # Create 3D plot
+        p = plot3d(
+            # Plot trajectory up to current time
+            x_mean[1:t], y_mean[1:t], z_mean[1:t],
+            title="State Evolution Over Time (t=$t)",
+            xlabel="X", ylabel="Y", zlabel="Z",
+            label="Inferred Mean",
+            linewidth=2,
+            color=:blue,
+            xlim=x_lim, ylim=y_lim, zlim=z_lim,
+            camera=(30 + 50*sin(t/length(means)*π), 30 + 20*cos(t/length(means)*π)),
+            legend=:topright
+        )
+        
+        # Add true trajectory
+        plot3d!(
+            true_x[1:t], true_y[1:t], true_z[1:t],
+            label="True State",
+            linewidth=2,
+            color=:red
+        )
+        
+        # Add noisy observations with transparency
+        scatter3d!(
+            noisy_x[1:t], noisy_y[1:t], noisy_z[1:t],
+            label="Observations",
+            markersize=2,
+            markerstrokewidth=0,
+            color=:gray,
+            alpha=0.3
+        )
+        
+        # Add current point with uncertainty
+        if t > 0
+            # Use average std as marker size
+            marker_size = sum([stds[t][i] for i in 1:3])/3 * 3
+            scatter3d!(
+                [x_mean[t]], [y_mean[t]], [z_mean[t]],
+                markersize=marker_size,
+                alpha=0.5,
+                color=:blue,
+                label="Current State"
+            )
+        end
+    end
+    
+    # Save animation
+    gif(anim, joinpath(ANIMATION_DIR, filename), fps=fps)
+    println("Saved animation: $filename")
+end
+
+# Function to animate time series data
+function animate_time_series(result, true_signal, noisy_signal; filename="time_series.gif", fps=15)
+    println("\nCreating time series animation...")
+    
+    # Extract means and standard deviations
+    means = mean.(result.posteriors[:x])
+    stds = [sqrt.(diag(cov(post))) for post in result.posteriors[:x]]
+    
+    # Pre-allocate arrays for better performance
+    n_points = length(means)
+    
+    # Create animation
+    anim = @animate for t in 1:n_points
+        p = plot(layout=(3,1), size=(800, 600), legend=:topright)
+        
+        for dim in 1:3
+            # Extract coordinates for this dimension
+            dim_means = [mean[dim] for mean in means[1:t]]
+            dim_stds = [std[dim] for std in stds[1:t]]
+            
+            # True and noisy signals
+            true_vals = [s[dim] for s in true_signal[1:t]]
+            noisy_vals = [s[dim] for s in noisy_signal[1:t]]
+            
+            # Plot dimension
+            subplot = plot!(p, 1:t, dim_means, 
+                          ribbon=dim_stds,
+                          subplot=dim,
+                          title="Dimension $dim (t=$t)",
+                          ylabel="Value",
+                          label="Inferred Mean",
+                          linewidth=2,
+                          fillalpha=0.3)
+            
+            # Add true signal
+            plot!(p, 1:t, true_vals,
+                 subplot=dim,
+                 label="True State",
+                 linewidth=2,
+                 color=:red)
+            
+            # Add noisy observations
+            scatter!(p, 1:t, noisy_vals,
+                   subplot=dim,
+                   label="Observations",
+                   markersize=2,
+                   markerstrokewidth=0,
+                   color=:gray,
+                   alpha=0.7)
+        end
+        
+        plot!(p, xlabel="Time Step", bottom_margin=5Plots.mm)
+    end
+    
+    # Save animation
+    gif(anim, joinpath(ANIMATION_DIR, filename), fps=fps)
+    println("Saved animation: $filename")
+end
+
+# Function to animate transition matrices evolution
+function animate_transition_matrices(matrices; filename="transition_matrices.gif", fps=10)
+    println("\nCreating transition matrices animation...")
+    
+    n = length(matrices)
+    # Use a subset if there are too many matrices
+    step_size = max(1, n ÷ 100)
+    selected_indices = 1:step_size:n
+    
+    anim = @animate for i in selected_indices
+        matrix = matrices[i]
+        
+        p = heatmap(matrix, 
+                  title="Transition Matrix (t=$i)",
+                  color=:viridis,
+                  aspect_ratio=:equal,
+                  clim=(0, max(1.0, maximum(matrix))),
+                  xticks=(1:3, ["x", "y", "z"]),
+                  yticks=(1:3, ["x", "y", "z"]),
+                  size=(500, 500))
+                  
+        annotate!([(j, k, text(round(matrix[j,k], digits=2), 8, :white)) 
+                  for j in 1:3 for k in 1:3])
+    end
+    
+    # Save animation
+    gif(anim, joinpath(ANIMATION_DIR, filename), fps=fps)
+    println("Saved animation: $filename")
+end
+
+# Function to animate neural network parameter changes
+function animate_parameter_changes(untrained_nn, trained_nn, training_steps=100; filename="parameter_evolution.gif", fps=10)
+    println("\nCreating parameter evolution animation...")
+    
+    # Get initial and final parameters
+    initial_params, _ = Flux.destructure(untrained_nn)
+    final_params, _ = Flux.destructure(trained_nn)
+    
+    # Interpolate between initial and final parameters
+    anim = @animate for t in 0:training_steps
+        # Linear interpolation between initial and final parameters
+        alpha = t / training_steps
+        current_params = (1 - alpha) * initial_params + alpha * final_params
+        
+        # Plot current parameters
+        p = bar(current_params,
+              title="Neural Network Parameters ($(round(Int, alpha*100))% trained)",
+              xlabel="Parameter Index",
+              ylabel="Value",
+              legend=false,
+              color=:blue,
+              alpha=0.7,
+              size=(800, 400))
+              
+        # Add reference lines for initial and final values
+        hline!([0], color=:black, linestyle=:dash, label="Zero")
+        
+        # Add progress information
+        annotate!([(length(current_params)÷2, maximum(current_params)*0.9, 
+                   text("Training progress: $(round(Int, alpha*100))%", 10, :center))])
+    end
+    
+    # Save animation
+    gif(anim, joinpath(ANIMATION_DIR, filename), fps=fps)
+    println("Saved animation: $filename")
+end
+
+# Function to create animated posterior distribution evolution
+function animate_posterior_evolution(result, dim=1; filename="posterior_evolution.gif", fps=10)
+    println("\nCreating posterior distribution evolution animation for dimension $dim...")
+    
+    posteriors = result.posteriors[:x]
+    n_points = length(posteriors)
+    
+    # Determine global limits for consistent animation
+    all_means = [mean(post)[dim] for post in posteriors]
+    all_stds = [sqrt(cov(post)[dim,dim]) for post in posteriors]
+    
+    x_min = minimum(all_means) - 4 * maximum(all_stds)
+    x_max = maximum(all_means) + 4 * maximum(all_stds)
+    y_max = maximum([pdf(Normal(μ, σ), μ) for (μ, σ) in zip(all_means, all_stds)]) * 1.2
+    
+    anim = @animate for t in 1:n_points
+        posterior = posteriors[t]
+        μ = mean(posterior)[dim]
+        σ = sqrt(cov(posterior)[dim,dim])
+        
+        # Generate points for the distribution curve
+        x_range = range(x_min, x_max, length=200)
+        pdf_values = [pdf(Normal(μ, σ), x) for x in x_range]
+        
+        # Plot the distribution
+        p = plot(x_range, pdf_values, 
+                title="Posterior Evolution for Dimension $dim (t=$t)", 
+                label="Current Posterior",
+                fill=true, 
+                fillalpha=0.3,
+                linewidth=2, 
+                xlabel="Value", 
+                ylabel="Density",
+                xlim=(x_min, x_max),
+                ylim=(0, y_max),
+                size=(700, 400))
+        
+        # Add the true value marker if available
+        if @isdefined(dataset) && t <= length(dataset.signal)
+            true_value = dataset.signal[t][dim]
+            vline!([true_value], label="True", linestyle=:dash, linewidth=2, color=:red)
+            
+            # Add the observation marker
+            obs_value = dataset.noisy_signal[t][dim]
+            vline!([obs_value], label="Observed", linestyle=:dot, linewidth=2, color=:gray)
+        end
+        
+        # Show mean and std dev as text
+        annotate!([
+            (x_min + (x_max - x_min) * 0.1, y_max * 0.9, 
+             text("μ = $(round(μ, digits=2))", 10, :left)),
+            (x_min + (x_max - x_min) * 0.1, y_max * 0.8, 
+             text("σ = $(round(σ, digits=2))", 10, :left))
+        ])
+    end
+    
+    # Save animation
+    gif(anim, joinpath(ANIMATION_DIR, filename), fps=fps)
+    println("Saved animation: $filename")
+end
+
+# Create animations after all visualizations
+println("\nGenerating animations...")
+
+# 3D trajectory animation
+animate_3d_trajectory(trained_result, dataset.signal, dataset.noisy_signal, 
+                     filename="01_3d_trajectory.gif", fps=20)
+
+# Time series animation
+animate_time_series(trained_result, dataset.signal, dataset.noisy_signal,
+                   filename="02_time_series.gif", fps=20)
+
+# Transition matrices animation
+animate_transition_matrices(trained_transition_matrices,
+                           filename="03_transition_matrices.gif", fps=10)
+
+# Parameter evolution animation
+animate_parameter_changes(untrained_neural_network, trained_neural_network, 100,
+                         filename="04_parameter_evolution.gif", fps=15)
+
+# Posterior distribution evolution animations (one for each dimension)
+animate_posterior_evolution(trained_result, 1, filename="05_posterior_evolution_dim1.gif")
+animate_posterior_evolution(trained_result, 2, filename="06_posterior_evolution_dim2.gif")
+animate_posterior_evolution(trained_result, 3, filename="07_posterior_evolution_dim3.gif")
+
+println("\nAll visualizations and animations saved to: $OUTPUT_DIR")
+println("Animations saved to: $ANIMATION_DIR")
