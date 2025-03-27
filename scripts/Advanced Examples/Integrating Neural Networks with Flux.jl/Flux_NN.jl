@@ -82,7 +82,7 @@ plot!(p3, gy, gz, label="True state", linewidth=2)
 # Combine plots with improved layout
 initial_proj_plot = plot(p1, p2, p3, size=(900, 250), layout=(1,3), margin=5Plots.mm)
 savefig(initial_proj_plot, joinpath(OUTPUT_DIR, "01_initial_projections.png"))
-display(initial_proj_plot)
+println("Saved: 01_initial_projections.png")
 
 function make_neural_network(rng = StableRNG(1234))
     model = Dense(3 => 3)
@@ -147,12 +147,13 @@ function plot_coordinates(result; filename = nothing)
     plt = plot(p1, p2, p3, size = (1000, 600), layout = (3, 1), legend=:bottomleft)
     if !isnothing(filename)
         savefig(plt, joinpath(OUTPUT_DIR, filename))
+        println("Saved: $filename")
     end
     return plt
 end
 
 untrained_plot = plot_coordinates(untrained_result, filename = "02_untrained_coordinates.png")
-display(untrained_plot)
+println("Saved: 02_untrained_coordinates.png")
 
 # free energy objective to be optimized during training
 function make_fe_tot_est(rebuild, data; Q = Q, B = B, R = R)
@@ -265,7 +266,7 @@ function run_epochs!(rebuild::F, fe_tot_est::I, state::S, neural_network::N; num
                        legend=false,
                        linewidth=2)
         savefig(p, joinpath(OUTPUT_DIR, "03_training_progress.png"))
-        display(p)
+        println("Saved: 03_training_progress.png")
     end
     
     return (free_energies=free_energies, timestamps=timestamps)
@@ -284,7 +285,7 @@ trained_result = infer(
 )
 
 trained_plot = plot_coordinates(trained_result, filename = "04_trained_coordinates.png")
-display(trained_plot)
+println("Saved: 04_trained_coordinates.png")
 
 ix, iy, iz = zeros(n_points), zeros(n_points), zeros(n_points)
 
@@ -329,7 +330,7 @@ function visualize_nn_parameters(nn, filename)
                      color=:viridis,
                      size=(800, 200))
     savefig(p, joinpath(OUTPUT_DIR, filename))
-    display(p)
+    println("Saved: $filename")
     return p
 end
 
@@ -351,7 +352,7 @@ function visualize_transition_matrices(matrices, filename)
     
     p = Plots.plot(heatmaps..., size=(900, 700), layout=(4, 5))
     savefig(p, joinpath(OUTPUT_DIR, filename))
-    display(p)
+    println("Saved: $filename")
     return p
 end
 
@@ -389,7 +390,7 @@ p_changes = Plots.bar(param_changes,
                     alpha=0.7,
                     size=(800, 400))
 savefig(p_changes, joinpath(OUTPUT_DIR, "10_parameter_changes.png"))
-display(p_changes)
+println("Saved: 10_parameter_changes.png")
 
 # Visualize uncertainty in the inferred states
 println("\nVisualizing inference uncertainty...")
@@ -404,7 +405,7 @@ p_uncert = Plots.plot(1:n_points, uncertainty_matrix',
                     linewidth=2,
                     size=(800, 400))
 savefig(p_uncert, joinpath(OUTPUT_DIR, "11_inference_uncertainty.png"))
-display(p_uncert)
+println("Saved: 11_inference_uncertainty.png")
 
 # Visualize model posterior distributions for selected time points
 println("\nVisualizing posterior distributions...")
@@ -458,9 +459,9 @@ function visualize_posterior_distributions(result, timepoints; filename = nothin
     
     if !isnothing(filename)
         savefig(posterior_plot, joinpath(OUTPUT_DIR, filename))
+        println("Saved: $filename")
     end
     
-    display(posterior_plot)
     return posterior_plot
 end
 
@@ -474,7 +475,7 @@ println("\nVisualizing state evolution with uncertainty...")
 function visualize_state_evolution(result, filename)
     # Extract the means and standard deviations for each dimension
     means = mean.(result.posteriors[:x])
-    stds = sqrt.(var.(result.posteriors[:x]))
+    stds = [sqrt.(diag(cov(post))) for post in result.posteriors[:x]]
     
     # Extract true values
     true_values = dataset.signal
@@ -502,9 +503,11 @@ function visualize_state_evolution(result, filename)
     # Add uncertainty tube
     for i in 1:min(n_points, 100) # Limit points for clarity
         if i % 5 == 0 # Only plot some points to avoid clutter
+            # Use average std as marker size
+            marker_size = (x_std[i] + y_std[i] + z_std[i])/3 * 2
             scatter3d!(
                 [x_mean[i]], [y_mean[i]], [z_mean[i]],
-                markersize=2*x_std[i],
+                markersize=marker_size,
                 alpha=0.2,
                 label=i==5 ? "Uncertainty" : false,
                 color=:blue
@@ -524,7 +527,6 @@ function visualize_state_evolution(result, filename)
     
     # Save and display
     savefig(p, joinpath(OUTPUT_DIR, filename))
-    display(p)
     return p
 end
 
@@ -569,7 +571,7 @@ function compare_prior_posterior(untrained_result, trained_result, filename)
     
     # Save and display
     savefig(p, joinpath(OUTPUT_DIR, filename))
-    display(p)
+    println("Saved: $filename")
     return p
 end
 
@@ -591,7 +593,7 @@ plot!(p3, iy, iz, label="Inferred Mean", linewidth=2)
 # Combine plots with improved layout
 final_proj_plot = plot(p1, p2, p3, size=(900, 250), layout=(1,3), margin=5Plots.mm)
 savefig(final_proj_plot, joinpath(OUTPUT_DIR, "05_final_projections.png"))
-display(final_proj_plot)
+println("Saved: 05_final_projections.png")
 
 # Save metrics to a summary file
 open(joinpath(OUTPUT_DIR, "performance_summary.txt"), "w") do f
@@ -644,7 +646,7 @@ try
     
     overview = Plots.plot(overview_plots..., layout=(rows, cols), size=(1200, 200*rows), title="Visualization Overview")
     savefig(overview, joinpath(OUTPUT_DIR, "15_visualization_overview.png"))
-    display(overview)
+    println("Saved: 15_visualization_overview.png")
 catch e
     println("Could not create visualization overview: $e")
 end
