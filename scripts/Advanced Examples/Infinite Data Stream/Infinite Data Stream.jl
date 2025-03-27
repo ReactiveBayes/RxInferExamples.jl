@@ -1,5 +1,5 @@
-# This file was automatically generated from examples/Advanced Examples/Infinite Data Stream/Infinite Data Stream.ipynb
-# by notebooks_to_scripts.jl at 2025-03-14T05:52:01.877
+# This file was automatically generated from /home/trim/Documents/GitHub/RxInferExamples.jl/examples/Advanced Examples/Infinite Data Stream/Infinite Data Stream.ipynb
+# by notebooks_to_scripts.jl at 2025-03-27T06:11:19.935
 #
 # Source notebook: Infinite Data Stream.ipynb
 

@@ -1,5 +1,5 @@
-# This file was automatically generated from examples/Advanced Examples/GP Regression by SSM/GP Regression by SSM.ipynb
-# by notebooks_to_scripts.jl at 2025-03-14T05:52:01.860
+# This file was automatically generated from /home/trim/Documents/GitHub/RxInferExamples.jl/examples/Advanced Examples/GP Regression by SSM/GP Regression by SSM.ipynb
+# by notebooks_to_scripts.jl at 2025-03-27T06:11:19.932
 #
 # Source notebook: GP Regression by SSM.ipynb
 

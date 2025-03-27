@@ -9,23 +9,28 @@ This script:
 3. Extracts Julia code from each notebook
 4. Creates a parallel scripts/ directory structure with .jl files
 
-Usage: Run this script from the repository root directory
+Usage: This script can be run from any directory
 ```
-julia support/notebooks_to_scripts.jl
+julia path/to/notebooks_to_scripts.jl
 ```
 """
 
 using JSON
 using Base.Filesystem
-using Dates  # Add Dates module import
+using Dates
 
-# Ensure we're running from the project root
-if !isdir("examples")
-    error("This script must be run from the repository root that contains the 'examples' directory")
+# Determine the repository root
+script_dir = dirname(abspath(@__FILE__))
+repo_root = dirname(script_dir)
+
+# Check if examples directory exists
+examples_dir = joinpath(repo_root, "examples")
+if !isdir(examples_dir)
+    error("Cannot find 'examples' directory in the repository root at $repo_root")
 end
 
 # Create output directory if it doesn't exist
-output_dir = "scripts"
+output_dir = joinpath(repo_root, "scripts")
 mkpath(output_dir)
 
 # Function to extract Julia code from a notebook
@@ -61,7 +66,7 @@ end
 # Function to convert notebook path to script path
 function notebook_to_script_path(notebook_path)
     # Replace the base directory
-    script_path = replace(notebook_path, "examples/" => "scripts/")
+    script_path = replace(notebook_path, examples_dir => output_dir)
     
     # Replace the file extension
     script_path = replace(script_path, r"\.ipynb$" => ".jl")
@@ -85,14 +90,14 @@ end
 global notebooks_processed = 0  # Declare as global to fix scope warning
 println("Converting notebooks to Julia scripts...")
 
-for (root, dirs, files) in walkdir("examples")
+for (root, dirs, files) in walkdir(examples_dir)
     # Skip the root examples directory itself
-    if root == "examples"
+    if root == examples_dir
         continue
     end
     
     # Create corresponding directory in scripts/
-    target_dir = replace(root, "examples/" => "scripts/")
+    target_dir = replace(root, examples_dir => output_dir)
     mkpath(target_dir)
     
     # Copy Project.toml and meta.jl if they exist

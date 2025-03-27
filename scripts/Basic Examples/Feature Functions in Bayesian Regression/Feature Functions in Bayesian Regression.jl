@@ -1,5 +1,5 @@
-# This file was automatically generated from examples/Basic Examples/Feature Functions in Bayesian Regression/Feature Functions in Bayesian Regression.ipynb
-# by notebooks_to_scripts.jl at 2025-03-14T05:52:02.109
+# This file was automatically generated from /home/trim/Documents/GitHub/RxInferExamples.jl/examples/Basic Examples/Feature Functions in Bayesian Regression/Feature Functions in Bayesian Regression.ipynb
+# by notebooks_to_scripts.jl at 2025-03-27T06:11:20.264
 #
 # Source notebook: Feature Functions in Bayesian Regression.ipynb
 

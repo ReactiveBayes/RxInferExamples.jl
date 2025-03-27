@@ -1,5 +1,5 @@
-# This file was automatically generated from examples/Problem Specific/RTS vs BIFM Smoothing/RTS vs BIFM Smoothing.ipynb
-# by notebooks_to_scripts.jl at 2025-03-14T05:52:02.338
+# This file was automatically generated from /home/trim/Documents/GitHub/RxInferExamples.jl/examples/Problem Specific/RTS vs BIFM Smoothing/RTS vs BIFM Smoothing.ipynb
+# by notebooks_to_scripts.jl at 2025-03-27T06:11:20.561
 #
 # Source notebook: RTS vs BIFM Smoothing.ipynb
 

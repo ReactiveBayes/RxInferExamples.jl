@@ -1,5 +1,5 @@
-# This file was automatically generated from examples/Basic Examples/Bayesian Multinomial Regression/Bayesian Multinomial Regression.ipynb
-# by notebooks_to_scripts.jl at 2025-03-14T05:52:02.006
+# This file was automatically generated from /home/trim/Documents/GitHub/RxInferExamples.jl/examples/Basic Examples/Bayesian Multinomial Regression/Bayesian Multinomial Regression.ipynb
+# by notebooks_to_scripts.jl at 2025-03-27T06:11:20.135
 #
 # Source notebook: Bayesian Multinomial Regression.ipynb
 

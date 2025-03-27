@@ -1,5 +1,5 @@
-# This file was automatically generated from examples/Basic Examples/Hidden Markov Model/Hidden Markov Model.ipynb
-# by notebooks_to_scripts.jl at 2025-03-14T05:52:02.112
+# This file was automatically generated from /home/trim/Documents/GitHub/RxInferExamples.jl/examples/Basic Examples/Hidden Markov Model/Hidden Markov Model.ipynb
+# by notebooks_to_scripts.jl at 2025-03-27T06:11:20.268
 #
 # Source notebook: Hidden Markov Model.ipynb
 

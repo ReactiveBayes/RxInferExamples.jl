@@ -1,5 +1,5 @@
-# This file was automatically generated from examples/Advanced Examples/Drone Dynamics/Drone Dynamics.ipynb
-# by notebooks_to_scripts.jl at 2025-03-14T05:52:01.857
+# This file was automatically generated from /home/trim/Documents/GitHub/RxInferExamples.jl/examples/Advanced Examples/Drone Dynamics/Drone Dynamics.ipynb
+# by notebooks_to_scripts.jl at 2025-03-27T06:11:19.927
 #
 # Source notebook: Drone Dynamics.ipynb
 
@@ -488,6 +488,29 @@ function animate_drone_3d_multi(drone::Drone3D, states, targets; fps=30)
     # Initialize raindrops
     raindrops = generate_raindrops()
     
+    # Determine dynamic plot bounds based on states and targets
+    x_vals = [states[1,:]; [t[1] for t in targets]]
+    y_vals = [states[2,:]; [t[2] for t in targets]]
+    z_vals = [states[3,:]; [t[3] for t in targets]]
+    
+    x_min, x_max = minimum(x_vals) - 0.5, maximum(x_vals) + 0.5
+    y_min, y_max = minimum(y_vals) - 0.5, maximum(y_vals) + 0.5
+    z_min, z_max = minimum(z_vals) - 0.5, maximum(z_vals) + 0.5
+    
+    # Ensure the plot window is at least 4x4x4 for good visualization
+    x_range = max(x_max - x_min, 4.0)
+    y_range = max(y_max - y_min, 4.0)
+    z_range = max(z_max - z_min, 4.0)
+    
+    # Center the plot window
+    x_center = (x_min + x_max) / 2
+    y_center = (y_min + y_max) / 2
+    z_center = (z_min + z_max) / 2
+    
+    x_min, x_max = x_center - x_range/2, x_center + x_range/2
+    y_min, y_max = y_center - y_range/2, y_center + y_range/2
+    z_min, z_max = z_center - z_range/2, z_center + z_range/2
+    
     animation = @animate for k in 1:size(states,2)
         # Update raindrop positions
         fall_speed = 0.1
@@ -495,7 +518,7 @@ function animate_drone_3d_multi(drone::Drone3D, states, targets; fps=30)
         z2 = raindrops[4] .- fall_speed
         
         # Regenerate raindrops that have fallen below view
-        below_view = findall(z2 .<= -2)
+        below_view = findall(z2 .<= z_min)
         if !isempty(below_view)
             new_drops = generate_raindrops(length(below_view))
             raindrops[1][below_view] = new_drops[1]
@@ -508,7 +531,7 @@ function animate_drone_3d_multi(drone::Drone3D, states, targets; fps=30)
         raindrops = (raindrops[1], raindrops[2], z1, z2)
         
         p = plot3d(
-            xlims=(-2, 2), ylims=(-2, 2), zlims=(-2, 2),
+            xlims=(x_min, x_max), ylims=(y_min, y_max), zlims=(z_min, z_max),
             xlabel="X", ylabel="Y", zlabel="Z",
             camera=(45, 30),
             title="Multi-Waypoint Drone Flight",
@@ -517,7 +540,7 @@ function animate_drone_3d_multi(drone::Drone3D, states, targets; fps=30)
         
         # Draw rain streaks
         for i in 1:length(raindrops[1])
-            if raindrops[4][i] > -2  # only draw if in view
+            if raindrops[4][i] > z_min  # only draw if in view
                 plot!(p, [raindrops[1][i], raindrops[1][i]], 
                         [raindrops[2][i], raindrops[2][i]], 
                         [raindrops[3][i], raindrops[4][i]],
@@ -547,7 +570,14 @@ function animate_drone_3d_multi(drone::Drone3D, states, targets; fps=30)
         end
         
         # Plot drone
-        plot_drone_3d!(p, drone_3d, State3D(states[:, k]...))
+        if size(states, 1) >= 12  # Make sure we have all 12 components for State3D
+            current_state = State3D(states[:, k]...)
+            plot_drone_3d!(p, drone, current_state)
+        else
+            # If we don't have enough state components, just plot a point at the position
+            scatter!(p, [states[1,k]], [states[2,k]], [states[3,k]], 
+                   color=:black, markersize=4, label=false)
+        end
         
         # Add trajectory trace (last 100 points)
         trace_start = max(1, k-100)

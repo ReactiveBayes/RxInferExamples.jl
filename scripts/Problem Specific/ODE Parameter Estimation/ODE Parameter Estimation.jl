@@ -1,5 +1,5 @@
-# This file was automatically generated from examples/Problem Specific/ODE Parameter Estimation/ODE Parameter Estimation.ipynb
-# by notebooks_to_scripts.jl at 2025-03-14T05:52:02.326
+# This file was automatically generated from /home/trim/Documents/GitHub/RxInferExamples.jl/examples/Problem Specific/ODE Parameter Estimation/ODE Parameter Estimation.ipynb
+# by notebooks_to_scripts.jl at 2025-03-27T06:11:20.544
 #
 # Source notebook: ODE Parameter Estimation.ipynb
 

@@ -1,5 +1,5 @@
-# This file was automatically generated from examples/Basic Examples/POMDP Control/POMDP Control.ipynb
-# by notebooks_to_scripts.jl at 2025-03-14T05:52:02.131
+# This file was automatically generated from /home/trim/Documents/GitHub/RxInferExamples.jl/examples/Basic Examples/POMDP Control/POMDP Control.ipynb
+# by notebooks_to_scripts.jl at 2025-03-27T06:11:20.299
 #
 # Source notebook: POMDP Control.ipynb
 
@@ -178,8 +178,8 @@ successes = []
             ),
             # Provide data for inference
             data = (
-                previous_control = UnfactorizedData(prev_u),
-                current_y = UnfactorizedData(last_observation),
+                previous_control = prev_u,
+                current_y = last_observation,
                 future_y = UnfactorizedData(fill(missing, max(T - t, 1)))
             ),
             constraints = constraints,
