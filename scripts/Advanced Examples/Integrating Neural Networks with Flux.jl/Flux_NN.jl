@@ -5,6 +5,14 @@
 
 using RxInfer, Flux, Random, Plots, LinearAlgebra, StableRNGs, ForwardDiff
 
+# Also import Distributions for the posterior visualization
+using Distributions
+
+# Create output directory for saving plots
+const OUTPUT_DIR = joinpath(@__DIR__, "output_images")
+mkpath(OUTPUT_DIR)
+println("Saving visualizations to: $OUTPUT_DIR")
+
 # Lorenz system equations to be used to generate dataset
 Base.@kwdef mutable struct Lorenz
     dt::Float64
@@ -72,7 +80,9 @@ p3 = scatter(ry, rz, label="Noisy observations", alpha=0.7, markersize=2, title 
 plot!(p3, gy, gz, label="True state", linewidth=2)
 
 # Combine plots with improved layout
-plot(p1, p2, p3, size=(900, 250), layout=(1,3), margin=5Plots.mm)
+initial_proj_plot = plot(p1, p2, p3, size=(900, 250), layout=(1,3), margin=5Plots.mm)
+savefig(initial_proj_plot, joinpath(OUTPUT_DIR, "01_initial_projections.png"))
+display(initial_proj_plot)
 
 function make_neural_network(rng = StableRNG(1234))
     model = Dense(3 => 3)
@@ -122,7 +132,6 @@ untrained_result = infer(
     returnvars = (x = KeepLast(), )
 )
 
-
 # A helper function for plotting
 function plot_coordinate(result, i; title = "")
     p = scatter(getindex.(dataset.noisy_signal, i), label="Observations", alpha=0.7, markersize=2, title = title)
@@ -131,14 +140,19 @@ function plot_coordinate(result, i; title = "")
     return p
 end
 
-function plot_coordinates(result)
+function plot_coordinates(result; filename = nothing)
     p1 = plot_coordinate(result, 1, title = "First coordinate")
     p2 = plot_coordinate(result, 2, title = "Second coordinate")
     p3 = plot_coordinate(result, 3, title = "Third coordinate")
-    return plot(p1, p2, p3, size = (1000, 600), layout = (3, 1), legend=:bottomleft)
+    plt = plot(p1, p2, p3, size = (1000, 600), layout = (3, 1), legend=:bottomleft)
+    if !isnothing(filename)
+        savefig(plt, joinpath(OUTPUT_DIR, filename))
+    end
+    return plt
 end
 
-plot_coordinates(untrained_result)
+untrained_plot = plot_coordinates(untrained_result, filename = "02_untrained_coordinates.png")
+display(untrained_plot)
 
 # free energy objective to be optimized during training
 function make_fe_tot_est(rebuild, data; Q = Q, B = B, R = R)
@@ -242,7 +256,7 @@ function run_epochs!(rebuild::F, fe_tot_est::I, state::S, neural_network::N; num
     println("  Final free energy: $final_fe")
     println("  Improvement: $improvement ($(round(improvement_pct; digits=2))%)")
     
-    # Optional: plot training progress
+    # Plot training progress
     if @isdefined(Plots)
         p = Plots.plot(timestamps, free_energies, 
                        xlabel="Time (seconds)", 
@@ -250,6 +264,7 @@ function run_epochs!(rebuild::F, fe_tot_est::I, state::S, neural_network::N; num
                        title="Training Progress",
                        legend=false,
                        linewidth=2)
+        savefig(p, joinpath(OUTPUT_DIR, "03_training_progress.png"))
         display(p)
     end
     
@@ -268,7 +283,8 @@ trained_result = infer(
     returnvars = (x = KeepLast(), )
 )
 
-plot_coordinates(trained_result)
+trained_plot = plot_coordinates(trained_result, filename = "04_trained_coordinates.png")
+display(trained_plot)
 
 ix, iy, iz = zeros(n_points), zeros(n_points), zeros(n_points)
 
@@ -303,8 +319,261 @@ function evaluate_model_performance(true_signal, noisy_signal, inferred_mean)
     return (obs_mse=obs_mse, inf_mse=inf_mse, improvement=improvement)
 end
 
+# Function to visualize neural network parameters
+function visualize_nn_parameters(nn, filename)
+    flat, _ = Flux.destructure(nn)
+    p = Plots.heatmap(reshape(flat, 1, :), 
+                     title="Neural Network Parameters", 
+                     ylabel="Parameters", 
+                     xlabel="Index",
+                     color=:viridis,
+                     size=(800, 200))
+    savefig(p, joinpath(OUTPUT_DIR, filename))
+    display(p)
+    return p
+end
+
+# Function to visualize transition matrices
+function visualize_transition_matrices(matrices, filename)
+    n = length(matrices)
+    sample_size = min(20, n)  # Sample a reasonable number to visualize
+    indices = round.(Int, range(1, n, length=sample_size))
+    
+    heatmaps = []
+    for (i, idx) in enumerate(indices)
+        push!(heatmaps, heatmap(matrices[idx], 
+                              title="Matrix $idx", 
+                              color=:viridis,
+                              aspect_ratio=:equal,
+                              xticks=1:3,
+                              yticks=1:3))
+    end
+    
+    p = Plots.plot(heatmaps..., size=(900, 700), layout=(4, 5))
+    savefig(p, joinpath(OUTPUT_DIR, filename))
+    display(p)
+    return p
+end
+
+# Visualize untrained neural network parameters
+println("\nVisualizing untrained neural network parameters...")
+visualize_nn_parameters(untrained_neural_network, "06_untrained_nn_parameters.png")
+
+# Visualize untrained transition matrices
+println("Visualizing untrained transition matrices...")
+visualize_transition_matrices(untrained_transition_matrices, "07_untrained_transition_matrices.png")
+
 # Evaluate performance
 performance_metrics = evaluate_model_performance(dataset.signal, dataset.noisy_signal, inferred_mean)
+
+# Visualize trained neural network parameters
+println("\nVisualizing trained neural network parameters...")
+visualize_nn_parameters(trained_neural_network, "08_trained_nn_parameters.png")
+
+# Visualize trained transition matrices
+println("Visualizing trained transition matrices...")
+visualize_transition_matrices(trained_transition_matrices, "09_trained_transition_matrices.png")
+
+# Visualize parameter changes during training
+println("\nVisualizing neural network parameter changes...")
+untrained_params, _ = Flux.destructure(untrained_neural_network)
+trained_params, _ = Flux.destructure(trained_neural_network)
+param_changes = trained_params - untrained_params
+
+p_changes = Plots.bar(param_changes, 
+                    title="Neural Network Parameter Changes", 
+                    ylabel="Change in Value", 
+                    xlabel="Parameter Index",
+                    legend=false,
+                    color=:blue,
+                    alpha=0.7,
+                    size=(800, 400))
+savefig(p_changes, joinpath(OUTPUT_DIR, "10_parameter_changes.png"))
+display(p_changes)
+
+# Visualize uncertainty in the inferred states
+println("\nVisualizing inference uncertainty...")
+uncertainty = var.(trained_result.posteriors[:x])
+uncertainty_matrix = hcat([sqrt.([u[1], u[2], u[3]]) for u in uncertainty]...)
+
+p_uncert = Plots.plot(1:n_points, uncertainty_matrix', 
+                    title="Inference Uncertainty", 
+                    ylabel="Standard Deviation", 
+                    xlabel="Time Step",
+                    label=["x dimension" "y dimension" "z dimension"],
+                    linewidth=2,
+                    size=(800, 400))
+savefig(p_uncert, joinpath(OUTPUT_DIR, "11_inference_uncertainty.png"))
+display(p_uncert)
+
+# Visualize model posterior distributions for selected time points
+println("\nVisualizing posterior distributions...")
+function visualize_posterior_distributions(result, timepoints; filename = nothing)
+    n_points = min(length(timepoints), 9)  # Maximum 9 points to visualize
+    selected_points = timepoints[1:n_points]
+    
+    plots = []
+    for t in selected_points
+        posterior = result.posteriors[:x][t]
+        μ = mean(posterior)
+        Σ = cov(posterior)
+        
+        # Create distribution plots for each dimension
+        for dim in 1:3
+            dim_μ = μ[dim]
+            dim_σ = sqrt(Σ[dim, dim])
+            
+            # Generate points for the distribution curve
+            x_range = range(dim_μ - 3*dim_σ, dim_μ + 3*dim_σ, length=100)
+            pdf_values = [pdf(Normal(dim_μ, dim_σ), x) for x in x_range]
+            
+            # Plot the distribution
+            p = plot(x_range, pdf_values, 
+                     title="t=$t, dim=$dim", 
+                     label="Posterior", 
+                     fillalpha=0.3, 
+                     fill=true, 
+                     linewidth=2, 
+                     xlabel="Value", 
+                     ylabel="Density")
+            
+            # Add the true value marker
+            true_value = dataset.signal[t][dim]
+            vline!([true_value], label="True", linestyle=:dash, linewidth=2)
+            
+            # Add the observation marker
+            obs_value = dataset.noisy_signal[t][dim]
+            vline!([obs_value], label="Observed", linestyle=:dot, linewidth=2)
+            
+            push!(plots, p)
+        end
+    end
+    
+    # Create a grid of plots
+    n_dim_plots = length(plots)
+    grid_size = ceil(Int, sqrt(n_dim_plots))
+    layout_dims = (grid_size, grid_size)
+    
+    posterior_plot = plot(plots..., layout=layout_dims, size=(800, 800), legend=:topright)
+    
+    if !isnothing(filename)
+        savefig(posterior_plot, joinpath(OUTPUT_DIR, filename))
+    end
+    
+    display(posterior_plot)
+    return posterior_plot
+end
+
+# Select representative timepoints for visualization
+# Beginning, middle and end points
+selected_timepoints = [1, n_points÷4, n_points÷2, 3*n_points÷4, n_points]
+visualize_posterior_distributions(trained_result, selected_timepoints, filename="12_posterior_distributions.png")
+
+# Visualize model state evolution with uncertainty
+println("\nVisualizing state evolution with uncertainty...")
+function visualize_state_evolution(result, filename)
+    # Extract the means and standard deviations for each dimension
+    means = mean.(result.posteriors[:x])
+    stds = sqrt.(var.(result.posteriors[:x]))
+    
+    # Extract true values
+    true_values = dataset.signal
+    
+    # Create arrays for plotting
+    x_mean = getindex.(means, 1)
+    y_mean = getindex.(means, 2)
+    z_mean = getindex.(means, 3)
+    
+    x_std = getindex.(stds, 1)
+    y_std = getindex.(stds, 2)
+    z_std = getindex.(stds, 3)
+    
+    # Create evolving 3D plot with uncertainty
+    p = plot3d(
+        x_mean, y_mean, z_mean,
+        title="State Evolution with Uncertainty",
+        label="Inferred Mean",
+        linewidth=2,
+        legend=:topright,
+        alpha=0.8,
+        camera=(30, 30)
+    )
+    
+    # Add uncertainty tube
+    for i in 1:min(n_points, 100) # Limit points for clarity
+        if i % 5 == 0 # Only plot some points to avoid clutter
+            scatter3d!(
+                [x_mean[i]], [y_mean[i]], [z_mean[i]],
+                markersize=2*x_std[i],
+                alpha=0.2,
+                label=i==5 ? "Uncertainty" : false,
+                color=:blue
+            )
+        end
+    end
+    
+    # Add true trajectory
+    plot3d!(
+        getindex.(true_values, 1),
+        getindex.(true_values, 2),
+        getindex.(true_values, 3),
+        label="True State",
+        linewidth=2,
+        color=:red
+    )
+    
+    # Save and display
+    savefig(p, joinpath(OUTPUT_DIR, filename))
+    display(p)
+    return p
+end
+
+visualize_state_evolution(trained_result, "13_state_evolution_3d.png")
+
+# Visualize comparison between prior and posterior model
+println("\nVisualizing prior vs posterior model performance...")
+function compare_prior_posterior(untrained_result, trained_result, filename)
+    # Get means from both models
+    prior_means = mean.(untrained_result.posteriors[:x])
+    posterior_means = mean.(trained_result.posteriors[:x])
+    
+    # Get true values
+    true_values = dataset.signal
+    
+    # Calculate errors
+    prior_errors = [norm(prior_means[i] - true_values[i]) for i in 1:n_points]
+    posterior_errors = [norm(posterior_means[i] - true_values[i]) for i in 1:n_points]
+    
+    # Plot comparison
+    p = plot(
+        1:n_points, 
+        [prior_errors posterior_errors], 
+        title="Prior vs Posterior Model Error",
+        xlabel="Time Step",
+        ylabel="Error (L2 Norm)",
+        label=["Prior Model" "Posterior Model"],
+        linewidth=2,
+        alpha=0.8
+    )
+    
+    # Add improvement percentage annotation
+    mean_prior_error = mean(prior_errors)
+    mean_posterior_error = mean(posterior_errors)
+    improvement = (mean_prior_error - mean_posterior_error) / mean_prior_error * 100
+    
+    annotate!(
+        n_points/2, 
+        maximum(prior_errors) * 0.9,
+        text("Improvement: $(round(improvement; digits=2))%", :center, 10)
+    )
+    
+    # Save and display
+    savefig(p, joinpath(OUTPUT_DIR, filename))
+    display(p)
+    return p
+end
+
+compare_prior_posterior(untrained_result, trained_result, "14_prior_vs_posterior.png")
 
 # Create three projection plots
 p1 = scatter(rx, ry, label="Noisy observations", alpha=0.7, markersize=2, title = "X-Y Projection")
@@ -320,4 +589,64 @@ plot!(p3, gy, gz, label="True state", linewidth=2)
 plot!(p3, iy, iz, label="Inferred Mean", linewidth=2)
 
 # Combine plots with improved layout
-plot(p1, p2, p3, size=(900, 250), layout=(1,3), margin=5Plots.mm)
+final_proj_plot = plot(p1, p2, p3, size=(900, 250), layout=(1,3), margin=5Plots.mm)
+savefig(final_proj_plot, joinpath(OUTPUT_DIR, "05_final_projections.png"))
+display(final_proj_plot)
+
+# Save metrics to a summary file
+open(joinpath(OUTPUT_DIR, "performance_summary.txt"), "w") do f
+    println(f, "=== Performance Metrics ===")
+    println(f, "Observation MSE: $(round(performance_metrics.obs_mse; digits=4))")
+    println(f, "Inference MSE: $(round(performance_metrics.inf_mse; digits=4))")
+    println(f, "Improvement: $(round(performance_metrics.improvement; digits=2))%")
+    
+    # Add more detailed metrics
+    println(f, "\n=== Neural Network Parameters ===")
+    println(f, "Number of parameters: $(length(trained_params))")
+    println(f, "Mean parameter value: $(round(mean(trained_params); digits=4))")
+    println(f, "Parameter value range: [$(round(minimum(trained_params); digits=4)), $(round(maximum(trained_params); digits=4))]")
+    println(f, "Parameter change summary:")
+    println(f, "  Mean absolute change: $(round(mean(abs.(param_changes)); digits=4))")
+    println(f, "  Max absolute change: $(round(maximum(abs.(param_changes)); digits=4))")
+    
+    println(f, "\n=== Uncertainty Analysis ===")
+    println(f, "Mean uncertainty (std dev):")
+    println(f, "  x dimension: $(round(mean(uncertainty_matrix[1,:]); digits=4))")
+    println(f, "  y dimension: $(round(mean(uncertainty_matrix[2,:]); digits=4))")
+    println(f, "  z dimension: $(round(mean(uncertainty_matrix[3,:]); digits=4))")
+    println(f, "Max uncertainty (std dev):")
+    println(f, "  x dimension: $(round(maximum(uncertainty_matrix[1,:]); digits=4))")
+    println(f, "  y dimension: $(round(maximum(uncertainty_matrix[2,:]); digits=4))")
+    println(f, "  z dimension: $(round(maximum(uncertainty_matrix[3,:]); digits=4))")
+end
+
+# Create a visualization showing all saved images for a quick overview
+println("\nCreating visualization overview...")
+try
+    image_files = filter(f -> endswith(f, ".png"), readdir(OUTPUT_DIR))
+    overview_plots = []
+    
+    for file in image_files
+        img = Plots.plot(title=file)
+        try
+            # Try to load and display the image
+            img = Plots.plot(Plots.plot!(img, joinpath(OUTPUT_DIR, file)), title=file, framestyle=:box)
+        catch
+            # If loading fails, just show the title
+            img = Plots.plot(title="Failed to load: $file", annotations=(0.5, 0.5, file))
+        end
+        push!(overview_plots, img)
+    end
+    
+    n_imgs = length(overview_plots)
+    cols = min(3, n_imgs)
+    rows = ceil(Int, n_imgs / cols)
+    
+    overview = Plots.plot(overview_plots..., layout=(rows, cols), size=(1200, 200*rows), title="Visualization Overview")
+    savefig(overview, joinpath(OUTPUT_DIR, "15_visualization_overview.png"))
+    display(overview)
+catch e
+    println("Could not create visualization overview: $e")
+end
+
+println("\nAll visualizations saved to: $OUTPUT_DIR")
