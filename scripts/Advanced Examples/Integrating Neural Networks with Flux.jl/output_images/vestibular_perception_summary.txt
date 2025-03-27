@@ -1,0 +1,37 @@
+=== Vestibular-Cochlear Balance Performance Metrics ===
+Proprioceptive Signal MSE: 4.2223
+Perceptual MSE: 0.9841
+Perceptual Precision: 76.69%
+
+=== Neural Network Parameters ===
+Number of parameters: 12
+Mean parameter value: 0.3017
+Parameter value range: [-0.0161, 1.3054]
+Parameter change summary:
+  Mean absolute change: 0.4514
+  Max absolute change: 0.813
+
+=== Perceptual Precision Analysis ===
+Mean perceptual uncertainty (std dev):
+  Anterior-Posterior: 0.8122
+  Medio-Lateral: 0.8165
+  Vertical: 0.8145
+Max perceptual uncertainty (std dev):
+  Anterior-Posterior: 1.0144
+  Medio-Lateral: 0.9952
+  Vertical: 1.0112
+
+=== Vestibular-Cochlear Balance Interpretation ===
+The model demonstrates how the brain might integrate noisy proprioceptive
+signals to form a coherent perception of postural state. The neural network
+learns to filter noisy proprioceptive inputs, resulting in improved
+perceptual precision (76.69% improvement).
+
+Dimension-specific findings:
+1. Anterior-Posterior perception precision: 19.94%
+2. Medio-Lateral perception precision: 17.96%
+3. Vertical perception precision: 19.46%
+
+This suggests that the vestibular-cochlear system achieves different levels
+of perceptual precision across postural dimensions, potentially reflecting
+the relative importance of each dimension for maintaining balance.
