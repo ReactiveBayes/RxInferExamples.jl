@@ -1,5 +1,5 @@
 # This file was automatically generated from /home/trim/Documents/GitHub/RxInferExamples.jl/examples/Advanced Examples/GP Regression by SSM/GP Regression by SSM.ipynb
-# by notebooks_to_scripts.jl at 2025-03-27T06:11:19.932
+# by notebooks_to_scripts.jl at 2025-03-31T09:50:40.846
 #
 # Source notebook: GP Regression by SSM.ipynb
 
@@ -9,7 +9,7 @@ using RxInfer, Random, Distributions, LinearAlgebra, Plots
     f_prev ~ MvNormal(μ = zeros(length(H)), Σ = P) #initial state
     for i in eachindex(y)
         f[i] ~ MvNormal(μ = A[i] * f_prev,Σ = Q[i])
-        y[i] ~ Normal(μ = dot(H , f[i]), var = var_noise)
+        y[i] ~ Normal(μ = dot(H, f[i]), var = var_noise)
         f_prev = f[i]
     end
 end

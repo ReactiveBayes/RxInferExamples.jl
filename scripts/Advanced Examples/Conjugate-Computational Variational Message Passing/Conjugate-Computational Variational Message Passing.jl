@@ -1,5 +1,5 @@
 # This file was automatically generated from /home/trim/Documents/GitHub/RxInferExamples.jl/examples/Advanced Examples/Conjugate-Computational Variational Message Passing/Conjugate-Computational Variational Message Passing.ipynb
-# by notebooks_to_scripts.jl at 2025-03-27T06:11:19.925
+# by notebooks_to_scripts.jl at 2025-03-31T09:50:40.800
 #
 # Source notebook: Conjugate-Computational Variational Message Passing.ipynb
 

@@ -1,0 +1,14 @@
+┌ Info: Starting RSLDS analysis at 2025-03-31T11:05:16.705
+└ @ Main /home/trim/Documents/GitHub/RxInferExamples.jl/scripts/Experimental Examples/Recurrent Switching Linear Dynamical System/Recurrent Switching Linear Dynamical System.jl:31
+┌ Info: Results will be saved to: /home/trim/Documents/GitHub/RxInferExamples.jl/scripts/Experimental Examples/Recurrent Switching Linear Dynamical System/results_2025-03-31_11-05-16
+└ @ Main /home/trim/Documents/GitHub/RxInferExamples.jl/scripts/Experimental Examples/Recurrent Switching Linear Dynamical System/Recurrent Switching Linear Dynamical System.jl:32
+┌ Info: Setting up model parameters
+└ @ Main /home/trim/Documents/GitHub/RxInferExamples.jl/scripts/Experimental Examples/Recurrent Switching Linear Dynamical System/Recurrent Switching Linear Dynamical System.jl:1002
+┌ Info: Running RSLDS inference with 150 iterations
+└ @ Main /home/trim/Documents/GitHub/RxInferExamples.jl/scripts/Experimental Examples/Recurrent Switching Linear Dynamical System/Recurrent Switching Linear Dynamical System.jl:1013
+┌ Info: Inference complete. Saving basic results directly.
+└ @ Main /home/trim/Documents/GitHub/RxInferExamples.jl/scripts/Experimental Examples/Recurrent Switching Linear Dynamical System/Recurrent Switching Linear Dynamical System.jl:1016
+┌ Info: Creating basic plots...
+└ @ Main /home/trim/Documents/GitHub/RxInferExamples.jl/scripts/Experimental Examples/Recurrent Switching Linear Dynamical System/Recurrent Switching Linear Dynamical System.jl:1088
+┌ Info: Printing key results
+└ @ Main /home/trim/Documents/GitHub/RxInferExamples.jl/scripts/Experimental Examples/Recurrent Switching Linear Dynamical System/Recurrent Switching Linear Dynamical System.jl:1112

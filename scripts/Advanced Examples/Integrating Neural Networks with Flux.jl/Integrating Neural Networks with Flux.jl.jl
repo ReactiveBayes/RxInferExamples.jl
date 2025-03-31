@@ -1,5 +1,5 @@
 # This file was automatically generated from /home/trim/Documents/GitHub/RxInferExamples.jl/examples/Advanced Examples/Integrating Neural Networks with Flux.jl/Integrating Neural Networks with Flux.jl.ipynb
-# by notebooks_to_scripts.jl at 2025-03-27T06:11:19.957
+# by notebooks_to_scripts.jl at 2025-03-31T09:50:40.863
 #
 # Source notebook: Integrating Neural Networks with Flux.jl.ipynb
 
@@ -75,7 +75,7 @@ plot!(p3, gy, gz, label="True state", linewidth=2)
 plot(p1, p2, p3, size=(900, 250), layout=(1,3), margin=5Plots.mm)
 
 function make_neural_network(rng = StableRNG(1234))
-    model = Dense(3 => 3, identity)
+    model = Dense(3 => 3)
 
     # Initialize the weights and biases of the neural network
     flat, rebuild = Flux.destructure(model)
@@ -155,45 +155,30 @@ function make_fe_tot_est(rebuild, data; Q = Q, B = B, R = R)
     end
 end
 
-function train!(neural_network, data; num_epochs = 500, learning_rate = 0.01)
-    opt = Flux.Adam(learning_rate)
-    
-    flat, rebuild = Flux.destructure(neural_network)
+function train!(neural_network, data; num_epochs = 500)
+    rule = Flux.Optimise.Adam()
+    state = Flux.Optimise.setup(rule, neural_network)
+
+    x, rebuild = Flux.destructure(neural_network)
     fe_tot_est_ = make_fe_tot_est(rebuild, data)
 
-    run_epochs!(flat, rebuild, fe_tot_est_, opt, neural_network; num_epochs = num_epochs, learning_rate = learning_rate)
-    
-    return neural_network
+    run_epochs!(rebuild, fe_tot_est_, state, neural_network; num_epochs = num_epochs)
 end
 
-function run_epochs!(flat::Vector{T}, rebuild::F, fe_tot_est::I, opt::O, neural_network; num_epochs::Int = 100, learning_rate::Float64 = 0.01) where {T, F, I, O}
+function run_epochs!(rebuild::F, fe_tot_est::I, state::S, neural_network::N; num_epochs::Int = 100) where {F, I, S, N}
     print_each = num_epochs ÷ 10
     start_time = time()
-    
     for epoch in 1:num_epochs
+        flat, _ = Flux.destructure(neural_network)
         if epoch % print_each == 0
             current_value = fe_tot_est(flat)
             elapsed = time() - start_time
             remaining = elapsed / epoch * (num_epochs - epoch)
             println("Epoch $epoch/$num_epochs: Free Energy = $current_value, ETA: $(round(remaining; digits=1)) seconds")
         end
-        
-        # Compute gradients with respect to flat parameters
-        grads = ForwardDiff.gradient(fe_tot_est, flat)
-        
-        # Update flat parameters using basic gradient descent
-        for i in 1:length(flat)
-            flat[i] -= learning_rate * grads[i]
-        end
+        grads = ForwardDiff.gradient(fe_tot_est, flat);
+        Flux.update!(state, neural_network, rebuild(grads))
     end
-    
-    # After all epochs, rebuild the network with final parameters
-    new_network = rebuild(flat)
-    
-    # Update the weights and biases directly
-    neural_network.weight .= new_network.weight
-    neural_network.bias .= new_network.bias
-    
     # Calculate and print total training time
     total_time = time() - start_time
     println("Finished in $(round(total_time; digits=1)) seconds")
@@ -201,7 +186,7 @@ end
 
 trained_neural_network = make_neural_network()
 
-train!(trained_neural_network, dataset.noisy_signal; num_epochs = 200)
+train!(trained_neural_network, dataset.noisy_signal; num_epochs = 2000)
 
 trained_transition_matrices = get_matrices_from_neural_network(dataset.noisy_signal, trained_neural_network)
 

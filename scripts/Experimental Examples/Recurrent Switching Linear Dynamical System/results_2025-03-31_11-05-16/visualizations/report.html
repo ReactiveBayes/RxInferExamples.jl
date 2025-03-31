@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RSLDS Analysis Results</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 20px; }
+        h1, h2, h3 { color: #333; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .report-header { margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #eee; }
+        .report-section { margin-bottom: 30px; }
+        .plot-gallery { display: flex; flex-wrap: wrap; gap: 20px; }
+        .plot-item { flex: 1; min-width: 300px; margin-bottom: 20px; }
+        .plot-item img { width: 100%; border: 1px solid #ddd; }
+        table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        pre { background-color: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="report-header">
+            <h1>RSLDS Analysis Results</h1>
+            <p>Generated on: 2025-03-31 11:11:37</p>
+            <p>Original analysis: 2025-03-31 11:08:23</p>
+        </div>
+        
+        <div class="report-section">
+            <h2>Model Information</h2>
+            <table>
+                <tr><th>Parameter</th><th>Value</th></tr>
+                <tr><td>Number of switching states</td><td>2</td></tr>
+                <tr><td>Latent state dimension</td><td>2</td></tr>
+                <tr><td>Observation dimension</td><td>2</td></tr>
+                <tr><td>Time points</td><td>501</td></tr>
+            </table>
+        </div>
+        
+        <div class="report-section">
+            <h2>Dashboard</h2>
+            <img src="dashboard.png" alt="Dashboard" style="width:100%; max-width:1000px;">
+        </div>
+        
+        <div class="report-section">
+            <h2>Switching States</h2>
+            <div class="plot-item">
+                <img src="switching_states.png" alt="Switching States">
+            </div>
+            <p>This plot shows the estimated regime switches over time.</p>
+        </div>
+        
+        <div class="report-section">
+            <h2>Continuous States</h2>
+            <div class="plot-gallery">
+
+    <div class="plot-item">
+        <img src="continuous_state_dim1.png" alt="Dimension 1">
+        <p>Dimension 1 state estimation with uncertainty</p>
+    </div>
+
+    <div class="plot-item">
+        <img src="continuous_state_dim2.png" alt="Dimension 2">
+        <p>Dimension 2 state estimation with uncertainty</p>
+    </div>
+
+            </div>
+        </div>
+        
+        <div class="report-section">
+            <h2>Transition Matrices</h2>
+            <div class="plot-gallery">
+
+            </div>
+        </div>
+
+    <div class="report-section">
+        <h2>Inference Convergence</h2>
+        <div class="plot-item">
+            <img src="free_energy.png" alt="Free Energy">
+            <p>Free energy convergence during inference</p>
+        </div>
+    </div>
+
+        <div class="report-section">
+            <h2>Combined View</h2>
+            <div class="plot-item">
+                <img src="combined_view.png" alt="Combined View">
+                <p>Combined view of all states and observations</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="report-section">
+        <h2>Animations</h2>
+        <div class="plot-gallery">
+            <div class="plot-item">
+                <img src="animation_states.gif" alt="States Animation">
+                <p>Animation of the switching states and continuous states over time</p>
+            </div>
+            <div class="plot-item">
+                <img src="animation_phase.gif" alt="Phase Space Animation">
+                <p>Animation of the system trajectory in phase space</p>
+            </div>
+        </div>
+    </div>
+
+        </div>
+    </body>
+</html>
+

@@ -1,19 +1,18 @@
 # This file was automatically generated from /home/trim/Documents/GitHub/RxInferExamples.jl/examples/Basic Examples/Bayesian Multinomial Regression/Bayesian Multinomial Regression.ipynb
-# by notebooks_to_scripts.jl at 2025-03-27T06:11:20.135
+# by notebooks_to_scripts.jl at 2025-03-31T09:50:41.004
 #
 # Source notebook: Bayesian Multinomial Regression.ipynb
 
 using RxInfer, Plots, StableRNGs, Distributions, ExponentialFamily, StatsPlots
 import ExponentialFamily: softmax 
 
-function generate_multinomial_data(rng=StableRNG(123);N = 3, k=3, nsamples = 1000)
+function generate_multinomial_data(rng=StableRNG(123);N = 20, k=9, nsamples = 1000)
     Ψ = randn(rng, k)
     p = softmax(Ψ)
     X = rand(rng, Multinomial(N, p), nsamples)
     X= [X[:,i] for i in 1:size(X,2)];
     return X, Ψ,p
 end
-
 
 nsamples = 5000
 N = 30
