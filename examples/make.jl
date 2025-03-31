@@ -11,6 +11,9 @@ function parse_commandline()
         "--use-dev"
         action = :store_true
         help = "Use local development version of RxInfer"
+        "--use-cache"
+        action = :store_true
+        help = "Use cached results for notebooks"
         "--rxinfer-path"
         help = "Path to RxInfer.jl repository (overrides default ../RxInfer.jl)"
         "filter"
@@ -24,6 +27,7 @@ end
 const ARGS = parse_commandline()
 const FILTER = get(ARGS, "filter", nothing)
 const USE_DEV = ARGS["use-dev"]
+const USE_CACHE = ARGS["use-cache"]
 const CUSTOM_RXINFER_PATH = get(ARGS, "rxinfer-path", nothing)
 
 const RXINFER_PATH = if USE_DEV
@@ -174,27 +178,22 @@ end
     # - The hidden block end marker
     # - The closing code fence (```)
     pattern = r"(```[a-z]*\n)### EXAMPLE_HIDDEN_BLOCK_START\((.*?)\) ###(.*?)### EXAMPLE_HIDDEN_BLOCK_END ###\n(```)"s
-    
+
     # Replace the matched pattern with HTML details tags around the code block
     new_content = replace(content, pattern => s -> begin
         matches = match(pattern, s)
-        
+
         code_fence_open = matches.captures[1]  # ```julia\n
         summary_text = matches.captures[2]     # The summary text
         code_content = matches.captures[3]     # The code between markers
         code_fence_close = matches.captures[4] # ```
-        
-        """
-```@raw html
-<details><summary>Hidden block of <b>$(summary_text)</b> - click to expand</summary>
-```
-$(code_fence_open)$(code_content)$(code_fence_close)
-```@raw html
-</details>
-<br>
-```"""
+
+        # Add a tab character to each line of the code content
+        code_content = join(filter(line -> !occursin(r"#\s*hide", line), map(line -> "\t" * line, eachline(IOBuffer(code_content)))), "\n")
+
+        "!!! details \"Hidden block of $(summary_text) - click to expand\"\n\t$(code_fence_open)$(code_content)\n\t$(code_fence_close)"
     end)
-    
+
     return new_content
 end
 
@@ -276,7 +275,7 @@ end
             out_path=output_path,
             doctype="github",
             fig_path=output_dir,
-            cache=:all,
+            cache=ifelse($USE_CACHE, :all, :refresh),
             cache_path=notebook_cache_dir,
             mod=mod
         )
@@ -286,7 +285,7 @@ end
 
         # Read the existing content
         content = read(output_path, String)
-        
+
         # Replace hidden block markers with HTML details tags
         content = replace_hidden_blocks(content)
 
