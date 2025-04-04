@@ -1,0 +1,15 @@
+Room Temperature Parameter Optimization Results
+=============================================
+True parameter:
+α = 0.1
+
+Optimized parameter:
+α = 0.0997760968076841
+
+Relative error:
+α error: 0.22%
+
+Optimization details:
+Converged: true
+Iterations: 1
+Final free energy: 366.6878067594571

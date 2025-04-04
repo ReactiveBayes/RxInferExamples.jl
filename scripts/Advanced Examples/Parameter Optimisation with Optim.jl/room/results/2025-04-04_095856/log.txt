@@ -1,0 +1,28 @@
+Room Temperature Parameter Optimisation
+Run at: 2025-04-04T09:58:56.921
+Output directory: /home/trim/Documents/GitHub/RxInferExamples.jl/scripts/Advanced Examples/Parameter Optimisation with Optim.jl/room/results/2025-04-04_095856
+[2025-04-04 09:58:57] Starting room temperature parameter optimization simulation
+[2025-04-04 09:59:14] Generating synthetic room data with true parameter: α=0.1
+[2025-04-04 09:59:14] Generated 480 data points (4.0 hours with dt=30.0 seconds)
+[2025-04-04 09:59:21] Room data plot saved to /home/trim/Documents/GitHub/RxInferExamples.jl/scripts/Advanced Examples/Parameter Optimisation with Optim.jl/room/results/2025-04-04_095856/room_data.png
+[2025-04-04 09:59:22] Creating animation of generative process...
+[2025-04-04 09:59:30] Generative process animation saved to /home/trim/Documents/GitHub/RxInferExamples.jl/scripts/Advanced Examples/Parameter Optimisation with Optim.jl/room/results/2025-04-04_095856/generative_process.gif
+[2025-04-04 09:59:32] Exploring free energy landscape...
+[2025-04-04 09:59:57] Free energy landscape saved to /home/trim/Documents/GitHub/RxInferExamples.jl/scripts/Advanced Examples/Parameter Optimisation with Optim.jl/room/results/2025-04-04_095856/free_energy_landscape.png
+[2025-04-04 09:59:57] Starting parameter optimization
+[2025-04-04 09:59:57] Initial parameter guess: α=0.05
+[2025-04-04 09:59:57] Running optimization with LBFGS method...
+[2025-04-04 10:00:01] Optimization complete
+[2025-04-04 10:00:01] True parameter: α=0.1
+[2025-04-04 10:00:01] Optimized parameter: α=0.0997760968076841
+[2025-04-04 10:00:01] Converged: true
+[2025-04-04 10:00:02] Creating animation of optimization process...
+[2025-04-04 10:00:06] Optimization process animation saved to /home/trim/Documents/GitHub/RxInferExamples.jl/scripts/Advanced Examples/Parameter Optimisation with Optim.jl/room/results/2025-04-04_095856/optimization_process.gif
+[2025-04-04 10:00:06] Running inference with optimized parameter
+[2025-04-04 10:00:09] Inference results plot saved to /home/trim/Documents/GitHub/RxInferExamples.jl/scripts/Advanced Examples/Parameter Optimisation with Optim.jl/room/results/2025-04-04_095856/inference_results.png
+[2025-04-04 10:00:10] Creating animation of inference results...
+[2025-04-04 10:00:13] Inference results animation saved to /home/trim/Documents/GitHub/RxInferExamples.jl/scripts/Advanced Examples/Parameter Optimisation with Optim.jl/room/results/2025-04-04_095856/inference_results.gif
+[2025-04-04 10:00:13] Parameter convergence plot saved to /home/trim/Documents/GitHub/RxInferExamples.jl/scripts/Advanced Examples/Parameter Optimisation with Optim.jl/room/results/2025-04-04_095856/parameter_convergence.png
+[2025-04-04 10:00:13] ✓ Saved copy of script for reproducibility
+[2025-04-04 10:00:13] Simulation completed successfully
+[2025-04-04 10:00:13] All results saved to: /home/trim/Documents/GitHub/RxInferExamples.jl/scripts/Advanced Examples/Parameter Optimisation with Optim.jl/room/results/2025-04-04_095856
