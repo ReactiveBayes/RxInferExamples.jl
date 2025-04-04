@@ -1,5 +1,5 @@
 # This file was automatically generated from /home/trim/Documents/GitHub/RxInferExamples.jl/examples/Problem Specific/Simple Nonlinear Node/Simple Nonlinear Node.ipynb
-# by notebooks_to_scripts.jl at 2025-03-31T09:50:41.430
+# by notebooks_to_scripts.jl at 2025-04-04T08:03:37.961
 #
 # Source notebook: Simple Nonlinear Node.ipynb
 

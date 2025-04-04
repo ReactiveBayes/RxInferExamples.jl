@@ -1,5 +1,5 @@
 # This file was automatically generated from /home/trim/Documents/GitHub/RxInferExamples.jl/examples/Basic Examples/Hidden Markov Model/Hidden Markov Model.ipynb
-# by notebooks_to_scripts.jl at 2025-03-31T09:50:41.137
+# by notebooks_to_scripts.jl at 2025-04-04T08:03:37.751
 #
 # Source notebook: Hidden Markov Model.ipynb
 
@@ -22,10 +22,10 @@ function generate_data(n_samples; seed = 42)
     
     rng = MersenneTwister(seed)
     
-    # Transition probabilities 
-    state_transition_matrix = [0.9 0.0 0.1;
-                                                        0.0 0.9 0.1; 
-                                                        0.05 0.05 0.9] 
+    # Transition probabilities bed|livi|bath-room 
+    state_transition_matrix = [0.9 0.05 0.0;
+                               0.1 0.9  0.1; 
+                               0.0 0.05 0.9] 
     # Observation noise
     observation_distribution_matrix = [0.9 0.05 0.05;
                                                                          0.05 0.9 0.05;

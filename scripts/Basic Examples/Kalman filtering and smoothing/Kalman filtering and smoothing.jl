@@ -1,19 +1,19 @@
 # This file was automatically generated from /home/trim/Documents/GitHub/RxInferExamples.jl/examples/Basic Examples/Kalman filtering and smoothing/Kalman filtering and smoothing.ipynb
-# by notebooks_to_scripts.jl at 2025-03-31T09:50:41.161
+# by notebooks_to_scripts.jl at 2025-04-04T08:03:37.766
 #
 # Source notebook: Kalman filtering and smoothing.ipynb
 
 using RxInfer, BenchmarkTools, Random, LinearAlgebra, Plots
 
-function generate_data(rng, A, B, Q, P)
+function generate_data(rng, A, B, P, Q)
     x_prev = [ 10.0, -10.0 ]
 
     x = Vector{Vector{Float64}}(undef, n)
     y = Vector{Vector{Float64}}(undef, n)
 
     for i in 1:n
-        x[i] = rand(rng, MvNormal(A * x_prev, Q))
-        y[i] = rand(rng, MvNormal(B * x[i], P))
+        x[i] = rand(rng, MvNormalMeanCovariance(A * x_prev, P))
+        y[i] = rand(rng, MvNormalMeanCovariance(B * x[i], Q))
         x_prev = x[i]
     end
     
@@ -31,13 +31,13 @@ rng = MersenneTwister(1234)
 θ = π / 35
 A = [ cos(θ) -sin(θ); sin(θ) cos(θ) ]
 B = diageye(2)
-Q = diageye(2)
-P = 25.0 .* diageye(2)
+Q = 25.0 * diageye(2)
+P = diageye(2)
 
 # Number of observations
 n = 300;
 
-x, y = generate_data(rng, A, B, Q, P);
+x, y = generate_data(rng, A, B, P, Q);
 
 px = plot()
 
@@ -48,13 +48,13 @@ px = scatter!(px, getindex.(y, 2), label = false, markersize = 2, color = :green
 
 plot(px)
 
-@model function rotate_ssm(y, x0, A, B, Q, P)
+@model function rotate_ssm(y, x0, A, B, P, Q)
     x_prior ~ x0
     x_prev = x_prior
     
     for i in 1:length(y)
-        x[i] ~ MvNormalMeanCovariance(A * x_prev, Q)
-        y[i] ~ MvNormalMeanCovariance(B * x[i], P)
+        x[i] ~ MvNormalMeanCovariance(A * x_prev, P)
+        y[i] ~ MvNormalMeanCovariance(B * x[i], Q)
         x_prev = x[i]
     end
 
@@ -65,7 +65,7 @@ x0 = MvNormalMeanCovariance(zeros(2), 100.0 * diageye(2));
 # For large number of observations you need to use limit_stack_depth = 100 option during model creation, e.g. 
 # infer(..., options = (limit_stack_depth = 500, ))`
 result = infer(
-    model = rotate_ssm(x0=x0, A=A, B=B, Q=Q, P=P), 
+    model = rotate_ssm(x0=x0, A=A, B=B, P=P, Q=Q), 
     data = (y = y,),
     free_energy = true
 );

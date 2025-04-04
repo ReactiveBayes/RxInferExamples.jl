@@ -1,5 +1,5 @@
 # This file was automatically generated from /home/trim/Documents/GitHub/RxInferExamples.jl/examples/Advanced Examples/Multi-agent Trajectory Planning/Multi-agent Trajectory Planning.ipynb
-# by notebooks_to_scripts.jl at 2025-03-31T09:50:40.874
+# by notebooks_to_scripts.jl at 2025-04-04T08:03:37.467
 #
 # Source notebook: Multi-agent Trajectory Planning.ipynb
 

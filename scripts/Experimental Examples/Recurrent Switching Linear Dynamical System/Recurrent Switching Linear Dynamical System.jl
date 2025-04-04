@@ -1,35 +1,7 @@
 # This file was automatically generated from /home/trim/Documents/GitHub/RxInferExamples.jl/examples/Experimental Examples/Recurrent Switching Linear Dynamical System/Recurrent Switching Linear Dynamical System.ipynb
-# by notebooks_to_scripts.jl at 2025-03-31T09:50:41.198
+# by notebooks_to_scripts.jl at 2025-04-04T08:03:37.785
 #
 # Source notebook: Recurrent Switching Linear Dynamical System.ipynb
-
-# Install required packages if they're not already installed
-import Pkg
-for pkg in ["ExponentialFamily", "RxInfer", "BayesBase", "GraphPPL", "ReactiveMP", "StableRNGs", 
-            "Plots", "Logging", "Dates", "DelimitedFiles", "LinearAlgebra", "Statistics"]
-    try
-        @eval import $pkg
-    catch
-        println("Installing $pkg...")
-        Pkg.add(pkg)
-    end
-end
-
-# Set up logging and import required packages
-using Logging, Dates, DelimitedFiles, LinearAlgebra, Statistics, Plots
-
-# Create output directory
-output_dir = joinpath(@__DIR__, "results_$(Dates.format(now(), "yyyy-mm-dd_HH-MM-SS"))")
-mkpath(output_dir)
-
-# Set up a logger that writes to both console and file
-log_file = joinpath(output_dir, "rslds_run.log")
-io = open(log_file, "w+")
-logger = SimpleLogger(io)
-global_logger(logger)
-
-@info "Starting RSLDS analysis at $(now())"
-@info "Results will be saved to: $output_dir"
 
 ### EXAMPLE_HIDDEN_BLOCK_START(RxInfer & ReactiveMP patches and extensions) ###
 using ExponentialFamily, RxInfer, BayesBase, GraphPPL
@@ -689,317 +661,6 @@ x = [x[:,i] for i in 1:T]
 nothing # hide
 ### EXAMPLE_HIDDEN_BLOCK_END ###
 
-"""
-    visualize_and_save_rslds_results(result, x, y, output_dir)
-    
-Creates and saves visualizations of RSLDS model results.
-
-# Arguments
-- `result`: The result of the RSLDS inference
-- `x`: True state values (if available, can be nothing for real data)
-- `y`: Observations
-- `output_dir`: Directory to save visualizations
-"""
-function visualize_and_save_rslds_results(result, x, y, output_dir)
-    @info "Generating visualizations..."
-    
-    # First, convert all distribution objects to concrete values to avoid any issues
-    # 1. Extract switching states
-    switching_state_posterior = result.posteriors[:s][end]
-    states = states_to_categorical(switching_state_posterior)
-    
-    # 2. Extract continuous states means and variances
-    continuous_state_posterior = result.posteriors[:x][end]
-    n_dims = length(BayesBase.mean(continuous_state_posterior[1]))
-    n_timesteps = length(continuous_state_posterior)
-    
-    # Pre-allocate arrays for means and variances
-    means = zeros(n_timesteps, n_dims)
-    variances = zeros(n_timesteps, n_dims)
-    
-    # Extract values safely
-    for t in 1:n_timesteps
-        for d in 1:n_dims
-            means[t, d] = BayesBase.mean(continuous_state_posterior[t])[d]
-            variances[t, d] = BayesBase.var(continuous_state_posterior[t])[d]
-        end
-    end
-    
-    # 3. Extract transition matrices
-    n_matrices = length(result.posteriors[:H][end])
-    matrices = []
-    for i in 1:n_matrices
-        matrix_mean = BayesBase.mean(result.posteriors[:H][end][i])
-        push!(matrices, reshape(matrix_mean, n_dims, n_dims))
-    end
-    
-    # 4. Extract discrete transition matrix
-    discrete_matrix = BayesBase.mean(result.posteriors[:P][end])
-    
-    # 5. Extract free energy if available
-    has_free_energy = isdefined(result, :free_energy) && !isempty(result.free_energy)
-    fe_values = has_free_energy ? [fe[1] for fe in result.free_energy] : nothing
-    
-    # Now create all visualizations using the extracted concrete values
-    
-    # 1. Switching state visualization
-    p1 = scatter(states, label="Estimated Regimes", color="blue", linewidth=2,
-                xlabel="Time", ylabel="Regime", title="Estimated Switching States")
-    savefig(p1, joinpath(output_dir, "switching_states.png"))
-    
-    # 2. Continuous state visualization for each dimension
-    for dim in 1:n_dims
-        from = 1
-        to = n_timesteps - 1
-        
-        p = plot(means[from+1:to, dim], ribbon=sqrt.(variances[from+1:to, dim]), 
-                label="Estimated States", color="blue", fillalpha=0.2, linewidth=2,
-                xlabel="Time", ylabel="State Value", title="Dimension $dim State Estimation")
-        
-        if x !== nothing
-            plot!(getindex.(x, dim)[from:to], label="True States", color="green", linewidth=1)
-        end
-        
-        scatter!(getindex.(y, dim)[from:to], label="Observed Data", color="black", ms=1.3)
-        
-        # Add a lens to highlight a section of the data
-        lens_start = max(1, div(to, 4))
-        lens_end = min(to, lens_start + 40)
-        lens!(p, lens_start:lens_end, [-3, 3], inset=(1, bbox(0.07, 0.6, 0.3, 0.3)))
-        
-        savefig(p, joinpath(output_dir, "continuous_state_dim$(dim).png"))
-    end
-    
-    # 3. Transition matrices visualization
-    for i in 1:n_matrices
-        p = heatmap(matrices[i], 
-                  title="Continuous Transition Matrix $i",
-                  xlabel="To", ylabel="From", 
-                  color=:viridis, aspect_ratio=1,
-                  clim=(-1, 1),
-                  annotate=[(j, i, text(round(matrices[i][i,j], digits=2), 8, :white)) 
-                           for i in 1:size(matrices[i], 1) for j in 1:size(matrices[i], 2)])
-        savefig(p, joinpath(output_dir, "transition_matrix_$(i).png"))
-    end
-    
-    # 4. Discrete transition matrix visualization
-    p = heatmap(discrete_matrix, 
-              title="Discrete Transition Matrix",
-              xlabel="To", ylabel="From", 
-              color=:viridis, aspect_ratio=1,
-              annotate=[(j, i, text(round(discrete_matrix[i,j], digits=3), 8, :white)) 
-                        for i in 1:size(discrete_matrix, 1) for j in 1:size(discrete_matrix, 2)])
-    savefig(p, joinpath(output_dir, "discrete_transition_matrix.png"))
-    
-    # 5. Free energy convergence
-    if has_free_energy
-        p = plot(fe_values, 
-                label="", title="Free Energy Convergence",
-                xlabel="Iteration", ylabel="Free Energy",
-                marker=:circle, markersize=3, linewidth=2)
-        savefig(p, joinpath(output_dir, "free_energy.png"))
-    end
-    
-    # 6. Parameter convergence (for first H matrix)
-    if length(result.posteriors[:H]) > 10
-        # Safely extract H parameter values from the last 10 iterations
-        param_values = []
-        for p in result.posteriors[:H][end-10:end]
-            h_mean = BayesBase.mean(p)
-            h_matrix = reshape(h_mean, n_dims, n_dims)
-            push!(param_values, [h_matrix[1,1], h_matrix[1,2], h_matrix[2,1], h_matrix[2,2]])
-        end
-        
-        p = plot(title="Parameter Convergence (First H Matrix)",
-                xlabel="Iteration", ylabel="Parameter Value")
-        plot!(getindex.(param_values, 1), label="H[1,1]", marker=:circle, markersize=3)
-        plot!(getindex.(param_values, 2), label="H[1,2]", marker=:square, markersize=3)
-        plot!(getindex.(param_values, 3), label="H[2,1]", marker=:diamond, markersize=3)
-        plot!(getindex.(param_values, 4), label="H[2,2]", marker=:star, markersize=3)
-        savefig(p, joinpath(output_dir, "parameter_convergence.png"))
-    end
-    
-    # 7. Combined view of states and observations
-    from = 1
-    to = min(n_timesteps - 1, 200)  # First 200 points or all if fewer
-    
-    p = plot(layout=(n_dims+1, 1), size=(800, 200*(n_dims+1)))
-    
-    # First plot is switching states
-    plot!(p[1], states[from:to], color="blue", linewidth=2, 
-          label="", title="Switching States", ylabel="Regime")
-    
-    # Remaining plots are continuous states for each dimension
-    for dim in 1:n_dims
-        plot_to = min(to+1, n_timesteps)
-        
-        plot!(p[dim+1], means[from+1:plot_to, dim], ribbon=sqrt.(variances[from+1:plot_to, dim]), 
-              label="Estimated", color="blue", fillalpha=0.2, linewidth=2,
-              title="Dimension $dim", ylabel="Value")
-        
-        if x !== nothing
-            plot!(p[dim+1], getindex.(x, dim)[from:to], label="True", color="green", linewidth=1)
-        end
-        
-        scatter!(p[dim+1], getindex.(y, dim)[from:to], label="Observed", color="black", ms=1.0)
-    end
-    
-    # Only show x-axis label on the bottom plot
-    plot!(p[n_dims+1], xlabel="Time")
-    
-    savefig(p, joinpath(output_dir, "combined_view.png"))
-    
-    @info "All visualizations saved to $output_dir"
-    
-    # Add a message about how to use the standalone visualization script
-    @info "To visualize these results later, you can use: julia visualize_rslds_results.jl $output_dir"
-end
-
-"""
-    save_rslds_results(result, x, y, output_dir)
-    
-Saves numerical results of RSLDS model to CSV files.
-
-# Arguments
-- `result`: The result of the RSLDS inference
-- `x`: True state values (if available, can be nothing for real data)
-- `y`: Observations
-- `output_dir`: Directory to save results
-"""
-function save_rslds_results(result, x, y, output_dir)
-    @info "Saving numerical results..."
-    
-    # First, convert all distribution objects to concrete values
-    
-    # 1. Extract switching states
-    switching_state_posterior = result.posteriors[:s][end]
-    states = states_to_categorical(switching_state_posterior)
-    
-    # 2. Extract continuous states means and variances
-    continuous_state_posterior = result.posteriors[:x][end]
-    n_dims = length(BayesBase.mean(continuous_state_posterior[1]))
-    n_timesteps = length(continuous_state_posterior)
-    
-    # Pre-allocate arrays
-    means = zeros(n_timesteps, n_dims)
-    vars = zeros(n_timesteps, n_dims)
-    
-    # Extract values safely
-    for t in 1:n_timesteps
-        for d in 1:n_dims
-            means[t, d] = BayesBase.mean(continuous_state_posterior[t])[d]
-            vars[t, d] = BayesBase.var(continuous_state_posterior[t])[d]
-        end
-    end
-    
-    # Save to files
-    writedlm(joinpath(output_dir, "switching_states.csv"), states)
-    writedlm(joinpath(output_dir, "continuous_states_mean.csv"), means)
-    writedlm(joinpath(output_dir, "continuous_states_var.csv"), vars)
-    
-    # 3. Save observations
-    observations = hcat(y...)'
-    writedlm(joinpath(output_dir, "observations.csv"), observations)
-    
-    # 4. Save true states if available
-    if x !== nothing
-        true_states = hcat(x...)'
-        writedlm(joinpath(output_dir, "true_states.csv"), true_states)
-    end
-    
-    # 5. Save transition matrices
-    for i in 1:length(result.posteriors[:H][end])
-        matrix_mean = BayesBase.mean(result.posteriors[:H][end][i])
-        matrix = reshape(matrix_mean, n_dims, n_dims)
-        writedlm(joinpath(output_dir, "transition_matrix_$(i).csv"), matrix)
-    end
-    
-    # 6. Save discrete transition matrix
-    discrete_matrix = BayesBase.mean(result.posteriors[:P][end])
-    writedlm(joinpath(output_dir, "discrete_transition_matrix.csv"), discrete_matrix)
-    
-    # 7. Save free energy if available
-    has_free_energy = isdefined(result, :free_energy) && !isempty(result.free_energy)
-    if has_free_energy
-        fe_values = [fe[1] for fe in result.free_energy]
-        writedlm(joinpath(output_dir, "free_energy.csv"), fe_values)
-    end
-    
-    # 8. Save a README file with information about the model and data
-    open(joinpath(output_dir, "README.txt"), "w") do io
-        println(io, "RSLDS Analysis Results")
-        println(io, "=====================")
-        println(io, "Generated on: $(Dates.format(now(), "yyyy-mm-dd HH:MM:SS"))")
-        println(io, "")
-        println(io, "Model Information:")
-        println(io, "- Number of switching states: 2")
-        println(io, "- Latent state dimension: 2")
-        println(io, "- Observation dimension: 2")
-        println(io, "")
-        println(io, "Files:")
-        println(io, "- switching_states.csv: Estimated switching states")
-        println(io, "- continuous_states_mean.csv: Mean of estimated continuous states")
-        println(io, "- continuous_states_var.csv: Variance of estimated continuous states")
-        println(io, "- observations.csv: Observation data")
-        if x !== nothing
-            println(io, "- true_states.csv: True states (for synthetic data)")
-        end
-        println(io, "- transition_matrix_*.csv: Estimated continuous transition matrices")
-        println(io, "- discrete_transition_matrix.csv: Estimated discrete transition matrix")
-        if has_free_energy
-            println(io, "- free_energy.csv: Free energy values during inference")
-        end
-        println(io, "")
-        println(io, "To visualize these results:")
-        println(io, "julia visualize_rslds_results.jl $(basename(output_dir))")
-    end
-    
-    @info "All numerical results saved to $output_dir"
-end
-
-"""
-    save_iteration_snapshot(result, x, y, output_dir, iteration)
-    
-Saves a snapshot of the current inference state at a specific iteration.
-
-# Arguments
-- `result`: The current RSLDS inference result
-- `x`: True state values (if available, can be nothing for real data)
-- `y`: Observations
-- `output_dir`: Base directory to save results
-- `iteration`: Current iteration number
-"""
-function save_iteration_snapshot(result, x, y, output_dir, iteration)
-    # Create the iteration-specific directory
-    iter_dir = joinpath(output_dir, "iteration_$(iteration)")
-    mkpath(iter_dir)
-    
-    # 1. Extract and save switching states
-    switching_state_posterior = result.posteriors[:s][end]
-    states = states_to_categorical(switching_state_posterior)
-    writedlm(joinpath(iter_dir, "switching_states.csv"), states)
-    
-    # 2. Extract and save continuous states
-    continuous_state_posterior = result.posteriors[:x][end]
-    
-    # Extract means and variances properly
-    means = hcat([[BayesBase.mean(state)[i] for i in 1:length(BayesBase.mean(state))] 
-                 for state in continuous_state_posterior]...)'
-    
-    vars = hcat([[BayesBase.var(state)[i] for i in 1:length(BayesBase.var(state))] 
-                for state in continuous_state_posterior]...)'
-    
-    writedlm(joinpath(iter_dir, "continuous_states_mean.csv"), means)
-    writedlm(joinpath(iter_dir, "continuous_states_var.csv"), vars)
-    
-    # 3. Save a simple README with iteration info
-    open(joinpath(iter_dir, "README.txt"), "w") do io
-        println(io, "RSLDS Inference - Iteration $(iteration)")
-        println(io, "Saved on: $(Dates.format(now(), "yyyy-mm-dd HH:MM:SS"))")
-    end
-end
-
-@info "Setting up model parameters"
 hyperparameters = RSLDSHyperparameters(
     a_w = 0.01,
     b_w = 0.01,
@@ -1010,115 +671,45 @@ hyperparameters = RSLDSHyperparameters(
     C = c
 ) 
 
-@info "Running RSLDS inference with 150 iterations"
 rslds_result = fit_rslds(y, 2, 2, 2; iterations = 150, hyperparameters = hyperparameters, progress = true)
 
-@info "Inference complete. Saving basic results directly."
 
-# Create output directory if it doesn't exist yet
-if !isdir(output_dir)
-    mkpath(output_dir)
+using Plots
+
+switching_state_posterior = rslds_result.posteriors[:s][end];
+states = states_to_categorical(switching_state_posterior);
+scatter(states, label="Estimated Regimes", color="blue", linewidth=2)
+
+continuous_state_posterior = rslds_result.posteriors[:x][end];
+index = 1
+from = 1
+to = 500
+
+m_continuous = getindex.(mean.(continuous_state_posterior), index);
+var_continuous = getindex.(var.(continuous_state_posterior), index);
+plot(m_continuous[from+1:to], ribbon=sqrt.(var_continuous[from+1:to]), label="Estimated States", color="blue",fillalpha=0.2, linewidth=2)
+plot!(getindex.(x,index)[from:to], label="True States", color="green", linewidth=1)
+scatter!(getindex.(y,index)[from:to], label="Observed Data", color="black", ms=1.3)
+lens!([10,50],[-3, 3],inset = (1, bbox(0.07, 0.6, 0.3, 0.3)), )
+
+
+index = 2
+m_continuous = getindex.(mean.(continuous_state_posterior), index);
+var_continuous = getindex.(var.(continuous_state_posterior), index);
+plot(m_continuous[from+1:to], ribbon=sqrt.(var_continuous[from+1:to]), label="Estimated States", color="blue",fillalpha=0.2, linewidth=2)
+plot!(getindex.(x,index)[from:to], label="True States", color="green", linewidth=1)
+scatter!(getindex.(y,index)[from:to], label="Observed Data", color="black", ms=1.3)
+lens!([350,400],[-3, 3],inset = (1, bbox(0.07, 0.6, 0.3, 0.3)), )
+
+
+println("Estimated continuous transition matrices:")
+println("----------------------------------------")
+for i in 1:length(rslds_result.posteriors[:H][end])
+    println("Matrix $i:")
+    println(reshape(mean(rslds_result.posteriors[:H][end][i]), 2, 2))
+    println()
 end
 
-# Extract and save switching states
-switching_state_posterior = rslds_result.posteriors[:s][end]
-states = states_to_categorical(switching_state_posterior)
-writedlm(joinpath(output_dir, "switching_states.csv"), states)
-
-# Extract and save continuous states
-continuous_state_posterior = rslds_result.posteriors[:x][end]
-n_dims = length(BayesBase.mean(continuous_state_posterior[1]))
-n_timesteps = length(continuous_state_posterior)
-
-# Pre-allocate arrays
-means = zeros(n_timesteps, n_dims)
-vars = zeros(n_timesteps, n_dims)
-
-# Extract values safely
-for t in 1:n_timesteps
-    for d in 1:n_dims
-        means[t, d] = BayesBase.mean(continuous_state_posterior[t])[d]
-        vars[t, d] = BayesBase.var(continuous_state_posterior[t])[d]
-    end
-end
-
-# Save to files
-writedlm(joinpath(output_dir, "continuous_states_mean.csv"), means)
-writedlm(joinpath(output_dir, "continuous_states_var.csv"), vars)
-
-# Save observations
-observations = hcat(y...)'
-writedlm(joinpath(output_dir, "observations.csv"), observations)
-
-# Save true states
-true_states = hcat(x...)'
-writedlm(joinpath(output_dir, "true_states.csv"), true_states)
-
-# Save free energy if available
-has_free_energy = isdefined(rslds_result, :free_energy) && !isempty(rslds_result.free_energy)
-if has_free_energy
-    fe_values = [fe[1] for fe in rslds_result.free_energy]
-    writedlm(joinpath(output_dir, "free_energy.csv"), fe_values)
-end
-
-# Create a README file
-open(joinpath(output_dir, "README.txt"), "w") do io
-    println(io, "RSLDS Analysis Results")
-    println(io, "=====================")
-    println(io, "Generated on: $(Dates.format(now(), "yyyy-mm-dd HH:MM:SS"))")
-    println(io, "")
-    println(io, "Model Information:")
-    println(io, "- Number of switching states: 2")
-    println(io, "- Latent state dimension: 2")
-    println(io, "- Observation dimension: 2")
-    println(io, "")
-    println(io, "To visualize these results:")
-    println(io, "julia visualize_rslds_results.jl $(basename(output_dir))")
-end
-
-# Create a script to automatically run the visualization with animations
-open(joinpath(output_dir, "create_visualizations.sh"), "w") do io
-    println(io, "#!/bin/bash")
-    println(io, "# Run this script to create visualizations with animations")
-    println(io, "julia \"$(joinpath(@__DIR__, "visualize_rslds_results.jl"))\" \"$(output_dir)\" --animate --fps 15")
-end
-chmod(joinpath(output_dir, "create_visualizations.sh"), 0o755)
-
-# Create basic plots
-@info "Creating basic plots..."
-
-# 1. Switching state plot
-p1 = scatter(states, label="Estimated Regimes", color="blue", linewidth=2,
-            xlabel="Time", ylabel="Regime", title="Estimated Switching States")
-savefig(p1, joinpath(output_dir, "switching_states.png"))
-
-# 2. Continuous state plot (first dimension)
-p2 = plot(means[:, 1], ribbon=sqrt.(vars[:, 1]), 
-          label="Estimated", color="blue", fillalpha=0.2, linewidth=2,
-          xlabel="Time", ylabel="Value", title="Dimension 1 State")
-plot!(p2, getindex.(x, 1), label="True", color="green", linewidth=1)
-scatter!(p2, getindex.(y, 1), label="Observed", color="black", ms=0.8)
-savefig(p2, joinpath(output_dir, "continuous_state_dim1.png"))
-
-# 3. Free energy plot if available
-if has_free_energy
-    p3 = plot(fe_values, 
-             label="", title="Free Energy Convergence",
-             xlabel="Iteration", ylabel="Free Energy",
-             marker=:circle, markersize=3, linewidth=2)
-    savefig(p3, joinpath(output_dir, "free_energy.png"))
-end
-
-@info "Printing key results"
-println("RSLDS analysis completed successfully!")
-println("Results saved to: $output_dir")
-println("Run the visualization script for detailed plots and animations:")
-println("julia \"$(joinpath(@__DIR__, "visualize_rslds_results.jl"))\" \"$(output_dir)\" --animate --fps 15")
-
-# Close the log file
-flush(io)
-close(io)
-
-# The script can be run directly from command line with:
-# julia "Recurrent Switching Linear Dynamical System.jl"
-@info "RSLDS analysis completed at $(now())"
+println("Estimated discrete transition matrix for HMM layer:")
+println("----------------------------------------")
+println(mean(rslds_result.posteriors[:P][end]))

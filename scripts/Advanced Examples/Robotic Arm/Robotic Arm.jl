@@ -1,5 +1,5 @@
 # This file was automatically generated from /home/trim/Documents/GitHub/RxInferExamples.jl/examples/Advanced Examples/Robotic Arm/Robotic Arm.ipynb
-# by notebooks_to_scripts.jl at 2025-03-31T09:50:40.889
+# by notebooks_to_scripts.jl at 2025-04-04T08:03:37.478
 #
 # Source notebook: Robotic Arm.ipynb
 

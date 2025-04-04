@@ -1,5 +1,5 @@
 # This file was automatically generated from /home/trim/Documents/GitHub/RxInferExamples.jl/examples/Basic Examples/Bayesian Binomial Regression/Bayesian Binomial Regression.ipynb
-# by notebooks_to_scripts.jl at 2025-03-31T09:50:40.897
+# by notebooks_to_scripts.jl at 2025-04-04T08:03:37.487
 #
 # Source notebook: Bayesian Binomial Regression.ipynb
 
@@ -57,14 +57,37 @@ results = infer(
 
 plot(results.free_energy,fontfamily = "Computer Modern", label="Free Energy", xlabel="Iteration", ylabel="Free Energy", title="Free Energy Convergence")
 
-m = mean(results.posteriors[:β][end])
-Σ = cov(results.posteriors[:β][end])
+# Create an animation showing how posterior evolves
+anim = @animate for i in 1:length(results.posteriors[:β])
+    # Get posterior at current iteration
+    m_i = mean(results.posteriors[:β][i])
+    Σ_i = cov(results.posteriors[:β][i])
+    
+    # Calculate dynamic limits based on current mean and covariance
+    # Add some padding (3 standard deviations) to ensure true parameters are visible
+    x_std = sqrt(Σ_i[1,1])
+    y_std = sqrt(Σ_i[2,2])
+    
+    x_min = min(m_i[1] - 3*x_std, true_beta[1] - 0.1)
+    x_max = max(m_i[1] + 3*x_std, true_beta[1] + 0.1)
+    y_min = min(m_i[2] - 3*y_std, true_beta[2] - 0.1)
+    y_max = max(m_i[2] + 3*y_std, true_beta[2] + 0.1)
+    
+    p = plot(xlims=(x_min, x_max), ylims=(y_min, y_max),
+             fontfamily = "Computer Modern",
+             title="Iteration $i", aspect_ratio=1)
+    
+    # Plot confidence ellipses
+    covellipse!(m_i, Σ_i, n_std=1, label="1σ Contour", color=:green, fillalpha=0.2)
+    covellipse!(m_i, Σ_i, n_std=3, label="3σ Contour", color=:blue, fillalpha=0.2)
+    
+    # Plot mean estimate and true parameters
+    scatter!([m_i[1]], [m_i[2]], label="Current Estimate", color=:blue)
+    scatter!([true_beta[1]], [true_beta[2]], label="True Parameters", color=:red)
+end
 
-p = plot(xlims=(-3.1,-2.9), ylims=(2.5,2.7),fontfamily = "Computer Modern")
-covellipse!(m, Σ, n_std=1, aspect_ratio=1, label="1σ Contours", color=:green, fillalpha=0.2)
-covellipse!(m, Σ, n_std=3, aspect_ratio=1, label="3σ Contours", color=:blue, fillalpha=0.2)
-scatter!([m[1]], [m[2]], label="Mean estimate", color=:blue)
-scatter!([true_beta[1]], [true_beta[2]], label="True Parameters")
+# Save the animation as a GIF
+gif(anim, "bayesian_regression_posterior.gif", fps=3)
 
 y_with_missing = Vector{Union{Missing, Int}}(missing, n_samples)
 for i in 1:n_samples

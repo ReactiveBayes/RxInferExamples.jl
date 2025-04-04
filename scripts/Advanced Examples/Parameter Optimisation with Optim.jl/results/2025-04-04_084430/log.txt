@@ -1,0 +1,68 @@
+Parameter Optimisation with Optim.jl
+Run at: 2025-04-04T08:44:30.765
+Output directory: /home/trim/Documents/GitHub/RxInferExamples.jl/scripts/Advanced Examples/Parameter Optimisation with Optim.jl/results/2025-04-04_084430
+Output will be saved to: /home/trim/Documents/GitHub/RxInferExamples.jl/scripts/Advanced Examples/Parameter Optimisation with Optim.jl/results/2025-04-04_084430
+
+========== PART 1: Univariate State Space Model ==========
+
+Generating synthetic data for univariate state space model...
+✓ Data generated: 250 points with true c = -5.0 and v = 1.0
+✓ Saved univariate data plot to /home/trim/Documents/GitHub/RxInferExamples.jl/scripts/Advanced Examples/Parameter Optimisation with Optim.jl/results/2025-04-04_084430/univariate_data.png
+
+Defining optimization function...
+
+Optimizing parameters using Gradient Descent...
+✓ Saved optimization trace to /home/trim/Documents/GitHub/RxInferExamples.jl/scripts/Advanced Examples/Parameter Optimisation with Optim.jl/results/2025-04-04_084430/optimization_trace.png
+✓ Saved optimization animation to /home/trim/Documents/GitHub/RxInferExamples.jl/scripts/Advanced Examples/Parameter Optimisation with Optim.jl/results/2025-04-04_084430/optimization_animation.gif
+✓ Saved free energy evolution animation to /home/trim/Documents/GitHub/RxInferExamples.jl/scripts/Advanced Examples/Parameter Optimisation with Optim.jl/results/2025-04-04_084430/free_energy_evolution.gif
+✓ Saved stacked free energy visualization to /home/trim/Documents/GitHub/RxInferExamples.jl/scripts/Advanced Examples/Parameter Optimisation with Optim.jl/results/2025-04-04_084430/free_energy_stacked.png
+✓ Saved free energy landscape visualizations
+✓ Saved free energy descent animation to /home/trim/Documents/GitHub/RxInferExamples.jl/scripts/Advanced Examples/Parameter Optimisation with Optim.jl/results/2025-04-04_084430/free_energy_descent.gif
+✓ Saved parameter trajectory to /home/trim/Documents/GitHub/RxInferExamples.jl/scripts/Advanced Examples/Parameter Optimisation with Optim.jl/results/2025-04-04_084430/parameter_trajectory.png
+
+Results for univariate model:
+Real value vs Optimized
+Real:      [-5.0, 0.0]
+Optimized: [0.9990370328385715, -4.8593306526902476]
+Converged: true
+
+Running inference with optimized parameters...
+✓ Saved univariate inference results to /home/trim/Documents/GitHub/RxInferExamples.jl/scripts/Advanced Examples/Parameter Optimisation with Optim.jl/results/2025-04-04_084430/univariate_results.png
+
+
+========== PART 2: Multivariate State Space Model ==========
+
+Generating data for multivariate model...
+✓ Generated 300 data points with true θ = 0.39269908169872414 (22.5°)
+✓ Saved multivariate data plots:
+  - Time series: /home/trim/Documents/GitHub/RxInferExamples.jl/scripts/Advanced Examples/Parameter Optimisation with Optim.jl/results/2025-04-04_084430/multivariate_data.png
+  - Phase space: /home/trim/Documents/GitHub/RxInferExamples.jl/scripts/Advanced Examples/Parameter Optimisation with Optim.jl/results/2025-04-04_084430/multivariate_phase.png
+
+Defining optimization function for multivariate model...
+
+Optimizing parameters using LBFGS...
+✓ Saved multivariate optimization trace
+⚠ Not enough iterations for optimization animation
+
+Results for multivariate model:
+Real value vs Optimized
+θ (true) = 0.39269908169872414 (22.5°)
+θ (optimized) = 0.39105864754959185 (22.406010046685587°)
+θ (raw optimized) = 10889.151195989773
+sinθ = (0.3826834323650898, 0.38116735460454493)
+cosθ = (0.9238795325112867, 0.9245060561098414)
+Initial x₀ (true) = [10.0, -10.0]
+Initial x₀ (optimized) = [8.950945722373094, -9.509267980195679]
+Converged: true
+
+Performing inference with optimized parameters...
+✓ Saved multivariate results plots:
+  - Time series: /home/trim/Documents/GitHub/RxInferExamples.jl/scripts/Advanced Examples/Parameter Optimisation with Optim.jl/results/2025-04-04_084430/multivariate_results.png
+  - Phase comparison: /home/trim/Documents/GitHub/RxInferExamples.jl/scripts/Advanced Examples/Parameter Optimisation with Optim.jl/results/2025-04-04_084430/multivariate_phase_comparison.png
+
+Creating animation of state evolution...
+✓ Saved state evolution animation to /home/trim/Documents/GitHub/RxInferExamples.jl/scripts/Advanced Examples/Parameter Optimisation with Optim.jl/results/2025-04-04_084430/state_evolution.gif
+
+========== Optimization Complete ==========
+All results saved to the output directory: /home/trim/Documents/GitHub/RxInferExamples.jl/scripts/Advanced Examples/Parameter Optimisation with Optim.jl/results/2025-04-04_084430
+✓ Saved copies of scripts for reproducibility
