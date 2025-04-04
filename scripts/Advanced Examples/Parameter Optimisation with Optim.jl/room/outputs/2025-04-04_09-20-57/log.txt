@@ -1,0 +1,32 @@
+Output will be saved to: /home/trim/Documents/GitHub/RxInferExamples.jl/scripts/Advanced Examples/Parameter Optimisation with Optim.jl/room/outputs/2025-04-04_09-20-57
+
+========== PART 1: Generate Synthetic Data ==========
+
+Generating synthetic room data...
+True parameters:
+  - α (coupling): 0.1
+  - β (temp decay): 0.2
+  - γ (humid decay): 0.15
+  - T₀ (initial temp): 25.0 °C
+  - H₀ (initial humidity): 60.0 %
+  - Temperature noise variance: 0.5
+  - Humidity noise variance: 2.0
+  - Simulation time: 48 hours
+  - Time step: 0.1 hours
+✓ Generated 480 data points
+✓ Saved room data plots to output directory
+
+========== PART 2: Define Probabilistic Model ==========
+
+Defined room temperature and humidity model
+
+========== PART 3: Parameter Optimization ==========
+
+Defining optimization function...
+Starting parameter optimization...
+Initial parameter guesses:
+  - α (coupling): 0.05
+  - β (temp decay): 0.3
+  - γ (humid decay): 0.1
+  - T₀ (initial temp): 22.0 °C
+  - H₀ (initial humidity): 55.0 %
