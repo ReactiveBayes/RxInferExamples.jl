@@ -258,6 +258,22 @@ function generate_examples_list()
               <a href="https://vflores-io.github.io/">vflores-io</a>.</span>
           </li>
       </ul>
+      
+      <h4 style="margin: 1.5em 0 1em 0; color: var(--category-text-color, #333);">Python Integration & Server Infrastructure</h4>
+      <ul style="margin: 0; padding-left: 1.2em;">
+          <li style="margin-bottom: 0.8em;">
+              <strong>RxInferServer.jl</strong><br/>
+              <span style="color: var(--text-muted-color, #666);">RESTful API service for deploying RxInfer models. 
+              <a href="https://github.com/lazydynamics/RxInferServer">GitHub Repository</a> | 
+              <a href="https://server.rxinfer.com">Documentation</a></span>
+          </li>
+          <li style="margin-bottom: 0.8em;">
+              <strong>RxInferClient.py</strong><br/>
+              <span style="color: var(--text-muted-color, #666);">Python SDK for interacting with RxInferServer. 
+              <a href="https://github.com/lazydynamics/RxInferClient.py">GitHub Repository</a> | 
+              <a href="https://lazydynamics.github.io/RxInferClient.py/">Documentation</a></span>
+          </li>
+      </ul>
   </div>
   ```
   """
