@@ -7,6 +7,24 @@
 [![Contribute a new example](https://img.shields.io/badge/Contribute-%20a%20new%20example-red)](https://examples.rxinfer.com/how_to_contribute/)
 [![Q&A](https://img.shields.io/badge/Q&A-RxInfer-orange)](https://github.com/reactivebayes/RxInfer.jl/discussions)
 
+## Python Integration
+
+RxInfer can be used from Python through our client-server infrastructure:
+
+- **[RxInferServer.jl](https://github.com/lazydynamics/RxInferServer)** - A RESTful API service for deploying RxInfer models
+- **[RxInferClient.py](https://github.com/lazydynamics/RxInferClient.py)** - Python SDK for interacting with RxInferServer
+
+The server provides OpenAPI-compliant endpoints for model deployment and inference, while the Python client offers a convenient interface to:
+- Create and manage model instances
+- Execute inference tasks
+- Monitor inference progress
+- Handle authentication and API keys
+- Process results in a native format
+
+For more information, visit:
+- [Server Documentation](https://server.rxinfer.com)
+- [Python SDK Documentation](https://lazydynamics.github.io/RxInferClient.py/)
+
 This repository contains a collection of examples for [RxInfer.jl](https://github.com/ReactiveBayes/RxInfer.jl), a Julia package for reactive message passing and probabilistic programming.
 
 Navigate to the [Examples](https://examples.rxinfer.com) page to check the pre-rendered examples or clone the repository and run the examples locally. Additionally, explore the official [RxInfer.jl](https://docs.rxinfer.com) documentation.
