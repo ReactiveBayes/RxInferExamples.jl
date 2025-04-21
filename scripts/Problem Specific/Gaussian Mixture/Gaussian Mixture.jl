@@ -1,5 +1,5 @@
 # This file was automatically generated from /home/trim/Documents/GitHub/RxInferExamples.jl/examples/Problem Specific/Gaussian Mixture/Gaussian Mixture.ipynb
-# by notebooks_to_scripts.jl at 2025-04-04T08:03:37.822
+# by notebooks_to_scripts.jl at 2025-04-21T06:26:05.332
 #
 # Source notebook: Gaussian Mixture.ipynb
 

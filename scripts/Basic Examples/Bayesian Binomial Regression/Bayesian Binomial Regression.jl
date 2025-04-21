@@ -1,5 +1,5 @@
 # This file was automatically generated from /home/trim/Documents/GitHub/RxInferExamples.jl/examples/Basic Examples/Bayesian Binomial Regression/Bayesian Binomial Regression.ipynb
-# by notebooks_to_scripts.jl at 2025-04-04T08:03:37.487
+# by notebooks_to_scripts.jl at 2025-04-21T06:26:04.870
 #
 # Source notebook: Bayesian Binomial Regression.ipynb
 

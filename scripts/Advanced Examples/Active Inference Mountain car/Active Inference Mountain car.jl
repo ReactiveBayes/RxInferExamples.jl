@@ -1,5 +1,5 @@
 # This file was automatically generated from /home/trim/Documents/GitHub/RxInferExamples.jl/examples/Advanced Examples/Active Inference Mountain car/Active Inference Mountain car.ipynb
-# by notebooks_to_scripts.jl at 2025-04-04T08:03:37.296
+# by notebooks_to_scripts.jl at 2025-04-21T06:26:04.617
 #
 # Source notebook: Active Inference Mountain car.ipynb
 

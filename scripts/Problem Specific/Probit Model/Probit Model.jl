@@ -1,5 +1,5 @@
 # This file was automatically generated from /home/trim/Documents/GitHub/RxInferExamples.jl/examples/Problem Specific/Probit Model/Probit Model.ipynb
-# by notebooks_to_scripts.jl at 2025-04-04T08:03:37.949
+# by notebooks_to_scripts.jl at 2025-04-21T06:26:05.449
 #
 # Source notebook: Probit Model.ipynb
 

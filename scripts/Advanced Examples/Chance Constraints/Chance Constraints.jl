@@ -1,5 +1,5 @@
 # This file was automatically generated from /home/trim/Documents/GitHub/RxInferExamples.jl/examples/Advanced Examples/Chance Constraints/Chance Constraints.ipynb
-# by notebooks_to_scripts.jl at 2025-04-04T08:03:37.434
+# by notebooks_to_scripts.jl at 2025-04-21T06:26:04.770
 #
 # Source notebook: Chance Constraints.ipynb
 
