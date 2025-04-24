@@ -15,8 +15,27 @@ RxInfer.jl is a Julia package that combines message passing-based inference with
 - Efficient and scalable inference algorithms
 - Support for both online and offline inference
 - Integration with the Julia ecosystem
+- Python integration through client-server infrastructure
 
 Read more about RxInfer.jl in the [RxInfer.jl Documentation](https://docs.rxinfer.com).
+
+## Python Integration
+
+RxInfer can be used from Python through our client-server infrastructure:
+
+- **[RxInferServer.jl](https://github.com/lazydynamics/RxInferServer)** - A RESTful API service for deploying RxInfer models
+- **[RxInferClient.py](https://github.com/lazydynamics/RxInferClient.py)** - Python SDK for interacting with RxInferServer
+
+The server provides OpenAPI-compliant endpoints for model deployment and inference, while the Python client offers a convenient interface to:
+- Create and manage model instances
+- Execute inference tasks
+- Monitor inference progress
+- Handle authentication and API keys
+- Process results in a native format
+
+For more information, visit:
+- [Server Documentation](https://server.rxinfer.com)
+- [Python SDK Documentation](https://lazydynamics.github.io/RxInferClient.py/)
 
 ## Examples
 
