@@ -310,16 +310,89 @@ end
 function create_parameter_evolution_plot(mresult, n_ar_processes, output_dir)
     log_message("Generating parameter evolution plot")
     
-    # The current version of RxInfer.jl does not store parameter history by default
-    # We'll create a dummy plot instead with a note
-    p = plot(title="Parameter Evolution During Inference",
-             xlabel="Iteration",
-             ylabel="Mean Parameter Value",
-             legend=false,
-             size=(800, 500))
-             
-    # Add text annotation explaining lack of parameter history
-    annotate!(p, 0.5, 0.5, text("Parameter history not available\nEnable history tracking in the inference call with 'historyvars'", 12, :center))
+    # Check if parameter history is available
+    if !haskey(mresult, :history) || !haskey(mresult.history, :θ) || !haskey(mresult.history, :γ) || !haskey(mresult.history, :τ)
+        # If no parameter history, create a dummy plot with a note
+        p = plot(title="Parameter Evolution During Inference",
+                xlabel="Iteration",
+                ylabel="Mean Parameter Value",
+                legend=false,
+                size=(800, 500))
+                
+        # Add text annotation explaining lack of parameter history
+        annotate!(p, 0.5, 0.5, text("Parameter history not available\nEnable history tracking in the inference call with 'historyvars'", 12, :center))
+        
+        # Save figure
+        param_filename = joinpath(output_dir, "parameter_evolution.png")
+        savefig(p, param_filename)
+        log_message("Parameter evolution plot saved to: $param_filename (dummy version - history not available)")
+        
+        return param_filename
+    end
+    
+    # Get the parameter histories
+    θ_history = mresult.history[:θ]
+    γ_history = mresult.history[:γ]
+    τ_history = mresult.history[:τ]
+    
+    # Number of iterations tracked
+    n_iterations = length(θ_history)
+    x_axis = 1:n_iterations
+    
+    # Create subplot for precision parameters (γ)
+    log_message("Processing γ parameter evolution", level="DEBUG")
+    p1 = plot(title="AR Process Precision (γ) Evolution",
+            xlabel="Iteration",
+            ylabel="Mean γ Value",
+            legend=(:topright, 6),
+            size=(800, 300))
+    
+    # Select a subset of AR processes to visualize to avoid overcrowding
+    process_indices = n_ar_processes > 5 ? round.(Int, range(1, n_ar_processes, length=5)) : 1:n_ar_processes
+    
+    for k in process_indices
+        if k <= length(γ_history[1])
+            # Extract the mean of γ across iterations for this process
+            γ_means = [mean(γ_history[i][k]) for i in 1:n_iterations]
+            plot!(p1, x_axis, γ_means, label="Process $k", linewidth=2)
+        end
+    end
+    
+    # Create subplot for AR coefficients (θ)
+    log_message("Processing θ parameter evolution", level="DEBUG")
+    p2 = plot(title="AR Coefficient (θ) Evolution",
+            xlabel="Iteration",
+            ylabel="Mean θ Value",
+            legend=(:topright, 6),
+            size=(800, 300))
+    
+    # Select a single process to visualize its coefficients
+    selected_process = 1
+    if length(θ_history[1]) >= selected_process
+        # Get the order of the AR process
+        ar_order = length(mean(θ_history[1][selected_process]))
+        
+        # Extract each coefficient's evolution
+        for coef_idx in 1:min(ar_order, 5)
+            θ_means = [mean(θ_history[i][selected_process])[coef_idx] for i in 1:n_iterations]
+            plot!(p2, x_axis, θ_means, label="θ$coef_idx (Proc $selected_process)", linewidth=2)
+        end
+    end
+    
+    # Create subplot for observation precision (τ)
+    log_message("Processing τ parameter evolution", level="DEBUG")
+    p3 = plot(title="Observation Precision (τ) Evolution",
+            xlabel="Iteration",
+            ylabel="Mean τ Value",
+            legend=false,
+            size=(800, 300))
+    
+    # Extract the mean of τ across iterations
+    τ_means = [mean(τ_history[i]) for i in 1:n_iterations]
+    plot!(p3, x_axis, τ_means, linewidth=2, color=:purple)
+    
+    # Combine plots
+    p = plot(p1, p2, p3, layout=(3,1), size=(800, 900))
     
     # Save figure
     param_filename = joinpath(output_dir, "parameter_evolution.png")

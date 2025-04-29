@@ -54,12 +54,14 @@ flowchart TD
     C1[Initialize Parameters] --> C2[Apply Constraints]
     C2 --> C3[Run Message Passing]
     C3 --> C4[Extract Posteriors]
+    C4 --> C5[Track Parameter History]
     end
     
     subgraph "Analysis & Visualization"
     E1[Calculate Metrics] --> E2[Generate Basic Plots]
     E2 --> E3[Generate Advanced Visualizations]
     E3 --> E4[Create Animation]
+    E4 --> E5[Visualize Parameter Evolution]
     end
     
     A --> A1
@@ -162,7 +164,19 @@ flowchart LR
     D --> E{Converged?}
     E -->|No| C
     E -->|Yes| F[Extract Results]
+    
+    subgraph "Parameter Tracking"
+    P1[Track θ]
+    P2[Track γ]
+    P3[Track τ]
+    end
+    
+    C --> P1
+    C --> P2
+    C --> P3
 ```
+
+The implementation now tracks the evolution of key model parameters (θ, γ, τ) across iterations, allowing for convergence analysis and better understanding of the inference process.
 
 ## Outputs
 
@@ -188,7 +202,7 @@ classDiagram
 - **Error heatmap**: Visualization of prediction errors across processes and time
 - **Correlation plots**: Analysis of correlations between processes
 - **Uncertainty visualization**: Analysis of prediction uncertainties
-- **Parameter evolution**: Plot showing parameter changes during inference
+- **Parameter evolution**: Plot showing convergence of AR coefficients (θ), process precisions (γ), and observation precision (τ) during inference
 - **Model complexity analysis**: SVD-based analysis of the latent structure
 - **Residual analysis**: Statistical analysis of prediction residuals
 - **Prediction animation**: GIF animation showing predictions evolving over time

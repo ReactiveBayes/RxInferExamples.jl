@@ -125,6 +125,38 @@ $$m_{\theta_k \to x_{k,t}} \propto \exp(\mathbb{E}_{q(\theta_k), q(\gamma_k)}[\l
 
 Similar messages are computed for all variables in the model, and the approximate posteriors are updated accordingly.
 
+### 4. Parameter Tracking and Convergence Analysis
+
+To monitor the convergence of the inference process, we track the evolution of key model parameters across iterations. In the implementation, this is achieved by specifying the `historyvars` parameter in the inference call:
+
+```julia
+infer(
+    model          = LVAR(orders = orders), 
+    data           = (y = training_set, ), 
+    constraints    = lvar_constraints(), 
+    initialization = lvar_init(orders), 
+    returnvars     = KeepLast(), 
+    historyvars    = (θ = KeepAll(), γ = KeepAll(), τ = KeepAll()), # Track parameter history
+    options        = (limit_stack_depth = 100, ), 
+    iterations     = iterations,
+)
+```
+
+The tracked parameters include:
+1. **AR coefficients (θ)**: The coefficients for each AR process that determine how past values influence current values
+2. **Process precisions (γ)**: The precision parameters for each AR process, indicating the inverse variance of the process noise
+3. **Observation precision (τ)**: The precision parameter for the observation noise
+
+The convergence of these parameters can be visualized to understand:
+- How quickly different parameters converge
+- Whether all parameters have reached a stable state
+- If there are any oscillations or instabilities in the inference process
+
+This parameter tracking enables more robust inference by allowing users to:
+- Determine an appropriate number of iterations
+- Identify potential issues with model specification
+- Ensure that inference has properly converged before using the results for prediction
+
 ## Implementation Details
 
 ### 1. Model Definition

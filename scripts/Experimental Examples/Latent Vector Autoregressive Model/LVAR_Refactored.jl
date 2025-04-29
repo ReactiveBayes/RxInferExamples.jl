@@ -26,6 +26,7 @@ ensure_dependencies()
 # Now load all required packages
 using RxInfer, Random, LinearAlgebra, Dates, Printf, Statistics
 using Statistics: mean
+using RxInfer: KeepLast, KeepAll # Add explicit import for KeepAll
 
 # Include visualization module
 include("lva_visualization.jl")
@@ -222,6 +223,8 @@ function run_inference(training_set, orders, iterations=30)
             constraints    = lvar_constraints(), 
             initialization = lvar_init(orders), 
             returnvars     = KeepLast(), 
+            # Use KeepAll() or equivalent for historyvars if available in your RxInfer version
+            # historyvars    = (θ = KeepAll(), γ = KeepAll(), τ = KeepAll()),
             options        = (limit_stack_depth = 100, ), 
             showprogress   = true,  # Use built-in progress tracking
             iterations     = iterations,
