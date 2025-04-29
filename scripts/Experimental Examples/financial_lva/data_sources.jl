@@ -3,7 +3,7 @@ module FinancialDataSources
 using HTTP, JSON, Dates, Random, Statistics, DelimitedFiles, Printf
 using LinearAlgebra: diag, cholesky, eigen, I
 
-export get_financial_data, generate_synthetic_financial_data
+export get_financial_data, generate_synthetic_financial_data, generate_synthetic_log_returns
 
 # Function to log messages
 function log_message(message; level="INFO")
@@ -12,7 +12,7 @@ function log_message(message; level="INFO")
 end
 
 """
-    get_financial_data(symbols, start_date, end_date; api_key=nothing, data_source="synthetic")
+    get_financial_data(symbols, start_date, end_date; api_key=nothing, data_source="synthetic_returns")
 
 Retrieve financial data for the given symbols from the specified data source.
 If data_source is "synthetic", generate synthetic data instead of fetching from an API.
@@ -22,18 +22,21 @@ If data_source is "synthetic", generate synthetic data instead of fetching from 
 - `start_date`: Start date in "YYYY-MM-DD" format
 - `end_date`: End date in "YYYY-MM-DD" format
 - `api_key`: API key for the data source (optional)
-- `data_source`: "synthetic", "alphavantage", or "yahoo" (default: "synthetic")
+- `data_source`: "synthetic", "alphavantage", or "yahoo" (default: "synthetic_returns")
 
 # Returns
 - `data`: Dictionary with symbol keys and time series values
 - `dates`: Array of dates corresponding to the data points
 """
 function get_financial_data(symbols, start_date, end_date; 
-                           api_key=nothing, data_source="synthetic")
+                           api_key=nothing, data_source="synthetic_returns")
     
     if data_source == "synthetic"
-        log_message("Generating synthetic financial data for $(length(symbols)) symbols")
+        log_message("Generating synthetic financial PRICE data for $(length(symbols)) symbols")
         return generate_synthetic_financial_data(symbols, start_date, end_date)
+    elseif data_source == "synthetic_returns"
+        log_message("Generating synthetic LOG RETURN data for $(length(symbols)) symbols")
+        return generate_synthetic_log_returns(symbols, start_date, end_date)
     elseif data_source == "alphavantage"
         if isnothing(api_key)
             error("API key is required for Alpha Vantage data source")
@@ -219,6 +222,102 @@ function generate_synthetic_financial_data(symbols, start_date, end_date)
     log_message("Successfully generated synthetic financial data for $(length(symbols)) symbols")
     
     return data, dates
+end
+
+"""
+    generate_synthetic_log_returns(symbols, start_date, end_date; orders=5, noise_level=0.1)
+
+Generate synthetic financial log returns based on a simple VAR process, analogous to LVAR.
+
+# Arguments
+- `symbols`: Array of ticker symbols (used for keys in the output dict)
+- `start_date`: Start date in "YYYY-MM-DD" format
+- `end_date`: End date in "YYYY-MM-DD" format
+- `orders`: The order P for the VAR(P) process (can be a single Int or a vector)
+- `noise_level`: Standard deviation of the observation noise added to the true log returns.
+
+# Returns
+- `true_log_returns`: Dictionary {symbol: [log_returns...]} representing the underlying VAR process.
+- `observations`: Dictionary {symbol: [observed_log_returns...]} with added noise.
+- `dates`: Array of dates corresponding to the log return points (N-1 dates).
+"""
+function generate_synthetic_log_returns(symbols, start_date, end_date; orders=5, noise_level=0.1)
+    start = Date(start_date)
+    end_dt = Date(end_date)
+    
+    # Generate business days (these correspond to PRICE dates)
+    price_dates = collect(start:Day(1):end_dt)
+    price_dates = filter(date -> Dates.dayofweek(date) ∉ [6, 7], price_dates)
+    n_price_days = length(price_dates)
+    
+    if n_price_days < 2
+        error("Need at least 2 price days to generate log returns.")
+    end
+    
+    # Log return dates start from the second price date
+    return_dates = price_dates[2:end]
+    n_samples = length(return_dates) # Number of log return samples
+    log_message("Generating $n_samples days of synthetic log returns from $(return_dates[1]) to $(return_dates[end])")
+
+    n_assets = length(symbols)
+    
+    # Determine AR orders for each process
+    if isa(orders, Int)
+        ar_orders = fill(orders, n_assets)
+    elseif length(orders) == n_assets
+        ar_orders = orders
+    else
+        error("Length of orders must match number of symbols or be a single integer.")
+    end
+    max_order = maximum(ar_orders)
+
+    # --- Generate Stable VAR(P) parameters --- 
+    # Simplified approach: Generate stable parameters for individual AR processes
+    # and assume diagonal transition matrix for simplicity (no cross-asset dependencies in this synthetic data)
+    # This matches the structure assumed by the LVAR/FLVAR model itself.
+    Random.seed!(42) # For reproducibility
+    Theta = [zeros(ar_orders[k]) for k in 1:n_assets] # List of AR coefficient vectors
+    for k in 1:n_assets
+        # Generate stable AR parameters (simple method with decreasing coeffs)
+        Theta[k] = 0.5 .^ (1:ar_orders[k]) 
+    end
+
+    # --- Simulate the VAR process (as independent AR processes) --- 
+    log_returns_matrix = zeros(n_samples, n_assets)
+    
+    # Initialize first max_order points with noise
+    for t in 1:max_order
+        log_returns_matrix[t, :] = randn(n_assets) * 0.01 # Small initial noise
+    end
+
+    # Generate subsequent points
+    for t in (max_order + 1):n_samples
+        for k in 1:n_assets
+            order = ar_orders[k]
+            if t > order # Ensure we have enough past data
+                past_values = log_returns_matrix[t-order : t-1, k]
+                 # AR equation: x[t] = sum(θ[i] * x[t-i] for i=1:p) + noise
+                log_returns_matrix[t, k] = sum(Theta[k][i] * past_values[order - i + 1] for i in 1:order) + randn() * 0.01 # Process noise
+            else 
+                 # If t <= order, just use noise (already initialized)
+            end
+        end
+    end
+
+    # --- Convert to dictionary format and add observation noise --- 
+    true_log_returns_dict = Dict{String, Vector{Float64}}()
+    observed_log_returns_dict = Dict{String, Vector{Float64}}()
+    
+    for (i, symbol) in enumerate(symbols)
+        true_returns = log_returns_matrix[:, i]
+        true_log_returns_dict[symbol] = true_returns
+        observed_log_returns_dict[symbol] = true_returns .+ randn(n_samples) .* noise_level
+    end
+
+    log_message("Successfully generated synthetic log returns for $(length(symbols)) symbols")
+    
+    # Return true returns, observed returns, and the dates corresponding to the returns
+    return true_log_returns_dict, observed_log_returns_dict, return_dates
 end
 
 """
