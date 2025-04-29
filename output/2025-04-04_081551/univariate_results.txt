@@ -1,4 +1,0 @@
-Real value vs Optimized
-Real:      [1.0, -5.0]
-Optimized: [0.9990370328385715, -4.8593306526902476]
-Converged: true

@@ -1,0 +1,52 @@
+{
+    "overall_statistics": {
+        "avg_test_mae": 123.01696439269477,
+        "avg_test_rmse": 123.58383153387182,
+        "avg_direction_accuracy": 0.23076923076923075
+    },
+    "inference": {
+        "iterations_per_second": 0.2601389141801722,
+        "iterations": 10,
+        "execution_time_seconds": 38.441
+    },
+    "model_parameters": {
+        "n_samples": 64,
+        "n_symbols": 3,
+        "training_samples": 51,
+        "test_samples": 13
+    },
+    "symbol_statistics": {
+        "test_rmse_by_symbol": [
+            98.99822577929972,
+            209.20091670971584,
+            62.552352112599884
+        ],
+        "test_mae_by_symbol": [
+            98.98171026720449,
+            207.52583495494432,
+            62.543347955935545
+        ],
+        "direction_accuracy": [
+            0.38461538461538464,
+            0.0,
+            0.3076923076923077
+        ]
+    },
+    "metadata": {
+        "symbols": [
+            "MSFT",
+            "GOOG",
+            "AAPL"
+        ],
+        "time_generated": "2025-04-29 10:42:52",
+        "start_date": "2022-01-01",
+        "end_date": "2022-03-31",
+        "data_source": "synthetic",
+        "train_test_split": 51,
+        "ar_orders": [
+            5,
+            5,
+            5
+        ]
+    }
+}
