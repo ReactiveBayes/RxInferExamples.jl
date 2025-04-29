@@ -1,5 +1,5 @@
 # This file was automatically generated from /home/trim/Documents/GitHub/RxInferExamples.jl/examples/Advanced Examples/Assessing People Skills/Assessing People Skills.ipynb
-# by notebooks_to_scripts.jl at 2025-04-21T06:26:04.768
+# by notebooks_to_scripts.jl at 2025-04-29T06:39:07.183
 #
 # Source notebook: Assessing People Skills.ipynb
 
