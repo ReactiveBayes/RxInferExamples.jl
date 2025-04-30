@@ -425,15 +425,44 @@ function save_results(mresult, test_metrics, execution_metrics, symbols, orders,
         log_message("Failed to save results summary: $e", level="ERROR")
     end
 
-    # Optionally: Save raw inference results (can be large)
+    # Save selected raw inference results (predictions and posteriors)
     try
         raw_results_path = joinpath(raw_dir, "inference_result.jld2") # Requires JLD2 package
-        # Ensure JLD2 is loaded: using JLD2 already done at top
-        save_object(raw_results_path, mresult) 
-        saved_files["raw_results_path"] = raw_results_path
-        log_message("Raw inference results saved to: $(basename(raw_results_path))")
+        
+        # Create a dictionary to hold the parts of mresult we want to save
+        results_to_save = Dict{Symbol, Any}()
+        
+        # Save predictions if available
+        if isdefined(mresult, :predictions) && !isempty(mresult.predictions)
+            results_to_save[:predictions] = mresult.predictions
+            log_message("Included predictions in raw results.", level="DEBUG")
+        else
+            log_message("No predictions found in mresult to save.", level="WARNING")
+        end
+        
+        # Save posteriors if available
+        if isdefined(mresult, :posteriors) && !isempty(mresult.posteriors)
+            results_to_save[:posteriors] = mresult.posteriors
+             log_message("Included posteriors in raw results.", level="DEBUG")
+        else
+            log_message("No posteriors found in mresult to save.", level="WARNING")
+        end
+        
+        # Save the selected results dictionary using JLD2
+        if !isempty(results_to_save)
+            save_object(raw_results_path, results_to_save) 
+            saved_files["raw_results_path"] = raw_results_path
+            log_message("Selected raw inference results (predictions, posteriors) saved to: $(basename(raw_results_path))")
+        else
+             log_message("No raw results (predictions or posteriors) were available to save.", level="WARNING")
+        end
+        
     catch e
-        log_message("Failed to save raw inference results: $e", level="WARNING")
+        log_message("Failed to save selected raw inference results: $e", level="WARNING")
+        # Print stack trace for debugging if in development environment
+        if get(ENV, "JULIA_ENV", "development") == "development"
+            log_message("Stack trace: $(stacktrace())", level="DEBUG")
+        end
     end
 
     return saved_files

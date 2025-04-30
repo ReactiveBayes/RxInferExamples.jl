@@ -1,0 +1,33 @@
+{
+    "overall_statistics": {
+        "max_rmse": 0.043475648548842775,
+        "min_rmse": 0.018043432797497802,
+        "avg_uncertainty_test": 0.06665268080809685,
+        "avg_rmse": 0.027944189385870743,
+        "median_rmse": 0.026336708124686407,
+        "rmse_std": 0.009382158789318234
+    },
+    "model_run_details": {
+        "n_samples_total": 1389,
+        "n_symbols": 5,
+        "n_samples_train": 1111,
+        "n_samples_test": 278
+    },
+    "symbol_statistics": {
+        "MSFT": {
+            "rmse": 0.043475648548842775
+        },
+        "AMZN": {
+            "rmse": 0.026974514083499518
+        },
+        "META": {
+            "rmse": 0.02489064337482719
+        },
+        "GOOG": {
+            "rmse": 0.026336708124686407
+        },
+        "AAPL": {
+            "rmse": 0.018043432797497802
+        }
+    }
+}
