@@ -33,6 +33,15 @@ sophisticated models, performance optimization, and integration with other Julia
 Real-world applications and domain-specific models. These examples show how RxInfer.jl
 can be applied to specific problems like time series analysis and signal processing.
 """
+    ),
+    Category(
+        "Experimental Examples",
+        "experimental_examples",
+        """
+Experimental examples and proof-of-concepts. These examples are not yet ready for
+production use but are useful for research and development. They also usually require 
+additional patches to RxInfer.jl to work.
+"""
     )
 ]
 
@@ -247,6 +256,22 @@ function generate_examples_list()
               <strong>Victor Flores blogpost</strong><br/>
               <span style="color: var(--text-muted-color, #666);">A collection of projects and examples with RxInfer (but not limited to) at 
               <a href="https://vflores-io.github.io/">vflores-io</a>.</span>
+          </li>
+      </ul>
+      
+      <h4 style="margin: 1.5em 0 1em 0; color: var(--category-text-color, #333);">Python Integration & Server Infrastructure</h4>
+      <ul style="margin: 0; padding-left: 1.2em;">
+          <li style="margin-bottom: 0.8em;">
+              <strong>RxInferServer.jl</strong><br/>
+              <span style="color: var(--text-muted-color, #666);">RESTful API service for deploying RxInfer models. 
+              <a href="https://github.com/lazydynamics/RxInferServer">GitHub Repository</a> | 
+              <a href="https://server.rxinfer.com">Documentation</a></span>
+          </li>
+          <li style="margin-bottom: 0.8em;">
+              <strong>RxInferClient.py</strong><br/>
+              <span style="color: var(--text-muted-color, #666);">Python SDK for interacting with RxInferServer. 
+              <a href="https://github.com/lazydynamics/RxInferClient.py">GitHub Repository</a> | 
+              <a href="https://lazydynamics.github.io/RxInferClient.py/">Documentation</a></span>
           </li>
       </ul>
   </div>

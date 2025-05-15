@@ -168,6 +168,35 @@ end
     end
 end
 
+# Function to replace hidden block markers with HTML details tags
+@everywhere function replace_hidden_blocks(content)
+    # Pattern to match code blocks with hidden block markers
+    # This regex captures: 
+    # - The opening code fence (```julia)
+    # - The hidden block start marker and its summary text
+    # - The code content
+    # - The hidden block end marker
+    # - The closing code fence (```)
+    pattern = r"(```[a-z]*\n)### EXAMPLE_HIDDEN_BLOCK_START\((.*?)\) ###(.*?)### EXAMPLE_HIDDEN_BLOCK_END ###\n(```)"s
+
+    # Replace the matched pattern with HTML details tags around the code block
+    new_content = replace(content, pattern => s -> begin
+        matches = match(pattern, s)
+
+        code_fence_open = matches.captures[1]  # ```julia\n
+        summary_text = matches.captures[2]     # The summary text
+        code_content = matches.captures[3]     # The code between markers
+        code_fence_close = matches.captures[4] # ```
+
+        # Add a tab character to each line of the code content
+        code_content = join(filter(line -> !occursin(r"#\s*hide", line), map(line -> "\t" * line, eachline(IOBuffer(code_content)))), "\n")
+
+        "!!! details \"Hidden block of $(summary_text) - click to expand\"\n\t$(code_fence_open)$(code_content)\n\t$(code_fence_close)"
+    end)
+
+    return new_content
+end
+
 # Function to process a single notebook
 @everywhere function process_notebook(notebook_path, build_dir, cache_dir, rxinfer_path=nothing)
     # Get the notebook's directory and activate its environment
@@ -256,6 +285,9 @@ end
 
         # Read the existing content
         content = read(output_path, String)
+
+        # Replace hidden block markers with HTML details tags
+        content = replace_hidden_blocks(content)
 
         EXAMPLE_METADATA = """
         ```@meta
