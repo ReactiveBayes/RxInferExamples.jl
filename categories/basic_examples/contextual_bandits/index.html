@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Contextual Bandits · RxInfer.jl Examples</title><meta name="title" content="Contextual Bandits · RxInfer.jl Examples"/><meta property="og:title" content="Contextual Bandits · RxInfer.jl Examples"/><meta property="twitter:title" content="Contextual Bandits · RxInfer.jl Examples"/><meta name="description" content="Contextual Bandits with RxInfer.jl\nThis notebooks covers RxInfer usage for the Contextual Bandits problem.\n\nCheck more examples and tutorials at https://examples.rxinfer.com\n"/><meta property="og:description" content="Contextual Bandits with RxInfer.jl\nThis notebooks covers RxInfer usage for the Contextual Bandits problem.\n\nCheck more examples and tutorials at https://examples.rxinfer.com\n"/><meta property="twitter:description" content="Contextual Bandits with RxInfer.jl\nThis notebooks covers RxInfer usage for the Contextual Bandits problem.\n\nCheck more examples and tutorials at https://examples.rxinfer.com\n"/><meta property="og:url" content="https://examples.rxinfer.com/categories/basic_examples/contextual_bandits/"/><meta property="twitter:url" content="https://examples.rxinfer.com/categories/basic_examples/contextual_bandits/"/><link rel="canonical" href="https://examples.rxinfer.com/categories/basic_examples/contextual_bandits/"/><script async src="https://www.googletagmanager.com/gtag/js?id=G-GMFX620VEP"></script><script>  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-GMFX620VEP', {'page_path': location.pathname + location.search + location.hash});
+</script><script data-outdated-warner src="../../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../../assets/documenter.js"></script><script src="../../../search_index.js"></script><script src="../../../siteinfo.js"></script><script src="../../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../../assets/themeswap.js"></script><link href="../../../assets/theme.css" rel="stylesheet" type="text/css"/><link href="../../../assets/header.css" rel="stylesheet" type="text/css"/><script src="../../../assets/header.js"></script><script src="../../../assets/chat.js"></script><link href="../../../assets/favicon.ico" rel="icon" type="image/x-icon"/>
+    <meta property="og:title" content="Contextual Bandits - RxInfer Examples">
+    <meta name="description" content="This notebooks covers RxInfer usage for the Contextual Bandits problem.
+">
+    <meta property="og:description" content="This notebooks covers RxInfer usage for the Contextual Bandits problem.
+">
+    <meta name="keywords" content="rxinfer, julia, bayesian inference, examples, probabilistic programming, message passing, probabilistic numerics, variational inference, belief propagation, advanced examples, contextual bandits">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://examples.rxinfer.com/sitemap.xml">
+    </head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../../"><img class="docs-light-only" src="../../../assets/logo.svg" alt="RxInfer.jl Examples logo"/><img class="docs-dark-only" src="../../../assets/logo-dark.svg" alt="RxInfer.jl Examples logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../../">RxInfer.jl Examples</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../../">Home</a></li><li><a class="tocitem" href="../../../how_to_contribute/">How to contribute</a></li><li><a class="tocitem" href="../../../autogenerated/list_of_examples/">List of Examples</a></li><li><span class="tocitem">Basic Examples</span><ul><li><a class="tocitem" href="../bayesian_binomial_regression/">Bayesian Binomial Regression</a></li><li><a class="tocitem" href="../bayesian_linear_regression/">Bayesian Linear Regression</a></li><li><a class="tocitem" href="../bayesian_multinomial_regression/">Bayesian Multinomial Regression</a></li><li><a class="tocitem" href="../bayesian_networks/">Bayesian Networks</a></li><li><a class="tocitem" href="../coin_toss_model/">Coin Toss Model</a></li><li class="is-active"><a class="tocitem" href>Contextual Bandits</a><ul class="internal"><li><a class="tocitem" href="#Turning-Ad-Scheduling-Into-a-Learning-Problem"><span>Turning Ad Scheduling Into a Learning Problem</span></a></li><li><a class="tocitem" href="#Contextual-Multi-Armed-Bandits-to-the-Rescue"><span>Contextual Multi-Armed Bandits to the Rescue</span></a></li><li><a class="tocitem" href="#Implementing-CMABs-in-**RxInfer.jl**"><span>Implementing CMABs in <strong>RxInfer.jl</strong></span></a></li><li><a class="tocitem" href="#Generative-model-(consistent-notation)"><span>Generative model (consistent notation)</span></a></li><li><a class="tocitem" href="#Inference-and-decision‑making"><span>Inference &amp; decision‑making</span></a></li></ul></li><li><a class="tocitem" href="../feature_functions_in_bayesian_regression/">Feature Functions In Bayesian Regression</a></li><li><a class="tocitem" href="../hidden_markov_model/">Hidden Markov Model</a></li><li><a class="tocitem" href="../kalman_filtering_and_smoothing/">Kalman Filtering And Smoothing</a></li><li><a class="tocitem" href="../pomdp_control/">Pomdp Control</a></li><li><a class="tocitem" href="../predicting_bike_rental_demand/">Predicting Bike Rental Demand</a></li></ul></li><li><span class="tocitem">Advanced Examples</span><ul><li><a class="tocitem" href="../../advanced_examples/active_inference_mountain_car/">Active Inference Mountain Car</a></li><li><a class="tocitem" href="../../advanced_examples/advanced_tutorial/">Advanced Tutorial</a></li><li><a class="tocitem" href="../../advanced_examples/assessing_people_skills/">Assessing People Skills</a></li><li><a class="tocitem" href="../../advanced_examples/chance_constraints/">Chance Constraints</a></li><li><a class="tocitem" href="../../advanced_examples/conjugate-computational_variational_message_passing/">Conjugate-Computational Variational Message Passing</a></li><li><a class="tocitem" href="../../advanced_examples/drone_dynamics/">Drone Dynamics</a></li><li><a class="tocitem" href="../../advanced_examples/gp_regression_by_ssm/">Gp Regression By Ssm</a></li><li><a class="tocitem" href="../../advanced_examples/infinite_data_stream/">Infinite Data Stream</a></li><li><a class="tocitem" href="../../advanced_examples/integrating_neural_networks_with_flux.jl/">Integrating Neural Networks With Flux.Jl</a></li><li><a class="tocitem" href="../../advanced_examples/learning_dynamics_with_vaes/">Learning Dynamics With Vaes</a></li><li><a class="tocitem" href="../../advanced_examples/multi-agent_trajectory_planning/">Multi-Agent Trajectory Planning</a></li><li><a class="tocitem" href="../../advanced_examples/nonlinear_sensor_fusion/">Nonlinear Sensor Fusion</a></li><li><a class="tocitem" href="../../advanced_examples/parameter_optimisation_with_optim.jl/">Parameter Optimisation With Optim.Jl</a></li><li><a class="tocitem" href="../../advanced_examples/robotic_arm/">Robotic Arm</a></li></ul></li><li><span class="tocitem">Problem Specific</span><ul><li><a class="tocitem" href="../../problem_specific/autoregressive_models/">Autoregressive Models</a></li><li><a class="tocitem" href="../../problem_specific/gamma_mixture/">Gamma Mixture</a></li><li><a class="tocitem" href="../../problem_specific/gaussian_mixture/">Gaussian Mixture</a></li><li><a class="tocitem" href="../../problem_specific/hierarchical_gaussian_filter/">Hierarchical Gaussian Filter</a></li><li><a class="tocitem" href="../../problem_specific/invertible_neural_network_tutorial/">Invertible Neural Network Tutorial</a></li><li><a class="tocitem" href="../../problem_specific/litter_model/">Litter Model</a></li><li><a class="tocitem" href="../../problem_specific/ode_parameter_estimation/">Ode Parameter Estimation</a></li><li><a class="tocitem" href="../../problem_specific/probit_model/">Probit Model</a></li><li><a class="tocitem" href="../../problem_specific/rts_vs_bifm_smoothing/">Rts Vs Bifm Smoothing</a></li><li><a class="tocitem" href="../../problem_specific/simple_nonlinear_node/">Simple Nonlinear Node</a></li><li><a class="tocitem" href="../../problem_specific/structural_dynamics_with_augmented_kalman_filter/">Structural Dynamics With Augmented Kalman Filter</a></li><li><a class="tocitem" href="../../problem_specific/universal_mixtures/">Universal Mixtures</a></li></ul></li><li><span class="tocitem">Experimental Examples</span><ul><li><a class="tocitem" href="../../experimental_examples/latent_vector_autoregressive_model/">Latent Vector Autoregressive Model</a></li><li><a class="tocitem" href="../../experimental_examples/recurrent_switching_linear_dynamical_system/">Recurrent Switching Linear Dynamical System</a></li></ul></li><li><a class="tocitem" href="../../../how_build_works/">How we build the examples</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Basic Examples</a></li><li class="is-active"><a href>Contextual Bandits</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Contextual Bandits</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl" title="View source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><div class="admonition is-info" id="Contributing-64592202d51b8d51"><header class="admonition-header">Contributing<a class="admonition-anchor" href="#Contributing-64592202d51b8d51" title="Permalink"></a></header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><h1 id="Contextual-Bandits"><a class="docs-heading-anchor" href="#Contextual-Bandits">Contextual Bandits</a><a id="Contextual-Bandits-1"></a><a class="docs-heading-anchor-permalink" href="#Contextual-Bandits" title="Permalink"></a></h1><p>We will start this notebook with a motivating example.</p><p>Let’s face it—ads are annoying. But very often they’re also one of the few ways to keep the business running. Imagine a free-to-play game for example. The real question isn’t whether to show ads, but when and which kind to show, so that players don’t feel bombarded, leave the game frustrated, or stop spending altogether.</p><p>It’s a balancing act between monetization and player retention.</p><p>If you show ads too aggressively, players quit. If you show ads too cautiously, you leave money on the table. So, how do you decide what to do in each moment of a player’s session?</p><h2 id="Turning-Ad-Scheduling-Into-a-Learning-Problem"><a class="docs-heading-anchor" href="#Turning-Ad-Scheduling-Into-a-Learning-Problem">Turning Ad Scheduling Into a Learning Problem</a><a id="Turning-Ad-Scheduling-Into-a-Learning-Problem-1"></a><a class="docs-heading-anchor-permalink" href="#Turning-Ad-Scheduling-Into-a-Learning-Problem" title="Permalink"></a></h2><p>Every player session is different. Some players are engaged, some are rushing through, some just made a purchase, some are one level away from quitting.</p><p>At every possible ad moment, you have choices like:</p><ul><li>Show a <strong>video ad</strong> (high revenue, high interruption)</li><li>Show a <strong>banner ad</strong> (low revenue, low interruption)</li><li>Show <strong>no ad</strong> (defer to later)</li></ul><p>And you have <em>context</em>—information about the session so far:</p><ul><li>Player’s level and progress</li><li>Time since the last ad</li><li>Time spent in the current session</li><li>Whether the player just succeeded or failed at something</li><li>Recent purchases or reward claims</li></ul><p>What you want is a system that <strong>learns from player behavior over time</strong>, figuring out which actions perform best in which contexts—not just maximizing clicks or ad revenue right now, but balancing that with keeping players happy and playing longer.</p><h2 id="Contextual-Multi-Armed-Bandits-to-the-Rescue"><a class="docs-heading-anchor" href="#Contextual-Multi-Armed-Bandits-to-the-Rescue">Contextual Multi-Armed Bandits to the Rescue</a><a id="Contextual-Multi-Armed-Bandits-to-the-Rescue-1"></a><a class="docs-heading-anchor-permalink" href="#Contextual-Multi-Armed-Bandits-to-the-Rescue" title="Permalink"></a></h2><p>This is exactly where <strong>Contextual Multi-Armed Bandits (CMABs)</strong> come in.</p><p>Contextual Multi‑Armed Bandits (CMABs) extend the classic bandit setting by allowing the learner to <strong>observe a context</strong>—a feature vector that describes the current situation—before selecting an action (or <em>arm</em>). The learner’s aim is to <strong>maximise cumulative reward</strong> over time by repeatedly balancing:</p><ul><li><strong>Exploration</strong> – trying arms whose pay‑offs are still uncertain in some contexts.</li><li><strong>Exploitation</strong> – choosing the arm with the highest estimated reward in the current context.</li></ul><p>CMABs sit between simple A/B tests and full reinforcement‑learning problems and are the work‑horse behind many personalisation engines.</p><p>Acting <em>identically</em> for every context wastes opportunity; CMABs formalise how to adapt decisions on‑the‑fly.</p><h2 id="Implementing-CMABs-in-**RxInfer.jl**"><a class="docs-heading-anchor" href="#Implementing-CMABs-in-**RxInfer.jl**">Implementing CMABs in <strong>RxInfer.jl</strong></a><a id="Implementing-CMABs-in-**RxInfer.jl**-1"></a><a class="docs-heading-anchor-permalink" href="#Implementing-CMABs-in-**RxInfer.jl**" title="Permalink"></a></h2><p>In this notebook we will implement a CMAB in <code>RxInfer.jl</code> way. A way to tackle CMAB in RxInfer requires expressing the generative model as a <strong>hierarchical Bayesian linear‑regression</strong> model and then message passing inference will do the rest.</p><h2 id="Generative-model-(consistent-notation)"><a class="docs-heading-anchor" href="#Generative-model-(consistent-notation)">Generative model (consistent notation)</a><a id="Generative-model-(consistent-notation)-1"></a><a class="docs-heading-anchor-permalink" href="#Generative-model-(consistent-notation)" title="Permalink"></a></h2><p>Let</p><ul><li><p class="math-container">\[K\]</p>– number of arms.</li><li><p class="math-container">\[d\]</p>– dimension of the context vector.</li><li><p class="math-container">\[c_t\in\mathbb{R}^d\]</p>– context observed at round <span>$</span>t<span>$</span>.</li><li><p class="math-container">\[a_t\in{1,\dots,K}\]</p>– arm selected at round <span>$</span>t<span>$</span>.</li><li><p class="math-container">\[r_t\in\mathbb{R}\]</p>– realised reward.</li></ul><p>The environment produces rewards according to:</p><ol><li><strong>Global noise precision</strong> <span>$\tau\;\sim\;\mathcal{G}(\alpha_\tau, \beta_\tau)$</span></li><li><strong>Arm‑specific regression parameters</strong>  <span>$k = 1,\dots,K$</span> <span>$\theta_k \;\sim\; \mathcal{N}(m_{0k}, V_{0k}), \qquad \\ \Lambda_k \;\sim\; \operatorname{Wishart}(\nu_{0k}, W_{0k})$</span></li><li><strong>Per interaction latent coefficients</strong>  <span>$t = 1,\dots,T$</span> <span>$\beta_t \;\sim\; \mathcal{N}(\theta_{a_t}, \Lambda_{a_t}^{-1})$</span></li><li><strong>Reward generation</strong> <span>$\mu_t = c_t^\top \beta_t, \qquad \\ r_t \;\sim\; \mathcal{N}(\mu_t, \tau^{-1})$</span></li></ol><p><strong>Interpretation.</strong> Each arm owns a <em>distribution of weight vectors</em> (<span>$\theta_k$</span>), capturing how the context maps to reward for that arm. On every play we draw a concrete weight vector <span>$\beta_t$</span>, compute the expected reward <span>$\mu_t$</span>, and then observe a noisy realisation <span>$r_t$</span>.</p><h2 id="Inference-and-decision‑making"><a class="docs-heading-anchor" href="#Inference-and-decision‑making">Inference &amp; decision‑making</a><a id="Inference-and-decision‑making-1"></a><a class="docs-heading-anchor-permalink" href="#Inference-and-decision‑making" title="Permalink"></a></h2><p>With RxInfer we:</p><ol><li><strong>Declare</strong> the model above with the <code>@model</code> macro. (To make the example simpler, we&#39;ll have two models: one for parameters and one for predictions. A more complex scenario would be to have a single model for both.)</li><li><strong>Stream</strong> incoming tuples <span>$(c_t, a_t, r_t)$</span>.</li><li><strong>Call</strong> <code>infer</code> to update the posterior over <span>$(\theta_k, \Lambda_k, \tau)$</span>.</li><li><strong>Compute predictive distributions</strong> of rewards in a <em>new</em> context <span>$c_{t+1}$</span> via <code>infer</code> on the predictive model:</li><li><strong>Choose</strong> the next arm based on sampled from the predictive distribution.</li></ol><p>Because both learning and prediction are expressed as probabilistic inference, we keep <strong>all uncertainty</strong> in closed form—ideal for principled exploration. The same pipeline generalises easily to non‑linear contexts (via feature maps) or non‑Gaussian rewards by swapping likelihood terms.</p><pre><code class="language-julia hljs">using RxInfer, Distributions, LinearAlgebra, Plots, StatsPlots, ProgressMeter, StableRNGs</code></pre><p>At first let&#39;s generate synthetic data to simulate the CMAB problem.</p><pre><code class="language-julia hljs"># Random number generator 
+rng = StableRNG(42)
+# Number of data points to generate
+n_samples = 200
+# Number of arms (actions) in the bandit problem
+n_arms    = 3
+# Number of different contexts available
+n_contexts  = 10
+# Dimensionality of context feature vectors
+context_dim = 6
+
+# Generate true arm parameters (θ_k in the model description)
+arms     = [ randn(rng, context_dim) for _ in 1:n_arms] # True arm parameters
+# Generate (normalized) context feature vectors (x_t in the model description)
+contexts = [ randn(rng, context_dim) for _ in 1:n_contexts] # Context feature vectors
+
+# Standard deviation of the observation noise (1/sqrt(τ) in the model)
+noise_sd = 0.1
+
+# Arrays to store the generated data
+arm_choices     = [] # Stores a_t - which arm was chosen
+context_choices = [] # Stores indices of contexts used
+rewards         = [] # Stores r_t - the observed rewards
+
+# Generate synthetic data according to the model
+for i in 1:n_samples
+    # Randomly select a context and an arm
+    push!(context_choices, rand(rng, 1:n_contexts))
+    push!(arm_choices,     rand(rng, 1:n_arms))
+    
+    # Calculate the deterministic part of the reward (μ_t = x_t^T β_t)
+    # Here we&#39;re simplifying by using arms directly as β_t instead of sampling from N(θ_k, Λ_k^-1)
+    mean_reward = dot(arms[arm_choices[end]], contexts[context_choices[end]])
+    
+    # Add Gaussian noise (r_t ~ N(μ_t, τ^-1))
+    noisy_reward = mean_reward + randn(rng) * noise_sd
+    push!(rewards, noisy_reward)
+end</code></pre><pre><code class="language-julia hljs"># Create more informative and visually appealing plots
+p1 = scatter(1:n_samples, context_choices, 
+             label=&quot;Context Choices&quot;, 
+             title=&quot;Context Selection Over Time&quot;,
+             xlabel=&quot;Sample&quot;, ylabel=&quot;Context ID&quot;,
+             marker=:circle, markersize=6, 
+             color=:blue, alpha=0.7,
+             legend=:topright)
+
+p2 = scatter(1:n_samples, arm_choices, 
+             label=&quot;Arm Choices&quot;, 
+             title=&quot;Arm Selection Over Time&quot;,
+             xlabel=&quot;Sample&quot;, ylabel=&quot;Arm ID&quot;,
+             marker=:diamond, markersize=6, 
+             color=:red, alpha=0.7,
+             legend=:topright)
+
+p3 = plot(1:n_samples, rewards, 
+          label=&quot;Rewards&quot;, 
+          title=&quot;Rewards Over Time&quot;,
+          xlabel=&quot;Sample&quot;, ylabel=&quot;Reward Value&quot;,
+          linewidth=2, marker=:star, markersize=4, 
+          color=:green, alpha=0.8,
+          legend=:topright)
+
+# Add a horizontal line at mean reward
+hline!(p3, [mean(rewards)], label=&quot;Mean Reward&quot;, linestyle=:dash, linewidth=2, color=:black)
+
+# Combine plots with a title
+plot(p1, p2, p3, 
+     layout=(3, 1), 
+     size=(800, 600), 
+     margin=5Plots.mm,
+     plot_title=&quot;Contextual Bandit Experiment Data&quot;)</code></pre><p><img src="Contextual Bandits_3_1.png" alt/></p><pre><code class="language-julia hljs">@model function contextual_bandit_simplified(n_arms, priors, past_rewards, past_choices, past_contexts)
+    local θ
+    local γ
+    local τ
+    
+    # Prior for each arm&#39;s parameters
+    for k in 1:n_arms
+        θ[k] ~ priors[:θ][k]
+        γ[k] ~ priors[:γ][k]
+    end
+
+    # Prior for the noise precision
+    τ ~ priors[:τ]
+
+    # Model for past observations
+    for n in eachindex(past_rewards)
+        arm_vals[n] ~ NormalMixture(switch = past_choices[n], m = θ, p = γ)
+        past_rewards[n] ~ Normal(μ=dot(arm_vals[n], past_contexts[n]), γ=τ)
+    end
+end</code></pre><p>Let&#39;s define the priors.</p><pre><code class="language-julia hljs">priors_rng = StableRNG(42)
+priors = Dict(
+    :θ =&gt; [MvNormalMeanPrecision(randn(priors_rng, context_dim), diagm(ones(context_dim))) for _ in 1:n_arms], 
+    :γ =&gt; [Wishart(context_dim + 1, diagm(ones(context_dim))) for _ in 1:n_arms], 
+    :τ =&gt; GammaShapeRate(1.0, 1.0)
+)</code></pre><pre><code class="nohighlight hljs">Dict{Symbol, Any} with 3 entries:
+  :γ =&gt; Wishart{Float64, PDMat{Float64, Matrix{Float64}}, Int64}[Distributi
+ons.…
+  :τ =&gt; ExponentialFamily.GammaShapeRate{Float64}(a=1.0, b=1.0)
+  :θ =&gt; MvNormalMeanPrecision{Float64, Vector{Float64}, Matrix{Float64}}[Mv
+Norm…</code></pre><p>And finally run the inference.</p><pre><code class="language-julia hljs">function run_inference(; n_arms, priors, past_rewards, past_choices, past_contexts, iterations = 50, free_energy = true)
+    init = @initialization begin
+        q(θ) = priors[:θ]
+        q(γ) = priors[:γ]
+        q(τ) = priors[:τ]
+    end
+
+    return infer(
+        model = contextual_bandit_simplified(
+            n_arms = n_arms, 
+            priors = priors,
+        ), 
+        data  = (
+            past_rewards  = past_rewards, 
+            past_choices  = past_choices, 
+            past_contexts = past_contexts
+        ), 
+        constraints   = MeanField(),
+        initialization = init,
+        showprogress = true, 
+        iterations  = iterations, 
+        free_energy = free_energy
+    )
+
+end</code></pre><pre><code class="nohighlight hljs">run_inference (generic function with 1 method)</code></pre><pre><code class="language-julia hljs"># Convert to the required types for the model
+rewards_data = Float64.(rewards)
+contexts_data = Vector{Float64}[contexts[idx] for idx in context_choices]
+arm_choices_data = [[Float64(k == chosen_arm) for k in 1:n_arms] for chosen_arm in arm_choices];</code></pre><pre><code class="language-julia hljs">result = run_inference(
+    n_arms = n_arms, 
+    priors = priors, 
+    past_rewards = rewards_data, 
+    past_choices = arm_choices_data, 
+    past_contexts = contexts_data, 
+    iterations = 50, 
+    free_energy = false
+)</code></pre><pre><code class="nohighlight hljs">Inference results:
+  Posteriors       | available for (γ, arm_vals, τ, θ)</code></pre><pre><code class="language-julia hljs"># Diagnostics of inferred arms
+
+# MSE of inferred arms
+mse_arms = mean(mean((mean.(result.posteriors[:θ][end])[i] .- arms[i]).^2) for i in eachindex(arms))
+println(&quot;MSE of inferred arms: $mse_arms&quot;)
+
+println(&quot;True mean rewards:&quot;)
+println(arms[1]&#39;*contexts[1])
+println(arms[2]&#39;*contexts[2])
+println(arms[1]&#39;*contexts[2])
+println(arms[2]&#39;*contexts[1])
+println(&quot;Inferred mean rewards:&quot;)
+println(mean.(result.posteriors[:θ][end])[1]&#39;*contexts[1])
+println(mean.(result.posteriors[:θ][end])[2]&#39;*contexts[2])
+println(mean.(result.posteriors[:θ][end])[1]&#39;*contexts[2])
+println(mean.(result.posteriors[:θ][end])[2]&#39;*contexts[1])
+
+println(&quot;Precisions of mixtures:&quot;)
+println(repr(MIME&quot;text/plain&quot;(), mean(result.posteriors[:γ][end][1])))
+println(repr(MIME&quot;text/plain&quot;(), mean(result.posteriors[:γ][end][2])))</code></pre><pre><code class="nohighlight hljs">MSE of inferred arms: 0.0003125825950642261
+True mean rewards:
+-0.9579669881184847
+-2.282584691329295
+-2.683794982728294
+-0.3696242643519623
+Inferred mean rewards:
+-0.9833867148306266
+-2.2365081642253104
+-2.6599445159029336
+-0.3743693401277549
+Precisions of mixtures:
+6×6 Matrix{Float64}:
+ 11.7926     1.23996   1.80025     -1.97843    1.74577      0.488932
+  1.23996   14.6716   -3.55382      1.20452   -1.29646      2.52028
+  1.80025   -3.55382  14.5377      -1.17817    0.00595107  -1.9205
+ -1.97843    1.20452  -1.17817     17.5505    -0.451869     2.82889
+  1.74577   -1.29646   0.00595107  -0.451869  11.8356       0.420977
+  0.488932   2.52028  -1.9205       2.82889    0.420977    14.2777
+6×6 Matrix{Float64}:
+ 11.9552    1.07416    2.07428   -1.10233    1.98604    1.1934
+  1.07416  15.8296    -3.3471     0.689648  -3.07965    2.3066
+  2.07428  -3.3471    14.2365    -0.211613   1.10734   -1.15906
+ -1.10233   0.689648  -0.211613  18.5433    -0.603242   2.52572
+  1.98604  -3.07965    1.10734   -0.603242  12.5671     0.576931
+  1.1934    2.3066    -1.15906    2.52572    0.576931  14.2877</code></pre><h3 id="Comparing-Different-Strategies-for-the-Contextual-Bandit-Problem"><a class="docs-heading-anchor" href="#Comparing-Different-Strategies-for-the-Contextual-Bandit-Problem">Comparing Different Strategies for the Contextual Bandit Problem</a><a id="Comparing-Different-Strategies-for-the-Contextual-Bandit-Problem-1"></a><a class="docs-heading-anchor-permalink" href="#Comparing-Different-Strategies-for-the-Contextual-Bandit-Problem" title="Permalink"></a></h3><p>We&#39;ll implement and evaluate three different approaches:</p><ol><li>Random Strategy - Selecting arms randomly without using context information</li><li>Vanilla Thompson Sampling - Sampling the reward distribution</li><li>RxInfer Predictive Inference - Approximating the predictive posterior via message-passing</li></ol><pre><code class="language-julia hljs">function random_strategy(; rng, n_arms)
+    chosen_arm = rand(rng, 1:n_arms)
+    return chosen_arm
+end
+
+function thompson_strategy(; rng, n_arms, current_context, posteriors)
+    # Thompson Sampling: Sample parameter vectors and choose best arm
+    expected_rewards = zeros(n_arms)
+    for k in 1:n_arms
+        # Sample parameters from posterior
+        theta_sample = rand(rng, posteriors[:θ][k])
+        expected_rewards[k] = dot(theta_sample, current_context)
+    end
+    
+    # Choose best arm based on sampled parameters
+    chosen_arm = argmax(expected_rewards)
+
+    # Randomly choose an arm with 20% probability to explore
+    if rand(rng) &lt; 0.20
+        chosen_arm = rand(rng, 1:n_arms)
+    end
+
+    return chosen_arm
+end</code></pre><pre><code class="nohighlight hljs">thompson_strategy (generic function with 1 method)</code></pre><pre><code class="language-julia hljs">@model function contextual_bandit_predictive(reward, priors, current_context)
+    local θ
+    local γ
+    local τ
+
+    # Prior for each arm&#39;s parameters
+    for k in 1:n_arms
+        θ[k] ~ priors[:θ][k]
+        γ[k] ~ priors[:γ][k]
+    end
+
+    τ ~ priors[:τ]
+
+    chosen_arm ~ Categorical(ones(n_arms) ./ n_arms)
+    arm_vals ~ NormalMixture(switch=chosen_arm, m=θ, p=γ)
+    reward ~ Normal(μ=dot(arm_vals, current_context), γ=τ)
+end
+
+function predictive_strategy(; rng, n_arms, current_context, posteriors)
+
+    priors = Dict(
+        :θ =&gt; posteriors[:θ],
+        :γ =&gt; posteriors[:γ],
+        :τ =&gt; posteriors[:τ]
+    )
+
+    init = @initialization begin
+        q(θ) = priors[:θ]
+        q(τ) = priors[:τ]
+        q(γ) = priors[:γ]
+        q(chosen_arm) = Categorical(ones(n_arms) ./ n_arms)
+    end
+
+    result = infer(
+        model=contextual_bandit_predictive(
+            priors=priors,
+            current_context=current_context
+        ),
+        data=(reward=maximum(rewards),),
+        constraints=MeanField(),
+        initialization=init,
+        showprogress=true,
+        iterations=50,
+    )
+
+    chosen_arm = argmax(probvec(result.posteriors[:chosen_arm][end]))
+
+    return chosen_arm
+end</code></pre><pre><code class="nohighlight hljs">predictive_strategy (generic function with 1 method)</code></pre><p>As we defined the strategies, we can proceed to defining the helper functions to run the simulation.</p><p>We will use the following flow:</p><ol><li><strong>PLAN</strong> - Run different strategies</li><li><strong>ACT</strong> - In this simulation, we&#39;re evaluating all strategies in parallel</li><li><strong>OBSERVE</strong> - Get rewards for all strategies</li><li><strong>LEARN</strong> - Update posteriors based on history</li><li><strong>KEEP HISTORY</strong> - Record all results</li></ol><pre><code class="language-julia hljs"># Helper functions
+function select_context(rng, n_contexts)
+    idx = rand(rng, 1:n_contexts)
+    return (index = idx, value = contexts[idx])
+end
+
+function plan(rng, n_arms, context, posteriors)
+    # Generate actions from different strategies
+    return Dict(
+        :random =&gt; random_strategy(rng = rng, n_arms = n_arms),
+        :thompson =&gt; thompson_strategy(rng = rng, n_arms = n_arms, current_context = context, posteriors = posteriors),
+        :predictive =&gt; predictive_strategy(rng = rng, n_arms = n_arms, current_context = context, posteriors = posteriors)
+    )
+end
+
+function act(rng, strategies)
+    # Here one would choose which strategy to actually follow
+    # For this simulation, we&#39;re evaluating all in parallel
+    # In a real scenario, one might return just one: return strategies[:thompson]
+    return strategies
+end
+
+function observe(rng, strategies, context, arms, noise_sd)
+    rewards = Dict()
+    for (strategy, arm_idx) in strategies
+        rewards[strategy] = dot(arms[arm_idx], context) + randn(rng) * noise_sd
+    end
+    return rewards
+end
+
+function learn(rng, n_arms, posteriors, past_rewards, past_choices, past_contexts)
+    # Note that we don&#39;t do any forgetting here which might be useful for long-term learning
+    # Prepare priors from current posteriors
+    priors = Dict(:θ =&gt; posteriors[:θ], :τ =&gt; posteriors[:τ], :γ =&gt; posteriors[:γ])
+    
+    # Default initialization
+    init = @initialization begin
+        q(θ) = priors[:θ]
+        q(τ) = priors[:τ]
+        q(γ) = priors[:γ]
+    end
+    
+    # Run inference
+    results = infer(
+        model = contextual_bandit_simplified(
+            n_arms = n_arms, 
+            priors = priors,
+        ), 
+        data = (
+            past_rewards = past_rewards, 
+            past_choices = past_choices,
+            past_contexts = past_contexts, 
+        ), 
+        returnvars = KeepLast(),
+        constraints = MeanField(),
+        initialization = init,
+        iterations = 50, 
+        free_energy = false
+    )
+    
+    return results.posteriors
+end
+
+function keep_history!(n_arms, history, strategies, rewards, context, posteriors)
+    # Update choices
+    for (strategy, arm_idx) in strategies
+        push!(history[:choices][strategy], [Float64(k == arm_idx) for k in 1:n_arms])
+    end
+    
+    # Update rewards
+    for (strategy, reward) in rewards
+        push!(history[:rewards][strategy], reward)
+    end
+    
+    # Update real history - using predictive strategy as the actual choice
+    push!(history[:real][:rewards], last(history[:rewards][:predictive]))
+    push!(history[:real][:choices], last(history[:choices][:predictive]))
+    
+    # Update contexts
+    push!(history[:contexts][:values], context.value)
+    push!(history[:contexts][:indices], context.index)
+    
+    # Update posteriors
+    push!(history[:posteriors], deepcopy(posteriors))
+end</code></pre><pre><code class="nohighlight hljs">keep_history! (generic function with 1 method)</code></pre><pre><code class="language-julia hljs">function run_bandit_simulation(n_epochs, window_length, n_arms, n_contexts, context_dim)
+    rng = StableRNG(42)
+
+    # Initialize histories with empty arrays, removing the references to undefined variables
+    history = Dict(
+        :rewards =&gt; Dict(:random =&gt; [], :thompson =&gt; [], :predictive =&gt; []),
+        :choices =&gt; Dict(:random =&gt; [], :thompson =&gt; [], :predictive =&gt; []),
+        :real =&gt; Dict(:rewards =&gt; [], :choices =&gt; []),
+        :contexts =&gt; Dict(:values =&gt; [], :indices =&gt; []),
+        :posteriors =&gt; []
+    )
+
+    # Initialize prior posterior as uninformative 
+    posteriors = Dict(:θ =&gt; [MvNormalMeanPrecision(randn(rng, context_dim), diagm(ones(context_dim))) for _ in 1:n_arms], 
+                      :γ =&gt; [Wishart(context_dim + 1, diagm(ones(context_dim))) for _ in 1:n_arms], 
+                      :τ =&gt; GammaShapeRate(1.0, 1.0))
+
+    @showprogress for epoch in 1:n_epochs
+        # 1. PLAN - Run different strategies
+        current_context = select_context(rng, n_contexts)
+
+        strategies = plan(rng, n_arms, current_context.value, posteriors)
+        
+        # 2. ACT - In this simulation, we&#39;re evaluating all strategies in parallel
+        # In a real scenario, you might choose one strategy here
+        chosen_arm = act(rng, strategies)
+        
+        # 3. OBSERVE - Get rewards for all strategies
+        rewards = observe(rng, strategies, current_context.value, arms, noise_sd)
+        
+        # 4. LEARN - Update posteriors based on history
+        # Only try to learn if we have collected data
+        if length(history[:real][:rewards]) &gt; 0
+            data_idx = max(1, length(history[:real][:rewards]) - window_length + 1):length(history[:real][:rewards])
+            
+            posteriors = learn(
+                rng,
+                n_arms,
+                posteriors,
+                history[:real][:rewards][data_idx],
+                history[:real][:choices][data_idx],
+                history[:contexts][:values][data_idx]
+            )
+
+        end
+        
+        # 5. KEEP HISTORY - Record all results
+        keep_history!(n_arms, history, strategies, rewards, current_context, posteriors)
+    end
+    
+    return history
+end</code></pre><pre><code class="nohighlight hljs">run_bandit_simulation (generic function with 1 method)</code></pre><pre><code class="language-julia hljs"># Run the simulation
+n_epochs = 500
+window_length = 10
+
+history = run_bandit_simulation(n_epochs, window_length, n_arms, n_contexts, context_dim)</code></pre><pre><code class="nohighlight hljs">Dict{Symbol, Any} with 5 entries:
+  :choices    =&gt; Dict{Symbol, Vector{Any}}(:predictive=&gt;[[1.0, 0.0, 0.0], [
+1.0,…
+  :contexts   =&gt; Dict{Symbol, Vector{Any}}(:values=&gt;[[1.13363, -0.840372, 2
+.085…
+  :real       =&gt; Dict{Symbol, Vector{Any}}(:choices=&gt;[[1.0, 0.0, 0.0], [1.0
+, 0.…
+  :rewards    =&gt; Dict{Symbol, Vector{Any}}(:predictive=&gt;[-1.03096, 1.03581,
+ 3.0…
+  :posteriors =&gt; Any[Dict{Symbol, Any}(:γ=&gt;Wishart{Float64, PDMat{Float64, 
+Matr…</code></pre><pre><code class="language-julia hljs">function print_summary_statistics(history, n_epochs)
+    # Additional summary statistics
+    println(&quot;Random strategy cumulative reward: $(sum(history[:rewards][:random]))&quot;)
+    println(&quot;Thompson strategy cumulative reward: $(sum(history[:rewards][:thompson]))&quot;)
+    println(&quot;Predictive strategy cumulative reward: $(sum(history[:rewards][:predictive]))&quot;)
+
+    println(&quot;Results after $n_epochs epochs:&quot;)
+    println(&quot;Random strategy average reward: $(mean(history[:rewards][:random]))&quot;)
+    println(&quot;Thompson strategy average reward: $(mean(history[:rewards][:thompson]))&quot;)
+    println(&quot;Predictive strategy average reward: $(mean(history[:rewards][:predictive]))&quot;)
+end
+
+# Print the summary statistics
+print_summary_statistics(history, n_epochs)</code></pre><pre><code class="nohighlight hljs">Random strategy cumulative reward: 285.4372425759371
+Thompson strategy cumulative reward: 1002.7939953472128
+Predictive strategy cumulative reward: 1066.9597510701233
+Results after 500 epochs:
+Random strategy average reward: 0.5708744851518742
+Thompson strategy average reward: 2.0055879906944254
+Predictive strategy average reward: 2.1339195021402464</code></pre><pre><code class="language-julia hljs">function plot_arm_distribution(history, n_arms)
+    # Count frequency of each arm selection
+    arm_counts_random = [count(==(i), argmax.(history[:choices][:random])) for i in 1:n_arms]
+    arm_counts_thompson = [count(==(i), argmax.(history[:choices][:thompson])) for i in 1:n_arms]
+    arm_counts_predictive = [count(==(i), argmax.(history[:choices][:predictive])) for i in 1:n_arms]
+
+    # Create grouped bar plot
+    bar_plot = groupedbar(
+        [&quot;Random&quot;, &quot;Thompson&quot;, &quot;Predictive&quot;],
+        [arm_counts_random arm_counts_thompson arm_counts_predictive]&#39;,
+        title=&quot;Arm Selection Distribution&quot;,
+        xlabel=&quot;Strategy&quot;,
+        ylabel=&quot;Selection Count&quot;,
+        bar_position=:dodge,
+        bar_width=0.8,
+        alpha=0.7
+    )
+    
+    return bar_plot
+end
+
+# Plot arm distribution
+arm_distribution_plot = plot_arm_distribution(history, n_arms)
+display(arm_distribution_plot)</code></pre><p><img src="Contextual Bandits_16_1.png" alt/></p><pre><code class="language-julia hljs">function calculate_improvements(history)
+    # Get final average rewards
+    final_random_avg = mean(history[:rewards][:random])
+    final_thompson_avg = mean(history[:rewards][:thompson])
+    final_predictive_avg = mean(history[:rewards][:predictive])
+
+    # Improvements over random baseline
+    thompson_improvement = (final_thompson_avg - final_random_avg) / abs(final_random_avg) * 100
+    predictive_improvement = (final_predictive_avg - final_random_avg) / abs(final_random_avg) * 100
+
+    println(&quot;Thompson sampling improves over random by $(round(thompson_improvement, digits=2))%&quot;)
+    println(&quot;Predictive strategy improves over random by $(round(predictive_improvement, digits=2))%&quot;)
+    
+    return Dict(
+        :thompson =&gt; thompson_improvement,
+        :predictive =&gt; predictive_improvement
+    )
+end
+
+# Calculate and display improvements
+improvements = calculate_improvements(history)</code></pre><pre><code class="nohighlight hljs">Thompson sampling improves over random by 251.32%
+Predictive strategy improves over random by 273.8%
+Dict{Symbol, Float64} with 2 entries:
+  :predictive =&gt; 273.798
+  :thompson   =&gt; 251.319</code></pre><pre><code class="language-julia hljs">function plot_moving_averages(history, n_epochs, ma_window=20)
+    # Calculate moving average rewards
+    ma_rewards_random = [mean(history[:rewards][:random][max(1,i-ma_window+1):i]) for i in 1:n_epochs]
+    ma_rewards_thompson = [mean(history[:rewards][:thompson][max(1,i-ma_window+1):i]) for i in 1:n_epochs]
+    ma_rewards_predictive = [mean(history[:rewards][:predictive][max(1,i-ma_window+1):i]) for i in 1:n_epochs]
+
+    # Plot moving average
+    plot(1:n_epochs, [ma_rewards_random, ma_rewards_thompson, ma_rewards_predictive], 
+         label=[&quot;Random&quot; &quot;Thompson&quot; &quot;Predictive&quot;],
+         title=&quot;Moving Average Reward&quot;, 
+         xlabel=&quot;Epoch&quot;, ylabel=&quot;Average Reward&quot;,
+         lw=2)
+end
+
+# Plot moving averages
+plot_moving_averages(history, n_epochs)</code></pre><p><img src="Contextual Bandits_18_1.png" alt/></p><pre><code class="language-julia hljs">function create_comprehensive_plots(history, window=100, k=10)
+    # Create a better color palette
+    colors = palette(:tab10)
+
+    # Plot 1: Arm choices comparison (every k-th point)
+    p1 = plot(title=&quot;Arm Choices Over Time&quot;, xlabel=&quot;Epoch&quot;, ylabel=&quot;Arm Index&quot;, 
+              legend=:outertopright, dpi=300)
+    plot!(p1, argmax.(history[:choices][:random][1:k:end]), label=&quot;Random&quot;, color=colors[1], 
+          markershape=:circle, markersize=3, alpha=0.5, linewidth=0)
+    plot!(p1, argmax.(history[:choices][:thompson][1:k:end]), label=&quot;Thompson&quot;, color=colors[2], 
+          markershape=:circle, markersize=3, alpha=0.5, linewidth=0)
+    plot!(p1, argmax.(history[:choices][:predictive][1:k:end]), label=&quot;Predictive&quot;, color=colors[3], 
+          markershape=:circle, markersize=3, alpha=0.5, linewidth=0)
+
+    # Plot 2: Context values (every k-th point)
+    p2 = plot(title=&quot;Context Changes&quot;, xlabel=&quot;Epoch&quot;, ylabel=&quot;Context Index&quot;, 
+              legend=false, dpi=300)
+    plot!(p2, history[:contexts][:indices][1:k:end], color=colors[4], linewidth=1.5)
+
+    # Plot 3: Reward comparison (every k-th point)
+    p3 = plot(title=&quot;Rewards by Strategy&quot;, xlabel=&quot;Epoch&quot;, ylabel=&quot;Reward Value&quot;, 
+              legend=:outertopright, dpi=300)
+    plot!(p3, history[:rewards][:random][1:k:end], label=&quot;Random&quot;, color=colors[1], linewidth=1.5, alpha=0.7)
+    plot!(p3, history[:rewards][:thompson][1:k:end], label=&quot;Thompson&quot;, color=colors[2], linewidth=1.5, alpha=0.7)
+    plot!(p3, history[:rewards][:predictive][1:k:end], label=&quot;Predictive&quot;, color=colors[3], linewidth=1.5, alpha=0.7)
+
+    # Plot 4: Cumulative rewards (every k-th point)
+    cumul_random = cumsum(history[:rewards][:random])[1:k:end]
+    cumul_thompson = cumsum(history[:rewards][:thompson])[1:k:end]
+    cumul_predictive = cumsum(history[:rewards][:predictive])[1:k:end]
+
+    p4 = plot(title=&quot;Cumulative Rewards&quot;, xlabel=&quot;Epoch&quot;, ylabel=&quot;Cumulative Reward&quot;, 
+              legend=:outertopright, dpi=300)
+    plot!(p4, cumul_random, label=&quot;Random&quot;, color=colors[1], linewidth=2)
+    plot!(p4, cumul_thompson, label=&quot;Thompson&quot;, color=colors[2], linewidth=2)
+    plot!(p4, cumul_predictive, label=&quot;Predictive&quot;, color=colors[3], linewidth=2)
+
+    # Plot 5: Moving average rewards (every k-th point)
+    ma_random = [mean(history[:rewards][:random][max(1,i-window+1):i]) for i in 1:length(history[:rewards][:random])][1:k:end]
+    ma_thompson = [mean(history[:rewards][:thompson][max(1,i-window+1):i]) for i in 1:length(history[:rewards][:thompson])][1:k:end]
+    ma_predictive = [mean(history[:rewards][:predictive][max(1,i-window+1):i]) for i in 1:length(history[:rewards][:predictive])][1:k:end]
+
+    p5 = plot(title=&quot;$window-Epoch Moving Average Rewards&quot;, xlabel=&quot;Epoch&quot;, ylabel=&quot;Avg Reward&quot;, 
+              legend=:outertopright, dpi=300)
+    plot!(p5, ma_random, label=&quot;Random&quot;, color=colors[1], linewidth=2)
+    plot!(p5, ma_thompson, label=&quot;Thompson&quot;, color=colors[2], linewidth=2)
+    plot!(p5, ma_predictive, label=&quot;Predictive&quot;, color=colors[3], linewidth=2)
+
+    # Combine all plots with a title
+    combined_plot = plot(p1, p2, p3, p4, p5, 
+         layout=(5, 1), 
+         size=(900, 900), 
+         plot_title=&quot;Bandit Strategies Comparison (shows every $k th point)&quot;, 
+         plot_titlefontsize=14,
+         left_margin=10Plots.mm,
+         bottom_margin=10Plots.mm)
+         
+    return combined_plot
+end
+
+create_comprehensive_plots(history, window_length, 10)  # Using k=10 for prettier plots</code></pre><p><img src="Contextual Bandits_19_1.png" alt/></p><p>Thompson and Predictive strategies both significantly outperform Random. Both intelligent strategies quickly adapt to changing contexts. The Predictive strategy shows a slight edge over Thompson sampling in final performance, demonstrating the effectiveness of Bayesian approaches in sequential decision-making under uncertainty.</p><hr/><div class="admonition is-info" id="Contributing-64592202d51b8d51"><header class="admonition-header">Contributing<a class="admonition-anchor" href="#Contributing-64592202d51b8d51" title="Permalink"></a></header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><div class="admonition is-compat" id="Environment-3e440e2b2e9811bf"><header class="admonition-header">Environment<a class="admonition-anchor" href="#Environment-3e440e2b2e9811bf" title="Permalink"></a></header><div class="admonition-body"><p>This example was executed in a clean, isolated environment. Below are the exact package versions used:</p><p>For reproducibility:</p><ul><li>Use the same package versions when running locally</li><li>Report any issues with package compatibility</li></ul></div></div><pre><code class="nohighlight hljs">Status `~/work/RxInferExamples.jl/RxInferExamples.jl/docs/src/categories/basic_examples/contextual_bandits/Project.toml`
+  [31c24e10] Distributions v0.25.120
+  [91a5bcdd] Plots v1.40.13
+  [92933f4c] ProgressMeter v1.10.4
+  [86711068] RxInfer v4.4.2
+  [860ef19b] StableRNGs v1.0.3
+  [f3b207a7] StatsPlots v0.15.7
+  [37e2e46d] LinearAlgebra v1.11.0
+  [9a3f8284] Random v1.11.0
+</code></pre><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+mermaid.initialize({
+    startOnLoad: true,
+    theme: "neutral"
+});
+</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../coin_toss_model/">« Coin Toss Model</a><a class="docs-footer-nextpage" href="../feature_functions_in_bayesian_regression/">Feature Functions In Bayesian Regression »</a><div class="flexbox-break"></div><p class="footer-message">Created in <a href="https://biaslab.github.io/">BIASlab</a>, maintained by <a href="https://github.com/ReactiveBayes">ReactiveBayes</a>, powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.11.4 on <span class="colophon-date" title="Tuesday 20 May 2025 15:14">Tuesday 20 May 2025</span>. Using Julia version 1.11.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
