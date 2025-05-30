@@ -41,6 +41,8 @@ jobs:
           version: ${{ matrix.version }}
       - uses: julia-actions/cache@v2
       - name: Build examples
+        env:
+          JULIA_FASTCHOLESKY_THROW_ERROR_NON_SYMMETRIC: 1
         run: |
           julia -e 'using Pkg; Pkg.add("Weave"); Pkg.precompile()'
           make examples-setup
@@ -78,3 +80,4 @@ jobs:
           make docs
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JULIA_FASTCHOLESKY_THROW_ERROR_NON_SYMMETRIC: 1
