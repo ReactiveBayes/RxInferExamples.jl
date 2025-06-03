@@ -15,8 +15,7 @@ This project demonstrates multi-agent trajectory planning using probabilistic in
 ### Execution Scripts
 
 - **[run_experiment.jl](run_experiment.jl)**: Command-line script for running individual experiments with configurable parameters.
-- **[main.jl](main.jl)**: Entry point for running all standard experiments sequentially.
-- **[Multi-agent Trajectory Planning.jl](Multi-agent%20Trajectory%20Planning.jl)**: Script version generated from the original notebook.
+- **[Multi-agent Trajectory Planning.jl](Multi-agent%20Trajectory%20Planning.jl)**: Main control script for running the refactored version, generated from the original notebook.
 
 ### Documentation
 
@@ -41,7 +40,7 @@ This project demonstrates multi-agent trajectory planning using probabilistic in
 
 ### Quick Start
 
-1. Navigate to the project directory:
+1. Navigate to the project directory, and run the main script from there:
    ```bash
    cd scripts/Advanced\ Examples/Multi-agent\ Trajectory\ Planning/
    ```
@@ -49,11 +48,6 @@ This project demonstrates multi-agent trajectory planning using probabilistic in
 2. Run a single experiment with default parameters:
    ```bash
    julia run_experiment.jl
-   ```
-
-3. Run all standard experiments:
-   ```bash
-   julia main.jl
    ```
 
 ### Command-line Parameters for run_experiment.jl

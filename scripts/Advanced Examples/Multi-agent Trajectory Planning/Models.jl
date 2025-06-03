@@ -63,6 +63,7 @@ function h(environment, radiuses, states...)
 end
 
 # For more details about the model, please refer to the original paper
+# Keep RxInfer.jl @model syntax carefully in mind
 @model function path_planning_model(environment, agents, goals, nr_steps)
 
     # Model's parameters are fixed, refer to the original 
