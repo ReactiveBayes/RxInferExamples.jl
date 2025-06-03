@@ -1,5 +1,5 @@
 # This file was automatically generated from /home/trim/Documents/GitHub/RxInferExamples.jl/examples/Problem Specific/ODE Parameter Estimation/ODE Parameter Estimation.ipynb
-# by notebooks_to_scripts.jl at 2025-04-29T06:39:07.631
+# by notebooks_to_scripts.jl at 2025-06-03T10:14:29.222
 #
 # Source notebook: ODE Parameter Estimation.ipynb
 
@@ -14,10 +14,8 @@ function lotka_volterra(u, z, p, t)
     return [du1, du2]
 end;
 
-dt = 0.1 # sample_interval
-
-function lotka_volterra_rk4(x, θ, t, dt)
-    lotka_volterra_dynamics = SeeToDee.Rk4(lotka_volterra, dt)
+function lotka_volterra_rk4(x, θ, t, dt, supersample = 1)
+    lotka_volterra_dynamics = SeeToDee.Rk4(lotka_volterra, dt, supersample = supersample)
     return lotka_volterra_dynamics(x, 0, θ, t)
 end
 
@@ -38,6 +36,7 @@ function generate_data(θ; x = ones(2), t =0.0, dt = 0.001, n = 1000, v = 1, see
     return data, noisy_data, ts
 end
 
+dt = 0.1 # sample_interval
 noisev = 0.35
 n = 10000
 true_params = [1.0, 1.5, 3.0, 1.0]
@@ -141,7 +140,6 @@ end;
 
 res = optimize(compute_free_energy, [zeros(4); 0.1ones(4)], NelderMead(), Optim.Options(show_trace = true, show_every = 300));
 
-
 θ_minimizer = exp.(res.minimizer)
 mθ_init = θ_minimizer[1:4]
 Vθ_init = Diagonal(θ_minimizer[5:end])
@@ -155,7 +153,6 @@ println("\nActual parameters used to generate data:")
 for (i, (name, val)) in enumerate(zip(["α", "β", "γ", "δ"], true_params))
     println(" * $name: $(round(val, digits=3))")
 end
-
 
 
 result = infer(
@@ -232,19 +229,17 @@ title!(p2, "Predator Population")
 
 plot(p1, p2, layout=(2,1), size=(1000,600))
 
-expf(θ) = exp.(θ) ## This function is used to apply the exp function to the parameters within the @model macro
+lotka_volterra_rk4_transformed(x,θ,t,dt) = lotka_volterra_rk4(x, exp.(θ), t, dt)## This function is used to apply the exp function to the parameters within the @model macro
 
 @model function lotka_volterra_model2(obs, mprev, Vprev, dt, t, mθ, Vθ)
     θ     ~ MvNormalMeanCovariance(mθ, Vθ)
     xprev ~ MvNormalMeanCovariance(mprev, Vprev)
-    θ_exp := expf(θ)
-    x     := lotka_volterra_rk4(xprev, θ_exp, t, dt)
+    x     := lotka_volterra_rk4_transformed(xprev, θ, t, dt)
     obs   ~ MvNormalMeanCovariance(x,  noisev * diageye(length(mprev)))
 end
 
 delta_meta2 = @meta begin
-    lotka_volterra_rk4() ->  Unscented()
-    expf() ->  Unscented()
+    lotka_volterra_rk4_transformed() ->  Unscented()
 end
 
 autoupdates2 = @autoupdates begin
@@ -269,23 +264,29 @@ result2  = infer(
 )
 
 
-mθ_exp =  mean.(result2.history[:θ_exp])
-Vθ_exp = var.(result2.history[:θ_exp])
+mθ =  mean.(result2.history[:θ])
+Vθ = cov.(result2.history[:θ])
+expf(θ) = exp.(θ)
+θdists = map((m,v) -> MvNormalMeanCovariance(m, v), mθ, Vθ)
+θ_exp_dists = map(θdist -> ReactiveMP.approximate(Unscented(), expf, (θdist,)), θdists)
+
+mθ_exp =  mean.(θ_exp_dists)
+Vθ_exp = cov.(θ_exp_dists)
 
 # Plot the inferred parameters with uncertainty
-p1 = plot(ts_long, getindex.(mθ_exp, 1), ribbon=2*sqrt.(getindex.(Vθ_exp, 1)), label="α", legend=:topright)
+p1 = plot(ts_long, getindex.(mθ_exp, 1), ribbon=2*sqrt.(getindex.(Vθ_exp, 1,1)), label="α", legend=:topright)
 plot!(p1, ts_long, fill(true_params[1], length(ts_long)), label="True α", linestyle=:dash)
 title!(p1, "Parameter α")
 
-p2 = plot(ts_long, getindex.(mθ_exp, 2), ribbon=2*sqrt.(getindex.(Vθ_exp, 2)), label="β", legend=:topright)
+p2 = plot(ts_long, getindex.(mθ_exp, 2), ribbon=2*sqrt.(getindex.(Vθ_exp, 2,2)), label="β", legend=:topright)
 plot!(p2, ts_long, fill(true_params[2], length(ts_long)), label="True β", linestyle=:dash)
 title!(p2, "Parameter β")
 
-p3 = plot(ts_long, getindex.(mθ_exp, 3), ribbon=2*sqrt.(getindex.(Vθ_exp, 3)), label="γ", legend=:topright)
+p3 = plot(ts_long, getindex.(mθ_exp, 3), ribbon=2*sqrt.(getindex.(Vθ_exp, 3,3)), label="γ", legend=:topright)
 plot!(p3, ts_long, fill(true_params[3], length(ts_long)), label="True γ", linestyle=:dash)
 title!(p3, "Parameter γ")
 
-p4 = plot(ts_long, getindex.(mθ_exp, 4), ribbon=2*sqrt.(getindex.(Vθ_exp, 4)), label="δ", legend=:topright)
+p4 = plot(ts_long, getindex.(mθ_exp, 4), ribbon=2*sqrt.(getindex.(Vθ_exp, 4,4)), label="δ", legend=:topright)
 plot!(p4, ts_long, fill(true_params[4], length(ts_long)), label="True δ", linestyle=:dash)
 title!(p4, "Parameter δ")
 
@@ -294,7 +295,7 @@ plot(p1, p2, p3, p4, layout=(4,1), size=(1000,800))
 
 # Print final parameter estimates and covariance
 final_means = last(mθ_exp)
-final_vars = last(Vθ_exp)
+final_vars = diag(last(Vθ_exp))
 final_stds = sqrt.(final_vars)
 
 # Print results
@@ -304,7 +305,7 @@ for (param, mean, std) in zip(param_names, final_means, final_stds)
 end
 
 println("\nFinal parameter covariance matrix:")
-display(cov(last(result2.history[:θ_exp])))
+display(last(Vθ_exp))
 
 
 # Get state estimates and variances

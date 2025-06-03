@@ -1,5 +1,5 @@
 # This file was automatically generated from /home/trim/Documents/GitHub/RxInferExamples.jl/examples/Advanced Examples/Active Inference Mountain car/Active Inference Mountain car.ipynb
-# by notebooks_to_scripts.jl at 2025-04-29T06:39:07.008
+# by notebooks_to_scripts.jl at 2025-06-03T10:14:28.548
 #
 # Source notebook: Active Inference Mountain car.ipynb
 
@@ -148,6 +148,8 @@ end
 import RxInfer.ReactiveMP: getrecent, messageout
 
 function create_agent(;T = 20, Fg, Fa, Ff, engine_force_limit, x_target, initial_position, initial_velocity)
+    huge = 1e6
+    tiny = 1e-6
     Epsilon = fill(huge, 1, 1)                # Control prior variance
     m_u = Vector{Float64}[ [ 0.0] for k=1:T ] # Set control priors
     V_u = Matrix{Float64}[ Epsilon for k=1:T ]

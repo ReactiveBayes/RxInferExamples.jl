@@ -1,5 +1,5 @@
 # This file was automatically generated from /home/trim/Documents/GitHub/RxInferExamples.jl/examples/Problem Specific/Structural Dynamics with Augmented Kalman Filter/Structural Dynamics with Augmented Kalman Filter.ipynb
-# by notebooks_to_scripts.jl at 2025-04-29T06:39:07.653
+# by notebooks_to_scripts.jl at 2025-06-03T10:14:29.254
 #
 # Source notebook: Structural Dynamics with Augmented Kalman Filter.ipynb
 

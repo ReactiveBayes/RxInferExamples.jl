@@ -1,5 +1,5 @@
 # This file was automatically generated from /home/trim/Documents/GitHub/RxInferExamples.jl/examples/Problem Specific/Universal Mixtures/Universal Mixtures.ipynb
-# by notebooks_to_scripts.jl at 2025-04-29T06:39:07.660
+# by notebooks_to_scripts.jl at 2025-06-03T10:14:29.260
 #
 # Source notebook: Universal Mixtures.ipynb
 

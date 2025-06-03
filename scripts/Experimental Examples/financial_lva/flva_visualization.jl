@@ -770,7 +770,7 @@ function create_uncertainty_plots(mresult, true_data, n_train, n_test, n_symbols
             X = [ones(length(test_uncertainties)) test_uncertainties]
             valid_indices = findall(isfinite.(abs.(test_errors))) # Handle potential NaNs/Infs
             if length(valid_indices) > 1
-                β = X[valid_indices,:] \ abs.(test_errors[valid_indices])
+                β = X[valid_indices,:] \\ abs.(test_errors[valid_indices])
                 x_range = range(minimum(filter(isfinite, test_uncertainties)), maximum(filter(isfinite, test_uncertainties)), length=100)
                 y_pred = [β[1] + β[2]*x for x in x_range]
                 plot!(p2, x_range, y_pred, linewidth=2, color=:orange, label="Trend")
