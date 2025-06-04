@@ -1,0 +1,39 @@
+# Experiment Summary
+Generated at: 2025-06-04 11:54:42
+
+## Environment
+Number of obstacles: 3
+  Obstacle 1: center=(-50.0, 0.0), size=(70.0, 2.0)
+  Obstacle 2: center=(50.0, 0.0), size=(70.0, 2.0)
+  Obstacle 3: center=(5.0, -1.0), size=(3.0, 10.0)
+
+## Agents
+  Agent 1: radius=2.5
+    Initial position: (-4.0, 10.0)
+    Target position: (-10.0, -10.0)
+    Path length: 23.89
+    Average control magnitude: 0.0767
+    Average position uncertainty: 1.228
+
+  Agent 2: radius=1.5
+    Initial position: (-10.0, 5.0)
+    Target position: (10.0, -15.0)
+    Path length: 29.1
+    Average control magnitude: 0.0744
+    Average position uncertainty: 1.3183
+
+  Agent 3: radius=1.0
+    Initial position: (-15.0, -10.0)
+    Target position: (10.0, 10.0)
+    Path length: 34.05
+    Average control magnitude: 0.0939
+    Average position uncertainty: 1.4933
+
+  Agent 4: radius=2.5
+    Initial position: (0.0, -10.0)
+    Target position: (-10.0, 15.0)
+    Path length: 33.04
+    Average control magnitude: 0.1064
+    Average position uncertainty: 1.5754
+
+## Inference Summary
