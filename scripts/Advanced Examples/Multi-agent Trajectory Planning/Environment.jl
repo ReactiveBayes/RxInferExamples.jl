@@ -1,9 +1,9 @@
 module Environment
 
-using Plots: Shape, plot!
+using Plots: Shape
 
 export Rectangle, Environment, Agent
-export plot_environment, plot_environment!
+export create_door_environment, create_wall_environment, create_combined_environment, create_standard_agents
 
 # A simple struct to represent a rectangle, which is defined by its center (x, y) and size (width, height)
 Base.@kwdef struct Rectangle
@@ -11,38 +11,10 @@ Base.@kwdef struct Rectangle
     size::Tuple{Float64, Float64}
 end
 
-function plot_rectangle!(p, rect::Rectangle)
-    # Calculate the x-coordinates of the four corners
-    x_coords = rect.center[1] .+ rect.size[1]/2 * [-1, 1, 1, -1, -1]
-    # Calculate the y-coordinates of the four corners
-    y_coords = rect.center[2] .+ rect.size[2]/2 * [-1, -1, 1, 1, -1]
-    
-    # Plot the rectangle with a black fill
-    plot!(p, Shape(x_coords, y_coords), 
-          label = "", 
-          color = :black, 
-          alpha = 0.5,
-          linewidth = 1.5,
-          fillalpha = 0.3)
-end
-
 # A simple struct to represent an environment, which is defined by a list of obstacles,
 # and in this demo the obstacles are just rectangles
 Base.@kwdef struct Environment
     obstacles::Vector{Rectangle}
-end
-
-function plot_environment!(p, env::Environment)
-    for obstacle in env.obstacles
-        plot_rectangle!(p, obstacle)
-    end
-    return p
-end
-
-function plot_environment(env::Environment)
-    p = Plots.plot(size = (800, 400), xlims = (-20, 20), ylims = (-20, 20), aspect_ratio = :equal)
-    plot_environment!(p, env)
-    return p
 end
 
 # Agent plan, encodes start and goal states
