@@ -5,6 +5,7 @@ using RxInfer
 using LogExpFunctions
 using StableRNGs
 using ..Environment
+using ..ConfigLoader
 
 export path_planning, Halfspace, softmin
 
@@ -23,7 +24,16 @@ end
     return BayesBase.TerminalProdArgument(PointMass( 1 / mean(q_γ) * sqrt(abs2(mean(q_out) - mean(q_a)) + var(q_out))))
 end
 
-softmin(x; l=10) = -logsumexp(-l .* x) / l
+# Global model parameters that can be updated from configuration
+SOFTMIN_TEMPERATURE = 10.0
+
+# Configurable softmin function
+softmin(x; l=SOFTMIN_TEMPERATURE) = -logsumexp(-l .* x) / l
+
+# Update softmin temperature from configuration
+function configure_softmin(temperature::Number)
+    global SOFTMIN_TEMPERATURE = temperature
+end
 
 # state here is a 4-dimensional vector [x, y, vx, vy]
 function distance(r::Rectangle, state)
@@ -64,15 +74,35 @@ end
 
 # For more details about the model, please refer to the original paper
 # Keep RxInfer.jl @model syntax carefully in mind
-@model function path_planning_model(environment, agents, goals, nr_steps)
+@model function path_planning_model(environment, agents, goals, nr_steps; model_params=nothing)
 
     # Model's parameters are fixed, refer to the original 
     # paper's implementation for more details about these parameters
-    local dt = 1
-    local A  = [1 dt 0 0; 0 1 0 0; 0 0 1 dt; 0 0 0 1]
-    local B  = [0 0; dt 0; 0 0; 0 dt]
-    local C  = [1 0 0 0; 0 0 1 0]
-    local γ  = 1
+    if model_params === nothing
+        # Default parameters if no configuration is provided
+        local dt = 1
+        local A  = [1 dt 0 0; 0 1 0 0; 0 0 1 dt; 0 0 0 1]
+        local B  = [0 0; dt 0; 0 0; 0 dt]
+        local C  = [1 0 0 0; 0 0 1 0]
+        local γ  = 1
+        local initial_state_variance = 1e2
+        local control_variance = 1e-1
+        local goal_constraint_variance = 1e-5
+        local gamma_shape = 3/2
+        local gamma_scale = γ^2/2
+    else
+        # Use parameters from configuration
+        local dt = model_params.dt
+        local A  = model_params.A
+        local B  = model_params.B
+        local C  = model_params.C
+        local γ  = model_params.gamma
+        local initial_state_variance = model_params.initial_state_variance
+        local control_variance = model_params.control_variance
+        local goal_constraint_variance = model_params.goal_constraint_variance
+        local gamma_shape = model_params.gamma_shape
+        local gamma_scale = model_params.gamma_scale_factor * γ^2
+    end
 
     local control
     local state
@@ -86,12 +116,12 @@ end
 
         # Prior on state, the state structure is 4 dimensional, where
         # [ x_position, x_velocity, y_position, y_velocity ]
-        state[k, 1] ~ MvNormal(mean = zeros(4), covariance = 1e2I)
+        state[k, 1] ~ MvNormal(mean = zeros(4), covariance = initial_state_variance * I)
 
         for t in 1:nr_steps
 
             # Prior on controls
-            control[k, t] ~ MvNormal(mean = zeros(2), covariance = 1e-1I)
+            control[k, t] ~ MvNormal(mean = zeros(2), covariance = control_variance * I)
 
             # State transition
             state[k, t+1] ~ A * state[k, t] + B * control[k, t]
@@ -101,7 +131,7 @@ end
             path[k, t] ~ C * state[k, t+1]
 
             # Environmental distance
-            zσ2[k, t] ~ GammaShapeRate(3 / 2, γ^2 / 2)
+            zσ2[k, t] ~ GammaShapeRate(gamma_shape, gamma_scale)
             z[k, t]   ~ g(environment, rs[k], path[k, t])
             
             # Halfspase priors were defined previousle in this experiment
@@ -110,15 +140,15 @@ end
         end
 
         # goal priors (indexing reverse due to definition)
-        goals[1, k] ~ MvNormal(mean = state[k, 1], covariance = 1e-5I)
-        goals[2, k] ~ MvNormal(mean = state[k, nr_steps+1], covariance = 1e-5I)
+        goals[1, k] ~ MvNormal(mean = state[k, 1], covariance = goal_constraint_variance * I)
+        goals[2, k] ~ MvNormal(mean = state[k, nr_steps+1], covariance = goal_constraint_variance * I)
 
     end
 
     for t = 1:nr_steps
 
         # observation constraint
-        dσ2[t] ~ GammaShapeRate(3 / 2, γ^2 / 2)
+        dσ2[t] ~ GammaShapeRate(gamma_shape, gamma_scale)
         d[t] ~ h(environment, rs, path[1, t], path[2, t], path[3, t], path[4, t])
         d[t] ~ Halfspace(0, dσ2[t], γ)
 
