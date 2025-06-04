@@ -48,9 +48,10 @@ export path_planning, path_planning_model, path_planning_constraints
     
     # Extract radiuses of each agent in a separate collection
     local rs = map((a) -> a.radius, agents)
+    local nr_agents = length(agents)
 
-    # Model is fixed for 4 agents
-    for k in 1:4
+    # Model for each agent (support variable number of agents)
+    for k in 1:nr_agents
 
         # Prior on state, the state structure is 4 dimensional, where
         # [ x_position, x_velocity, y_position, y_velocity ]
@@ -84,12 +85,15 @@ export path_planning, path_planning_model, path_planning_constraints
     end
 
     for t = 1:nr_steps
-
         # observation constraint
         dσ2[t] ~ GammaShapeRate(gamma_shape, gamma_scale)
-        d[t] ~ h(environment, rs, path[1, t], path[2, t], path[3, t], path[4, t])
+        
+        # Get all agent paths at time t
+        agent_paths = [path[k, t] for k in 1:nr_agents]
+        
+        # Use variadic arguments to pass all agent paths
+        d[t] ~ h(environment, rs, agent_paths...)
         d[t] ~ Halfspace(0, dσ2[t], γ)
-
     end
 
 end
@@ -100,10 +104,53 @@ end
     q(z, zσ2) = q(z)q(zσ2)
 end
 
-function path_planning(; environment, agents, nr_iterations = 350, nr_steps = 40, seed = 42, save_intermediates = false, intermediate_steps = 10, output_dir = nothing, model_params = nothing)
+"""
+    compute_diagnostics(result)
+
+Compute diagnostic metrics from inference results.
+
+# Arguments
+- `result`: The result object from the inference process
+
+# Returns
+- Named tuple containing various diagnostic metrics:
+  - `:paths`: Mean of agent paths
+  - `:controls`: Mean of control inputs
+  - `:path_vars`: Variance of agent paths
+  - `:avg_control_magnitude`: Average magnitude of control inputs
+  - `:max_uncertainty`: Maximum uncertainty in agent paths
+  - `:elbo_values`: ELBO values if available
+"""
+function compute_diagnostics(result)
+    # Extract posteriors
+    paths = mean.(result.posteriors[:path])
+    controls = mean.(result.posteriors[:control])
+    path_vars = var.(result.posteriors[:path])
+    
+    # Compute metrics
+    avg_control_magnitude = mean([norm(c) for c in controls])
+    max_uncertainty = maximum([maximum(v) for v in path_vars])
+    
+    # Check if ELBO values were tracked
+    elbo_values = hasfield(typeof(result), :diagnostics) && haskey(result.diagnostics, :elbo) ? 
+                 result.diagnostics[:elbo] : 
+                 nothing
+    
+    return (
+        paths = paths,
+        controls = controls,
+        path_vars = path_vars,
+        avg_control_magnitude = avg_control_magnitude,
+        max_uncertainty = max_uncertainty,
+        elbo_values = elbo_values
+    )
+end
+
+function path_planning(; environment, agents, nr_iterations = 350, nr_steps = 40, seed = 42, save_intermediates = false, intermediate_steps = 10, output_dir = nothing, model_params = nothing, track_elbo = true)
     println("Starting path planning inference...")
-    # Fixed number of agents
-    nr_agents = 4
+    # Use actual number of agents from input
+    nr_agents = length(agents)
+    println("Planning for $(nr_agents) agents...")
 
     # Form goals compatible with the model
     goals = hcat(
@@ -139,9 +186,23 @@ function path_planning(; environment, agents, nr_iterations = 350, nr_steps = 40
         g() -> Linearization()
     end
 
+    # Prepare callbacks
+    callbacks = []
+    
+    # Add ELBO tracking callback if requested
+    if track_elbo
+        elbo_values = Float64[]
+        elbo_callback = RxInfer.on_iteration((i, pv, elbo) -> begin
+            push!(elbo_values, elbo)
+            return false
+        end)
+        push!(callbacks, elbo_callback)
+    end
+    
     # Configure callback to save intermediate results if requested
     if save_intermediates && output_dir !== nothing
-        callback = on_iteration((i, pv, elbo) -> begin
+        # Fix: Use RxInfer.on_iteration to ensure correct namespace and provide an array of callbacks
+        save_callback = RxInfer.on_iteration((i, pv, elbo) -> begin
             if i % intermediate_steps == 0
                 intermediate_dir = joinpath(output_dir, "intermediates")
                 mkpath(intermediate_dir)
@@ -161,10 +222,11 @@ function path_planning(; environment, agents, nr_iterations = 350, nr_steps = 40
             return false
         end)
         
-        callback_opts = (callbacks = callback,)
-    else
-        callback_opts = ()
+        push!(callbacks, save_callback)
     end
+    
+    # Configure callback options
+    callback_opts = isempty(callbacks) ? () : (callbacks = callbacks,)
 
     println("Running inference with $(nr_iterations) iterations...")
     results = infer(
@@ -177,6 +239,16 @@ function path_planning(; environment, agents, nr_iterations = 350, nr_steps = 40
         returnvars 		= KeepLast(), 
         options         = (limit_stack_depth = 300, callback_opts...)
     )
+    
+    # Add ELBO values to results if tracked
+    if track_elbo
+        if !hasfield(typeof(results), :diagnostics)
+            results = merge(results, (diagnostics = Dict(:elbo => elbo_values),))
+        else
+            results.diagnostics[:elbo] = elbo_values
+        end
+    end
+    
     println("Inference completed.")
     return results
 end

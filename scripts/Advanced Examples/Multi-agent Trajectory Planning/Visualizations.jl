@@ -6,6 +6,8 @@ using ..Environment
 export plot_marker_at_position!, plot_agent_naive_plan!, animate_paths
 # Add new exports for functions moved from Environment.jl
 export plot_rectangle!, plot_environment!, plot_environment
+# Add export for the new ELBO convergence function
+export plot_elbo_convergence
 
 """
     plot_marker_at_position!(p, radius, position; color="red", markersize=10.0, alpha=1.0, label="")
@@ -79,7 +81,7 @@ function plot_agent_plans!(p, agents)
 end
 
 """
-    animate_paths(environment, agents, paths; filename = "result.gif", fps = 15)
+    animate_paths(environment, agents, paths; filename = "result.gif", fps = 15, x_limits = (-20, 20), y_limits = (-20, 20), plot_size = (800, 400), show_targets = true, path_alpha = 0.8)
 
 Create an animation of agent paths through the environment.
 
@@ -89,25 +91,48 @@ Create an animation of agent paths through the environment.
 - `paths`: Matrix of agent positions over time, dimensions: (nr_agents, nr_steps)
 - `filename`: Output filename for the GIF (default: "result.gif")
 - `fps`: Frames per second for the animation (default: 15)
+- `x_limits`: Tuple with x-axis limits (default: (-20, 20))
+- `y_limits`: Tuple with y-axis limits (default: (-20, 20))
+- `plot_size`: Tuple with plot width and height (default: (800, 400))
+- `show_targets`: Whether to show target positions (default: true)
+- `path_alpha`: Alpha value for path lines (default: 0.8)
 
 # Returns
 - `nothing`
 """
-function animate_paths(environment, agents, paths; filename = "result.gif", fps = 15)
+function animate_paths(environment, agents, paths; 
+                      filename = "result.gif", 
+                      fps = 15, 
+                      x_limits = (-20, 20), 
+                      y_limits = (-20, 20), 
+                      plot_size = (800, 400), 
+                      show_targets = true,
+                      path_alpha = 0.8)
     nr_agents, nr_steps = size(paths)
     colors = Plots.palette(:tab10)
 
     println("Generating animation frames...")
     animation = @animate for t in 1:nr_steps
-        frame = plot_environment(environment)
+        frame = plot_environment(environment, 
+                                x_limits = x_limits, 
+                                y_limits = y_limits, 
+                                plot_size = plot_size)
     
         for k in 1:nr_agents
             position = paths[k, t]          
             path = paths[k, 1:t]
             
             plot_marker_at_position!(frame, agents[k].radius, position, color = colors[k])
-            plot_marker_at_position!(frame, agents[k].radius, agents[k].target_position, color = colors[k], alpha = 0.2)
-            plot!(frame, getindex.(path, 1), getindex.(path, 2); linestyle=:dash, label="", color=colors[k])
+            
+            if show_targets
+                plot_marker_at_position!(frame, agents[k].radius, agents[k].target_position, color = colors[k], alpha = 0.2)
+            end
+            
+            plot!(frame, getindex.(path, 1), getindex.(path, 2); 
+                 linestyle = :dash, 
+                 label = "", 
+                 color = colors[k], 
+                 alpha = path_alpha)
         end
 
         frame
@@ -119,6 +144,57 @@ function animate_paths(environment, agents, paths; filename = "result.gif", fps 
     println("Animation saved successfully.")
     
     return nothing
+end
+
+"""
+    plot_elbo_convergence(elbo_values; filename = "convergence.png")
+
+Create a plot showing the ELBO convergence during inference.
+
+# Arguments
+- `elbo_values`: Vector of ELBO values from inference iterations
+- `filename`: Output filename for the plot (default: "convergence.png")
+
+# Returns
+- The plot object
+"""
+function plot_elbo_convergence(elbo_values; filename = "convergence.png")
+    p = plot(elbo_values, 
+             xlabel = "Iteration", 
+             ylabel = "ELBO", 
+             title = "Convergence of Inference",
+             legend = false, 
+             linewidth = 2,
+             grid = true,
+             size = (800, 400))
+    
+    # Add a smoothed trend line
+    if length(elbo_values) > 10
+        window_size = max(5, div(length(elbo_values), 20))
+        smoothed = movmean(elbo_values, window_size)
+        plot!(p, smoothed, linewidth = 3, color = :red, alpha = 0.7, label = "Moving Average")
+    end
+    
+    # Save the plot
+    println("Saving convergence plot to $filename...")
+    savefig(p, filename)
+    println("Convergence plot saved successfully.")
+    
+    return p
+end
+
+# Helper function for moving average
+function movmean(arr, window_size)
+    n = length(arr)
+    result = similar(arr)
+    
+    for i in 1:n
+        start_idx = max(1, i - div(window_size, 2))
+        end_idx = min(n, i + div(window_size, 2))
+        result[i] = mean(arr[start_idx:end_idx])
+    end
+    
+    return result
 end
 
 # Functions moved from Environment.jl
@@ -170,18 +246,21 @@ function plot_environment!(p, env::Environment)
 end
 
 """
-    plot_environment(env::Environment)
+    plot_environment(env::Environment; x_limits=(-20, 20), y_limits=(-20, 20), plot_size=(800, 400))
 
 Create a new plot showing the environment.
 
 # Arguments
 - `env`: Environment object containing obstacles
+- `x_limits`: Tuple with x-axis limits (default: (-20, 20))
+- `y_limits`: Tuple with y-axis limits (default: (-20, 20))
+- `plot_size`: Tuple with plot width and height (default: (800, 400))
 
 # Returns
 - A new plot showing the environment
 """
-function plot_environment(env::Environment)
-    p = Plots.plot(size = (800, 400), xlims = (-20, 20), ylims = (-20, 20), aspect_ratio = :equal)
+function plot_environment(env::Environment; x_limits=(-20, 20), y_limits=(-20, 20), plot_size=(800, 400))
+    p = Plots.plot(size = plot_size, xlims = x_limits, ylims = y_limits, aspect_ratio = :equal)
     plot_environment!(p, env)
     return p
 end

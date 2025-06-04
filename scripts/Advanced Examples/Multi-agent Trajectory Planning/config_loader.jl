@@ -3,7 +3,7 @@ module ConfigLoader
 using TOML
 using LinearAlgebra
 
-export load_config, apply_config
+export load_config, apply_config, validate_config
 
 """
     load_config(config_path="config.toml")
@@ -22,6 +22,118 @@ function load_config(config_path="config.toml")
     end
     
     return TOML.parsefile(config_path)
+end
+
+"""
+    validate_config(config)
+
+Validate the configuration parameters.
+
+# Arguments
+- `config`: Configuration dictionary
+
+# Returns
+- Tuple of (is_valid, errors)
+"""
+function validate_config(config)
+    errors = String[]
+    
+    # Check required sections
+    required_sections = ["model", "agents", "environments", "visualization", "experiments"]
+    for section in required_sections
+        if !haskey(config, section)
+            push!(errors, "Missing required section: $section")
+        end
+    end
+    
+    # Check agent count
+    if haskey(config, "agents")
+        if length(config["agents"]) < 1
+            push!(errors, "At least one agent must be defined")
+        end
+        
+        # Validate agent properties
+        for (i, agent) in enumerate(config["agents"])
+            if !haskey(agent, "radius") || agent["radius"] <= 0
+                push!(errors, "Agent $i has invalid radius")
+            end
+            if !haskey(agent, "initial_position") || length(agent["initial_position"]) != 2
+                push!(errors, "Agent $i has invalid initial position")
+            end
+            if !haskey(agent, "target_position") || length(agent["target_position"]) != 2
+                push!(errors, "Agent $i has invalid target position")
+            end
+        end
+    end
+    
+    # Check environment definitions
+    if haskey(config, "environments")
+        for (env_name, env) in config["environments"]
+            if !haskey(env, "obstacles") || isempty(env["obstacles"])
+                push!(errors, "Environment '$env_name' has no obstacles defined")
+            end
+            
+            # Validate obstacle properties
+            if haskey(env, "obstacles")
+                for (i, obstacle) in enumerate(env["obstacles"])
+                    if !haskey(obstacle, "center") || length(obstacle["center"]) != 2
+                        push!(errors, "Obstacle $i in environment '$env_name' has invalid center")
+                    end
+                    if !haskey(obstacle, "size") || length(obstacle["size"]) != 2 || 
+                        obstacle["size"][1] <= 0 || obstacle["size"][2] <= 0
+                        push!(errors, "Obstacle $i in environment '$env_name' has invalid size")
+                    end
+                end
+            end
+        end
+    end
+    
+    # Check model parameters
+    if haskey(config, "model")
+        model = config["model"]
+        
+        # Check required model parameters
+        required_model_params = ["dt", "gamma", "nr_steps", "nr_iterations"]
+        for param in required_model_params
+            if !haskey(model, param)
+                push!(errors, "Missing required model parameter: $param")
+            end
+        end
+        
+        # Check numeric constraints
+        if haskey(model, "dt") && model["dt"] <= 0
+            push!(errors, "Model parameter 'dt' must be positive")
+        end
+        if haskey(model, "nr_steps") && model["nr_steps"] < 2
+            push!(errors, "Model parameter 'nr_steps' must be at least 2")
+        end
+        if haskey(model, "nr_iterations") && model["nr_iterations"] < 1
+            push!(errors, "Model parameter 'nr_iterations' must be at least 1")
+        end
+    end
+    
+    # Check visualization parameters
+    if haskey(config, "visualization")
+        vis = config["visualization"]
+        
+        # Check required visualization parameters
+        required_vis_params = ["x_limits", "y_limits", "fps"]
+        for param in required_vis_params
+            if !haskey(vis, param)
+                push!(errors, "Missing required visualization parameter: $param")
+            end
+        end
+        
+        # Check numeric constraints
+        if haskey(vis, "fps") && vis["fps"] <= 0
+            push!(errors, "Visualization parameter 'fps' must be positive")
+        end
+        if haskey(vis, "heatmap_resolution") && vis["heatmap_resolution"] < 10
+            push!(errors, "Visualization parameter 'heatmap_resolution' must be at least 10")
+        end
+    end
+    
+    return isempty(errors), errors
 end
 
 """
@@ -249,6 +361,12 @@ Apply the loaded configuration to the appropriate model components.
   - `:exp_params`: Experiment parameters
 """
 function apply_config(config)
+    # Validate configuration first
+    is_valid, errors = validate_config(config)
+    if !is_valid
+        error("Invalid configuration:\n" * join(errors, "\n"))
+    end
+    
     # Extract components from config
     model_params = get_model_parameters(config)
     agents = get_agents_from_config(config)
