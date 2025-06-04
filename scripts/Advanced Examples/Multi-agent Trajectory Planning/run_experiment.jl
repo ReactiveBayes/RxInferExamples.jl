@@ -102,6 +102,65 @@ try
         logger=logger
     )
     
+    # Generate ELBO convergence visualization if not already created
+    if haskey(result, :convergence) && !isempty(result.convergence) && !isfile(joinpath(output_dir, "convergence.png"))
+        TrajectoryPlanning.log_message("Generating ELBO convergence plot...", logger)
+        
+        # Create the convergence plot manually
+        p = Plots.plot(result.convergence, 
+            linewidth = 2, 
+            xlabel = "Iteration", 
+            ylabel = "ELBO", 
+            title = "Convergence of Inference",
+            legend = false, 
+            size = (800, 400)
+        )
+        
+        # Save the plot
+        convergence_path = joinpath(output_dir, "convergence.png")
+        Plots.savefig(p, convergence_path)
+        TrajectoryPlanning.log_message("ELBO convergence plot saved to $convergence_path", logger)
+    elseif !isfile(joinpath(output_dir, "convergence.png")) && isfile(joinpath(output_dir, "convergence_metrics.csv"))
+        # Try to create from the CSV file if it exists
+        TrajectoryPlanning.log_message("Attempting to create ELBO plot from CSV metrics...", logger)
+        
+        try
+            # Read the metrics from the CSV file
+            metrics_file = joinpath(output_dir, "convergence_metrics.csv")
+            metrics_data = readlines(metrics_file)
+            
+            # Parse the ELBO values
+            elbo_values = Float64[]
+            for line in metrics_data
+                parts = split(line, ",")
+                if length(parts) >= 2
+                    push!(elbo_values, parse(Float64, parts[2]))
+                end
+            end
+            
+            if !isempty(elbo_values)
+                # Create the plot
+                p = Plots.plot(elbo_values, 
+                    linewidth = 2, 
+                    xlabel = "Iteration", 
+                    ylabel = "ELBO", 
+                    title = "Convergence of Inference",
+                    legend = false, 
+                    size = (800, 400)
+                )
+                
+                # Save the plot
+                convergence_path = joinpath(output_dir, "convergence.png")
+                Plots.savefig(p, convergence_path)
+                TrajectoryPlanning.log_message("ELBO convergence plot created from CSV data and saved to $convergence_path", logger)
+            else
+                TrajectoryPlanning.log_message("No ELBO values found in the CSV file", logger)
+            end
+        catch e
+            TrajectoryPlanning.log_message("Error creating ELBO plot from CSV: $e", logger)
+        end
+    end
+    
     # Generate a detailed summary
     TrajectoryPlanning.generate_experiment_summary(
         environment=environment,

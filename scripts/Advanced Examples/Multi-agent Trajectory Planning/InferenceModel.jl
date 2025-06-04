@@ -192,22 +192,23 @@ function path_planning(; environment, agents, nr_iterations = 350, nr_steps = 40
     # Add ELBO tracking callback if requested
     if track_elbo
         elbo_values = Float64[]
-        elbo_callback = RxInfer.on_iteration((i, pv, elbo) -> begin
-            push!(elbo_values, elbo)
-            return false
-        end)
-        push!(callbacks, elbo_callback)
+        callback = (metadata) -> begin
+            push!(elbo_values, metadata.free_energy)
+            if metadata.iteration % 50 == 0
+                println("Iteration $(metadata.iteration)/$(nr_iterations) - ELBO: $(metadata.free_energy)")
+            end
+            return nothing
+        end
     end
     
     # Configure callback to save intermediate results if requested
     if save_intermediates && output_dir !== nothing
-        # Fix: Use RxInfer.on_iteration to ensure correct namespace and provide an array of callbacks
-        save_callback = RxInfer.on_iteration((i, pv, elbo) -> begin
-            if i % intermediate_steps == 0
+        callback_save = (metadata) -> begin
+            if metadata.iteration % intermediate_steps == 0
                 intermediate_dir = joinpath(output_dir, "intermediates")
                 mkpath(intermediate_dir)
-                paths = mean.(pv[:path])
-                open(joinpath(intermediate_dir, "paths_iteration_$(i).csv"), "w") do io
+                paths = mean.(metadata.marginals[:path])
+                open(joinpath(intermediate_dir, "paths_iteration_$(metadata.iteration).csv"), "w") do io
                     println(io, "agent,step,x,y")
                     for k in 1:nr_agents
                         for t in 1:nr_steps
@@ -216,17 +217,18 @@ function path_planning(; environment, agents, nr_iterations = 350, nr_steps = 40
                     end
                 end
                 open(joinpath(intermediate_dir, "elbo.csv"), "a") do io
-                    println(io, "$(i),$(elbo)")
+                    println(io, "$(metadata.iteration),$(metadata.free_energy)")
                 end
             end
-            return false
-        end)
-        
-        push!(callbacks, save_callback)
+            return nothing
+        end
     end
     
-    # Configure callback options
-    callback_opts = isempty(callbacks) ? () : (callbacks = callbacks,)
+    # Configure callbacks for infer
+    callbacks = track_elbo ? (inference = callback,) : NamedTuple()
+    if save_intermediates && output_dir !== nothing
+        callbacks = merge(callbacks, (save = callback_save,))
+    end
 
     println("Running inference with $(nr_iterations) iterations...")
     results = infer(
@@ -237,7 +239,8 @@ function path_planning(; environment, agents, nr_iterations = 350, nr_steps = 40
         meta 			= door_meta,
         iterations 		= nr_iterations,
         returnvars 		= KeepLast(), 
-        options         = (limit_stack_depth = 300, callback_opts...)
+        options         = (limit_stack_depth = 300, warn = false),
+        callbacks       = callbacks
     )
     
     # Add ELBO values to results if tracked

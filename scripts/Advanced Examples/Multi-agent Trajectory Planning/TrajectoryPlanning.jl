@@ -420,19 +420,18 @@ function path_planning(; environment, agents, nr_iterations = 350, nr_steps = 40
         g() -> Linearization()
     end
 
-    # NEW: Add callback to track convergence metrics
+    # For tracking convergence and intermediate results
     convergence_metrics = Float64[]
-    
-    # Track intermediate results if requested
     intermediate_results = []
     
+    # Create a callback for tracking ELBO and intermediate results
     callback = (metadata) -> begin
         # Track ELBO 
         push!(convergence_metrics, metadata.free_energy)
         
         # Save intermediate results if requested
         if save_intermediates && (metadata.iteration % intermediate_steps == 0 || 
-                                metadata.iteration == nr_iterations)
+                              metadata.iteration == nr_iterations)
             log_message("Saving intermediate results at iteration $(metadata.iteration)", logger)
             push!(intermediate_results, (
                 iteration = metadata.iteration,
@@ -460,7 +459,7 @@ function path_planning(; environment, agents, nr_iterations = 350, nr_steps = 40
         iterations 		= nr_iterations,
         callbacks       = (inference = callback, ),
         returnvars 		= KeepLast(), 
-        options         = (limit_stack_depth = 300, )
+        options         = (limit_stack_depth = 300, warn = false)
     )
     log_message("Inference completed.", logger)
     
@@ -474,8 +473,24 @@ function path_planning(; environment, agents, nr_iterations = 350, nr_steps = 40
         end
         log_message("Saved convergence metrics to $metrics_file", logger)
         
-        # Plot convergence
-        plot_convergence_metrics(convergence_metrics, output_dir=output_dir, logger=logger)
+        # Manually create and save the convergence plot
+        log_message("Generating convergence metrics plot...", logger)
+        p = plot(convergence_metrics, linewidth=2, xlabel="Iteration", ylabel="ELBO",
+                title="Convergence of Inference", legend=false, size=(800, 400))
+        output_path = joinpath(output_dir, "convergence.png")
+        savefig(p, output_path)
+        log_message("Convergence plot saved successfully to $output_path", logger)
+    else
+        # Generate a flat line with "Data Not Found" message instead of sample data
+        log_message("No convergence metrics available. Generating placeholder convergence plot...", logger)
+        flat_data = zeros(100)  # Flat line at zero
+        p = plot(flat_data, linewidth=2, xlabel="Iteration", ylabel="ELBO",
+                title="Convergence of Inference", legend=false, size=(800, 400),
+                color=:gray, alpha=0.5)
+        annotate!(p, 50, 0.5, text("Data Not Found", :red, :center, 12))
+        output_path = joinpath(output_dir, "convergence.png")
+        savefig(p, output_path)
+        log_message("Placeholder convergence plot saved to $output_path", logger)
     end
     
     # Save intermediate results if available
@@ -521,11 +536,11 @@ function path_planning(; environment, agents, nr_iterations = 350, nr_steps = 40
     save_path_data(paths_matrix, controls_matrix, path_vars_matrix, output_dir, logger)
     
     return (
-        results = results,
         paths = paths_matrix,
         controls = controls_matrix,
         path_vars = path_vars_matrix,
-        convergence = convergence_metrics
+        convergence = convergence_metrics,
+        result = results
     )
 end
 
@@ -646,32 +661,46 @@ function create_standard_agents()
     ]
 end
 
-function execute_and_save_animation(environment, agents; output_dir=".", gifname = "result.gif", 
-                                   save_intermediates=false, seed=42, logger=nothing, kwargs...)
+function execute_and_save_animation(environment, agents; 
+                                   output_dir = ".", 
+                                   gifname = "result.gif", 
+                                   seed = 42,
+                                   save_intermediates = false,
+                                   logger = nothing,
+                                   kwargs...)
     log_message("Planning paths for environment with $(length(environment.obstacles)) obstacles...", logger)
     
-    # Extended path_planning call with more returns and intermediate results
+    # Run path planning
     result = path_planning(
         environment = environment, 
         agents = agents, 
+        seed = seed,
         save_intermediates = save_intermediates,
         output_dir = output_dir,
-        seed = seed,
-        logger = logger, 
+        logger = logger,
         kwargs...
     )
     
     # Create animation and save it
-    animate_paths(environment, agents, result.paths, output_dir=output_dir, filename=gifname, logger=logger)
-    
-    # Generate a detailed summary of the experiment
-    generate_experiment_summary(
-        environment = environment,
-        agents = agents,
-        result = result,
+    animate_paths(
+        environment, 
+        agents, 
+        result.paths, 
         output_dir = output_dir,
+        filename = gifname,
         logger = logger
     )
+    
+    # Generate ELBO convergence plot if available
+    if haskey(result, :convergence) && !isempty(result.convergence)
+        log_message("Generating ELBO convergence plot...", logger)
+        plot_convergence_metrics(
+            result.convergence,
+            output_dir = output_dir,
+            filename = "convergence.png",
+            logger = logger
+        )
+    end
     
     return result
 end

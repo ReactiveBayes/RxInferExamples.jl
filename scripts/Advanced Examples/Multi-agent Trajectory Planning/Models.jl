@@ -22,9 +22,13 @@ using .HalfspaceNode
 using .DistanceFunctions
 using .InferenceModel
 
+# Import and re-export visualization functions needed for ELBO plots
+using ..Visualizations: plot_elbo_convergence
+
 # Export all necessary functions and types
 export Halfspace
 export distance, g, h, softmin, configure_softmin
 export path_planning, path_planning_model, path_planning_constraints, compute_diagnostics
+export plot_elbo_convergence
 
 end # module 

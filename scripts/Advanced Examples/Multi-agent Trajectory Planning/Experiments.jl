@@ -14,6 +14,28 @@ function execute_and_save_animation(environment, agents; gifname = "result.gif",
     # Create animation and save it
     animate_paths(environment, agents, paths; filename = gifname)
     
+    # Extract ELBO values if available
+    if hasfield(typeof(result), :diagnostics) && haskey(result.diagnostics, :elbo)
+        elbo_values = result.diagnostics[:elbo]
+        if !isempty(elbo_values)
+            # Get output directory from gifname
+            output_dir = dirname(gifname)
+            output_dir = (output_dir == "") ? "." : output_dir
+            
+            # Create ELBO convergence plot
+            println("Generating ELBO convergence plot...")
+            plot_elbo_convergence(elbo_values, filename = joinpath(output_dir, "convergence.png"))
+            
+            # Save raw ELBO data
+            open(joinpath(output_dir, "convergence_metrics.csv"), "w") do f
+                for (i, val) in enumerate(elbo_values)
+                    println(f, "$i,$val")
+                end
+            end
+            println("Saved convergence metrics to $(joinpath(output_dir, "convergence_metrics.csv"))")
+        end
+    end
+    
     return paths
 end
 
