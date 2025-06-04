@@ -70,7 +70,11 @@ The model uses two key distance functions:
 - `g()`: Calculates distance from an agent to obstacles, adjusted for agent radius
 - `h()`: Calculates minimum distance between all agent pairs, adjusted for agent radii
 
-The `softmin` function creates a differentiable approximation of the minimum function, allowing the model to handle multiple constraints simultaneously.
+The `softmin` function creates a differentiable approximation of the minimum function, allowing the model to handle multiple constraints simultaneously:
+```julia
+softmin(x; l=10) = -logsumexp(-l .* x) / l
+```
+Where `l` is a temperature parameter that controls the smoothness of the approximation.
 
 ## The @model Block Explained
 
@@ -145,6 +149,16 @@ The inference is performed using variational message passing with the following 
 3. **Linearization**: Non-linear functions are approximated using linearization
 4. **Iterations**: Typically 350 iterations are performed for convergence
 
+The inference constraints are defined with:
+
+```julia
+@constraints function path_planning_constraints()
+    # Mean-field variational constraints on the parameters
+    q(d, dσ2) = q(d)q(dσ2)
+    q(z, zσ2) = q(z)q(zσ2)
+end
+```
+
 ## Implementation Notes
 
 - The model currently supports exactly 4 agents
@@ -167,26 +181,232 @@ During the inference process, the implementation tracks several key aspects:
 The implementation generates various output files for analysis:
 
 1. **Animation GIFs**: Showing agent movements through the environment
-2. **CSV Data Files**: Raw path, control, and uncertainty data
-3. **Visualization PNGs**: Heatmaps and plots of various metrics
-4. **Summary Files**: Documentation of experiment parameters and results
-5. **Convergence Metrics**: ELBO values throughout the inference process
+   - `door_42.gif`, `door_123.gif`: Animations of agents navigating through a door environment with different seeds
+   - `wall_42.gif`, `wall_123.gif`: Animations of agents navigating around a wall obstacle
+   - `combined_42.gif`, `combined_123.gif`: Animations of agents navigating through a more complex environment
+   
+2. **CSV Data Files**:
+   - `paths.csv`: Raw path data with columns for agent index, time step, x-position, y-position
+   - `controls.csv`: Control inputs with columns for agent index, time step, x-control, y-control
+   - `uncertainties.csv`: Path uncertainties with columns for agent index, time step, x-variance, y-variance
+
+3. **Visualization PNGs**:
+   - `obstacle_distance.png`: Heatmap showing distance to obstacles throughout the environment
+   - `path_uncertainty.png`: Visualization of the uncertainty in the planned paths
+   - `convergence.png`: Plot showing convergence of the ELBO during inference
+   - `door_environment_heatmap.png`, `wall_environment_heatmap.png`, `combined_environment_heatmap.png`: Heatmaps of the obstacle distance fields for different environments
+
+4. **Summary Files**:
+   - `experiment_summary.txt`: Summary of experiment parameters and results
+   - `experiment.log`: Detailed log of the experiment execution
+   - `README.md`: Overview of the results directory contents
+
+### Environment Definition
+
+The project includes three standard environments:
+
+1. **Door Environment**: Two parallel walls with a gap between them
+   ```julia
+   function create_door_environment()
+       return Environment(obstacles = [
+           Rectangle(center = (-40, 0), size = (70, 5)),
+           Rectangle(center = (40, 0), size = (70, 5))
+       ])
+   end
+   ```
+
+2. **Wall Environment**: A single wall obstacle in the center
+   ```julia
+   function create_wall_environment()
+       return Environment(obstacles = [
+           Rectangle(center = (0, 0), size = (10, 5))
+       ])
+   end
+   ```
+
+3. **Combined Environment**: A combination of walls and obstacles
+   ```julia
+   function create_combined_environment()
+       return Environment(obstacles = [
+           Rectangle(center = (-50, 0), size = (70, 2)),
+           Rectangle(center = (50, -0), size = (70, 2)),
+           Rectangle(center = (5, -1), size = (3, 10))
+       ])
+   end
+   ```
 
 ### Visualization Functions
 
 The implementation includes several advanced visualization functions:
 
-- `animate_paths()`: Creates animations of agent movements
-- `visualize_controls()`: Shows control inputs as quiver plots
-- `visualize_obstacle_distance()`: Creates heatmaps of obstacle distances
-- `visualize_path_uncertainty()`: Displays path uncertainty visually
-- `plot_convergence_metrics()`: Shows convergence of the inference process
+1. **`animate_paths(environment, agents, paths; filename, fps)`**:
+   - Creates animations of agent movements over time
+   - Renders agents as circles with their respective radii
+   - Shows the complete path of each agent with dashed lines
+   - Parameters:
+     - `environment`: The environment with obstacles
+     - `agents`: The list of agents with radii and start/end positions
+     - `paths`: Matrix of agent positions over time
+     - `filename`: Output GIF filename
+     - `fps`: Animation frames per second
+
+2. **`visualize_controls(agents, controls, paths; filename, fps)`**:
+   - Shows control inputs as quiver plots for each agent
+   - Visualizes the magnitude and direction of acceleration at each time step
+   - Parameters:
+     - `agents`: The list of agents
+     - `controls`: Matrix of control inputs over time
+     - `paths`: Matrix of agent positions over time
+     - `filename`: Output GIF filename
+     - `fps`: Animation frames per second
+
+3. **`visualize_obstacle_distance(environment; filename, resolution)`**:
+   - Creates heatmaps of distances to obstacles
+   - Uses a color gradient to show the distance field around obstacles
+   - Parameters:
+     - `environment`: The environment with obstacles
+     - `filename`: Output PNG filename
+     - `resolution`: Resolution of the heatmap grid
+
+4. **`visualize_path_uncertainty(environment, agents, paths, path_vars; filename)`**:
+   - Displays path uncertainty visually using circles of varying sizes
+   - Larger circles indicate higher uncertainty in the position
+   - Parameters:
+     - `environment`: The environment with obstacles
+     - `agents`: The list of agents
+     - `paths`: Matrix of agent positions over time
+     - `path_vars`: Matrix of position variances over time
+     - `filename`: Output PNG filename
+
+5. **`plot_convergence_metrics(metrics; filename)`**:
+   - Shows convergence of the inference process by plotting ELBO values
+   - Parameters:
+     - `metrics`: Array of ELBO values from inference iterations
+     - `filename`: Output PNG filename
+
+### Experiment Execution
+
+The experiment execution is handled by the `Experiments.jl` module, which provides:
+
+1. **`execute_and_save_animation(environment, agents; gifname, kwargs...)`**:
+   - Plans paths for agents in the given environment
+   - Creates and saves an animation of the resulting paths
+   - Returns the planned paths
+
+2. **`run_all_experiments()`**:
+   - Runs experiments for all standard environments
+   - Uses different random seeds to generate diverse results
+   - Saves all outputs to the results directory
+
+## Hard-Coded Parameters
+
+The implementation contains several hard-coded parameters that could be moved to a configuration file:
+
+1. **Model parameters**:
+   - `dt = 1`: Time step for the state space model
+   - `A = [1 dt 0 0; 0 1 0 0; 0 0 1 dt; 0 0 0 1]`: State transition matrix
+   - `B = [0 0; dt 0; 0 0; 0 dt]`: Control input matrix
+   - `C = [1 0 0 0; 0 0 1 0]`: Observation matrix
+   - `γ = 1`: Constraint parameter for the Halfspace node
+   - `nr_steps = 40`: Number of time steps in the trajectory
+   - `nr_iterations = 350`: Number of inference iterations
+
+2. **Prior distributions**:
+   - `MvNormal(mean = zeros(4), covariance = 1e2I)`: Prior on initial state
+   - `MvNormal(mean = zeros(2), covariance = 1e-1I)`: Prior on control inputs
+   - `MvNormal(mean = state[k, 1], covariance = 1e-5I)`: Goal constraints
+   - `GammaShapeRate(3 / 2, γ^2 / 2)`: Prior on constraint parameters
+
+3. **Visualization parameters**:
+   - `fps = 15`: Animation frames per second
+   - `resolution = 100`: Heatmap resolution
+   - Plot sizes, axis limits, and color schemes
+
+4. **Environment parameters**:
+   - Fixed number of agents (4)
+   - Obstacle positions and sizes
+   - Agent radii, initial positions, and target positions
+   - Plot boundaries (`xlims = (-20, 20), ylims = (-20, 20)`)
+
+## Configuration File Recommendations
+
+To improve flexibility, the following configurations could be moved to a dedicated file (e.g., TOML, JSON, or YAML):
+
+1. **Model Configuration**:
+   ```toml
+   [model]
+   dt = 1.0
+   gamma = 1.0
+   nr_steps = 40
+   nr_iterations = 350
+   nr_agents = 4
+   softmin_temperature = 10.0
+   
+   [priors]
+   initial_state_variance = 100.0
+   control_variance = 0.1
+   goal_constraint_variance = 1e-5
+   ```
+
+2. **Environment Configuration**:
+   ```toml
+   [plotting]
+   x_limits = [-20, 20]
+   y_limits = [-20, 20]
+   fps = 15
+   heatmap_resolution = 100
+   
+   [door_environment]
+   obstacles = [
+     { center = [-40, 0], size = [70, 5] },
+     { center = [40, 0], size = [70, 5] }
+   ]
+   
+   [wall_environment]
+   obstacles = [
+     { center = [0, 0], size = [10, 5] }
+   ]
+   
+   [combined_environment]
+   obstacles = [
+     { center = [-50, 0], size = [70, 2] },
+     { center = [50, 0], size = [70, 2] },
+     { center = [5, -1], size = [3, 10] }
+   ]
+   ```
+
+3. **Agent Configuration**:
+   ```toml
+   [[agents]]
+   radius = 2.5
+   initial_position = [-4, 10]
+   target_position = [-10, -10]
+   
+   [[agents]]
+   radius = 1.5
+   initial_position = [-10, 5]
+   target_position = [10, -15]
+   
+   [[agents]]
+   radius = 1.0
+   initial_position = [-15, -10]
+   target_position = [10, 10]
+   
+   [[agents]]
+   radius = 2.5
+   initial_position = [0, -10]
+   target_position = [-10, 15]
+   ```
 
 ### Future Improvements
 
 Potential improvements to the model include:
-- Supporting variable numbers of agents
-- Implementing more sophisticated environment representations
-- Adding dynamic obstacles
+- Supporting variable numbers of agents (removing the hard-coded limit of 4)
+- Implementing more sophisticated environment representations (beyond rectangles)
+- Adding dynamic obstacles that move over time
 - Using more advanced approximation methods for non-linear functions
 - Implementing online/incremental inference for real-time applications
+- Creating a configuration file system to replace hard-coded parameters
+- Adding more complex state dynamics models (e.g., including acceleration)
+- Implementing hierarchical planning for longer time horizons
+- Adding uncertainty in environmental perception
