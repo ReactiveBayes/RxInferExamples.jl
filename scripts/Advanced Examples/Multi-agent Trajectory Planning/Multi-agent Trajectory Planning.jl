@@ -21,7 +21,15 @@ using Dates
 # Set plot backend
 gr()
 
+# Load the advanced visualization function
+include("visualize_results.jl")
+
 # Run all experiments and get the output directory
 println("Starting Multi-agent Trajectory Planning experiments...")
-output_dir = run_all_experiments()
-println("All experiments completed. Results saved to: $output_dir") 
+output_dir = TrajectoryPlanning.run_all_experiments()
+println("All experiments completed. Results saved to: $output_dir")
+
+# Run advanced visualizations on the results
+println("\nGenerating advanced visualizations...")
+visualize_results(output_dir)
+println("Advanced visualizations completed.") 

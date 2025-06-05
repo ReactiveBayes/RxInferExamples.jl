@@ -15,179 +15,220 @@ include("TrajectoryPlanning.jl")
 using .TrajectoryPlanning
 using Plots
 using Dates
+using RxInfer
+using Distributions
+using CSV
+using TOML
+using LinearAlgebra
+using Random
+using DelimitedFiles
 
-function main()
-    # Experiment parameters (defaults, can be overridden by command line arguments)
-    environment_type = "combined"  # One of: "door", "wall", "combined"
-    seed = 42
-    save_intermediate_steps = true
-    output_dir = ""  # Empty means auto-generate a timestamped directory
+# Include necessary modules
+include("Environment.jl")
+include("DistanceFunctions.jl")
+include("HalfspaceNode.jl")
+include("Models.jl")
+include("Visualizations.jl")
+include("Experiments.jl")
+include("config_loader.jl")
 
-# Parse command line arguments
-for arg in ARGS
-    if startswith(arg, "--env=")
-        environment_type = split(arg, "=")[2]
-    elseif startswith(arg, "--seed=")
-        seed = parse(Int, split(arg, "=")[2])
-    elseif startswith(arg, "--output=")
-        output_dir = split(arg, "=")[2]
-    elseif arg == "--no-intermediates"
-        save_intermediate_steps = false
-    elseif arg == "--help"
-        println("""
-        Usage: julia run_experiment.jl [options]
-        
-        Options:
-          --env=TYPE         Choose environment type: door, wall, combined (default: combined)
-          --seed=NUMBER      Set random seed (default: 42)
-          --output=DIR       Specify output directory (default: auto-generated timestamp)
-          --no-intermediates Don't save intermediate steps
-          --help             Show this help message
-        """)
-        exit(0)
+# Load the configuration
+config = load_config("config.toml")
+
+# Create or set up result directory
+result_dir = joinpath("results", Dates.format(now(), "yyyy-mm-dd_HH-MM-SS"))
+mkpath(result_dir)
+
+# Run the experiment with the provided configuration
+run_experiment(config; result_dir = result_dir)
+
+# Add code to demonstrate the new visualization capabilities
+println("\nGenerating additional visualizations...")
+
+# Check if this is being run after an experiment or on existing data
+function demonstrate_visualizations(result_dir)
+    # Check if the result directory exists
+    if !isdir(result_dir)
+        println("Result directory not found: $result_dir")
+        return
     end
-end
-
-# Create output directory if not specified
-if isempty(output_dir)
-    output_dir = TrajectoryPlanning.create_timestamped_dir()
-end
-mkpath(output_dir)
-
-# Setup logging
-log_file = joinpath(output_dir, "experiment.log")
-logger = TrajectoryPlanning.DualLogger(log_file)
-
-# Select environment based on user choice
-println("Running experiment with $environment_type environment, seed=$seed")
-TrajectoryPlanning.log_message("Starting experiment with $environment_type environment, seed=$seed", logger)
-
-# Create environment and agents
-local environment
-if environment_type == "door"
-    environment = TrajectoryPlanning.create_door_environment()
-    TrajectoryPlanning.log_message("Created door environment", logger)
-elseif environment_type == "wall"
-    environment = TrajectoryPlanning.create_wall_environment()
-    TrajectoryPlanning.log_message("Created wall environment", logger)
-elseif environment_type == "combined"
-    environment = TrajectoryPlanning.create_combined_environment()
-    TrajectoryPlanning.log_message("Created combined environment", logger)
-else
-    error("Unknown environment type: $environment_type")
-end
-
-agents = TrajectoryPlanning.create_standard_agents()
-TrajectoryPlanning.log_message("Created agents", logger)
-
-try
-    # Create environment visualization
-    TrajectoryPlanning.log_message("Generating environment visualization...", logger)
-    TrajectoryPlanning.visualize_obstacle_distance(
-        environment, 
-        output_dir=output_dir, 
-        filename="environment_heatmap.png", 
-        logger=logger
-    )
     
-    # Run the experiment
-    TrajectoryPlanning.log_message("Running path planning experiment...", logger)
-    result = TrajectoryPlanning.execute_and_save_animation(
-        environment, 
-        agents, 
-        output_dir=output_dir, 
-        gifname="trajectories.gif", 
-        seed=seed, 
-        save_intermediates=save_intermediate_steps,
-        logger=logger
-    )
+    # Load data from files
+    paths_file = joinpath(result_dir, "paths.csv")
+    controls_file = joinpath(result_dir, "controls.csv")
+    uncertainties_file = joinpath(result_dir, "uncertainties.csv")
     
-    # Generate ELBO convergence visualization if not already created
-    if haskey(result, :convergence) && !isempty(result.convergence) && !isfile(joinpath(output_dir, "convergence.png"))
-        TrajectoryPlanning.log_message("Generating ELBO convergence plot...", logger)
+    if !isfile(paths_file) || !isfile(controls_file) || !isfile(uncertainties_file)
+        println("Required data files not found in: $result_dir")
+        return
+    end
+    
+    # Load the data
+    println("Loading data from: $result_dir")
+    
+    # Load paths data
+    paths_data = CSV.read(paths_file, header=false)
+    nr_agents = length(unique(paths_data[!, 1]))
+    nr_steps = div(size(paths_data, 1), nr_agents)
+    
+    # Create paths matrix
+    paths = Matrix{Tuple{Float64, Float64}}(undef, nr_agents, nr_steps)
+    for i in 1:size(paths_data, 1)
+        agent_idx = paths_data[i, 1]
+        step_idx = paths_data[i, 2]
+        x = paths_data[i, 3]
+        y = paths_data[i, 4]
+        paths[agent_idx, step_idx] = (x, y)
+    end
+    
+    # Load controls data
+    controls_data = CSV.read(controls_file, header=false)
+    
+    # Create controls matrix
+    controls = Matrix{Tuple{Float64, Float64}}(undef, nr_agents, nr_steps)
+    for i in 1:size(controls_data, 1)
+        agent_idx = controls_data[i, 1]
+        step_idx = controls_data[i, 2]
+        x = controls_data[i, 3]
+        y = controls_data[i, 4]
+        controls[agent_idx, step_idx] = (x, y)
+    end
+    
+    # Load uncertainties data
+    uncertainties_data = CSV.read(uncertainties_file, header=false)
+    
+    # Create uncertainties matrix
+    uncertainties = Matrix{Tuple{Float64, Float64}}(undef, nr_agents, nr_steps)
+    for i in 1:size(uncertainties_data, 1)
+        agent_idx = uncertainties_data[i, 1]
+        step_idx = uncertainties_data[i, 2]
+        unc_x = uncertainties_data[i, 3]
+        unc_y = uncertainties_data[i, 4]
+        uncertainties[agent_idx, step_idx] = (unc_x, unc_y)
+    end
+    
+    # Create a simple environment for visualization
+    # Define obstacles based on the experiment configuration
+    obstacles = []
+    
+    # Try to load the experiment log for environment info
+    log_file = joinpath(result_dir, "experiment.log")
+    if isfile(log_file)
+        log_contents = read(log_file, String)
         
-        # Create the convergence plot manually
-        p = Plots.plot(result.convergence, 
-            linewidth = 2, 
-            xlabel = "Iteration", 
-            ylabel = "ELBO", 
-            title = "Convergence of Inference",
-            legend = false, 
-            size = (800, 400)
-        )
-        
-        # Save the plot
-        convergence_path = joinpath(output_dir, "convergence.png")
-        Plots.savefig(p, convergence_path)
-        TrajectoryPlanning.log_message("ELBO convergence plot saved to $convergence_path", logger)
-    elseif !isfile(joinpath(output_dir, "convergence.png")) && isfile(joinpath(output_dir, "convergence_metrics.csv"))
-        # Try to create from the CSV file if it exists
-        TrajectoryPlanning.log_message("Attempting to create ELBO plot from CSV metrics...", logger)
-        
-        try
-            # Read the metrics from the CSV file
-            metrics_file = joinpath(output_dir, "convergence_metrics.csv")
-            metrics_data = readlines(metrics_file)
+        # Extract obstacle information
+        obstacle_pattern = r"Obstacle: center=\(([-\d\.]+), ([-\d\.]+)\), size=\(([-\d\.]+), ([-\d\.]+)\)"
+        for match in eachmatch(obstacle_pattern, log_contents)
+            center_x = parse(Float64, match.captures[1])
+            center_y = parse(Float64, match.captures[2])
+            size_x = parse(Float64, match.captures[3])
+            size_y = parse(Float64, match.captures[4])
             
-            # Parse the ELBO values
-            elbo_values = Float64[]
-            for line in metrics_data
-                parts = split(line, ",")
-                if length(parts) >= 2
-                    push!(elbo_values, parse(Float64, parts[2]))
-                end
-            end
-            
-            if !isempty(elbo_values)
-                # Create the plot
-                p = Plots.plot(elbo_values, 
-                    linewidth = 2, 
-                    xlabel = "Iteration", 
-                    ylabel = "ELBO", 
-                    title = "Convergence of Inference",
-                    legend = false, 
-                    size = (800, 400)
-                )
-                
-                # Save the plot
-                convergence_path = joinpath(output_dir, "convergence.png")
-                Plots.savefig(p, convergence_path)
-                TrajectoryPlanning.log_message("ELBO convergence plot created from CSV data and saved to $convergence_path", logger)
-            else
-                TrajectoryPlanning.log_message("No ELBO values found in the CSV file", logger)
-            end
-        catch e
-            TrajectoryPlanning.log_message("Error creating ELBO plot from CSV: $e", logger)
+            push!(obstacles, Environment.Rectangle((center_x, center_y), (size_x, size_y)))
         end
     end
     
-    # Generate a detailed summary
-    TrajectoryPlanning.generate_experiment_summary(
-        environment=environment,
-        agents=agents,
-        result=result,
-        output_dir=output_dir,
-        logger=logger
-    )
-    
-    # Create README
-    TrajectoryPlanning.create_readme(output_dir, logger)
-    
-    TrajectoryPlanning.log_message("Experiment completed successfully", logger)
-    TrajectoryPlanning.log_message("Results saved to: $output_dir", logger)
-    println("Experiment completed successfully. Results saved to: $output_dir")
-catch e
-    TrajectoryPlanning.log_message("ERROR: Experiment failed with error: $e", logger)
-    for (exc, bt) in Base.catch_stack()
-        showerror(logger.log_file, exc, bt)
-        println(logger.log_file)
+    # If no obstacles found in log, create default ones
+    if isempty(obstacles)
+        push!(obstacles, Environment.Rectangle((0.0, 0.0), (4.0, 2.0)))
     end
-    rethrow(e)
-finally
-    # Close the logger
-    TrajectoryPlanning.close_logger(logger)
-end
+    
+    # Create environment
+    env = Environment.Environment(obstacles)
+    
+    # Create agent objects with basic properties
+    agents = []
+    for i in 1:nr_agents
+        # Extract initial and target positions from paths
+        initial_position = paths[i, 1]
+        target_position = paths[i, end]
+        
+        # Create agent with radius 1.0
+        push!(agents, Environment.Agent(initial_position, target_position, 1.0, i))
+    end
+    
+    # Generate various visualizations
+    println("Generating visualizations...")
+    
+    # 1. Path uncertainty visualization
+    println("  - Path uncertainty visualization")
+    plot_path_uncertainties(agents, paths, uncertainties, 
+                          filename = joinpath(result_dir, "path_uncertainty.png"),
+                          uncertainty_scale = 3.0,
+                          show_step = 5)  # Show every 5th step for clarity
+    
+    # 2. Control signals visualization
+    println("  - Control signals visualization")
+    plot_control_signals(controls, 
+                       filename = joinpath(result_dir, "control_signals.png"),
+                       component = :both)
+    
+    plot_control_signals(controls, 
+                       filename = joinpath(result_dir, "control_magnitudes.png"),
+                       component = :magnitude)
+    
+    # 3. Combined visualization at different timesteps
+    println("  - Combined visualization at different timesteps")
+    # Start, middle and end points
+    for (idx, step) in enumerate([1, div(nr_steps, 2), nr_steps])
+        plot_combined_visualization(env, agents, paths, uncertainties, controls,
+                                  filename = joinpath(result_dir, "combined_$(idx).png"),
+                                  step = step,
+                                  uncertainty_scale = 2.0,
+                                  control_scale = 5.0)
+    end
+    
+    # 4. 3D path visualization for each agent
+    println("  - 3D path visualizations")
+    for i in 1:nr_agents
+        plot_agent_path_3d(paths, i,
+                         uncertainties = uncertainties,
+                         filename = joinpath(result_dir, "agent$(i)_path_3d.png"),
+                         with_time = true)
+        
+        plot_agent_path_3d(paths, i,
+                         uncertainties = uncertainties,
+                         filename = joinpath(result_dir, "agent$(i)_path_3d_uncertainty.png"),
+                         with_time = false)
+    end
+    
+    # 5. Path density heatmap
+    println("  - Path density heatmap")
+    create_path_heatmap(env, paths,
+                      filename = joinpath(result_dir, "path_heatmap.png"),
+                      resolution = 100)
+    
+    # 6. Generate animations if requested
+    println("  - Generating animations (this may take some time)...")
+    
+    # Path uncertainty animation
+    animate_path_uncertainties(env, agents, paths, uncertainties,
+                             filename = joinpath(result_dir, "path_uncertainty.gif"),
+                             uncertainty_scale = 3.0,
+                             show_full_path = false)
+    
+    # Control signals animation
+    animate_control_signals(env, paths, controls,
+                          filename = joinpath(result_dir, "control_signals.gif"),
+                          control_scale = 5.0)
+    
+    # Combined visualization animation
+    animate_combined_visualization(env, agents, paths, uncertainties, controls,
+                                 filename = joinpath(result_dir, "combined_visualization.gif"),
+                                 uncertainty_scale = 2.0,
+                                 control_scale = 5.0,
+                                 show_trail = true,
+                                 trail_length = 10)
+    
+    println("All visualizations completed and saved to: $result_dir")
 end
 
-# Call the main function
-main()
+# Run the visualization demonstration
+demonstrate_visualizations(result_dir)
+
+# Also add capability to visualize existing results
+if length(ARGS) > 0
+    existing_result_dir = ARGS[1]
+    println("\nVisualizing existing results from: $existing_result_dir")
+    demonstrate_visualizations(existing_result_dir)
+end

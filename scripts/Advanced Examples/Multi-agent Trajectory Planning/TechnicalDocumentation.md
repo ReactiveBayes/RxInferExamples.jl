@@ -187,20 +187,18 @@ The model is defined by the following equations:
 The distance functions are crucial for collision avoidance:
 
 ```mermaid
-graph LR
-    subgraph "DistanceFunctions"
-        D[distance] --> DR[distance(r::Rectangle, state)]
-        D --> DE[distance(env::Environment, state)]
-        G[g] --> D
-        H[h] --> D
-        S[softmin]
-    end
+graph TD
+    D[distance] --> DR["distance(r::Rectangle, state)"]
+    D --> DE["distance(env::Environment, state)"]
+    G[g] --> D
+    H[h] --> D
+    S[softmin]
     
-    DR --> "Calculates distance<br/>from point to rectangle"
-    DE --> "Minimum distance to<br/>any obstacle via softmin"
-    G --> "Distance with<br/>radius offset"
-    H --> "Minimum pairwise<br/>distance between agents"
-    S --> "Smooth approximation<br/>of min function"
+    DR --> DRD["Calculates distance from point to rectangle"]
+    DE --> DED["Minimum distance to any obstacle via softmin"]
+    G --> GD["Distance with radius offset"]
+    H --> HD["Minimum pairwise distance between agents"]
+    S --> SD["Smooth approximation of min function"]
 ```
 
 ### Softmin Function
