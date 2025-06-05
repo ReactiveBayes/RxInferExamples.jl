@@ -14,126 +14,401 @@ include("TrajectoryPlanning.jl")
 using .TrajectoryPlanning
 
 """
-    visualize_results(results_dir)
+    visualize_results(result_dir, subdirs=nothing)
 
-Generate visualizations from results stored in the specified directory.
+Generate advanced visualizations from result data.
 
 # Arguments
-- `results_dir`: Directory containing result files (paths.csv, controls.csv, etc.)
+- `result_dir`: Path to the results directory
+- `subdirs`: Optional dictionary of subdirectories (animations, visualizations, data, heatmaps)
+"""
+function visualize_results(result_dir, subdirs=nothing)
+    # Check if the directory exists
+    if !isdir(result_dir)
+        error("Result directory not found: $result_dir")
+    end
+    
+    # Set up directory structure if not provided
+    if subdirs === nothing
+        subdirs = Dict(
+            "animations" => joinpath(result_dir, "animations"),
+            "visualizations" => joinpath(result_dir, "visualizations"),
+            "data" => joinpath(result_dir, "data"),
+            "heatmaps" => joinpath(result_dir, "heatmaps")
+        )
+        
+        # Create directories if they don't exist
+        for (_, dir) in subdirs
+            if !isdir(dir)
+                mkpath(dir)
+            end
+        end
+    end
+    
+    # Try to load and visualize the path data
+    try
+        # First check in the data subdirectory, then in the root directory
+        path_file = joinpath(subdirs["data"], "paths.csv")
+        if !isfile(path_file)
+            path_file = joinpath(result_dir, "paths.csv")
+        end
+        
+        if isfile(path_file)
+            paths = load_path_data(path_file)
+            println("Loaded path data: $(length(paths)) points")
+            
+            # Create visualization in the visualizations subdirectory
+            viz_file = joinpath(subdirs["visualizations"], "path_visualization.png")
+            create_path_visualization(paths, viz_file)
+            println("Saved path visualization.")
+        else
+            println("Warning: Path data file not found.")
+        end
+    catch e
+        println("Error visualizing path data: $e")
+    end
+    
+    # Try to load and visualize the control data
+    try
+        # First check in the data subdirectory, then in the root directory
+        control_file = joinpath(subdirs["data"], "controls.csv")
+        if !isfile(control_file)
+            control_file = joinpath(result_dir, "controls.csv")
+        end
+        
+        if isfile(control_file)
+            controls = load_control_data(control_file)
+            println("Loaded control data: $(length(controls)) points")
+            
+            # Create visualization in the visualizations subdirectory
+            viz_file = joinpath(subdirs["visualizations"], "control_magnitudes.png")
+            create_control_visualization(controls, viz_file)
+            println("Saved control magnitude visualization.")
+        else
+            println("Warning: Control data file not found.")
+        end
+    catch e
+        println("Error visualizing control data: $e")
+    end
+    
+    # Try to load and visualize convergence metrics
+    try
+        # First check in the data subdirectory, then in the root directory
+        metrics_file = joinpath(subdirs["data"], "convergence_metrics.csv")
+        if !isfile(metrics_file)
+            metrics_file = joinpath(result_dir, "convergence_metrics.csv")
+        end
+        
+        if isfile(metrics_file)
+            metrics = load_convergence_metrics(metrics_file)
+            
+            # Create visualization in the visualizations subdirectory
+            viz_file = joinpath(subdirs["visualizations"], "convergence_detailed.png")
+            create_convergence_visualization(metrics, viz_file)
+            println("Saved detailed convergence visualization.")
+        else
+            println("Warning: Convergence metrics file not found.")
+        end
+    catch e
+        println("Error visualizing convergence metrics: $e")
+    end
+end
+
+"""
+    load_path_data(file_path)
+
+Load path data from a CSV file.
+
+# Arguments
+- `file_path`: Path to the CSV file
 
 # Returns
-- Nothing. Visualizations are saved to the results directory.
+- Dictionary of path data
 """
-function visualize_results(results_dir)
-    println("Visualizing results from $results_dir...")
+function load_path_data(file_path)
+    # Parse the CSV file
+    paths = Dict()
     
-    # Check if directory exists
-    if !isdir(results_dir)
-        error("Results directory not found: $results_dir")
-    end
-    
-    # Load path data if available
-    paths_file = joinpath(results_dir, "paths.csv")
-    if isfile(paths_file)
-        path_data = readdlm(paths_file, ',', Float64)
-        println("Loaded path data: $(size(path_data, 1)) points")
-        
-        # Process path data
-        nr_agents = Int(maximum(path_data[:, 1]))
-        nr_steps = Int(maximum(path_data[:, 2]))
-        
-        # Reshape data into matrices
-        paths = Array{Vector{Float64}}(undef, nr_agents, nr_steps)
-        for i in 1:size(path_data, 1)
-            agent = Int(path_data[i, 1])
-            step = Int(path_data[i, 2])
-            paths[agent, step] = [path_data[i, 3], path_data[i, 4]]
-        end
-        
-        # Plot paths
-        p = plot(title="Agent Paths", xlabel="X", ylabel="Y", aspect_ratio=:equal,
-                 legend=:topleft, size=(800, 600))
-        
-        colors = Plots.palette(:tab10)
-        for k in 1:nr_agents
-            x_coords = [paths[k, t][1] for t in 1:nr_steps]
-            y_coords = [paths[k, t][2] for t in 1:nr_steps]
+    # Read the file
+    try
+        lines = readlines(file_path)
+        for line in lines
+            # Skip header or empty lines
+            if isempty(line) || startswith(line, "agent") || occursin("agent,step,x,y", line)
+                continue
+            end
             
-            plot!(p, x_coords, y_coords, linewidth=2, 
-                  marker=:circle, markersize=3, 
-                  label="Agent $k", color=colors[k])
+            # Parse the line
+            parts = split(line, ',')
+            if length(parts) >= 4
+                agent = parse(Int, parts[1])
+                step = parse(Int, parts[2])
+                x = parse(Float64, parts[3])
+                y = parse(Float64, parts[4])
+                
+                if !haskey(paths, agent)
+                    paths[agent] = Dict()
+                end
+                
+                paths[agent][step] = (x, y)
+            end
+        end
+    catch e
+        println("Error parsing path data: $e")
+    end
+    
+    return paths
+end
+
+"""
+    load_control_data(file_path)
+
+Load control data from a CSV file.
+
+# Arguments
+- `file_path`: Path to the CSV file
+
+# Returns
+- Dictionary of control data
+"""
+function load_control_data(file_path)
+    # Parse the CSV file
+    controls = Dict()
+    
+    # Read the file
+    try
+        lines = readlines(file_path)
+        for line in lines
+            # Skip header or empty lines
+            if isempty(line) || startswith(line, "agent") || occursin("agent,step,x_control,y_control", line)
+                continue
+            end
             
-            # Mark start and end points
-            scatter!([x_coords[1]], [y_coords[1]], color=colors[k], 
-                     marker=:star, markersize=8, label="")
-            scatter!([x_coords[end]], [y_coords[end]], color=colors[k], 
-                     marker=:square, markersize=8, label="")
+            # Parse the line
+            parts = split(line, ',')
+            if length(parts) >= 4
+                agent = parse(Int, parts[1])
+                step = parse(Int, parts[2])
+                x_control = parse(Float64, parts[3])
+                y_control = parse(Float64, parts[4])
+                
+                if !haskey(controls, agent)
+                    controls[agent] = Dict()
+                end
+                
+                controls[agent][step] = (x_control, y_control)
+            end
         end
-        
-        savefig(p, joinpath(results_dir, "path_visualization.png"))
-        println("Saved path visualization.")
-    else
-        println("Warning: Path data file not found.")
+    catch e
+        println("Error parsing control data: $e")
     end
     
-    # Load control data if available
-    controls_file = joinpath(results_dir, "controls.csv")
-    if isfile(controls_file)
-        control_data = readdlm(controls_file, ',', Float64)
-        println("Loaded control data: $(size(control_data, 1)) points")
-        
-        # Process control data
-        nr_agents = Int(maximum(control_data[:, 1]))
-        nr_steps = Int(maximum(control_data[:, 2]))
-        
-        # Reshape data into matrices
-        controls = Array{Vector{Float64}}(undef, nr_agents, nr_steps)
-        for i in 1:size(control_data, 1)
-            agent = Int(control_data[i, 1])
-            step = Int(control_data[i, 2])
-            controls[agent, step] = [control_data[i, 3], control_data[i, 4]]
+    return controls
+end
+
+"""
+    load_convergence_metrics(file_path)
+
+Load convergence metrics from a CSV file.
+
+# Arguments
+- `file_path`: Path to the CSV file
+
+# Returns
+- Array of ELBO values
+"""
+function load_convergence_metrics(file_path)
+    # Parse the CSV file
+    metrics = Float64[]
+    
+    # Read the file
+    try
+        lines = readlines(file_path)
+        for line in lines
+            # Skip header or empty lines
+            if isempty(line) || startswith(line, "iteration") || occursin("iteration,elbo", line)
+                continue
+            end
+            
+            # Parse the line
+            parts = split(line, ',')
+            if length(parts) >= 2
+                elbo = parse(Float64, parts[2])
+                push!(metrics, elbo)
+            end
         end
-        
-        # Plot control magnitudes
-        p = plot(title="Control Magnitudes", xlabel="Step", ylabel="Magnitude", 
-                 legend=:topleft, size=(800, 400))
-        
-        colors = Plots.palette(:tab10)
-        for k in 1:nr_agents
-            magnitudes = [norm(controls[k, t]) for t in 1:nr_steps]
-            plot!(p, 1:nr_steps, magnitudes, linewidth=2, 
-                  marker=:circle, markersize=3, 
-                  label="Agent $k", color=colors[k])
-        end
-        
-        savefig(p, joinpath(results_dir, "control_magnitudes.png"))
-        println("Saved control magnitude visualization.")
-    else
-        println("Warning: Control data file not found.")
+    catch e
+        println("Error parsing convergence metrics: $e")
     end
     
-    # Load convergence data if available
-    convergence_file = joinpath(results_dir, "convergence_metrics.csv")
-    if isfile(convergence_file)
-        convergence_data = readdlm(convergence_file, ',', Float64)
-        println("Loaded convergence data: $(size(convergence_data, 1)) points")
+    return metrics
+end
+
+"""
+    create_path_visualization(paths, output_file)
+
+Create a visualization of agent paths and save it to a file.
+
+# Arguments
+- `paths`: Dictionary of path data
+- `output_file`: Path to the output file
+"""
+function create_path_visualization(paths, output_file)
+    # Create a new plot
+    p = plot(
+        size=(800, 600),
+        xlabel="X",
+        ylabel="Y",
+        title="Agent Paths",
+        legend=true,
+        xlim=(-20, 20),
+        ylim=(-20, 20),
+        grid=true
+    )
+    
+    # Colors for different agents
+    colors = [:blue, :orange, :green, :red, :purple, :brown, :pink, :gray]
+    
+    # Plot each agent's path
+    for (agent, steps) in paths
+        xs = Float64[]
+        ys = Float64[]
         
-        iterations = convergence_data[:, 1]
-        elbo_values = convergence_data[:, 2]
+        # Sort steps by step number
+        sorted_steps = sort(collect(keys(steps)))
         
-        # Plot convergence
-        p = plot(iterations, elbo_values, 
-                 title="ELBO Convergence", xlabel="Iteration", ylabel="ELBO",
-                 legend=false, linewidth=2, size=(800, 400))
+        for step in sorted_steps
+            x, y = steps[step]
+            push!(xs, x)
+            push!(ys, y)
+        end
         
-        savefig(p, joinpath(results_dir, "elbo_convergence.png"))
-        println("Saved ELBO convergence visualization.")
-    else
-        println("Warning: Convergence metrics file not found.")
+        # Plot the path
+        plot!(p, xs, ys, 
+             label="Agent $agent", 
+             linewidth=2, 
+             color=colors[mod1(agent, length(colors))],
+             marker=:circle,
+             markersize=3,
+             markerstrokewidth=0)
+        
+        # Mark start and end points
+        if length(xs) > 0
+            scatter!(p, [xs[1]], [ys[1]], 
+                   marker=:star, 
+                   color=colors[mod1(agent, length(colors))],
+                   markersize=8,
+                   label=nothing)
+                   
+            scatter!(p, [xs[end]], [ys[end]], 
+                   marker=:square, 
+                   color=colors[mod1(agent, length(colors))],
+                   markersize=8,
+                   label=nothing)
+        end
     end
     
-    println("Visualization complete.")
-    return nothing
+    # Save the plot
+    savefig(p, output_file)
+end
+
+"""
+    create_control_visualization(controls, output_file)
+
+Create a visualization of control magnitudes and save it to a file.
+
+# Arguments
+- `controls`: Dictionary of control data
+- `output_file`: Path to the output file
+"""
+function create_control_visualization(controls, output_file)
+    # Create a new plot
+    p = plot(
+        size=(800, 400),
+        xlabel="Step",
+        ylabel="Magnitude",
+        title="Control Magnitudes",
+        legend=true,
+        grid=true
+    )
+    
+    # Colors for different agents
+    colors = [:blue, :orange, :green, :red, :purple, :brown, :pink, :gray]
+    
+    # Plot each agent's control magnitude
+    for (agent, steps) in controls
+        xs = Int[]
+        magnitudes = Float64[]
+        
+        # Sort steps by step number
+        sorted_steps = sort(collect(keys(steps)))
+        
+        for step in sorted_steps
+            x_control, y_control = steps[step]
+            magnitude = sqrt(x_control^2 + y_control^2)
+            
+            push!(xs, step)
+            push!(magnitudes, magnitude)
+        end
+        
+        # Plot the control magnitude
+        plot!(p, xs, magnitudes, 
+             label="Agent $agent", 
+             linewidth=2, 
+             color=colors[mod1(agent, length(colors))],
+             marker=:circle,
+             markersize=3,
+             markerstrokewidth=0)
+    end
+    
+    # Save the plot
+    savefig(p, output_file)
+end
+
+"""
+    create_convergence_visualization(metrics, output_file)
+
+Create a visualization of convergence metrics and save it to a file.
+
+# Arguments
+- `metrics`: Array of ELBO values
+- `output_file`: Path to the output file
+"""
+function create_convergence_visualization(metrics, output_file)
+    if isempty(metrics)
+        # Create a placeholder plot if no metrics are available
+        p = plot(
+            [0, 100], [0, 0], 
+            linewidth=0, 
+            xlabel="Iteration", 
+            ylabel="ELBO", 
+            title="Convergence of Inference", 
+            legend=false, 
+            size=(800, 400),
+            annotations=[(50, 0.5, Plots.text("Data Not Found", :red, 14))]
+        )
+    else
+        # Create a new plot
+        p = plot(
+            size=(800, 400),
+            xlabel="Iteration",
+            ylabel="ELBO",
+            title="Convergence of Inference",
+            legend=false,
+            grid=true
+        )
+        
+        # Plot the ELBO values
+        plot!(p, 1:length(metrics), metrics, 
+             linewidth=2, 
+             color=:blue,
+             marker=:circle,
+             markersize=3,
+             markerstrokewidth=0)
+    end
+    
+    # Save the plot
+    savefig(p, output_file)
 end
 
 """

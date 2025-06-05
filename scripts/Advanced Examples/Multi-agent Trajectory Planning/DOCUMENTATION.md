@@ -419,3 +419,45 @@ Potential improvements to the model include:
 - Adding more complex state dynamics models (e.g., including acceleration)
 - Implementing hierarchical planning for longer time horizons
 - Adding uncertainty in environmental perception
+
+### Output Organization
+
+The implementation now organizes outputs into a clear subdirectory structure:
+
+1. **Directory Structure**:
+   ```
+   results/YYYY-MM-DD_HH-MM-SS/
+   ├── animations/      # Contains all animated GIFs
+   ├── data/            # Contains all data files (CSV, logs)
+   ├── heatmaps/        # Contains environment heatmaps
+   ├── visualizations/  # Contains static visualizations
+   └── README.md        # Overview of results
+   ```
+
+2. **Animations Directory (`animations/`)**:
+   - `door_42.gif`, `door_123.gif`: Animations of door environment experiments
+   - `wall_42.gif`, `wall_123.gif`: Animations of wall environment experiments
+   - `combined_42.gif`, `combined_123.gif`: Animations of combined environment experiments
+   - `control_signals.gif`: Visualization of control signals over time
+
+3. **Data Directory (`data/`)**:
+   - `paths.csv`: Path data for all agents
+   - `controls.csv`: Control inputs for all agents
+   - `uncertainties.csv`: Path uncertainties for all agents
+   - `experiment.log`: Detailed experiment log
+   - `convergence_metrics.csv`: ELBO convergence metrics (if available)
+
+4. **Heatmaps Directory (`heatmaps/`)**:
+   - `door_environment_heatmap.png`: Distance field for door environment
+   - `wall_environment_heatmap.png`: Distance field for wall environment
+   - `combined_environment_heatmap.png`: Distance field for combined environment
+   - `obstacle_distance.png`: Obstacle distance heatmap for the current experiment
+
+5. **Visualizations Directory (`visualizations/`)**:
+   - `path_visualization.png`: Static visualization of agent paths
+   - `path_uncertainty.png`: Visualization of uncertainty in agent paths
+   - `control_magnitudes.png`: Plot of control signal magnitudes over time
+   - `convergence.png`: ELBO convergence plot
+   - `convergence_detailed.png`: Detailed convergence analysis
+
+This organization improves the clarity of the output structure and makes it easier to locate specific results. The subdirectory structure is created automatically when running experiments, and all visualization functions have been updated to use this structure.

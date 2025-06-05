@@ -11,7 +11,7 @@ using ..ConfigLoader
 export path_planning, path_planning_model, path_planning_constraints
 
 # For more details about the model, please refer to the original paper
-# Keep RxInfer.jl @model syntax carefully in mind
+# Keep RxInfer.jl @model syntax carefully in mind (review the RxInfer technical documentation)
 @model function path_planning_model(environment, agents, goals, nr_steps; model_params=nothing)
 
     # Model's parameters are fixed, refer to the original 
@@ -186,28 +186,31 @@ function path_planning(; environment, agents, nr_iterations = 350, nr_steps = 40
         g() -> Linearization()
     end
 
-    # Prepare callbacks
-    callbacks = []
+    # Track ELBO values if requested
+    elbo_values = Float64[]
     
-    # Add ELBO tracking callback if requested
-    if track_elbo
-        elbo_values = Float64[]
-        callback = (metadata) -> begin
+    # Define callback for ELBO tracking
+    function callback_elbo(metadata)
+        if haskey(metadata, :free_energy)
             push!(elbo_values, metadata.free_energy)
             if metadata.iteration % 50 == 0
                 println("Iteration $(metadata.iteration)/$(nr_iterations) - ELBO: $(metadata.free_energy)")
             end
-            return nothing
         end
+        return nothing
     end
     
-    # Configure callback to save intermediate results if requested
-    if save_intermediates && output_dir !== nothing
-        callback_save = (metadata) -> begin
-            if metadata.iteration % intermediate_steps == 0
-                intermediate_dir = joinpath(output_dir, "intermediates")
-                mkpath(intermediate_dir)
+    # Define callback for saving intermediate results
+    function callback_save(metadata)
+        if save_intermediates && output_dir !== nothing && metadata.iteration % intermediate_steps == 0
+            intermediate_dir = joinpath(output_dir, "intermediates")
+            mkpath(intermediate_dir)
+            
+            # Extract current path estimates
+            if haskey(metadata, :marginals) && haskey(metadata.marginals, :path)
                 paths = mean.(metadata.marginals[:path])
+                
+                # Save paths to CSV
                 open(joinpath(intermediate_dir, "paths_iteration_$(metadata.iteration).csv"), "w") do io
                     println(io, "agent,step,x,y")
                     for k in 1:nr_agents
@@ -216,32 +219,36 @@ function path_planning(; environment, agents, nr_iterations = 350, nr_steps = 40
                         end
                     end
                 end
-                open(joinpath(intermediate_dir, "elbo.csv"), "a") do io
-                    println(io, "$(metadata.iteration),$(metadata.free_energy)")
+                
+                # Save ELBO value if available
+                if haskey(metadata, :free_energy)
+                    open(joinpath(intermediate_dir, "elbo.csv"), "a") do io
+                        println(io, "$(metadata.iteration),$(metadata.free_energy)")
+                    end
                 end
             end
-            return nothing
         end
+        return nothing
     end
     
-    # Configure callbacks for infer using proper callback names
-    callbacks = NamedTuple()
+    # Configure callbacks for inference
+    callbacks = Dict()
+    
     if track_elbo
-        callbacks = merge(callbacks, (after_iteration = callback,))
+        callbacks[:after_iteration] = callback_elbo
     end
     
-    # Need a different callback name for saving intermediates to avoid overwriting
     if save_intermediates && output_dir !== nothing
-        # Create a combined callback if ELBO tracking is also enabled
         if track_elbo
-            combined_callback = (metadata) -> begin
-                callback(metadata)
+            # Combine callbacks if both ELBO tracking and saving are enabled
+            combined_callback = function(metadata)
+                callback_elbo(metadata)
                 callback_save(metadata)
                 return nothing
             end
-            callbacks = (after_iteration = combined_callback,)
+            callbacks[:after_iteration] = combined_callback
         else
-            callbacks = merge(callbacks, (after_iteration = callback_save,))
+            callbacks[:after_iteration] = callback_save
         end
     end
 
@@ -259,7 +266,7 @@ function path_planning(; environment, agents, nr_iterations = 350, nr_steps = 40
     )
     
     # Add ELBO values to results if tracked
-    if track_elbo
+    if track_elbo && !isempty(elbo_values)
         if !hasfield(typeof(results), :diagnostics)
             results = merge(results, (diagnostics = Dict(:elbo => elbo_values),))
         else

@@ -232,3 +232,31 @@ if length(ARGS) > 0
     println("\nVisualizing existing results from: $existing_result_dir")
     demonstrate_visualizations(existing_result_dir)
 end
+
+"""
+    create_output_directories(base_dir)
+
+Create organized subdirectories for output files.
+
+# Arguments
+- `base_dir`: Base directory path
+
+# Returns
+- Dictionary with paths to subdirectories
+"""
+function create_output_directories(base_dir)
+    # Create main subdirectories
+    subdirs = Dict(
+        "animations" => joinpath(base_dir, "animations"),
+        "visualizations" => joinpath(base_dir, "visualizations"),
+        "data" => joinpath(base_dir, "data"),
+        "heatmaps" => joinpath(base_dir, "heatmaps")
+    )
+    
+    # Create each directory
+    for (_, dir) in subdirs
+        mkpath(dir)
+    end
+    
+    return subdirs
+end
