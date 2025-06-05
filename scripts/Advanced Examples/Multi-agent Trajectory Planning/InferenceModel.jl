@@ -224,10 +224,25 @@ function path_planning(; environment, agents, nr_iterations = 350, nr_steps = 40
         end
     end
     
-    # Configure callbacks for infer
-    callbacks = track_elbo ? (inference = callback,) : NamedTuple()
+    # Configure callbacks for infer using proper callback names
+    callbacks = NamedTuple()
+    if track_elbo
+        callbacks = merge(callbacks, (after_iteration = callback,))
+    end
+    
+    # Need a different callback name for saving intermediates to avoid overwriting
     if save_intermediates && output_dir !== nothing
-        callbacks = merge(callbacks, (save = callback_save,))
+        # Create a combined callback if ELBO tracking is also enabled
+        if track_elbo
+            combined_callback = (metadata) -> begin
+                callback(metadata)
+                callback_save(metadata)
+                return nothing
+            end
+            callbacks = (after_iteration = combined_callback,)
+        else
+            callbacks = merge(callbacks, (after_iteration = callback_save,))
+        end
     end
 
     println("Running inference with $(nr_iterations) iterations...")
