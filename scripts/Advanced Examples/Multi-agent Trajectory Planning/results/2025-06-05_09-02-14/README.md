@@ -1,6 +1,6 @@
 # Multi-agent Trajectory Planning Results
 
-Generated at: 2025-06-05 08:36:36
+Generated at: 2025-06-05 09:04:16
 
 ## Contents
 
@@ -14,17 +14,22 @@ Generated at: 2025-06-05 08:36:36
 
 ### Visualizations
 - `control_signals.gif` - Control signals for each agent
+- `control_magnitudes.png` - Plot of control signal magnitudes over time
 - `obstacle_distance.png` - Heatmap of distances to obstacles
 - `path_uncertainty.png` - Visualization of path uncertainties
-- `convergence.png` - Convergence plot of the inference
+- `path_visualization.png` - Static visualization of agent paths
+- `convergence.png` - Convergence plot of the inference (may show placeholder if ELBO tracking unavailable)
+
+### Environment Heatmaps
+- `door_environment_heatmap.png` - Distance field visualization for door environment
+- `wall_environment_heatmap.png` - Distance field visualization for wall environment
+- `combined_environment_heatmap.png` - Distance field visualization for combined environment
 
 ### Data Files
-- `paths.csv` - Raw path data
-- `controls.csv` - Raw control signals
-- `uncertainties.csv` - Path uncertainties
-- `convergence_metrics.csv` - ELBO values during inference
-- `experiment.log` - Detailed log of the experiment
-- `experiment_summary.txt` - Summary of experiment results
+- `paths.csv` - Raw path data (agent positions over time)
+- `controls.csv` - Raw control signals (agent control inputs)
+- `uncertainties.csv` - Path uncertainties (variance in agent positions)
+- `experiment.log` - Detailed log of experiment execution
 
 ## Experiment Setup
 

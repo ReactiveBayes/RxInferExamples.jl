@@ -237,52 +237,61 @@ The project includes three standard environments:
 
 ### Visualization Functions
 
-The implementation includes several advanced visualization functions:
+The implementation includes several advanced visualization functions that generate multiple output types:
 
-1. **`animate_paths(environment, agents, paths; filename, fps)`**:
-   - Creates animations of agent movements over time
-   - Renders agents as circles with their respective radii
-   - Shows the complete path of each agent with dashed lines
-   - Parameters:
-     - `environment`: The environment with obstacles
-     - `agents`: The list of agents with radii and start/end positions
-     - `paths`: Matrix of agent positions over time
-     - `filename`: Output GIF filename
-     - `fps`: Animation frames per second
+1. **Animated Visualizations**:
+   - **`animate_paths(environment, agents, paths; filename, fps)`**:
+     - Creates animations of agent movements over time
+     - Renders agents as circles with their respective radii
+     - Shows the complete path of each agent with dashed lines
+     - Outputs: GIF animations (`door_42.gif`, `wall_42.gif`, etc.)
 
-2. **`visualize_controls(agents, controls, paths; filename, fps)`**:
-   - Shows control inputs as quiver plots for each agent
-   - Visualizes the magnitude and direction of acceleration at each time step
-   - Parameters:
-     - `agents`: The list of agents
-     - `controls`: Matrix of control inputs over time
-     - `paths`: Matrix of agent positions over time
-     - `filename`: Output GIF filename
-     - `fps`: Animation frames per second
+   - **`visualize_controls(agents, controls, paths; filename, fps)`**:
+     - Shows control inputs as quiver plots for each agent
+     - Visualizes the magnitude and direction of acceleration at each time step
+     - Outputs: `control_signals.gif`
 
-3. **`visualize_obstacle_distance(environment; filename, resolution)`**:
-   - Creates heatmaps of distances to obstacles
-   - Uses a color gradient to show the distance field around obstacles
-   - Parameters:
-     - `environment`: The environment with obstacles
-     - `filename`: Output PNG filename
-     - `resolution`: Resolution of the heatmap grid
+2. **Static Visualizations**:
+   - **`visualize_obstacle_distance(environment; filename, resolution)`**:
+     - Creates heatmaps of distances to obstacles
+     - Uses a color gradient to show the distance field around obstacles
+     - Outputs: `obstacle_distance.png`, environment-specific heatmaps
 
-4. **`visualize_path_uncertainty(environment, agents, paths, path_vars; filename)`**:
-   - Displays path uncertainty visually using circles of varying sizes
-   - Larger circles indicate higher uncertainty in the position
-   - Parameters:
-     - `environment`: The environment with obstacles
-     - `agents`: The list of agents
-     - `paths`: Matrix of agent positions over time
-     - `path_vars`: Matrix of position variances over time
-     - `filename`: Output PNG filename
+   - **`visualize_path_uncertainty(environment, agents, paths, path_vars; filename)`**:
+     - Displays path uncertainty visually using circles of varying sizes
+     - Larger circles indicate higher uncertainty in the position
+     - Outputs: `path_uncertainty.png`
 
-5. **`plot_convergence_metrics(metrics; filename)`**:
-   - Shows convergence of the inference process by plotting ELBO values
-   - Parameters:
-     - `metrics`: Array of ELBO values from inference iterations
-     - `filename`: Output PNG filename
+   - **`plot_path_visualization(environment, agents, paths; filename)`**:
+     - Creates a static visualization of agent paths
+     - Shows start and end positions with markers
+     - Outputs: `path_visualization.png`
+
+   - **`plot_control_magnitudes(agents, controls; filename)`**:
+     - Plots the magnitude of control signals over time
+     - Compares control effort across different agents
+     - Outputs: `control_magnitudes.png`
+
+   - **`plot_convergence_metrics(metrics; filename)`**:
+     - Shows convergence of the inference process by plotting ELBO values
+     - Creates placeholder visualization when convergence data isn't available
+     - Outputs: `convergence.png`
+
+3. **Data Files**:
+   - **`save_path_data(paths, output_file)`**:
+     - Saves agent paths as CSV data
+     - Format: agent_id, time_step, x_position, y_position
+     - Outputs: `paths.csv`
+
+   - **`save_control_data(controls, output_file)`**:
+     - Saves control inputs as CSV data
+     - Format: agent_id, time_step, x_control, y_control
+     - Outputs: `controls.csv`
+
+   - **`save_uncertainty_data(uncertainties, output_file)`**:
+     - Saves path uncertainties as CSV data
+     - Format: agent_id, time_step, x_variance, y_variance
+     - Outputs: `uncertainties.csv`
 
 ### Experiment Execution
 
