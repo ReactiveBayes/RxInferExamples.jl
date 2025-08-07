@@ -1,5 +1,5 @@
 # This file was automatically generated from /home/trim/Documents/GitHub/RxInferExamples.jl/examples/Advanced Examples/Nonlinear Sensor Fusion/Nonlinear Sensor Fusion.ipynb
-# by notebooks_to_scripts.jl at 2025-06-03T10:14:28.757
+# by notebooks_to_scripts.jl at 2025-08-07T12:32:28.359
 #
 # Source notebook: Nonlinear Sensor Fusion.ipynb
 

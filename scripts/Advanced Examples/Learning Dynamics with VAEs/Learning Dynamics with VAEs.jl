@@ -1,5 +1,5 @@
 # This file was automatically generated from /home/trim/Documents/GitHub/RxInferExamples.jl/examples/Advanced Examples/Learning Dynamics with VAEs/Learning Dynamics with VAEs.ipynb
-# by notebooks_to_scripts.jl at 2025-06-03T10:14:28.746
+# by notebooks_to_scripts.jl at 2025-08-07T12:32:28.270
 #
 # Source notebook: Learning Dynamics with VAEs.ipynb
 

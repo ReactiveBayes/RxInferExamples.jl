@@ -1,5 +1,5 @@
 # This file was automatically generated from /home/trim/Documents/GitHub/RxInferExamples.jl/examples/Experimental Examples/Latent Vector Autoregressive Model/Latent Vector Autoregressive Model.ipynb
-# by notebooks_to_scripts.jl at 2025-06-03T10:14:29.044
+# by notebooks_to_scripts.jl at 2025-08-07T12:32:28.797
 #
 # Source notebook: Latent Vector Autoregressive Model.ipynb
 

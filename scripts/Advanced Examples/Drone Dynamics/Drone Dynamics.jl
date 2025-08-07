@@ -1,5 +1,5 @@
 # This file was automatically generated from /home/trim/Documents/GitHub/RxInferExamples.jl/examples/Advanced Examples/Drone Dynamics/Drone Dynamics.ipynb
-# by notebooks_to_scripts.jl at 2025-06-03T10:14:28.720
+# by notebooks_to_scripts.jl at 2025-08-07T12:32:28.208
 #
 # Source notebook: Drone Dynamics.ipynb
 

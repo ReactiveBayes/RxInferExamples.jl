@@ -1,5 +1,5 @@
 # This file was automatically generated from /home/trim/Documents/GitHub/RxInferExamples.jl/examples/Advanced Examples/Parameter Optimisation with Optim.jl/Parameter Optimisation with Optim.jl.ipynb
-# by notebooks_to_scripts.jl at 2025-06-03T10:14:28.760
+# by notebooks_to_scripts.jl at 2025-08-07T12:32:28.365
 #
 # Source notebook: Parameter Optimisation with Optim.jl.ipynb
 

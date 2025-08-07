@@ -1,5 +1,5 @@
 # This file was automatically generated from /home/trim/Documents/GitHub/RxInferExamples.jl/examples/Problem Specific/Autoregressive Models/Autoregressive Models.ipynb
-# by notebooks_to_scripts.jl at 2025-06-03T10:14:29.120
+# by notebooks_to_scripts.jl at 2025-08-07T12:32:28.935
 #
 # Source notebook: Autoregressive Models.ipynb
 

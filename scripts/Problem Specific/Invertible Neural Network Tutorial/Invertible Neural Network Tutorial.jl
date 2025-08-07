@@ -1,5 +1,5 @@
 # This file was automatically generated from /home/trim/Documents/GitHub/RxInferExamples.jl/examples/Problem Specific/Invertible Neural Network Tutorial/Invertible Neural Network Tutorial.ipynb
-# by notebooks_to_scripts.jl at 2025-06-03T10:14:29.159
+# by notebooks_to_scripts.jl at 2025-08-07T12:32:28.996
 #
 # Source notebook: Invertible Neural Network Tutorial.ipynb
 

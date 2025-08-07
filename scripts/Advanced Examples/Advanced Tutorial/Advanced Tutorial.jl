@@ -1,5 +1,5 @@
 # This file was automatically generated from /home/trim/Documents/GitHub/RxInferExamples.jl/examples/Advanced Examples/Advanced Tutorial/Advanced Tutorial.ipynb
-# by notebooks_to_scripts.jl at 2025-06-03T10:14:28.680
+# by notebooks_to_scripts.jl at 2025-08-07T12:32:28.195
 #
 # Source notebook: Advanced Tutorial.ipynb
 

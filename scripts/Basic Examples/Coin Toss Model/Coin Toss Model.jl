@@ -1,5 +1,5 @@
 # This file was automatically generated from /home/trim/Documents/GitHub/RxInferExamples.jl/examples/Basic Examples/Coin Toss Model/Coin Toss Model.ipynb
-# by notebooks_to_scripts.jl at 2025-06-03T10:14:28.886
+# by notebooks_to_scripts.jl at 2025-08-07T12:32:28.555
 #
 # Source notebook: Coin Toss Model.ipynb
 

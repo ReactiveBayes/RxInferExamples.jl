@@ -1,5 +1,5 @@
 # This file was automatically generated from /home/trim/Documents/GitHub/RxInferExamples.jl/examples/Basic Examples/Predicting Bike Rental Demand/Predicting Bike Rental Demand.ipynb
-# by notebooks_to_scripts.jl at 2025-06-03T10:14:29.039
+# by notebooks_to_scripts.jl at 2025-08-07T12:32:28.790
 #
 # Source notebook: Predicting Bike Rental Demand.ipynb
 

@@ -1,5 +1,5 @@
 # This file was automatically generated from /home/trim/Documents/GitHub/RxInferExamples.jl/examples/Problem Specific/RTS vs BIFM Smoothing/RTS vs BIFM Smoothing.ipynb
-# by notebooks_to_scripts.jl at 2025-06-03T10:14:29.236
+# by notebooks_to_scripts.jl at 2025-08-07T12:32:29.133
 #
 # Source notebook: RTS vs BIFM Smoothing.ipynb
 
@@ -16,9 +16,9 @@ function generate_parameters(dim_out::Int64, dim_in::Int64, dim_lat::Int64; seed
 
     # generate matrices, input statistics and noise matrices
     A      = diagm(0.8 .* ones(dim_lat) .+ 0.2 * rand(rng, dim_lat))                                            # size (dim_lat x dim_lat)
-    B      = rand(dim_lat, dim_in)                                                                              # size (dim_lat x dim_in)
-    C      = rand(dim_out, dim_lat)                                                                             # size (dim_out x dim_lat)
-    μu     = rand(dim_in) .* collect(1:dim_in)                                                                  # size (dim_in x 1)
+    B      = rand(rng, dim_lat, dim_in)                                                                         # size (dim_lat x dim_in)
+    C      = rand(rng, dim_out, dim_lat)                                                                        # size (dim_out x dim_lat)
+    μu     = rand(rng, dim_in) .* collect(1:dim_in)                                                             # size (dim_in x 1)
     Σu     = input_noise  .* collect(Hermitian(randn(rng, dim_in, dim_in) + diagm(10 .+ 10*rand(dim_in))))      # size (dim_in x dim_in)
     Σy     = output_noise .* collect(Hermitian(randn(rng, dim_out, dim_out) + diagm(10 .+ 10*rand(dim_out))))   # size (dim_out x dim_out)
     Wu     = inv(Σu)
@@ -66,9 +66,10 @@ nr_samples = 200
 dim_out = 3
 dim_in = 3
 dim_lat = 25
+seed = 42
 
 # generate parameters
-A, B, C, μu, Σu, Σy, Wu, Wy = generate_parameters(dim_out, dim_in, dim_lat);
+A, B, C, μu, Σu, Σy, Wu, Wy = generate_parameters(dim_out, dim_in, dim_lat; seed = seed);
             
 # generate data
 data_z, data_y, data_u = generate_data(nr_samples, A, B, C, μu, Σu, Σy);

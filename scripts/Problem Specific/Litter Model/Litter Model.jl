@@ -1,5 +1,5 @@
 # This file was automatically generated from /home/trim/Documents/GitHub/RxInferExamples.jl/examples/Problem Specific/Litter Model/Litter Model.ipynb
-# by notebooks_to_scripts.jl at 2025-06-03T10:14:29.163
+# by notebooks_to_scripts.jl at 2025-08-07T12:32:29.003
 #
 # Source notebook: Litter Model.ipynb
 

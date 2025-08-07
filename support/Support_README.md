@@ -1,4 +1,4 @@
- 🚀 RxInferExamples.jl - Enhanced Repository 
+# RxInferExamples.jl - Enhanced Repository
 
 ## 📋 Overview
 
@@ -28,15 +28,22 @@ graph TD
 ## 🛠️ Installation
 
 1. Clone this repository:
+
    ```bash
    git clone https://github.com/your-username/RxInferExamples.jl.git
    cd RxInferExamples.jl
    ```
 
-2. Run the setup script to initialize the environment:
+2. Run the setup script to initialize the environment (non-interactive by default):
+
    ```bash
-   julia setup.jl
+   julia support/setup.jl --convert --verify
    ```
+
+   - Add `--clean` to reset caches
+   - Add `--convert-all` to force reconversion of all notebooks
+   - Add `--no-examples` or `--no-docs` to skip those stages
+   - Add `--quiet` for reduced output, `--force` to continue on non-critical errors
 
 ## 📊 Enhanced Examples
 
@@ -74,7 +81,7 @@ graph TD
 
 #### Output Structure
 
-```
+```text
 outputs/
 ├── animations/
 │   ├── environment_evolution.gif
@@ -135,9 +142,26 @@ cd scripts/Basic\ Examples/POMDP\ Control/
 julia run_with_animation.jl
 ```
 
+## 🔁 Notebook to Script Conversion
+
+Convert notebooks in `examples/` into mirrored `.jl` files under `scripts/`:
+
+```bash
+julia support/notebooks_to_scripts.jl --skip-existing --verify
+```
+
+Useful flags:
+
+- `--dry-run`: show planned conversions only
+- `--filter SUBSTR`: process only notebooks whose path contains `SUBSTR`
+- `--list`: list targeted notebooks
+- `--force`: regenerate all targeted scripts
+- `--quiet`: reduce output verbosity
+
 ## 📈 Analytics Output
 
 The script generates comprehensive analytics including:
+
 - Success rates and statistics
 - Path length distributions
 - Step-by-step visualizations
@@ -153,6 +177,14 @@ git remote add upstream https://github.com/original-owner/RxInferExamples.jl.git
 git fetch upstream
 git merge upstream/main
 ```
+
+## 📚 Learn More About RxInfer
+
+For background on RxInfer and its ecosystem:
+
+- JOSS paper: [RxInfer: A Julia package for reactive real-time Bayesian inference](https://doi.org/10.21105/joss.05161)
+- RxInfer.jl repository and roadmap: [ReactiveBayes/RxInfer.jl on GitHub](https://github.com/ReactiveBayes/RxInfer.jl)
+- BIASlab RxInfer landing: [rxinfer-website](https://biaslab.github.io/rxinfer-website/)
 
 ## 📈 Future Improvements
 

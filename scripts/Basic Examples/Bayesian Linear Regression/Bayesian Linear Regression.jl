@@ -1,5 +1,5 @@
 # This file was automatically generated from /home/trim/Documents/GitHub/RxInferExamples.jl/examples/Basic Examples/Bayesian Linear Regression/Bayesian Linear Regression.ipynb
-# by notebooks_to_scripts.jl at 2025-06-03T10:14:28.856
+# by notebooks_to_scripts.jl at 2025-08-07T12:32:28.517
 #
 # Source notebook: Bayesian Linear Regression.ipynb
 

@@ -1,5 +1,5 @@
 # This file was automatically generated from /home/trim/Documents/GitHub/RxInferExamples.jl/examples/Basic Examples/Kalman filtering and smoothing/Kalman filtering and smoothing.ipynb
-# by notebooks_to_scripts.jl at 2025-06-03T10:14:29.029
+# by notebooks_to_scripts.jl at 2025-08-07T12:32:28.774
 #
 # Source notebook: Kalman filtering and smoothing.ipynb
 
