@@ -1,0 +1,8 @@
+name = "pos_only_constant_2000"
+n = 2000
+dt = 0.1
+sigma_a = 0.25
+sigma_obs_pos = 0.5
+sigma_obs_vel = "NaN"
+generator = "constant_accel"
+order = 3

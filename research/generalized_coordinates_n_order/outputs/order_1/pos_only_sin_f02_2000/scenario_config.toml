@@ -1,0 +1,8 @@
+name = "pos_only_sin_f02_2000"
+n = 2000
+dt = 0.05
+sigma_a = 0.1
+sigma_obs_pos = 0.3
+sigma_obs_vel = "NaN"
+generator = "sinusoid"
+order = 1

@@ -1,0 +1,8 @@
+name = "pos_only_piecewise_mixed_2000"
+n = 2000
+dt = 0.05
+sigma_a = 0.7
+sigma_obs_pos = 0.4
+sigma_obs_vel = "NaN"
+generator = "piecewise_mixed"
+order = 1
