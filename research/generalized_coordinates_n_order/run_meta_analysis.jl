@@ -6,6 +6,7 @@ Pkg.activate(@__DIR__)
 using Plots
 using Statistics
 using Printf
+ENV["GKSwstype"] = "100"  # headless plots
 
 const OUTROOT = joinpath(@__DIR__, "outputs")
 const META_OUT = joinpath(OUTROOT, "meta_analysis")
@@ -73,6 +74,7 @@ coverage_mean = fill(NaN, num_orders, num_scen)
 fe_iter_final = fill(NaN, num_orders, num_scen)
 fe_time_total_sum = fill(NaN, num_orders, num_scen)
 fe_time_final = fill(NaN, num_orders, num_scen)
+corr_mean = fill(NaN, num_orders, num_scen)
 
 function _write_matrix_csv(path::AbstractString, rows::Vector{Int}, cols::Vector{String}, M::Array{Float64,2})
     open(path, "w") do io
@@ -99,11 +101,11 @@ for K in orders
         i = order_to_row[K]
         j = scenario_to_col[scen]
 
-        # metrics.csv: two lines with rmse and coverage95
+        # metrics.csv: rmse, coverage95, corr_mean
         metrics_path = joinpath(sdir, "metrics.csv")
         if isfile(metrics_path)
             header, rows = _parse_csv(metrics_path)
-            # rows: [ ["rmse", dim_1, dim_2, ...], ["coverage95", dim_1, ...] ]
+            # rows: [ ["rmse", d1, d2, ...], ["coverage95", ...], ["corr_mean", ...] ]
             if length(rows) >= 1
                 rmse_vals = _parse_floats(rows[1][2:end])
                 rmse_dim1[i, j] = isempty(rmse_vals) ? NaN : rmse_vals[1]
@@ -113,6 +115,10 @@ for K in orders
                 cov_vals = _parse_floats(rows[2][2:end])
                 coverage_dim1[i, j] = isempty(cov_vals) ? NaN : cov_vals[1]
                 coverage_mean[i, j] = isempty(cov_vals) ? NaN : mean(skipmissing(cov_vals))
+            end
+            if length(rows) >= 3
+                corr_vals = _parse_floats(rows[3][2:end])
+                corr_mean[i, j] = isempty(corr_vals) ? NaN : mean(skipmissing(corr_vals))
             end
         end
 
@@ -154,6 +160,7 @@ _write_matrix_csv(joinpath(META_OUT, "coverage95_mean.csv"), orders, scenarios, 
 _write_matrix_csv(joinpath(META_OUT, "fe_iter_final.csv"), orders, scenarios, fe_iter_final)
 _write_matrix_csv(joinpath(META_OUT, "fe_time_total_sum.csv"), orders, scenarios, fe_time_total_sum)
 _write_matrix_csv(joinpath(META_OUT, "fe_time_final.csv"), orders, scenarios, fe_time_final)
+_write_matrix_csv(joinpath(META_OUT, "corr_mean.csv"), orders, scenarios, corr_mean)
 
 # -------------------------------
 # Heatmaps
@@ -179,6 +186,7 @@ _heatmap_and_save(coverage_mean, "Mean Coverage 95% (across dims)", "heatmap_cov
 _heatmap_and_save(fe_iter_final, "Final Iteration Free Energy", "heatmap_fe_iter_final.png"; clabel="ELBO")
 _heatmap_and_save(fe_time_total_sum, "Sum of Time-step Free Energy (total)", "heatmap_fe_time_total_sum.png"; clabel="sum FE")
 _heatmap_and_save(fe_time_final, "Final Time-step Free Energy (total)", "heatmap_fe_time_final.png"; clabel="FE")
+_heatmap_and_save(corr_mean, "Mean correlation (posterior mean vs truth)", "heatmap_corr_mean.png"; clabel="corr")
 
 # -------------------------------
 # Markdown summary index
@@ -195,6 +203,7 @@ open(joinpath(META_OUT, "README.md"), "w") do io
         "fe_iter_final.csv",
         "fe_time_total_sum.csv",
         "fe_time_final.csv",
+        "corr_mean.csv",
     ]
         println(io, "- " * f)
     end
@@ -207,6 +216,7 @@ open(joinpath(META_OUT, "README.md"), "w") do io
         "heatmap_fe_iter_final.png",
         "heatmap_fe_time_total_sum.png",
         "heatmap_fe_time_final.png",
+        "heatmap_corr_mean.png",
     ]
         println(io, "- " * f)
     end

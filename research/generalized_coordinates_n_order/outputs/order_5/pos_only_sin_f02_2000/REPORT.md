@@ -1,5 +1,5 @@
 # GC Scenario Report: pos_only_sin_f02_2000
-Generated: 2025-08-08 09:35:47
+Generated: 2025-08-08 10:24:02
 
 ## Scenario
 - **n**: 2000
@@ -43,6 +43,10 @@ Generated: 2025-08-08 09:35:47
 | `gc_stdres_qq.png` | file | 27838 |
 | `gc_stdres_time.png` | file | 81855 |
 | `gc_y_fit.png` | file | 141864 |
-| `metrics.csv` | file | 182 |
+| `metrics.csv` | file | 257 |
+| `post_mean.csv` | file | 207104 |
+| `post_var.csv` | file | 219997 |
 | `rxinfer_free_energy.csv` | file | 2214 |
 | `scenario_config.toml` | file | 139 |
+| `x_true.csv` | file | 137630 |
+| `y.csv` | file | 46793 |

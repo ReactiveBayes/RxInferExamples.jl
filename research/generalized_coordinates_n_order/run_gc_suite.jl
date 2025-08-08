@@ -3,7 +3,8 @@ ENV["JULIA_PKG_PRECOMPILE_AUTO"] = "0"
 using Pkg
 Pkg.activate(@__DIR__)
 
-using RxInfer, Random, LinearAlgebra, Distributions, StableRNGs, Plots
+using RxInfer, Random, LinearAlgebra, Distributions, StableRNGs, Plots, Statistics
+ENV["GKSwstype"] = "100"  # headless plots
 
 function _resolve_modules()
     try
@@ -48,7 +49,7 @@ let (GCUtils, GCModel, GCViz, GCConfig, GCGenerators, GCReport) = _resolve_modul
             ]
         )),
     ]
-    orders = 1:9
+    orders = 1:8
     run_cfg = GCConfig.default_run_config()
 
     for K in orders
@@ -144,11 +145,46 @@ let (GCUtils, GCModel, GCViz, GCConfig, GCGenerators, GCReport) = _resolve_modul
         D = min(length(first(x_true)), K)
         rmse = [ sqrt(mean([ (μ[t][k] - x_true[t][k])^2 for t in 1:n ])) for k in 1:D ]
         coverage = [ mean([ abs(x_true[t][k] - μ[t][k]) <= 1.96 * sqrt(σ2[t][k]) for t in 1:n ]) for k in 1:D ]
+        corr_mean = [
+            try
+                cor([x_true[t][k] for t in 1:n], [μ[t][k] for t in 1:n])
+            catch
+                NaN
+            end for k in 1:D
+        ]
         open(joinpath(outdir, "metrics.csv"), "w") do io
             header = join(vcat(["metric"], ["dim_"*string(k) for k in 1:D]), ",")
             println(io, header)
             println(io, "rmse,", join(string.(rmse), ","))
             println(io, "coverage95,", join(string.(coverage), ","))
+            println(io, "corr_mean,", join(string.(corr_mean), ","))
+        end
+        # Dump per-time true state, posterior mean and variance, and observations
+        open(joinpath(outdir, "x_true.csv"), "w") do io
+            println(io, join(vcat(["t"], ["dim_"*string(k) for k in 1:D]), ","))
+            for t in 1:n
+                println(io, join(vcat([string(t)], [string(x_true[t][k]) for k in 1:D]), ","))
+            end
+        end
+        open(joinpath(outdir, "post_mean.csv"), "w") do io
+            println(io, join(vcat(["t"], ["dim_"*string(k) for k in 1:D]), ","))
+            for t in 1:n
+                println(io, join(vcat([string(t)], [string(μ[t][k]) for k in 1:D]), ","))
+            end
+        end
+        open(joinpath(outdir, "post_var.csv"), "w") do io
+            println(io, join(vcat(["t"], ["dim_"*string(k) for k in 1:D]), ","))
+            for t in 1:n
+                println(io, join(vcat([string(t)], [string(σ2[t][k]) for k in 1:D]), ","))
+            end
+        end
+        # Observations
+        obs_dims = length(y[1])
+        open(joinpath(outdir, "y.csv"), "w") do io
+            println(io, join(vcat(["t"], ["obs_"*string(k) for k in 1:obs_dims]), ","))
+            for t in 1:n
+                println(io, join(vcat([string(t)], [string(y[t][k]) for k in 1:obs_dims]), ","))
+            end
         end
         open(joinpath(outdir, "scenario_config.toml"), "w") do io
             println(io, "name = \"" * scen.name * "\"")

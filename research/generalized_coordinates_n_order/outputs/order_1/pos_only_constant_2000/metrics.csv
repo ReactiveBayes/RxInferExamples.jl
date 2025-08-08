@@ -1,3 +1,4 @@
 metric,dim_1
 rmse,0.01020495587455365
 coverage95,1.0
+corr_mean,0.8965463684005931

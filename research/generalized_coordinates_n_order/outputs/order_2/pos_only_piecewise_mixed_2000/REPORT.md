@@ -1,5 +1,5 @@
 # GC Scenario Report: pos_only_piecewise_mixed_2000
-Generated: 2025-08-08 09:32:57
+Generated: 2025-08-08 10:21:32
 
 ## Scenario
 - **n**: 2000
@@ -43,6 +43,10 @@ Generated: 2025-08-08 09:32:57
 | `gc_stdres_qq.png` | file | 26896 |
 | `gc_stdres_time.png` | file | 56848 |
 | `gc_y_fit.png` | file | 107324 |
-| `metrics.csv` | file | 86 |
+| `metrics.csv` | file | 137 |
+| `post_mean.csv` | file | 91544 |
+| `post_var.csv` | file | 96884 |
 | `rxinfer_free_energy.csv` | file | 2214 |
 | `scenario_config.toml` | file | 154 |
+| `x_true.csv` | file | 84802 |
+| `y.csv` | file | 46615 |

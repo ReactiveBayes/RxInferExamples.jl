@@ -10,6 +10,7 @@ Tables:
 - fe_iter_final.csv
 - fe_time_total_sum.csv
 - fe_time_final.csv
+- corr_mean.csv
 
 Heatmaps:
 - heatmap_rmse_dim1.png
@@ -19,6 +20,7 @@ Heatmaps:
 - heatmap_fe_iter_final.png
 - heatmap_fe_time_total_sum.png
 - heatmap_fe_time_final.png
+- heatmap_corr_mean.png
 
 Notes:
 - Dim 1 corresponds to position. Mean metrics are averaged across available state dimensions.
