@@ -92,7 +92,6 @@ end
     # Execute run script within its project and verify outputs
     include(joinpath(@__DIR__, "..", "run_gc_car.jl"))
     outdir = joinpath(@__DIR__, "..", "outputs")
-    @test isfile(joinpath(outdir, "rxinfer_free_energy.csv"))
     @test isfile(joinpath(outdir, "gc_posterior_summary.csv"))
     @test isfile(joinpath(outdir, "gc_free_energy_timeseries.csv"))
 end

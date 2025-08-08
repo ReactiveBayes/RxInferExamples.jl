@@ -1,0 +1,2 @@
+Approximate value of κ: 0.707254
+Approximate value of ω: -0.087265

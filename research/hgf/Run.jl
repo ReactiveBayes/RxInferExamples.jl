@@ -30,7 +30,7 @@ function run_filter(y, real_k::Real, real_w::Real, z_var::Real, y_var::Real)
         keephistory    = length(y),
         historyvars    = (x_next = KeepLast(), z_next = KeepLast()),
         initialization = init,
-        iterations     = 5,
+        iterations     = 20,
         free_energy    = true,
     )
     return result
@@ -51,7 +51,7 @@ function run_smoothing(y, z_var::Real, y_var::Real)
         meta = hgfmeta_smoothing(),
         constraints = hgfconstraints_smoothing(),
         initialization = hgf_init_smoothing(),
-        iterations = 20,
+        iterations = 50,
         options = (limit_stack_depth = 100,),
         returnvars = (x = KeepLast(), z = KeepLast(), ω = KeepLast(), κ = KeepLast()),
         free_energy = true,

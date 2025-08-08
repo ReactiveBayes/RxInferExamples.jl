@@ -28,7 +28,7 @@ let (GCUtils, GCModel, GCViz) = _resolve_modules()
 
     # Config
     rng = StableRNG(42)
-    n   = 200
+    n   = 2000
     dt  = 0.1
     σ_a = 0.25
     σ_obs_pos = 0.5
@@ -63,9 +63,9 @@ let (GCUtils, GCModel, GCViz) = _resolve_modules()
         initialization = init,
         keephistory = n,
         historyvars = (x = KeepLast(),),
-        iterations = 1,
+        iterations = 100,
         autostart = true,
-        free_energy = false,
+        free_energy = true,
         allow_node_contraction = false,
         options = (limit_stack_depth = 100,),
         warn = false,
@@ -96,6 +96,27 @@ let (GCUtils, GCModel, GCViz) = _resolve_modules()
         end
     end
 
+    # Save RxInfer free energy trajectory (per-iteration)
+    try
+        fe_path = joinpath(outdir, "rxinfer_free_energy.csv")
+        open(fe_path, "w") do io
+            println(io, "iteration,free_energy,delta,relative_delta")
+            prev = nothing
+            for (i, F) in enumerate(result.free_energy)
+                if prev === nothing
+                    println(io, string(i, ",", F, ",,,"))
+                else
+                    d = F - prev
+                    rd = prev == 0 ? NaN : d / abs(prev)
+                    println(io, string(i, ",", F, ",", d, ",", rd))
+                end
+                prev = F
+            end
+        end
+    catch err
+        @warn "Saving rxinfer_free_energy.csv failed" err
+    end
+
     # Plots
     if isnan(σ_obs_vel)
         fig_pos = GCViz.plot_pos(x_true, y, xmarginals)
@@ -120,6 +141,12 @@ let (GCUtils, GCModel, GCViz) = _resolve_modules()
     savefig(GCViz.plot_coverage(x_true, xmarginals), joinpath(outdir, "gc_coverage.png"))
     savefig(GCViz.plot_residual_hist(y, xmarginals, B), joinpath(outdir, "gc_residual_hist.png"))
     savefig(GCViz.plot_fe_cumsum(fe.total), joinpath(outdir, "gc_fe_cumsum.png"))
+    # Free energy across iterations (exact)
+    try
+        savefig(GCViz.plot_fe_iterations(result.free_energy), joinpath(outdir, "gc_fe_iterations.png"))
+    catch err
+        @warn "Plotting gc_fe_iterations.png failed" err
+    end
 
     savefig(GCViz.plot_y_fit(y, xmarginals, B, R), joinpath(outdir, "gc_y_fit.png"))
     savefig(GCViz.plot_stdres_hist(y, xmarginals, B, R), joinpath(outdir, "gc_stdres_hist.png"))
@@ -128,12 +155,29 @@ let (GCUtils, GCModel, GCViz) = _resolve_modules()
     savefig(GCViz.plot_mse_time(x_true, xmarginals), joinpath(outdir, "gc_mse_time.png"))
     savefig(GCViz.plot_state_coverage_time(x_true, xmarginals), joinpath(outdir, "gc_state_coverage_time.png"))
 
-    # Save CSV report (time, obs_term, dyn_term, total)
+    # Save CSV report (time, obs_term, prior_term, dyn_term, total)
     open(joinpath(outdir, "gc_free_energy_timeseries.csv"), "w") do io
-        println(io, "t,obs_term,dyn_term,total")
+        println(io, "t,obs_term,prior_term,dyn_term,total")
         for t in 1:n
-            println(io, string(t, ",", fe.obs_term[t], ",", fe.dyn_term[t], ",", fe.total[t]))
+            println(io, string(t, ",", fe.obs_term[t], ",", fe.prior_term[t], ",", fe.dyn_term[t], ",", fe.total[t]))
         end
+    end
+
+    # Optional per-dimension observation contributions if available
+    try
+        if length(first(y)) >= 1
+            open(joinpath(outdir, "gc_free_energy_obs_dim_terms.csv"), "w") do io
+                nd = length(first(y))
+                header = join(["t"; ["obs_dim_" * string(d) for d in 1:nd]], ",")
+                println(io, header)
+                for t in 1:n
+                    row = join([string(t); string.(fe.obs_dim_terms[t])], ",")
+                    println(io, row)
+                end
+            end
+        end
+    catch err
+        @warn "Saving gc_free_energy_obs_dim_terms.csv failed" err
     end
 
     # Animations

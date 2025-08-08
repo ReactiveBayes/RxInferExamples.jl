@@ -9,7 +9,8 @@ using Printf
 export plot_hidden_states, plot_free_energy, plot_param_posteriors, make_hidden_states_animation,
        plot_state_errors, plot_residuals, plot_variance_trajectories,
        plot_residual_acf, plot_residual_qq, plot_coverage,
-       make_residuals_animation
+       make_residuals_animation,
+       plot_free_energy_deltas, plot_free_energy_summary
 
 function plot_hidden_states(z_true::AbstractVector, x_true::AbstractVector, y_obs::AbstractVector, z_est, x_est; title_suffix = "")
     n = length(y_obs)
@@ -25,6 +26,21 @@ end
 
 function plot_free_energy(free_energy_history; label = "Bethe Free Energy")
     return plot(free_energy_history, label = label)
+end
+
+function plot_free_energy_deltas(series; label = "Δ Free Energy")
+    n = length(series)
+    if n <= 1
+        return plot(title = "Δ Free Energy (insufficient data)")
+    end
+    d = diff(series)
+    return plot(d, label = label)
+end
+
+function plot_free_energy_summary(series; label = "Free Energy")
+    p1 = plot(series, label = label)
+    p2 = plot_free_energy_deltas(series; label = "Δ " * label)
+    return plot(p1, p2, layout = @layout([ a; b ]))
 end
 
 function plot_param_posteriors(q_κ, q_ω; real_k = nothing, real_w = nothing)

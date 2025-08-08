@@ -76,7 +76,10 @@ function free_energy_timeseries(y::Vector{<:AbstractVector}, xmarginals, A::Abst
     end
 
     obs_term = zeros(Float64, n)
+    prior_term = zeros(Float64, n)
     dyn_term = zeros(Float64, n)
+    # Optional: per-dimension observation terms (only sound for diagonal R)
+    obs_dim_terms = Vector{Vector{Float64}}(undef, n)
 
     for t in 1:n
         # Observation contribution
@@ -84,13 +87,21 @@ function free_energy_timeseries(y::Vector{<:AbstractVector}, xmarginals, A::Abst
         Σy = B * Σ[t] * B'
         resid = y[t] .- μy
         obs_term[t] = 0.5 * (dimy * log2π + logdetR + tr(Rinvt * Σy) + dot(resid, Rinvt * resid))
+        # Per-dimension split only when R is diagonal (approximate otherwise)
+        if isdiag(R)
+            rd = diag(R)
+            Σy_diag = diag(Σy)
+            obs_dim_terms[t] = [0.5 * (log2π + log(rd[d]) + (Σy_diag[d] / rd[d]) + (resid[d]^2 / rd[d])) for d in 1:dimy]
+        else
+            obs_dim_terms[t] = fill(NaN, dimy)
+        end
 
         if t == 1
             # Prior contribution
             Σ0 = x0_cov
             μ0 = x0_mean
             resid0 = μ[1] .- μ0
-            dyn_term[t] = 0.5 * (dimx * log2π + logdet(x0_cov) + tr(inv(Σ0) * Σ[1]) + dot(resid0, inv(Σ0) * resid0))
+            prior_term[t] = 0.5 * (dimx * log2π + logdet(x0_cov) + tr(inv(Σ0) * Σ[1]) + dot(resid0, inv(Σ0) * resid0))
         else
             μpred = A * μ[t-1]
             Σpred = A * Σ[t-1] * A'
@@ -99,8 +110,8 @@ function free_energy_timeseries(y::Vector{<:AbstractVector}, xmarginals, A::Abst
         end
     end
 
-    total = obs_term .+ dyn_term
-    return (; obs_term, dyn_term, total)
+    total = obs_term .+ prior_term .+ dyn_term
+    return (; obs_term, prior_term, dyn_term, total, obs_dim_terms)
 end
 
 end # module
