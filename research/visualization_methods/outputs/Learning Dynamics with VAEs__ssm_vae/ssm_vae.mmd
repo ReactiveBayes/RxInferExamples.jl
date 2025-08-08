@@ -1,0 +1,159 @@
+graph TD
+  5["5"]
+  ContinuousTransition["ContinuousTransition"]
+  H_matrix["H_matrix"]
+  Hₛ["Hₛ"]
+  MvNormal["MvNormal"]
+  MvNormalMeanCovariance["MvNormalMeanCovariance"]
+  VAENode["VAENode"]
+  Wishart["Wishart"]
+  abs["abs"]
+  angle_error["angle_error"]
+  animateforiin1length["animateforiin1length"]
+  atan["atan"]
+  axis["axis"]
+  continuation_animation["continuation_animation"]
+  det["det"]
+  det_H["det_H"]
+  digit_indices["digit_indices"]
+  eigen["eigen"]
+  eigen_vals, eigen_vecs["eigen_vals, eigen_vecs"]
+  end["end"]
+  falseaspect_ratioequalsize["falseaspect_ratioequalsize"]
+  falsecolorbarfalseaspect_ratioequalsize["falsecolorbarfalseaspect_ratioequalsize"]
+  findall["findall"]
+  first["first"]
+  for["for"]
+  generate_rotated_sequence["generate_rotated_sequence"]
+  grid["grid"]
+  h["h"]
+  ideal["ideal"]
+  img["img"]
+  img_4d["img_4d"]
+  img_height["img_height"]
+  img_height, img_width["img_height, img_width"]
+  img_width["img_width"]
+  is_pure_rotation["is_pure_rotation"]
+  isapprox["isapprox"]
+  last["last"]
+  layout["layout"]
+  length["length"]
+  n_obs["n_obs"]
+  n_pred_to_show["n_pred_to_show"]
+  norm["norm"]
+  norm_H["norm_H"]
+  obs_strip["obs_strip"]
+  obs_tick_labels["obs_tick_labels"]
+  obs_tick_pos["obs_tick_pos"]
+  p1["p1"]
+  p2["p2"]
+  plot["plot"]
+  pred_strip["pred_strip"]
+  pred_tick_labels["pred_tick_labels"]
+  pred_tick_pos["pred_tick_pos"]
+  println("Determinant: $(round(det_H, digits["println("Determinant: $(round(det_H, digits"]
+  println("Eigenvalues: $(round_(abs_(eigen_vals), digits["println("Eigenvalues: $(round.(abs.(eigen_vals), digits"]
+  pure["pure"]
+  q["q"]
+  q(Hₛ)["q(Hₛ)"]
+  q(x, Hₛ, Λₛ)["q(x, Hₛ, Λₛ)"]
+  q(Λₛ)["q(Λₛ)"]
+  range["range"]
+  real_latent_dim1["real_latent_dim1"]
+  real_latent_dim2["real_latent_dim2"]
+  reshape["reshape"]
+  rotated_data["rotated_data"]
+  rotated_train_labels["rotated_train_labels"]
+  rotation_angle["rotation_angle"]
+  rotation_anim["rotation_anim"]
+  rotation_animation["rotation_animation"]
+  sample_image["sample_image"]
+  size["size"]
+  ssm_vae["ssm_vae"]
+  ssm_vae_model["ssm_vae_model"]
+  string["string"]
+  t["t"]
+  transition(h)["transition(h)"]
+  x["x"]
+  y["y"]
+  y_pred["y_pred"]
+  zeros["zeros"]
+  Λ["Λ"]
+  Λₛ["Λₛ"]
+  Σ["Σ"]
+  μ["μ"]
+  5 --> println("Determinant: $(round(det_H, digits
+  5 --> println("Eigenvalues: $(round_(abs_(eigen_vals), digits
+  ContinuousTransition --> x
+  H_matrix --> det_H
+  H_matrix --> eigen_vals, eigen_vecs
+  H_matrix --> norm_H
+  H_matrix --> rotation_angle
+  Hₛ --> x
+  MvNormal --> Hₛ
+  MvNormal --> x
+  MvNormalMeanCovariance --> q(Hₛ)
+  VAENode --> y
+  Wishart --> q(Λₛ)
+  Wishart --> Λₛ
+  abs --> angle_error
+  animateforiin1length --> continuation_animation
+  animateforiin1length --> rotation_animation
+  atan --> rotation_angle
+  det --> det_H
+  det_H --> is_pure_rotation
+  eigen --> eigen_vals, eigen_vecs
+  end --> H_matrix
+  end --> p1
+  end --> p2
+  falseaspect_ratioequalsize --> axis
+  falsecolorbarfalseaspect_ratioequalsize --> axis
+  findall --> digit_indices
+  first --> real_latent_dim1
+  for --> println("Determinant: $(round(det_H, digits
+  generate_rotated_sequence --> rotation_anim
+  grid --> layout
+  h --> transition(h)
+  ideal --> println("Determinant: $(round(det_H, digits
+  img --> img_4d
+  img_height --> obs_strip
+  img_height --> pred_strip
+  img_width --> obs_strip
+  img_width --> pred_strip
+  isapprox --> is_pure_rotation
+  last --> real_latent_dim2
+  length --> n_obs
+  n_obs --> obs_strip
+  n_obs --> obs_tick_labels
+  n_pred_to_show --> pred_strip
+  norm --> norm_H
+  plot --> p1
+  plot --> p2
+  pure --> println("Determinant: $(round(det_H, digits
+  q --> q(x, Hₛ, Λₛ)
+  range --> obs_tick_pos
+  range --> pred_tick_pos
+  reshape --> H_matrix
+  reshape --> img_4d
+  reshape --> transition(h)
+  rotated_data --> n_obs
+  rotated_train_labels --> digit_indices
+  rotation_angle --> angle_error
+  rotation_anim --> rotation_animation
+  sample_image --> rotation_anim
+  size --> img_height, img_width
+  ssm_vae --> ssm_vae_model
+  string --> obs_tick_labels
+  string --> pred_tick_labels
+  t --> y
+  x --> x
+  x --> y
+  y_pred --> continuation_animation
+  y_pred --> img_height, img_width
+  zeros --> obs_strip
+  zeros --> pred_strip
+  Λ --> Hₛ
+  Λₛ --> x
+  Σ --> x
+  μ --> Hₛ
+  μ --> x

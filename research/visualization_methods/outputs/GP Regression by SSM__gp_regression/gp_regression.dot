@@ -1,0 +1,32 @@
+digraph G {
+  "A" [label="A"];
+  "MvNormal" [label="MvNormal"];
+  "Normal" [label="Normal"];
+  "P" [label="P"];
+  "Q" [label="Q"];
+  "f" [label="f"];
+  "f_prev" [label="f_prev"];
+  "i" [label="i"];
+  "var" [label="var"];
+  "var_noise" [label="var_noise"];
+  "y" [label="y"];
+  "Σ" [label="Σ"];
+  "μ" [label="μ"];
+  "A" -> "f";
+  "MvNormal" -> "f";
+  "MvNormal" -> "f_prev";
+  "Normal" -> "y";
+  "P" -> "f_prev";
+  "Q" -> "f";
+  "f" -> "y";
+  "f_prev" -> "f";
+  "i" -> "f";
+  "i" -> "y";
+  "var" -> "y";
+  "var_noise" -> "y";
+  "Σ" -> "f";
+  "Σ" -> "f_prev";
+  "μ" -> "f";
+  "μ" -> "f_prev";
+  "μ" -> "y";
+}

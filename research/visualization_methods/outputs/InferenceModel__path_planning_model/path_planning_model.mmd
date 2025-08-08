@@ -1,0 +1,168 @@
+graph TD
+  Dict["Dict"]
+  GammaShapeRate["GammaShapeRate"]
+  Halfspace["Halfspace"]
+  I["I"]
+  KeepLast["KeepLast"]
+  MvNormal["MvNormal"]
+  MvNormalMeanCovariance["MvNormalMeanCovariance"]
+  StableRNG["StableRNG"]
+  agents["agents"]
+  avg_control_magnitude["avg_control_magnitude"]
+  c["c"]
+  callbacks["callbacks"]
+  combined_callback["combined_callback"]
+  constraints["constraints"]
+  control["control"]
+  control_variance["control_variance"]
+  controls["controls"]
+  covariance["covariance"]
+  create_door_environment["create_door_environment"]
+  create_standard_agents["create_standard_agents"]
+  d["d"]
+  dσ2["dσ2"]
+  elbo_values["elbo_values"]
+  environment["environment"]
+  for["for"]
+  function["function"]
+  g["g"]
+  gamma_scale["gamma_scale"]
+  gamma_shape["gamma_shape"]
+  goal_constraint_variance["goal_constraint_variance"]
+  goals["goals"]
+  h["h"]
+  hasfield["hasfield"]
+  in["in"]
+  initial_state_variance["initial_state_variance"]
+  intermediate_dir["intermediate_dir"]
+  joinpath["joinpath"]
+  k["k"]
+  length["length"]
+  local nr_agents["local nr_agents"]
+  local rs["local rs"]
+  map["map"]
+  max_uncertainty["max_uncertainty"]
+  maximum["maximum"]
+  mean["mean"]
+  merge["merge"]
+  metadata["metadata"]
+  model["model"]
+  model_params["model_params"]
+  nr_agents["nr_agents"]
+  nr_steps["nr_steps"]
+  output_dir["output_dir"]
+  path["path"]
+  path_planning_constraints["path_planning_constraints"]
+  path_planning_model["path_planning_model"]
+  path_vars["path_vars"]
+  paths["paths"]
+  q["q"]
+  q(control)["q(control)"]
+  q(d, dσ2)["q(d, dσ2)"]
+  q(dσ2)["q(dσ2)"]
+  q(z, zσ2)["q(z, zσ2)"]
+  q(zσ2)["q(zσ2)"]
+  repeat["repeat"]
+  results["results"]
+  returnvars["returnvars"]
+  rng["rng"]
+  rs["rs"]
+  seed["seed"]
+  state["state"]
+  t["t"]
+  v["v"]
+  var["var"]
+  z["z"]
+  zσ2["zσ2"]
+  γ["γ"]
+  μ(path)["μ(path)"]
+  μ(state)["μ(state)"]
+  Dict --> callbacks
+  GammaShapeRate --> dσ2
+  GammaShapeRate --> zσ2
+  Halfspace --> d
+  Halfspace --> z
+  I --> control
+  I --> goals
+  I --> state
+  KeepLast --> returnvars
+  MvNormal --> control
+  MvNormal --> goals
+  MvNormal --> state
+  MvNormalMeanCovariance --> μ(path)
+  MvNormalMeanCovariance --> μ(state)
+  StableRNG --> rng
+  agents --> local nr_agents
+  agents --> local rs
+  agents --> model
+  agents --> nr_agents
+  c --> avg_control_magnitude
+  control_variance --> control
+  controls --> avg_control_magnitude
+  covariance --> control
+  covariance --> goals
+  covariance --> state
+  create_door_environment --> environment
+  create_standard_agents --> agents
+  dσ2 --> d
+  elbo_values --> results
+  environment --> d
+  environment --> model
+  environment --> z
+  for --> avg_control_magnitude
+  for --> max_uncertainty
+  function --> combined_callback
+  g --> z
+  gamma_scale --> dσ2
+  gamma_scale --> zσ2
+  gamma_shape --> dσ2
+  gamma_shape --> zσ2
+  goal_constraint_variance --> goals
+  h --> d
+  hasfield --> elbo_values
+  in --> avg_control_magnitude
+  in --> max_uncertainty
+  initial_state_variance --> state
+  joinpath --> intermediate_dir
+  k --> goals
+  k --> z
+  length --> local nr_agents
+  length --> nr_agents
+  map --> local rs
+  maximum --> max_uncertainty
+  mean --> avg_control_magnitude
+  mean --> control
+  mean --> controls
+  mean --> goals
+  mean --> paths
+  mean --> state
+  merge --> results
+  metadata --> combined_callback
+  model_params --> model
+  nr_agents --> q(zσ2)
+  nr_steps --> model
+  nr_steps --> q(control)
+  nr_steps --> q(dσ2)
+  nr_steps --> q(zσ2)
+  output_dir --> intermediate_dir
+  path --> z
+  path_planning_constraints --> constraints
+  path_planning_model --> model
+  path_vars --> max_uncertainty
+  q --> q(d, dσ2)
+  q --> q(z, zσ2)
+  repeat --> q(control)
+  repeat --> q(dσ2)
+  repeat --> q(zσ2)
+  results --> results
+  rs --> d
+  rs --> z
+  seed --> rng
+  state --> goals
+  t --> d
+  t --> z
+  v --> max_uncertainty
+  var --> path_vars
+  zσ2 --> z
+  γ --> d
+  γ --> z

@@ -1,0 +1,28 @@
+graph TD
+  CTransition["CTransition"]
+  MvNormal["MvNormal"]
+  Normal["Normal"]
+  P["P"]
+  _y["_y"]
+  a["a"]
+  h["h"]
+  h_prev["h_prev"]
+  i["i"]
+  softdot["softdot"]
+  x["x"]
+  y["y"]
+  γ["γ"]
+  θ["θ"]
+  CTransition --> h
+  MvNormal --> x
+  Normal --> y
+  P --> h
+  a --> h
+  h --> _y
+  h_prev --> h
+  i --> _y
+  i --> x
+  i --> y
+  softdot --> _y
+  γ --> _y
+  θ --> _y

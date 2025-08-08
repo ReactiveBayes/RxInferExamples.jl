@@ -1,0 +1,31 @@
+graph TD
+  Categorical["Categorical"]
+  MeanField["MeanField"]
+  NormalMixture["NormalMixture"]
+  argmax["argmax"]
+  arm_vals["arm_vals"]
+  chosen_arm["chosen_arm"]
+  constraints["constraints"]
+  context_to_mvnormal["context_to_mvnormal"]
+  current_context["current_context"]
+  end["end"]
+  latent_context["latent_context"]
+  n_arms["n_arms"]
+  q(chosen_arm)["q(chosen_arm)"]
+  reward["reward"]
+  softdot["softdot"]
+  τ["τ"]
+  Categorical --> chosen_arm
+  Categorical --> q(chosen_arm)
+  MeanField --> constraints
+  NormalMixture --> arm_vals
+  argmax --> chosen_arm
+  arm_vals --> reward
+  context_to_mvnormal --> latent_context
+  current_context --> latent_context
+  end --> chosen_arm
+  latent_context --> reward
+  n_arms --> chosen_arm
+  n_arms --> q(chosen_arm)
+  softdot --> reward
+  τ --> reward

@@ -1,0 +1,35 @@
+digraph G {
+  "Bernoulli" [label="Bernoulli"];
+  "Beta" [label="Beta"];
+  "Gamma" [label="Gamma"];
+  "Normal" [label="Normal"];
+  "NormalMixture" [label="NormalMixture"];
+  "i" [label="i"];
+  "m" [label="m"];
+  "mean" [label="mean"];
+  "p" [label="p"];
+  "rate" [label="rate"];
+  "s" [label="s"];
+  "shape" [label="shape"];
+  "switch" [label="switch"];
+  "variance" [label="variance"];
+  "w" [label="w"];
+  "y" [label="y"];
+  "z" [label="z"];
+  "Bernoulli" -> "z";
+  "Beta" -> "s";
+  "Gamma" -> "w";
+  "Normal" -> "m";
+  "NormalMixture" -> "y";
+  "i" -> "y";
+  "m" -> "y";
+  "mean" -> "m";
+  "p" -> "y";
+  "rate" -> "w";
+  "s" -> "z";
+  "shape" -> "w";
+  "switch" -> "y";
+  "variance" -> "m";
+  "w" -> "y";
+  "z" -> "y";
+}

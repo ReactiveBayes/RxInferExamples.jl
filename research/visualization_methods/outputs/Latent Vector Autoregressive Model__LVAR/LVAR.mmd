@@ -1,0 +1,49 @@
+graph TD
+  AR_sequence["AR_sequence"]
+  GammaShapeRate["GammaShapeRate"]
+  MvNormalMeanScalePrecision["MvNormalMeanScalePrecision"]
+  b["b"]
+  c["c"]
+  c, b["c, b"]
+  dot_sequence["dot_sequence"]
+  form_c_b["form_c_b"]
+  form_priors["form_priors"]
+  i["i"]
+  index["index"]
+  k["k"]
+  length["length"]
+  order["order"]
+  orders["orders"]
+  priors["priors"]
+  x["x"]
+  y["y"]
+  y_length["y_length"]
+  μ["μ"]
+  τ["τ"]
+  AR_sequence --> x
+  GammaShapeRate --> τ
+  MvNormalMeanScalePrecision --> y
+  b --> μ
+  c --> μ
+  dot_sequence --> μ
+  form_c_b --> c, b
+  form_priors --> priors
+  i --> y
+  i --> μ
+  index --> x
+  k --> x
+  k --> μ
+  length --> x
+  length --> y_length
+  order --> x
+  orders --> c, b
+  orders --> priors
+  orders --> x
+  orders --> μ
+  priors --> x
+  x --> μ
+  y --> c, b
+  y --> y_length
+  y_length --> x
+  μ --> y
+  τ --> y

@@ -1,0 +1,32 @@
+digraph G {
+  "Categorical" [label="Categorical"];
+  "MeanField" [label="MeanField"];
+  "NormalMixture" [label="NormalMixture"];
+  "argmax" [label="argmax"];
+  "arm_vals" [label="arm_vals"];
+  "chosen_arm" [label="chosen_arm"];
+  "constraints" [label="constraints"];
+  "context_to_mvnormal" [label="context_to_mvnormal"];
+  "current_context" [label="current_context"];
+  "end" [label="end"];
+  "latent_context" [label="latent_context"];
+  "n_arms" [label="n_arms"];
+  "q(chosen_arm)" [label="q(chosen_arm)"];
+  "reward" [label="reward"];
+  "softdot" [label="softdot"];
+  "τ" [label="τ"];
+  "Categorical" -> "chosen_arm";
+  "Categorical" -> "q(chosen_arm)";
+  "MeanField" -> "constraints";
+  "NormalMixture" -> "arm_vals";
+  "argmax" -> "chosen_arm";
+  "arm_vals" -> "reward";
+  "context_to_mvnormal" -> "latent_context";
+  "current_context" -> "latent_context";
+  "end" -> "chosen_arm";
+  "latent_context" -> "reward";
+  "n_arms" -> "chosen_arm";
+  "n_arms" -> "q(chosen_arm)";
+  "softdot" -> "reward";
+  "τ" -> "reward";
+}

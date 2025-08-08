@@ -1,0 +1,23 @@
+digraph G {
+  "MultinomialPolya" [label="MultinomialPolya"];
+  "MvNormalWeightedMeanPrecision" [label="MvNormalWeightedMeanPrecision"];
+  "N" [label="N"];
+  "Wβ" [label="Wβ"];
+  "X" [label="X"];
+  "i" [label="i"];
+  "obs" [label="obs"];
+  "Ψ" [label="Ψ"];
+  "β" [label="β"];
+  "ξβ" [label="ξβ"];
+  "ϕ" [label="ϕ"];
+  "MultinomialPolya" -> "obs";
+  "MvNormalWeightedMeanPrecision" -> "β";
+  "N" -> "obs";
+  "Wβ" -> "β";
+  "X" -> "Ψ";
+  "i" -> "obs";
+  "i" -> "Ψ";
+  "Ψ" -> "obs";
+  "ξβ" -> "β";
+  "ϕ" -> "Ψ";
+}

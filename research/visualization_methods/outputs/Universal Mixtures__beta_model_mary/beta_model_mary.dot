@@ -1,0 +1,26 @@
+digraph G {
+  "Bernoulli" [label="Bernoulli"];
+  "Beta" [label="Beta"];
+  "Mixture" [label="Mixture"];
+  "inputs" [label="inputs"];
+  "john_is_right" [label="john_is_right"];
+  "switch" [label="switch"];
+  "y" [label="y"];
+  "y" [label="y "];
+  "θ" [label="θ"];
+  "θ_jane" [label="θ_jane"];
+  "θ_john" [label="θ_john"];
+  "Bernoulli" -> "john_is_right";
+  "Bernoulli" -> "y";
+  "Bernoulli" -> "y";
+  "Beta" -> "θ_jane";
+  "Beta" -> "θ_john";
+  "Mixture" -> "θ";
+  "inputs" -> "θ";
+  "john_is_right" -> "θ";
+  "switch" -> "θ";
+  "θ" -> "y";
+  "θ" -> "y";
+  "θ_jane" -> "θ";
+  "θ_john" -> "θ";
+}

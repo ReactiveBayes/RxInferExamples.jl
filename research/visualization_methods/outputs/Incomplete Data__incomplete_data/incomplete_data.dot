@@ -1,0 +1,22 @@
+digraph G {
+  "MvNormal" [label="MvNormal"];
+  "Wishart" [label="Wishart"];
+  "dim" [label="dim"];
+  "huge" [label="huge"];
+  "i" [label="i"];
+  "j" [label="j"];
+  "m" [label="m"];
+  "softdot" [label="softdot"];
+  "x" [label="x"];
+  "y" [label="y"];
+  "Λ" [label="Λ"];
+  "MvNormal" -> "m";
+  "MvNormal" -> "x";
+  "Wishart" -> "Λ";
+  "dim" -> "Λ";
+  "huge" -> "y";
+  "i" -> "y";
+  "j" -> "y";
+  "softdot" -> "y";
+  "x" -> "y";
+}

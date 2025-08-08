@@ -1,0 +1,23 @@
+digraph G {
+  "DirichletCollection" [label="DirichletCollection"];
+  "clouded_data" [label="clouded_data"];
+  "cpt_cloud_rain" [label="cpt_cloud_rain"];
+  "cpt_cloud_sprinkler" [label="cpt_cloud_sprinkler"];
+  "cpt_sprinkler_rain_wet_grass" [label="cpt_sprinkler_rain_wet_grass"];
+  "i" [label="i"];
+  "rain_data" [label="rain_data"];
+  "sprinkler_data" [label="sprinkler_data"];
+  "sprinkler_model" [label="sprinkler_model"];
+  "wet_grass_data" [label="wet_grass_data"];
+  "DirichletCollection" -> "cpt_cloud_rain";
+  "DirichletCollection" -> "cpt_cloud_sprinkler";
+  "DirichletCollection" -> "cpt_sprinkler_rain_wet_grass";
+  "clouded_data" -> "wet_grass_data";
+  "cpt_cloud_rain" -> "wet_grass_data";
+  "cpt_cloud_sprinkler" -> "wet_grass_data";
+  "cpt_sprinkler_rain_wet_grass" -> "wet_grass_data";
+  "i" -> "wet_grass_data";
+  "rain_data" -> "wet_grass_data";
+  "sprinkler_data" -> "wet_grass_data";
+  "sprinkler_model" -> "wet_grass_data";
+}

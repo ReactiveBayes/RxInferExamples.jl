@@ -1,0 +1,36 @@
+digraph G {
+  "Gamma" [label="Gamma"];
+  "Normal" [label="Normal"];
+  "mean" [label="mean"];
+  "precision" [label="precision"];
+  "rate" [label="rate"];
+  "shape" [label="shape"];
+  "variance" [label="variance"];
+  "x_current" [label="x_current"];
+  "x_prev" [label="x_prev"];
+  "x_prev_mean" [label="x_prev_mean"];
+  "x_prev_var" [label="x_prev_var"];
+  "y" [label="y"];
+  "τ" [label="τ"];
+  "τ_rate" [label="τ_rate"];
+  "τ_shape" [label="τ_shape"];
+  "Gamma" -> "τ";
+  "Normal" -> "x_current";
+  "Normal" -> "x_prev";
+  "Normal" -> "y";
+  "mean" -> "x_current";
+  "mean" -> "x_prev";
+  "mean" -> "y";
+  "precision" -> "x_current";
+  "precision" -> "y";
+  "rate" -> "τ";
+  "shape" -> "τ";
+  "variance" -> "x_prev";
+  "x_current" -> "y";
+  "x_prev" -> "x_current";
+  "x_prev_mean" -> "x_prev";
+  "x_prev_var" -> "x_prev";
+  "τ" -> "y";
+  "τ_rate" -> "τ";
+  "τ_shape" -> "τ";
+}

@@ -1,0 +1,35 @@
+digraph G {
+  "Normal" [label="Normal"];
+  "RequireMessageFunctionalDependencies" [label="RequireMessageFunctionalDependencies"];
+  "data_y" [label="data_y"];
+  "dependencies" [label="dependencies"];
+  "in" [label="in"];
+  "label" [label="label"];
+  "legend" [label="legend"];
+  "mean" [label="mean"];
+  "model" [label="model"];
+  "p" [label="p"];
+  "plot" [label="plot"];
+  "precision" [label="precision"];
+  "probit_model" [label="probit_model"];
+  "scatter" [label="scatter"];
+  "x" [label="x"];
+  "x_prev" [label="x_prev"];
+  "xlabel" [label="xlabel"];
+  "ylabel" [label="ylabel"];
+  "Normal" -> "x";
+  "RequireMessageFunctionalDependencies" -> "dependencies";
+  "data_y" -> "p";
+  "in" -> "dependencies";
+  "label" -> "p";
+  "legend" -> "p";
+  "mean" -> "x";
+  "p" -> "p";
+  "plot" -> "p";
+  "precision" -> "x";
+  "probit_model" -> "model";
+  "scatter" -> "p";
+  "x_prev" -> "x";
+  "xlabel" -> "p";
+  "ylabel" -> "p";
+}

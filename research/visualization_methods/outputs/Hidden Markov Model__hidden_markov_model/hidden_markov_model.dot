@@ -1,0 +1,21 @@
+digraph G {
+  "A" [label="A"];
+  "B" [label="B"];
+  "Categorical" [label="Categorical"];
+  "DirichletCollection" [label="DirichletCollection"];
+  "DiscreteTransition" [label="DiscreteTransition"];
+  "s" [label="s"];
+  "s_0" [label="s_0"];
+  "s_prev" [label="s_prev"];
+  "t" [label="t"];
+  "x" [label="x"];
+  "A" -> "s";
+  "B" -> "x";
+  "Categorical" -> "s_0";
+  "DirichletCollection" -> "A";
+  "DiscreteTransition" -> "s";
+  "DiscreteTransition" -> "x";
+  "s" -> "x";
+  "s_prev" -> "s";
+  "t" -> "x";
+}

@@ -1,0 +1,32 @@
+digraph G {
+  "A" [label="A"];
+  "B" [label="B"];
+  "DiscreteTransition" [label="DiscreteTransition"];
+  "controls" [label="controls"];
+  "current_state" [label="current_state"];
+  "current_y" [label="current_y"];
+  "future_y" [label="future_y"];
+  "m_A" [label="m_A"];
+  "m_B" [label="m_B"];
+  "prev_state" [label="prev_state"];
+  "previous_control" [label="previous_control"];
+  "previous_state" [label="previous_state"];
+  "s" [label="s"];
+  "t" [label="t"];
+  "A" -> "current_y";
+  "B" -> "current_state";
+  "DiscreteTransition" -> "current_state";
+  "DiscreteTransition" -> "current_y";
+  "DiscreteTransition" -> "future_y";
+  "DiscreteTransition" -> "s";
+  "controls" -> "s";
+  "current_state" -> "current_y";
+  "m_A" -> "future_y";
+  "m_B" -> "s";
+  "prev_state" -> "s";
+  "previous_control" -> "current_state";
+  "previous_state" -> "current_state";
+  "s" -> "future_y";
+  "t" -> "future_y";
+  "t" -> "s";
+}

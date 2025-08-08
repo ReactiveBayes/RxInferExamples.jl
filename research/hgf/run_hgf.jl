@@ -3,7 +3,6 @@
 using Logging
 using Plots
 using Statistics
-using Dates
 using Printf
 using JSON
 
@@ -51,10 +50,8 @@ function main()
     p_qq = HGF.Viz.plot_residual_qq(residual_series)
     p_cov = HGF.Viz.plot_coverage(z, x, z_hist, x_hist; alpha = 0.05)
 
-    # Save outputs to top-level results directory
-    project_root = normpath(joinpath(@__DIR__, "..", ".."))
-    outdir = normpath(joinpath(project_root, "results", string(Dates.format(now(), "yyyy-mm-dd_HHMMSS")), "HGF"))
-    isdir(outdir) || mkpath(outdir)
+    # Save outputs to local module output directory
+    outdir = ensure_output_dir()
     savefig(p1, joinpath(outdir, "hidden_states_filtering.png"))
     savefig(p2, joinpath(outdir, "free_energy_filtering.png"))
     savefig(p2d, joinpath(outdir, "free_energy_filtering_deltas.png"))

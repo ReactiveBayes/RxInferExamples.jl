@@ -1,0 +1,12 @@
+digraph G {
+  "Bernoulli" [label="Bernoulli"];
+  "Beta" [label="Beta"];
+  "y" [label="y"];
+  "y" [label="y "];
+  "θ" [label="θ"];
+  "Bernoulli" -> "y";
+  "Bernoulli" -> "y";
+  "Beta" -> "θ";
+  "θ" -> "y";
+  "θ" -> "y";
+}

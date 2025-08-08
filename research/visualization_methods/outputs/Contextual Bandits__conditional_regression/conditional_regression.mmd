@@ -1,0 +1,244 @@
+graph TD
+  413["413"]
+  48["48"]
+  :predictive[":predictive"]
+  :τ[":τ"]
+  Categorical["Categorical"]
+  Dict["Dict"]
+  Float64["Float64"]
+  GammaShapeRate["GammaShapeRate"]
+  Int["Int"]
+  KeepLast["KeepLast"]
+  MeanField["MeanField"]
+  MvNormalMeanPrecision["MvNormalMeanPrecision"]
+  NormalMixture["NormalMixture"]
+  StableRNG["StableRNG"]
+  VectorFloat64["VectorFloat64"]
+  act["act"]
+  actual_context["actual_context"]
+  actual_rewards["actual_rewards"]
+  analyze_doubly_robust_uplift["analyze_doubly_robust_uplift"]
+  argmax["argmax"]
+  arm_counts_predictive["arm_counts_predictive"]
+  arm_counts_random["arm_counts_random"]
+  arm_counts_thompson["arm_counts_thompson"]
+  arm_distribution_plot["arm_distribution_plot"]
+  arm_idx["arm_idx"]
+  arm_vals["arm_vals"]
+  arms["arms"]
+  augmented_context["augmented_context"]
+  calculate_improvements["calculate_improvements"]
+  chosen_arm["chosen_arm"]
+  colors["colors"]
+  compute_reward["compute_reward"]
+  constraints["constraints"]
+  context["context"]
+  context_dim["context_dim"]
+  context_mean["context_mean"]
+  context_precision["context_precision"]
+  context_to_mvnormal["context_to_mvnormal"]
+  cumsum["cumsum"]
+  cumul_predictive["cumul_predictive"]
+  cumul_random["cumul_random"]
+  cumul_thompson["cumul_thompson"]
+  current_context["current_context"]
+  data_idx["data_idx"]
+  direct_method["direct_method"]
+  dot["dot"]
+  end["end"]
+  expected_rewards["expected_rewards"]
+  final_predictive_avg["final_predictive_avg"]
+  final_random_avg["final_random_avg"]
+  final_thompson_avg["final_thompson_avg"]
+  for["for"]
+  history["history"]
+  i["i"]
+  idx["idx"]
+  improvements["improvements"]
+  in["in"]
+  inferred_arm_mean["inferred_arm_mean"]
+  inferred_arm_posterior["inferred_arm_posterior"]
+  inferred_arms["inferred_arms"]
+  k["k"]
+  latent_context["latent_context"]
+  length["length"]
+  max["max"]
+  mean["mean"]
+  mse_arms["mse_arms"]
+  n["n"]
+  n_arms["n_arms"]
+  n_contexts["n_contexts"]
+  n_epochs["n_epochs"]
+  noise_sd["noise_sd"]
+  observe["observe"]
+  palette["palette"]
+  past_rewards["past_rewards"]
+  plan["plan"]
+  plot_arm_distribution["plot_arm_distribution"]
+  posteriors["posteriors"]
+  pred_std["pred_std"]
+  prediction_mse["prediction_mse"]
+  predictive_strategy["predictive_strategy"]
+  predictive_vs_random["predictive_vs_random"]
+  println("$(lpad(i, 6)) | $(rpad(round(actual, digits["println("$(lpad(i, 6)) | $(rpad(round(actual, digits"]
+  println("Test       | $(rpad(round(test_mse, digits["println("Test       | $(rpad(round(test_mse, digits"]
+  println("Training   | $(rpad(round(train_mse, digits["println("Training   | $(rpad(round(train_mse, digits"]
+  priors["priors"]
+  priors_rng["priors_rng"]
+  q(chosen_arm)["q(chosen_arm)"]
+  q(latent_context)["q(latent_context)"]
+  q_context["q_context"]
+  rand["rand"]
+  returnvars["returnvars"]
+  reward["reward"]
+  reward_variances["reward_variances"]
+  rewards["rewards"]
+  rewards_data["rewards_data"]
+  rng["rng"]
+  run_bandit_simulation["run_bandit_simulation"]
+  select_context["select_context"]
+  softdot["softdot"]
+  sqrt["sqrt"]
+  strategies["strategies"]
+  target_rewards["target_rewards"]
+  target_strategy["target_strategy"]
+  theta_sample["theta_sample"]
+  thompson_vs_random["thompson_vs_random"]
+  train_rewards["train_rewards"]
+  undef["undef"]
+  window_length["window_length"]
+  zeros["zeros"]
+  τ["τ"]
+  413 --> println("$(lpad(i, 6)) | $(rpad(round(actual, digits
+  48 --> println("Test       | $(rpad(round(test_mse, digits
+  48 --> println("Training   | $(rpad(round(train_mse, digits
+  Categorical --> chosen_arm
+  Categorical --> q(chosen_arm)
+  Dict --> posteriors
+  Dict --> priors
+  Dict --> rewards
+  Float64 --> rewards_data
+  GammaShapeRate --> :τ
+  Int --> arm_counts_predictive
+  Int --> arm_counts_random
+  Int --> arm_counts_thompson
+  KeepLast --> returnvars
+  MeanField --> constraints
+  MvNormalMeanPrecision --> q(latent_context)
+  NormalMixture --> arm_vals
+  StableRNG --> priors_rng
+  StableRNG --> rng
+  VectorFloat64 --> context_mean
+  VectorFloat64 --> context_precision
+  act --> chosen_arm
+  actual_context --> q_context
+  actual_rewards --> prediction_mse
+  analyze_doubly_robust_uplift --> predictive_vs_random
+  analyze_doubly_robust_uplift --> thompson_vs_random
+  argmax --> chosen_arm
+  arm_idx --> rewards
+  arm_vals --> past_rewards
+  arm_vals --> reward
+  arms --> mse_arms
+  arms --> rewards
+  augmented_context --> expected_rewards
+  calculate_improvements --> improvements
+  compute_reward --> rewards
+  context --> rewards
+  context_dim --> history
+  context_dim --> posteriors
+  context_to_mvnormal --> latent_context
+  context_to_mvnormal --> q_context
+  cumsum --> cumul_predictive
+  cumsum --> cumul_random
+  cumsum --> cumul_thompson
+  current_context --> latent_context
+  dot --> expected_rewards
+  end --> chosen_arm
+  end --> inferred_arms
+  expected_rewards --> chosen_arm
+  for --> mse_arms
+  history --> arm_distribution_plot
+  history --> cumul_predictive
+  history --> cumul_random
+  history --> cumul_thompson
+  history --> final_predictive_avg
+  history --> final_random_avg
+  history --> final_thompson_avg
+  history --> improvements
+  history --> n_arms
+  history --> predictive_vs_random
+  history --> thompson_vs_random
+  i --> mse_arms
+  i --> pred_std
+  in --> mse_arms
+  inferred_arm_posterior --> inferred_arm_mean
+  k --> theta_sample
+  latent_context --> past_rewards
+  latent_context --> reward
+  length --> n_arms
+  length --> n_epochs
+  max --> data_idx
+  mean --> augmented_context
+  mean --> direct_method
+  mean --> final_predictive_avg
+  mean --> final_random_avg
+  mean --> final_thompson_avg
+  mean --> inferred_arm_mean
+  mean --> inferred_arms
+  mean --> mse_arms
+  mean --> prediction_mse
+  n --> arm_vals
+  n --> past_rewards
+  n_arms --> arm_counts_predictive
+  n_arms --> arm_counts_random
+  n_arms --> arm_counts_thompson
+  n_arms --> chosen_arm
+  n_arms --> expected_rewards
+  n_arms --> history
+  n_arms --> q(chosen_arm)
+  n_arms --> strategies
+  n_contexts --> current_context
+  n_contexts --> history
+  n_epochs --> history
+  noise_sd --> rewards
+  observe --> rewards
+  palette --> colors
+  plan --> strategies
+  plot_arm_distribution --> arm_distribution_plot
+  posteriors --> priors
+  posteriors --> strategies
+  posteriors --> theta_sample
+  predictive_strategy --> :predictive
+  rand --> chosen_arm
+  rand --> idx
+  rand --> theta_sample
+  reward_variances --> pred_std
+  rng --> chosen_arm
+  rng --> current_context
+  rng --> idx
+  rng --> rewards
+  rng --> strategies
+  rng --> theta_sample
+  run_bandit_simulation --> history
+  select_context --> current_context
+  softdot --> past_rewards
+  softdot --> reward
+  sqrt --> pred_std
+  strategies --> chosen_arm
+  strategies --> rewards
+  target_rewards --> direct_method
+  target_rewards --> n_epochs
+  target_strategy --> n_arms
+  theta_sample --> expected_rewards
+  train_rewards --> rewards_data
+  undef --> context_mean
+  undef --> context_precision
+  window_length --> data_idx
+  window_length --> history
+  zeros --> arm_counts_predictive
+  zeros --> arm_counts_random
+  zeros --> arm_counts_thompson
+  zeros --> expected_rewards
+  τ --> past_rewards
+  τ --> reward

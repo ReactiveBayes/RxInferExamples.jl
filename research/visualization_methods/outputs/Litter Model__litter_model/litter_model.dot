@@ -1,0 +1,9 @@
+digraph G {
+  "Gamma" [label="Gamma"];
+  "Poisson" [label="Poisson"];
+  "x" [label="x"];
+  "θ" [label="θ"];
+  "Gamma" -> "θ";
+  "Poisson" -> "x";
+  "θ" -> "x";
+}

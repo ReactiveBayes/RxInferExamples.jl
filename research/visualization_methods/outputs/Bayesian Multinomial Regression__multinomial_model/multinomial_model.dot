@@ -1,0 +1,9 @@
+digraph G {
+  "MvNormalWeightedMeanPrecision" [label="MvNormalWeightedMeanPrecision"];
+  "W_ψ" [label="W_ψ"];
+  "ξ_ψ" [label="ξ_ψ"];
+  "ψ" [label="ψ"];
+  "MvNormalWeightedMeanPrecision" -> "ψ";
+  "W_ψ" -> "ψ";
+  "ξ_ψ" -> "ψ";
+}

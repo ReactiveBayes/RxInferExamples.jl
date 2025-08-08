@@ -1,0 +1,135 @@
+graph TD
+  Categorical["Categorical"]
+  Dirichlet["Dirichlet"]
+  Gamma["Gamma"]
+  GammaMixture["GammaMixture"]
+  GammaShapeRate["GammaShapeRate"]
+  MeanField["MeanField"]
+  MersenneTwister["MersenneTwister"]
+  MixtureModel["MixtureModel"]
+  _as, _bs["_as, _bs"]
+  _dists["_dists"]
+  _mixing["_mixing"]
+  _mixture["_mixture"]
+  a["a"]
+  as["as"]
+  b["b"]
+  begin["begin"]
+  bs["bs"]
+  dataset["dataset"]
+  default_factorisation["default_factorisation"]
+  end["end"]
+  g["g"]
+  gamma_mixture_model["gamma_mixture_model"]
+  gmodel["gmodel"]
+  gpriors["gpriors"]
+  histogram["histogram"]
+  i["i"]
+  layout["layout"]
+  length["length"]
+  map["map"]
+  mean["mean"]
+  mixing["mixing"]
+  mixingsum["mixingsum"]
+  mixture["mixture"]
+  mixtures["mixtures"]
+  n_samples["n_samples"]
+  nmixtures["nmixtures"]
+  p1["p1"]
+  p2["p2"]
+  p3["p3"]
+  parameters["parameters"]
+  plot["plot"]
+  plot(plot(p1, p2, layout["plot(plot(p1, p2, layout"]
+  q["q"]
+  q(as)["q(as)"]
+  q(bs)["q(bs)"]
+  q(z)["q(z)"]
+  q(z, as, bs, s)["q(z, as, bs, s)"]
+  rand["rand"]
+  rate["rate"]
+  rng["rng"]
+  s["s"]
+  shape["shape"]
+  size["size"]
+  switch["switch"]
+  vague["vague"]
+  xlim["xlim"]
+  y["y"]
+  ylim["ylim"]
+  z["z"]
+  Categorical --> q(z)
+  Categorical --> z
+  Dirichlet --> s
+  Gamma --> as
+  Gamma --> bs
+  GammaMixture --> y
+  GammaShapeRate --> q(bs)
+  MeanField --> default_factorisation
+  MersenneTwister --> rng
+  MixtureModel --> _mixture
+  MixtureModel --> mixture
+  _dists --> _mixture
+  _mixing --> _mixture
+  _mixture --> p2
+  a --> plot(plot(p1, p2, layout
+  a --> y
+  as --> q(as)
+  as --> y
+  b --> plot(plot(p1, p2, layout
+  b --> y
+  begin --> q(as)
+  begin --> q(bs)
+  bs --> q(bs)
+  bs --> y
+  dataset --> p1
+  dataset --> p2
+  end --> _as, _bs
+  end --> q(as)
+  end --> q(bs)
+  g --> _dists
+  gamma_mixture_model --> gmodel
+  gpriors --> gmodel
+  histogram --> p1
+  histogram --> p2
+  i --> as
+  i --> bs
+  i --> y
+  layout --> plot(plot(p1, p2, layout
+  length --> nmixtures
+  map --> _dists
+  mean --> _as, _bs
+  mean --> _mixing
+  mixing --> mixing
+  mixing --> mixture
+  mixingsum --> mixing
+  mixture --> dataset
+  mixture --> p1
+  mixtures --> mixture
+  mixtures --> nmixtures
+  n_samples --> dataset
+  nmixtures --> mixing
+  parameters --> gmodel
+  plot --> p1
+  plot --> p2
+  plot --> p3
+  q --> q(as)
+  q --> q(bs)
+  q --> q(z, as, bs, s)
+  rand --> dataset
+  rand --> mixing
+  rate --> as
+  rate --> bs
+  rng --> dataset
+  rng --> mixing
+  s --> z
+  shape --> as
+  shape --> bs
+  size --> plot(plot(p1, p2, layout
+  switch --> y
+  vague --> q(z)
+  xlim --> p1
+  xlim --> p2
+  ylim --> p1
+  ylim --> p2
+  z --> y

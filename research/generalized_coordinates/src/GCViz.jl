@@ -7,7 +7,7 @@ export plot_pos, plot_pos_vel, plot_free_energy_terms, summary_dashboard,
        make_animation_pos, make_animation_states,
        plot_rmse, plot_coverage, plot_residual_hist, plot_fe_cumsum,
        plot_y_fit, plot_stdres_hist, plot_stdres_qq, plot_stdres_acf, plot_mse_time, plot_state_coverage_time,
-       plot_fe_iterations
+       plot_fe_iterations, plot_stdres_time, plot_derivative_consistency
 
 # Use a non-interactive backend for headless environments
 try
@@ -104,8 +104,10 @@ function summary_dashboard(x_true, y, xmargs, obs_term, dyn_term, total)
     μ, _ = _means_stds(xmargs)
     p2 = plot(title = "Velocity (inferred)")
     plot!(p2, getindex!(μ, 2), label = "Inferred velocity", color=:blue)
-    p3 = plot_free_energy_terms(obs_term, dyn_term, total)
-    return plot(p1, p2, p3, layout=(3,1), size=(950,900))
+    p3 = plot(title = "Acceleration (inferred)")
+    plot!(p3, getindex!(μ, 3), label = "Inferred acceleration", color=:orange)
+    p4 = plot_free_energy_terms(obs_term, dyn_term, total)
+    return plot(p1, p2, p3, p4, layout=(4,1), size=(950,1200))
 end
 
 # Plot residuals (observed - inferred projections) for available dims
@@ -306,23 +308,29 @@ function plot_mse_time(x_true::Vector{<:AbstractVector}, xmargs)
 end
 
 # Simple position animation
-function make_animation_pos(x_true::Vector{<:AbstractVector}, y::Vector{<:AbstractVector}, xmargs, path::AbstractString)
+function make_animation_pos(x_true::Vector{<:AbstractVector}, y::Vector{<:AbstractVector}, xmargs, path::AbstractString; step::Int=1, fps::Int=30, maxframes::Int=typemax(Int))
     n = length(x_true)
     μ, σ = _means_stds(xmargs)
-    anim = @animate for t in 1:n
+    frames = 0
+    anim = @animate for t in 1:step:n
+        frames += 1
+        frames > maxframes && break
         p = plot(title = "Position inference (t=$(t))", legend=:topright)
         plot!(p, getindex!(x_true[1:t], 1), label = "True position", color = :black)
         scatter!(p, 1:t, getindex!(y[1:t], 1), ms = 2, alpha = 0.6, label = "Observations", color = :red)
         plot!(p, getindex!(μ[1:t], 1), ribbon = getindex!(σ[1:t], 1), fillalpha = 0.3, label = "Inferred position", color = :blue)
     end
-    gif(anim, path; fps = 30)
+    gif(anim, path; fps = fps)
 end
 
 # States animation (pos, vel, acc) inferred vs true
-function make_animation_states(x_true::Vector{<:AbstractVector}, xmargs, path::AbstractString)
+function make_animation_states(x_true::Vector{<:AbstractVector}, xmargs, path::AbstractString; step::Int=1, fps::Int=20, maxframes::Int=typemax(Int))
     n = length(x_true)
     μ, σ = _means_stds(xmargs)
-    anim = @animate for t in 1:n
+    frames = 0
+    anim = @animate for t in 1:step:n
+        frames += 1
+        frames > maxframes && break
         p1 = plot(title = "Position", legend=false)
         plot!(p1, getindex!(x_true[1:t], 1), color=:black)
         plot!(p1, getindex!(μ[1:t], 1), ribbon = getindex!(σ[1:t], 1), color=:blue, fillalpha=0.3)
@@ -334,7 +342,41 @@ function make_animation_states(x_true::Vector{<:AbstractVector}, xmargs, path::A
         plot!(p3, getindex!(μ[1:t], 3), ribbon = getindex!(σ[1:t], 3), color=:orange, fillalpha=0.3)
         plot(p1, p2, p3, layout=(3,1), size=(900,900))
     end
-    gif(anim, path; fps = 20)
+    gif(anim, path; fps = fps)
+end
+
+# Standardized residuals over time
+function plot_stdres_time(y::Vector{<:AbstractVector}, xmargs, B::AbstractMatrix, R::AbstractMatrix)
+    n = length(y)
+    μ, σ = _means_stds(xmargs)
+    ny = length(first(y))
+    p = plot(layout=(ny,1), size=(900, 300*ny))
+    for d in 1:ny
+        res = [ y[t][d] - (B*μ[t])[d] for t in 1:n ]
+        Σy = [ B * Diagonal(σ[t].^2) * B' for t in 1:n ]
+        σy = [ sqrt(Σy[t][d,d] + R[d,d]) for t in 1:n ]
+        z = [ res[t] / σy[t] for t in 1:n ]
+        plot!(p[d], z; label="stdres[$d]", title="Std residuals over time dim $d")
+        hline!(p[d], [0.0]; color=:black, lw=1, label="")
+    end
+    return p
+end
+
+# Consistency of generalized coordinates: finite-difference checks
+function plot_derivative_consistency(xmargs, dt::Real)
+    μ, _ = _means_stds(xmargs)
+    n = length(xmargs)
+    # numerical derivatives via first-order differences
+    dμ_pos = [ (μ[t+1][1] - μ[t][1]) / dt for t in 1:n-1 ]
+    dμ_vel = [ (μ[t+1][2] - μ[t][2]) / dt for t in 1:n-1 ]
+    vel_inferred = getindex.(μ[1:n-1], 2)
+    acc_inferred = getindex.(μ[1:n-1], 3)
+    vel_err = [abs(dμ_pos[t] - vel_inferred[t]) for t in 1:n-1]
+    acc_err = [abs(dμ_vel[t] - acc_inferred[t]) for t in 1:n-1]
+    p = plot(layout=(2,1), size=(900,600))
+    plot!(p[1], vel_err; title="|d(pos)/dt - vel|", ylabel="mismatch")
+    plot!(p[2], acc_err; title="|d(vel)/dt - acc|", ylabel="mismatch", xlabel="time")
+    return p
 end
 
 end # module

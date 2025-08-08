@@ -1,0 +1,71 @@
+graph TD
+  A["A"]
+  B["B"]
+  ContinuousTransition["ContinuousTransition"]
+  DirichletCollection["DirichletCollection"]
+  DiscreteTransition["DiscreteTransition"]
+  GammaShapeRate["GammaShapeRate"]
+  Gate["Gate"]
+  H["H"]
+  MultinomialPolya["MultinomialPolya"]
+  MvNormalMeanCovariance["MvNormalMeanCovariance"]
+  MvNormalMeanPrecision["MvNormalMeanPrecision"]
+  P["P"]
+  R["R"]
+  Wishart["Wishart"]
+  a_w["a_w"]
+  a_w, b_w, Ψ_w, Ψ_R,ν_R, α, C["a_w, b_w, Ψ_w, Ψ_R,ν_R, α, C"]
+  b_w["b_w"]
+  get_hyperparameters["get_hyperparameters"]
+  hyperparameters["hyperparameters"]
+  obs["obs"]
+  s["s"]
+  softdot["softdot"]
+  t["t"]
+  u["u"]
+  w["w"]
+  x["x"]
+  Λ["Λ"]
+  Ψ_R["Ψ_R"]
+  Ψ_w["Ψ_w"]
+  α["α"]
+  ν_R["ν_R"]
+  ϕ["ϕ"]
+  A --> x
+  B --> x
+  ContinuousTransition --> u
+  ContinuousTransition --> x
+  DirichletCollection --> P
+  DiscreteTransition --> s
+  GammaShapeRate --> R
+  GammaShapeRate --> w
+  Gate --> A
+  Gate --> B
+  MultinomialPolya --> s
+  MvNormalMeanCovariance --> H
+  MvNormalMeanCovariance --> x
+  MvNormalMeanCovariance --> ϕ
+  MvNormalMeanPrecision --> obs
+  P --> s
+  R --> obs
+  Wishart --> R
+  Wishart --> w
+  Wishart --> Λ
+  a_w --> w
+  b_w --> w
+  get_hyperparameters --> a_w, b_w, Ψ_w, Ψ_R,ν_R, α, C
+  hyperparameters --> a_w, b_w, Ψ_w, Ψ_R,ν_R, α, C
+  s --> s
+  softdot --> u
+  t --> s
+  t --> u
+  t --> x
+  u --> s
+  w --> u
+  x --> u
+  x --> x
+  Ψ_R --> R
+  Ψ_w --> w
+  α --> P
+  ν_R --> R
+  ϕ --> u

@@ -1,0 +1,340 @@
+graph TD
+  Dict["Dict"]
+  FVC_est["FVC_est"]
+  FVC_obs["FVC_obs"]
+  FVC_predict["FVC_predict"]
+  FVC_predicted["FVC_predicted"]
+  Gamma["Gamma"]
+  KeepLast["KeepLast"]
+  Normal["Normal"]
+  NormalMeanVariance["NormalMeanVariance"]
+  a["a"]
+  abs["abs"]
+  b["b"]
+  c["c"]
+  code["code"]
+  color["color"]
+  constraints["constraints"]
+  d["d"]
+  data["data"]
+  dataset["dataset"]
+  delta["delta"]
+  estimated_σ["estimated_σ"]
+  false["false"]
+  fill["fill"]
+  fillalpha["fillalpha"]
+  first["first"]
+  getindex["getindex"]
+  i["i"]
+  id["id"]
+  info["info"]
+  inv["inv"]
+  label["label"]
+  layout["layout"]
+  legend["legend"]
+  length["length"]
+  local p1["local p1"]
+  local p2["local p2"]
+  local p3["local p3"]
+  local p4["local p4"]
+  local p5["local p5"]
+  local p6["local p6"]
+  local α["local α"]
+  local αsmoking["local αsmoking"]
+  local β["local β"]
+  local βsmoking["local βsmoking"]
+  local μ_α["local μ_α"]
+  local μ_β["local μ_β"]
+  map["map"]
+  mean["mean"]
+  model["model"]
+  n_codes["n_codes"]
+  n_patients["n_patients"]
+  n_smoking_statuses["n_smoking_statuses"]
+  p["p"]
+  p1["p1"]
+  p2["p2"]
+  p3["p3"]
+  partially_pooled["partially_pooled"]
+  partially_pooled_constraints["partially_pooled_constraints"]
+  partially_pooled_inference["partially_pooled_inference"]
+  partially_pooled_inference_results["partially_pooled_inference_results"]
+  partially_pooled_with_smoking["partially_pooled_with_smoking"]
+  partially_pooled_with_smoking_inference_results["partially_pooled_with_smoking_inference_results"]
+  partially_pooled_with_smooking_constraints["partially_pooled_with_smooking_constraints"]
+  patient["patient"]
+  patient_code_column["patient_code_column"]
+  patient_code_encoder["patient_code_encoder"]
+  patient_codes["patient_codes"]
+  patient_id["patient_id"]
+  patient_ids["patient_ids"]
+  patient_α["patient_α"]
+  patientchart["patientchart"]
+  patientchart_bayesian["patientchart_bayesian"]
+  patientinfo["patientinfo"]
+  plot["plot"]
+  plot(p1, p2, p3, layout["plot(p1, p2, p3, layout"]
+  pm["pm"]
+  precision["precision"]
+  predict_weeks["predict_weeks"]
+  predicted["predicted"]
+  pv["pv"]
+  q["q"]
+  q(FVC_est, σ)["q(FVC_est, σ)"]
+  q(α)["q(α)"]
+  q(β)["q(β)"]
+  q(μ_α, σ_α, α)["q(μ_α, σ_α, α)"]
+  q(μ_α, σ_α, μ_β, σ_β, σ)["q(μ_α, σ_α, μ_β, σ_β, σ)"]
+  q(μ_α_global, σ_α_global, α)["q(μ_α_global, σ_α_global, α)"]
+  q(μ_α_global, σ_α_global, μ_β_global, σ_β_global)["q(μ_α_global, σ_α_global, μ_β_global, σ_β_global)"]
+  q(μ_α_global, σ_α_global, μ_β_global, σ_β_global, σ)["q(μ_α_global, σ_α_global, μ_β_global, σ_β_global, σ)"]
+  q(μ_α_smoking_status, μ_β_smoking_status, σ_α_global, σ_β_global)["q(μ_α_smoking_status, μ_β_smoking_status, σ_α_global, σ_β_global)"]
+  q(μ_β, σ_β, β)["q(μ_β, σ_β, β)"]
+  q(μ_β_global, σ_β_global, β)["q(μ_β_global, σ_β_global, β)"]
+  q(σ)["q(σ)"]
+  q(σ_α)["q(σ_α)"]
+  q(σ_α_global)["q(σ_α_global)"]
+  q(σ_β)["q(σ_β)"]
+  q(σ_β_global)["q(σ_β_global)"]
+  range["range"]
+  results["results"]
+  return plot!(p, predict_weeks, getindex_(predicted, 1), ribbon["return plot!(p, predict_weeks, getindex.(predicted, 1), ribbon"]
+  returnvars["returnvars"]
+  scale["scale"]
+  shape["shape"]
+  sigma_c["sigma_c"]
+  size["size"]
+  smoking_code_encoder["smoking_code_encoder"]
+  smoking_id_mapping["smoking_id_mapping"]
+  smoking_status["smoking_status"]
+  smoking_status_patient_mapping["smoking_status_patient_mapping"]
+  std["std"]
+  title["title"]
+  vague["vague"]
+  values["values"]
+  var["var"]
+  weeks["weeks"]
+  α["α"]
+  β["β"]
+  μ(α)["μ(α)"]
+  μ(β)["μ(β)"]
+  μ_α["μ_α"]
+  μ_α_global["μ_α_global"]
+  μ_α_smoking_status["μ_α_smoking_status"]
+  μ_β["μ_β"]
+  μ_β_global["μ_β_global"]
+  μ_β_smoking_status["μ_β_smoking_status"]
+  σ["σ"]
+  σ_α["σ_α"]
+  σ_α_global["σ_α_global"]
+  σ_β["σ_β"]
+  σ_β_global["σ_β_global"]
+  Dict --> patient_code_encoder
+  Dict --> smoking_code_encoder
+  Dict --> smoking_id_mapping
+  FVC_est --> data
+  FVC_predict --> FVC_predicted
+  FVC_predicted --> sigma_c
+  Gamma --> q(σ)
+  Gamma --> q(σ_α)
+  Gamma --> q(σ_α_global)
+  Gamma --> q(σ_β)
+  Gamma --> q(σ_β_global)
+  Gamma --> σ
+  Gamma --> σ_α
+  Gamma --> σ_α_global
+  Gamma --> σ_β
+  Gamma --> σ_β_global
+  KeepLast --> returnvars
+  Normal --> data
+  Normal --> local μ_α
+  Normal --> local μ_β
+  Normal --> α
+  Normal --> β
+  Normal --> μ_α
+  Normal --> μ_α_global
+  Normal --> μ_α_smoking_status
+  Normal --> μ_β
+  Normal --> μ_β_global
+  Normal --> μ_β_smoking_status
+  NormalMeanVariance --> q(α)
+  NormalMeanVariance --> q(β)
+  NormalMeanVariance --> μ(α)
+  NormalMeanVariance --> μ(β)
+  a --> plot(p1, p2, p3, layout
+  abs --> delta
+  b --> plot(p1, p2, p3, layout
+  c --> plot(p1, p2, p3, layout
+  code --> smoking_id_mapping
+  color --> return plot!(p, predict_weeks, getindex_(predicted, 1), ribbon
+  d --> local α
+  d --> local αsmoking
+  d --> local β
+  d --> local βsmoking
+  dataset --> FVC_obs
+  dataset --> delta
+  dataset --> info
+  dataset --> p
+  dataset --> p1
+  dataset --> p2
+  dataset --> p3
+  dataset --> partially_pooled_inference_results
+  dataset --> partially_pooled_with_smoking_inference_results
+  dataset --> patient_codes
+  dataset --> weeks
+  false --> local p1
+  false --> local p2
+  false --> local p3
+  false --> local p4
+  false --> local p5
+  false --> local p6
+  fill --> local p1
+  fill --> local p2
+  fillalpha --> local p1
+  fillalpha --> local p2
+  first --> smoking_status
+  getindex --> return plot!(p, predict_weeks, getindex_(predicted, 1), ribbon
+  i --> data
+  i --> α
+  i --> β
+  id --> smoking_status_patient_mapping
+  inv --> estimated_σ
+  label --> local p1
+  label --> local p2
+  layout --> plot(p1, p2, p3, layout
+  legend --> local p3
+  legend --> local p4
+  legend --> local p5
+  legend --> local p6
+  length --> n_codes
+  length --> n_patients
+  length --> n_smoking_statuses
+  map --> local α
+  map --> local αsmoking
+  map --> local β
+  map --> local βsmoking
+  map --> patient_code_column
+  map --> predicted
+  map --> smoking_status_patient_mapping
+  mean --> data
+  mean --> pm
+  mean --> α
+  mean --> β
+  mean --> μ_α
+  mean --> μ_α_global
+  mean --> μ_α_smoking_status
+  mean --> μ_β
+  mean --> μ_β_global
+  mean --> μ_β_smoking_status
+  partially_pooled --> model
+  partially_pooled_constraints --> constraints
+  partially_pooled_inference --> partially_pooled_inference_results
+  partially_pooled_inference_results --> p1
+  partially_pooled_inference_results --> p2
+  partially_pooled_inference_results --> p3
+  partially_pooled_with_smoking --> partially_pooled_with_smoking_inference_results
+  partially_pooled_with_smoking_inference_results --> p1
+  partially_pooled_with_smoking_inference_results --> p2
+  partially_pooled_with_smoking_inference_results --> p3
+  partially_pooled_with_smooking_constraints --> constraints
+  patient --> patient_code_column
+  patient --> patient_code_encoder
+  patient_code_encoder --> p1
+  patient_code_encoder --> p2
+  patient_code_encoder --> p3
+  patient_code_encoder --> patient_code_column
+  patient_codes --> model
+  patient_codes --> n_codes
+  patient_id --> info
+  patient_id --> p
+  patient_id --> smoking_status
+  patient_ids --> patient_code_column
+  patient_α --> pm
+  patient_α --> pv
+  patientchart --> p
+  patientchart_bayesian --> p1
+  patientchart_bayesian --> p2
+  patientchart_bayesian --> p3
+  patientinfo --> info
+  plot --> local p1
+  plot --> local p2
+  plot --> local p3
+  plot --> local p4
+  plot --> local p5
+  plot --> local p6
+  precision --> data
+  precision --> α
+  precision --> β
+  precision --> μ_α_smoking_status
+  precision --> μ_β_smoking_status
+  predict_weeks --> predicted
+  predicted --> return plot!(p, predict_weeks, getindex_(predicted, 1), ribbon
+  q --> q(FVC_est, σ)
+  q --> q(μ_α, σ_α, α)
+  q --> q(μ_α, σ_α, μ_β, σ_β, σ)
+  q --> q(μ_α_global, σ_α_global, α)
+  q --> q(μ_α_global, σ_α_global, μ_β_global, σ_β_global)
+  q --> q(μ_α_global, σ_α_global, μ_β_global, σ_β_global, σ)
+  q --> q(μ_α_smoking_status, μ_β_smoking_status, σ_α_global, σ_β_global)
+  q --> q(μ_β, σ_β, β)
+  q --> q(μ_β_global, σ_β_global, β)
+  range --> predict_weeks
+  results --> FVC_predicted
+  scale --> σ
+  scale --> σ_α
+  scale --> σ_α_global
+  scale --> σ_β
+  scale --> σ_β_global
+  shape --> σ
+  shape --> σ_α
+  shape --> σ_α_global
+  shape --> σ_β
+  shape --> σ_β_global
+  size --> plot(p1, p2, p3, layout
+  smoking_code_encoder --> smoking_status_patient_mapping
+  smoking_status --> smoking_id_mapping
+  smoking_status_patient_mapping --> partially_pooled_with_smoking_inference_results
+  smoking_status_patient_mapping --> α
+  smoking_status_patient_mapping --> β
+  std --> sigma_c
+  title --> local p1
+  title --> local p2
+  title --> local p3
+  title --> local p4
+  title --> local p5
+  title --> local p6
+  vague --> q(α)
+  vague --> q(β)
+  vague --> q(σ)
+  vague --> q(σ_α)
+  vague --> q(σ_β)
+  vague --> μ(α)
+  vague --> μ(β)
+  values --> FVC_obs
+  values --> patient_codes
+  values --> weeks
+  var --> pv
+  var --> μ_α
+  var --> μ_α_global
+  var --> μ_β
+  var --> μ_β_global
+  weeks --> model
+  μ_α --> local p1
+  μ_α --> q(μ_α, σ_α, α)
+  μ_α --> α
+  μ_α_global --> q(μ_α_global, σ_α_global, α)
+  μ_α_global --> μ_α_smoking_status
+  μ_α_smoking_status --> α
+  μ_β --> local p2
+  μ_β --> q(μ_β, σ_β, β)
+  μ_β --> β
+  μ_β_global --> q(μ_β_global, σ_β_global, β)
+  μ_β_global --> μ_β_smoking_status
+  μ_β_smoking_status --> β
+  σ --> data
+  σ_α --> α
+  σ_α_global --> α
+  σ_α_global --> μ_α_smoking_status
+  σ_β --> β
+  σ_β_global --> β
+  σ_β_global --> μ_β_smoking_status

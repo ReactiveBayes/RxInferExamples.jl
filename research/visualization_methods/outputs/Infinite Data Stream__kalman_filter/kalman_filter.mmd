@@ -1,0 +1,35 @@
+graph TD
+  Gamma["Gamma"]
+  Normal["Normal"]
+  mean["mean"]
+  precision["precision"]
+  rate["rate"]
+  shape["shape"]
+  variance["variance"]
+  x_current["x_current"]
+  x_prev["x_prev"]
+  x_prev_mean["x_prev_mean"]
+  x_prev_var["x_prev_var"]
+  y["y"]
+  τ["τ"]
+  τ_rate["τ_rate"]
+  τ_shape["τ_shape"]
+  Gamma --> τ
+  Normal --> x_current
+  Normal --> x_prev
+  Normal --> y
+  mean --> x_current
+  mean --> x_prev
+  mean --> y
+  precision --> x_current
+  precision --> y
+  rate --> τ
+  shape --> τ
+  variance --> x_prev
+  x_current --> y
+  x_prev --> x_current
+  x_prev_mean --> x_prev
+  x_prev_var --> x_prev
+  τ --> y
+  τ_rate --> τ
+  τ_shape --> τ

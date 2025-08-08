@@ -1,0 +1,18 @@
+digraph G {
+  "AR" [label="AR"];
+  "ARMeta" [label="ARMeta"];
+  "Multivariate" [label="Multivariate"];
+  "meta" [label="meta"];
+  "order" [label="order"];
+  "x" [label="x"];
+  "x_prev" [label="x_prev"];
+  "γ" [label="γ"];
+  "θ" [label="θ"];
+  "AR" -> "x";
+  "ARMeta" -> "meta";
+  "Multivariate" -> "meta";
+  "order" -> "meta";
+  "x_prev" -> "x";
+  "γ" -> "x";
+  "θ" -> "x";
+}

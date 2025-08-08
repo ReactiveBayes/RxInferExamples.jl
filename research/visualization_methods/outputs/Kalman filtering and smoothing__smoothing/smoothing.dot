@@ -1,0 +1,31 @@
+digraph G {
+  "Gamma" [label="Gamma"];
+  "Normal" [label="Normal"];
+  "P" [label="P"];
+  "i" [label="i"];
+  "mean" [label="mean"];
+  "precision" [label="precision"];
+  "scale" [label="scale"];
+  "shape" [label="shape"];
+  "var" [label="var"];
+  "x" [label="x"];
+  "x_prev" [label="x_prev"];
+  "x_prior" [label="x_prior"];
+  "y" [label="y"];
+  "Gamma" -> "P";
+  "Normal" -> "x";
+  "Normal" -> "x_prior";
+  "Normal" -> "y";
+  "P" -> "y";
+  "i" -> "y";
+  "mean" -> "x";
+  "mean" -> "x_prior";
+  "mean" -> "y";
+  "precision" -> "x";
+  "precision" -> "y";
+  "scale" -> "P";
+  "shape" -> "P";
+  "var" -> "x_prior";
+  "x" -> "y";
+  "x_prev" -> "x";
+}

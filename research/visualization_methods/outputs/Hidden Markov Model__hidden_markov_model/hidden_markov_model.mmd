@@ -1,0 +1,20 @@
+graph TD
+  A["A"]
+  B["B"]
+  Categorical["Categorical"]
+  DirichletCollection["DirichletCollection"]
+  DiscreteTransition["DiscreteTransition"]
+  s["s"]
+  s_0["s_0"]
+  s_prev["s_prev"]
+  t["t"]
+  x["x"]
+  A --> s
+  B --> x
+  Categorical --> s_0
+  DirichletCollection --> A
+  DiscreteTransition --> s
+  DiscreteTransition --> x
+  s --> x
+  s_prev --> s
+  t --> x

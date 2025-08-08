@@ -1,0 +1,34 @@
+graph TD
+  Bernoulli["Bernoulli"]
+  Beta["Beta"]
+  Gamma["Gamma"]
+  Normal["Normal"]
+  NormalMixture["NormalMixture"]
+  i["i"]
+  m["m"]
+  mean["mean"]
+  p["p"]
+  rate["rate"]
+  s["s"]
+  shape["shape"]
+  switch["switch"]
+  variance["variance"]
+  w["w"]
+  y["y"]
+  z["z"]
+  Bernoulli --> z
+  Beta --> s
+  Gamma --> w
+  Normal --> m
+  NormalMixture --> y
+  i --> y
+  m --> y
+  mean --> m
+  p --> y
+  rate --> w
+  s --> z
+  shape --> w
+  switch --> y
+  variance --> m
+  w --> y
+  z --> y

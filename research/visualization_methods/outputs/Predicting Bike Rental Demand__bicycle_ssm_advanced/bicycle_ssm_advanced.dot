@@ -1,0 +1,29 @@
+digraph G {
+  "CTransition" [label="CTransition"];
+  "MvNormal" [label="MvNormal"];
+  "Normal" [label="Normal"];
+  "P" [label="P"];
+  "_y" [label="_y"];
+  "a" [label="a"];
+  "h" [label="h"];
+  "h_prev" [label="h_prev"];
+  "i" [label="i"];
+  "softdot" [label="softdot"];
+  "x" [label="x"];
+  "y" [label="y"];
+  "γ" [label="γ"];
+  "θ" [label="θ"];
+  "CTransition" -> "h";
+  "MvNormal" -> "x";
+  "Normal" -> "y";
+  "P" -> "h";
+  "a" -> "h";
+  "h" -> "_y";
+  "h_prev" -> "h";
+  "i" -> "_y";
+  "i" -> "x";
+  "i" -> "y";
+  "softdot" -> "_y";
+  "γ" -> "_y";
+  "θ" -> "_y";
+}

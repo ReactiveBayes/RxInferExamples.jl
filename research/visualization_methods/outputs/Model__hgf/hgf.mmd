@@ -1,0 +1,43 @@
+graph TD
+  GCV["GCV"]
+  Normal["Normal"]
+  mean["mean"]
+  variance["variance"]
+  x_next["x_next"]
+  x_prev["x_prev"]
+  x_prev_mean["x_prev_mean"]
+  x_prev_var["x_prev_var"]
+  y["y"]
+  y_variance["y_variance"]
+  z_next["z_next"]
+  z_prev["z_prev"]
+  z_prev_mean["z_prev_mean"]
+  z_prev_var["z_prev_var"]
+  z_variance["z_variance"]
+  κ["κ"]
+  ω["ω"]
+  GCV --> x_next
+  Normal --> x_prev
+  Normal --> y
+  Normal --> z_next
+  Normal --> z_prev
+  mean --> x_prev
+  mean --> y
+  mean --> z_next
+  mean --> z_prev
+  variance --> x_prev
+  variance --> y
+  variance --> z_next
+  variance --> z_prev
+  x_next --> y
+  x_prev --> x_next
+  x_prev_mean --> x_prev
+  x_prev_var --> x_prev
+  y_variance --> y
+  z_next --> x_next
+  z_prev --> z_next
+  z_prev_mean --> z_prev
+  z_prev_var --> z_prev
+  z_variance --> z_next
+  κ --> x_next
+  ω --> x_next

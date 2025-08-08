@@ -1,0 +1,16 @@
+graph TD
+  MvNormalMeanCovariance["MvNormalMeanCovariance"]
+  MvNormalMeanPrecision["MvNormalMeanPrecision"]
+  R["R"]
+  W["W"]
+  t["t"]
+  y["y"]
+  z["z"]
+  MvNormalMeanCovariance --> y
+  MvNormalMeanCovariance --> z
+  MvNormalMeanPrecision --> y
+  MvNormalMeanPrecision --> z
+  R --> y
+  W --> z
+  t --> y
+  z --> z

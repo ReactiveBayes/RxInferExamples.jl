@@ -1,0 +1,83 @@
+graph TD
+  Gamma["Gamma"]
+  NonlinearNode["NonlinearNode"]
+  Normal["Normal"]
+  NormalMeanPrecision["NormalMeanPrecision"]
+  PosteriorforθlabelEstimatedlegendbottomrightfilltruefillopacity02xlim["PosteriorforθlabelEstimatedlegendbottomrightfilltruefillopacity02xlim"]
+  StableRNG["StableRNG"]
+  abs["abs"]
+  constraints["constraints"]
+  data["data"]
+  estimated["estimated"]
+  initialization["initialization"]
+  m["m"]
+  m_μ["m_μ"]
+  m_σ["m_σ"]
+  mean["mean"]
+  meta["meta"]
+  model["model"]
+  nconstsraints["nconstsraints"]
+  ninit["ninit"]
+  nmeta["nmeta"]
+  nonlinear_estimation["nonlinear_estimation"]
+  nonlinear_fn["nonlinear_fn"]
+  nonlinear_fn(x)["nonlinear_fn(x)"]
+  nsamples["nsamples"]
+  plot(estimated, title["plot(estimated, title"]
+  precision["precision"]
+  q["q"]
+  q(m)["q(m)"]
+  q(w)["q(w)"]
+  q(θ, w, m)["q(θ, w, m)"]
+  rand["rand"]
+  rng["rng"]
+  seed["seed"]
+  vague["vague"]
+  variance["variance"]
+  w["w"]
+  y["y"]
+  ylim["ylim"]
+  θ["θ"]
+  θ_μ["θ_μ"]
+  θ_σ["θ_σ"]
+  Gamma --> q(w)
+  NonlinearNode --> w
+  Normal --> estimated
+  Normal --> m
+  Normal --> y
+  Normal --> θ
+  NormalMeanPrecision --> q(m)
+  PosteriorforθlabelEstimatedlegendbottomrightfilltruefillopacity02xlim --> plot(estimated, title
+  StableRNG --> rng
+  abs --> nonlinear_fn(x)
+  m --> y
+  m_μ --> m
+  m_μ --> model
+  m_σ --> m
+  mean --> m
+  mean --> y
+  mean --> θ
+  nconstsraints --> constraints
+  ninit --> initialization
+  nmeta --> meta
+  nonlinear_estimation --> model
+  nonlinear_fn --> meta
+  nonlinear_fn --> w
+  nsamples --> constraints
+  nsamples --> meta
+  precision --> y
+  q --> q(θ, w, m)
+  rand --> data
+  rng --> data
+  seed --> rng
+  vague --> q(m)
+  vague --> q(w)
+  variance --> m
+  variance --> θ
+  w --> data
+  w --> y
+  ylim --> plot(estimated, title
+  θ --> w
+  θ_μ --> model
+  θ_μ --> θ
+  θ_σ --> θ

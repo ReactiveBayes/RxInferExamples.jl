@@ -1,0 +1,24 @@
+digraph G {
+  "BinomialPolya" [label="BinomialPolya"];
+  "MvNormalWeightedMeanPrecision" [label="MvNormalWeightedMeanPrecision"];
+  "RequireMessageFunctionalDependencies" [label="RequireMessageFunctionalDependencies"];
+  "X" [label="X"];
+  "dependencies" [label="dependencies"];
+  "i" [label="i"];
+  "n_trials" [label="n_trials"];
+  "prior_precision" [label="prior_precision"];
+  "prior_xi" [label="prior_xi"];
+  "y" [label="y"];
+  "β" [label="β"];
+  "BinomialPolya" -> "y";
+  "MvNormalWeightedMeanPrecision" -> "β";
+  "RequireMessageFunctionalDependencies" -> "dependencies";
+  "X" -> "y";
+  "i" -> "y";
+  "n_trials" -> "y";
+  "prior_precision" -> "dependencies";
+  "prior_precision" -> "β";
+  "prior_xi" -> "β";
+  "β" -> "dependencies";
+  "β" -> "y";
+}

@@ -3,7 +3,7 @@
 ### Run
 - **Tests**: `julia --project=research/hgf -e "using Pkg; Pkg.instantiate(); Pkg.test()"`
 - **Example**: `julia --project=research/hgf research/hgf/run_hgf.jl`
-- **Outputs**: saved under `results/<timestamp>/HGF/` (PNGs, GIFs, MP4s, JSON report, summary.txt).
+- **Outputs**: saved under `research/hgf/output/` (PNGs, GIFs, MP4s, JSON report, summary.txt). Use `HGF.ensure_output_dir()` to create it programmatically.
 
 ### Modules
 - **Utils.jl**: parameters and synthetic data generation

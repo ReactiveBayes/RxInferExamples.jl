@@ -1,0 +1,16 @@
+digraph G {
+  "Categorical" [label="Categorical"];
+  "DiscreteTransition" [label="DiscreteTransition"];
+  "clouded" [label="clouded"];
+  "rain" [label="rain"];
+  "sprinkler" [label="sprinkler"];
+  "wet_grass" [label="wet_grass"];
+  "Categorical" -> "clouded";
+  "DiscreteTransition" -> "rain";
+  "DiscreteTransition" -> "sprinkler";
+  "DiscreteTransition" -> "wet_grass";
+  "clouded" -> "rain";
+  "clouded" -> "sprinkler";
+  "rain" -> "wet_grass";
+  "sprinkler" -> "wet_grass";
+}

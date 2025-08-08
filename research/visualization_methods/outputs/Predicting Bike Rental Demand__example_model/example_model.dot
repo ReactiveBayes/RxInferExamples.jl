@@ -1,0 +1,11 @@
+digraph G {
+  "NormalMeanPrecision" [label="NormalMeanPrecision"];
+  "h" [label="h"];
+  "x" [label="x"];
+  "y" [label="y"];
+  "NormalMeanPrecision" -> "h";
+  "NormalMeanPrecision" -> "x";
+  "NormalMeanPrecision" -> "y";
+  "h" -> "x";
+  "x" -> "y";
+}

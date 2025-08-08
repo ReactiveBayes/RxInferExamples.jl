@@ -1,0 +1,16 @@
+digraph G {
+  "MvNormal" [label="MvNormal"];
+  "Normal" [label="Normal"];
+  "h" [label="h"];
+  "h_prev" [label="h_prev"];
+  "i" [label="i"];
+  "x" [label="x"];
+  "y" [label="y"];
+  "MvNormal" -> "h";
+  "MvNormal" -> "x";
+  "Normal" -> "y";
+  "h" -> "y";
+  "h_prev" -> "h";
+  "i" -> "x";
+  "i" -> "y";
+}

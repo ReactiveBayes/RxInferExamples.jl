@@ -1,0 +1,43 @@
+graph TD
+  AR["AR"]
+  Gamma["Gamma"]
+  Multivariate["Multivariate"]
+  MvNormal["MvNormal"]
+  Normal["Normal"]
+  ReactiveMPar_unit["ReactiveMPar_unit"]
+  c["c"]
+  i["i"]
+  mean["mean"]
+  order["order"]
+  precision["precision"]
+  x["x"]
+  x0["x0"]
+  x_prev["x_prev"]
+  y["y"]
+  α["α"]
+  β["β"]
+  γ["γ"]
+  θ["θ"]
+  τ["τ"]
+  AR --> x
+  Gamma --> τ
+  Multivariate --> c
+  MvNormal --> x0
+  MvNormal --> θ
+  Normal --> y
+  ReactiveMPar_unit --> c
+  i --> y
+  mean --> x0
+  mean --> y
+  mean --> θ
+  order --> c
+  precision --> x0
+  precision --> y
+  precision --> θ
+  x --> y
+  x_prev --> x
+  α --> τ
+  β --> τ
+  γ --> y
+  θ --> x
+  τ --> x

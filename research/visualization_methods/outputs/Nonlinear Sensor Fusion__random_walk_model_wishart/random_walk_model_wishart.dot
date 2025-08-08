@@ -1,0 +1,20 @@
+digraph G {
+  "MvNormalMeanCovariance" [label="MvNormalMeanCovariance"];
+  "MvNormalMeanPrecision" [label="MvNormalMeanPrecision"];
+  "Q" [label="Q"];
+  "R" [label="R"];
+  "Wishart" [label="Wishart"];
+  "t" [label="t"];
+  "y" [label="y"];
+  "z" [label="z"];
+  "MvNormalMeanCovariance" -> "y";
+  "MvNormalMeanCovariance" -> "z";
+  "MvNormalMeanPrecision" -> "y";
+  "MvNormalMeanPrecision" -> "z";
+  "Q" -> "z";
+  "R" -> "y";
+  "Wishart" -> "Q";
+  "Wishart" -> "R";
+  "t" -> "y";
+  "z" -> "z";
+}

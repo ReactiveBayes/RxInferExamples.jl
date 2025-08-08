@@ -1,0 +1,34 @@
+digraph G {
+  "AR" [label="AR"];
+  "Normal" [label="Normal"];
+  "S" [label="S"];
+  "c" [label="c"];
+  "dot" [label="dot"];
+  "e" [label="e"];
+  "h" [label="h"];
+  "mean" [label="mean"];
+  "precision" [label="precision"];
+  "q_order" [label="q_order"];
+  "shift" [label="shift"];
+  "x" [label="x"];
+  "z" [label="z"];
+  "zeros" [label="zeros"];
+  "γ" [label="γ"];
+  "η" [label="η"];
+  "τ" [label="τ"];
+  "AR" -> "z";
+  "Normal" -> "e";
+  "c" -> "x";
+  "dot" -> "x";
+  "h" -> "z";
+  "mean" -> "e";
+  "precision" -> "e";
+  "q_order" -> "S";
+  "q_order" -> "c";
+  "shift" -> "S";
+  "z" -> "x";
+  "zeros" -> "c";
+  "γ" -> "e";
+  "η" -> "z";
+  "τ" -> "z";
+}

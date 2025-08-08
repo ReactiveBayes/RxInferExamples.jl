@@ -1,0 +1,31 @@
+graph TD
+  A["A"]
+  B["B"]
+  DiscreteTransition["DiscreteTransition"]
+  controls["controls"]
+  current_state["current_state"]
+  current_y["current_y"]
+  future_y["future_y"]
+  m_A["m_A"]
+  m_B["m_B"]
+  prev_state["prev_state"]
+  previous_control["previous_control"]
+  previous_state["previous_state"]
+  s["s"]
+  t["t"]
+  A --> current_y
+  B --> current_state
+  DiscreteTransition --> current_state
+  DiscreteTransition --> current_y
+  DiscreteTransition --> future_y
+  DiscreteTransition --> s
+  controls --> s
+  current_state --> current_y
+  m_A --> future_y
+  m_B --> s
+  prev_state --> s
+  previous_control --> current_state
+  previous_state --> current_state
+  s --> future_y
+  t --> future_y
+  t --> s

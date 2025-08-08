@@ -1,0 +1,83 @@
+graph TD
+  MvNormal["MvNormal"]
+  X["X"]
+  X_benchmark["X_benchmark"]
+  Y["Y"]
+  Y_benchmark["Y_benchmark"]
+  combined_basis["combined_basis"]
+  combined_basis_ωs_all_data["combined_basis_ωs_all_data"]
+  covariance["covariance"]
+  dataset["dataset"]
+  dfs["dfs"]
+  do["do"]
+  fill["fill"]
+  fontfamily["fontfamily"]
+  function plot_inference_results_for(; ϕs, datasets, title["function plot_inference_results_for(; ϕs, datasets, title"]
+  i["i"]
+  infer_ω["infer_ω"]
+  labels["labels"]
+  length["length"]
+  map["map"]
+  mean["mean"]
+  p["p"]
+  p1["p1"]
+  p2["p2"]
+  plot["plot"]
+  ps["ps"]
+  rand["rand"]
+  range["range"]
+  rl["rl"]
+  rng["rng"]
+  rngStableRNG["rngStableRNG"]
+  rr["rr"]
+  x["x"]
+  xs["xs"]
+  y["y"]
+  zeros["zeros"]
+  Λ["Λ"]
+  Σ["Σ"]
+  Φₓ["Φₓ"]
+  μ["μ"]
+  ω["ω"]
+  ϕifor_in11iin1length["ϕifor_in11iin1length"]
+  ϕs["ϕs"]
+  MvNormal --> y
+  MvNormal --> ω
+  X --> combined_basis_ωs_all_data
+  Y --> combined_basis_ωs_all_data
+  combined_basis --> combined_basis_ωs_all_data
+  covariance --> y
+  covariance --> ω
+  dataset --> dfs
+  dataset --> ps
+  do --> dfs
+  do --> ps
+  fill --> dataset
+  fontfamily --> p
+  i --> dataset
+  infer_ω --> combined_basis_ωs_all_data
+  length --> xs
+  map --> dfs
+  map --> ps
+  mean --> y
+  mean --> ω
+  p1 --> p
+  p2 --> p
+  plot --> p
+  rand --> Y_benchmark
+  range --> X_benchmark
+  range --> xs
+  rl --> xs
+  rng --> Y_benchmark
+  rngStableRNG --> function plot_inference_results_for(; ϕs, datasets, title
+  rr --> xs
+  x --> combined_basis_ωs_all_data
+  y --> combined_basis_ωs_all_data
+  zeros --> μ
+  Λ --> y
+  Σ --> ω
+  Φₓ --> y
+  μ --> ω
+  ω --> y
+  ϕifor_in11iin1length --> labels
+  ϕs --> combined_basis_ωs_all_data

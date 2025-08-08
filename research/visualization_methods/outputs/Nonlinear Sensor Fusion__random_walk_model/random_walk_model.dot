@@ -1,0 +1,17 @@
+digraph G {
+  "MvNormalMeanCovariance" [label="MvNormalMeanCovariance"];
+  "MvNormalMeanPrecision" [label="MvNormalMeanPrecision"];
+  "R" [label="R"];
+  "W" [label="W"];
+  "t" [label="t"];
+  "y" [label="y"];
+  "z" [label="z"];
+  "MvNormalMeanCovariance" -> "y";
+  "MvNormalMeanCovariance" -> "z";
+  "MvNormalMeanPrecision" -> "y";
+  "MvNormalMeanPrecision" -> "z";
+  "R" -> "y";
+  "W" -> "z";
+  "t" -> "y";
+  "z" -> "z";
+}

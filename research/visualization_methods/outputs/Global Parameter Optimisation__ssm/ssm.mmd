@@ -1,0 +1,33 @@
+graph TD
+  As["As"]
+  B["B"]
+  Matrix["Matrix"]
+  MvNormal["MvNormal"]
+  Q["Q"]
+  R["R"]
+  cov["cov"]
+  i["i"]
+  mean["mean"]
+  x["x"]
+  x_prior_cov["x_prior_cov"]
+  x_prior_mean["x_prior_mean"]
+  y["y"]
+  zeros["zeros"]
+  As --> x
+  B --> y
+  Matrix --> x_prior_cov
+  MvNormal --> x
+  MvNormal --> y
+  Q --> x
+  R --> y
+  cov --> x
+  cov --> y
+  i --> x
+  i --> y
+  mean --> x
+  mean --> y
+  x --> x
+  x --> y
+  x_prior_cov --> x
+  x_prior_mean --> x
+  zeros --> x_prior_mean

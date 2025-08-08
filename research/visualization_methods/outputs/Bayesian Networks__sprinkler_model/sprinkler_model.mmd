@@ -1,0 +1,15 @@
+graph TD
+  Categorical["Categorical"]
+  DiscreteTransition["DiscreteTransition"]
+  clouded["clouded"]
+  rain["rain"]
+  sprinkler["sprinkler"]
+  wet_grass["wet_grass"]
+  Categorical --> clouded
+  DiscreteTransition --> rain
+  DiscreteTransition --> sprinkler
+  DiscreteTransition --> wet_grass
+  clouded --> rain
+  clouded --> sprinkler
+  rain --> wet_grass
+  sprinkler --> wet_grass

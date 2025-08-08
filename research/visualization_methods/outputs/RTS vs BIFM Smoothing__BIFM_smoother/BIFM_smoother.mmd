@@ -1,0 +1,40 @@
+graph TD
+  A["A"]
+  BIFM["BIFM"]
+  BIFMHelper["BIFMHelper"]
+  MvNormal["MvNormal"]
+  Wu["Wu"]
+  Wy["Wy"]
+  dim_lat["dim_lat"]
+  i["i"]
+  mean["mean"]
+  precision["precision"]
+  size["size"]
+  u["u"]
+  y["y"]
+  yt["yt"]
+  z["z"]
+  z_prior["z_prior"]
+  μu["μu"]
+  A --> dim_lat
+  BIFM --> yt
+  BIFMHelper --> z
+  MvNormal --> u
+  MvNormal --> y
+  MvNormal --> z_prior
+  Wu --> u
+  Wy --> y
+  i --> y
+  i --> yt
+  mean --> u
+  mean --> y
+  mean --> z_prior
+  precision --> u
+  precision --> y
+  precision --> z_prior
+  size --> dim_lat
+  u --> yt
+  yt --> y
+  z --> yt
+  z_prior --> z
+  μu --> u

@@ -1,0 +1,23 @@
+digraph G {
+  "Flow" [label="Flow"];
+  "MvNormalMeanCovariance" [label="MvNormalMeanCovariance"];
+  "MvNormalMeanPrecision" [label="MvNormalMeanPrecision"];
+  "Wishart" [label="Wishart"];
+  "k" [label="k"];
+  "x" [label="x"];
+  "y" [label="y"];
+  "y_lat" [label="y_lat"];
+  "z_Λ" [label="z_Λ"];
+  "z_μ" [label="z_μ"];
+  "Flow" -> "y_lat";
+  "MvNormalMeanCovariance" -> "y";
+  "MvNormalMeanCovariance" -> "z_μ";
+  "MvNormalMeanPrecision" -> "x";
+  "Wishart" -> "z_Λ";
+  "k" -> "y";
+  "k" -> "y_lat";
+  "x" -> "y_lat";
+  "y_lat" -> "y";
+  "z_Λ" -> "x";
+  "z_μ" -> "x";
+}

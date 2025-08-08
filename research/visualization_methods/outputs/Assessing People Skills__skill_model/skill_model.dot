@@ -1,0 +1,12 @@
+digraph G {
+  "Bernoulli" [label="Bernoulli"];
+  "Score" [label="Score"];
+  "i" [label="i"];
+  "r" [label="r"];
+  "s" [label="s"];
+  "t" [label="t"];
+  "Bernoulli" -> "s";
+  "Score" -> "r";
+  "i" -> "r";
+  "t" -> "r";
+}

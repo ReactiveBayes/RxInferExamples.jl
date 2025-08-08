@@ -1,0 +1,22 @@
+graph TD
+  Flow["Flow"]
+  MvNormalMeanCovariance["MvNormalMeanCovariance"]
+  MvNormalMeanPrecision["MvNormalMeanPrecision"]
+  Wishart["Wishart"]
+  k["k"]
+  x["x"]
+  y["y"]
+  y_lat["y_lat"]
+  z_Λ["z_Λ"]
+  z_μ["z_μ"]
+  Flow --> y_lat
+  MvNormalMeanCovariance --> y
+  MvNormalMeanCovariance --> z_μ
+  MvNormalMeanPrecision --> x
+  Wishart --> z_Λ
+  k --> y
+  k --> y_lat
+  x --> y_lat
+  y_lat --> y
+  z_Λ --> x
+  z_μ --> x

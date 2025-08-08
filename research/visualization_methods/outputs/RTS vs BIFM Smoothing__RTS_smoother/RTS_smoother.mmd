@@ -1,0 +1,36 @@
+graph TD
+  A["A"]
+  C["C"]
+  MvNormal["MvNormal"]
+  Wu["Wu"]
+  Wy["Wy"]
+  dim_lat["dim_lat"]
+  dim_out["dim_out"]
+  i["i"]
+  mean["mean"]
+  precision["precision"]
+  size["size"]
+  u["u"]
+  y["y"]
+  z["z"]
+  z_prev["z_prev"]
+  μu["μu"]
+  A --> dim_lat
+  C --> dim_out
+  C --> y
+  MvNormal --> u
+  MvNormal --> y
+  MvNormal --> z_prev
+  Wu --> u
+  Wy --> y
+  i --> y
+  mean --> u
+  mean --> y
+  mean --> z_prev
+  precision --> u
+  precision --> y
+  precision --> z_prev
+  size --> dim_lat
+  size --> dim_out
+  z --> y
+  μu --> u

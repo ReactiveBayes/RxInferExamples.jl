@@ -1,0 +1,23 @@
+graph TD
+  BinomialPolya["BinomialPolya"]
+  MvNormalWeightedMeanPrecision["MvNormalWeightedMeanPrecision"]
+  RequireMessageFunctionalDependencies["RequireMessageFunctionalDependencies"]
+  X["X"]
+  dependencies["dependencies"]
+  i["i"]
+  n_trials["n_trials"]
+  prior_precision["prior_precision"]
+  prior_xi["prior_xi"]
+  y["y"]
+  β["β"]
+  BinomialPolya --> y
+  MvNormalWeightedMeanPrecision --> β
+  RequireMessageFunctionalDependencies --> dependencies
+  X --> y
+  i --> y
+  n_trials --> y
+  prior_precision --> dependencies
+  prior_precision --> β
+  prior_xi --> β
+  β --> dependencies
+  β --> y

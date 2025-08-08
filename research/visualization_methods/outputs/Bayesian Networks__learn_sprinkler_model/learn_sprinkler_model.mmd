@@ -1,0 +1,22 @@
+graph TD
+  DirichletCollection["DirichletCollection"]
+  clouded_data["clouded_data"]
+  cpt_cloud_rain["cpt_cloud_rain"]
+  cpt_cloud_sprinkler["cpt_cloud_sprinkler"]
+  cpt_sprinkler_rain_wet_grass["cpt_sprinkler_rain_wet_grass"]
+  i["i"]
+  rain_data["rain_data"]
+  sprinkler_data["sprinkler_data"]
+  sprinkler_model["sprinkler_model"]
+  wet_grass_data["wet_grass_data"]
+  DirichletCollection --> cpt_cloud_rain
+  DirichletCollection --> cpt_cloud_sprinkler
+  DirichletCollection --> cpt_sprinkler_rain_wet_grass
+  clouded_data --> wet_grass_data
+  cpt_cloud_rain --> wet_grass_data
+  cpt_cloud_sprinkler --> wet_grass_data
+  cpt_sprinkler_rain_wet_grass --> wet_grass_data
+  i --> wet_grass_data
+  rain_data --> wet_grass_data
+  sprinkler_data --> wet_grass_data
+  sprinkler_model --> wet_grass_data

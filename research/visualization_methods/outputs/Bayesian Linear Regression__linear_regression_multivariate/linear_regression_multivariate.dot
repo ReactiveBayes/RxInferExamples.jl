@@ -1,0 +1,35 @@
+digraph G {
+  "InverseWishart" [label="InverseWishart"];
+  "MvNormal" [label="MvNormal"];
+  "W" [label="W"];
+  "a" [label="a"];
+  "b" [label="b"];
+  "covariance" [label="covariance"];
+  "dim" [label="dim"];
+  "mean" [label="mean"];
+  "x" [label="x"];
+  "y" [label="y"];
+  "y" [label="y "];
+  "InverseWishart" -> "W";
+  "MvNormal" -> "a";
+  "MvNormal" -> "b";
+  "MvNormal" -> "y";
+  "MvNormal" -> "y";
+  "W" -> "y";
+  "W" -> "y";
+  "a" -> "y";
+  "a" -> "y";
+  "b" -> "y";
+  "b" -> "y";
+  "covariance" -> "a";
+  "covariance" -> "b";
+  "covariance" -> "y";
+  "covariance" -> "y";
+  "dim" -> "W";
+  "mean" -> "a";
+  "mean" -> "b";
+  "mean" -> "y";
+  "mean" -> "y";
+  "x" -> "y";
+  "x" -> "y";
+}

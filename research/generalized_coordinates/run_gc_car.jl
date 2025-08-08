@@ -14,16 +14,20 @@ function _resolve_modules()
             GeneralizedCoordinatesExamples.GCUtils,
             GeneralizedCoordinatesExamples.GCModel,
             GeneralizedCoordinatesExamples.GCViz,
+            GeneralizedCoordinatesExamples.GCConfig,
+            GeneralizedCoordinatesExamples.GCGenerators,
         )
     catch
         include(joinpath(@__DIR__, "src", "GCUtils.jl")); @eval using .GCUtils
         include(joinpath(@__DIR__, "src", "GCModel.jl")); @eval using .GCModel
         include(joinpath(@__DIR__, "src", "GCViz.jl")); @eval using .GCViz
-        return (GCUtils, GCModel, GCViz)
+        include(joinpath(@__DIR__, "src", "GCConfig.jl")); @eval using .GCConfig
+        include(joinpath(@__DIR__, "src", "GCGenerators.jl")); @eval using .GCGenerators
+        return (GCUtils, GCModel, GCViz, GCConfig, GCGenerators)
     end
 end
 
-let (GCUtils, GCModel, GCViz) = _resolve_modules()
+let (GCUtils, GCModel, GCViz, GCConfig, GCGenerators) = _resolve_modules()
     # NOTE: Per requirements, no algorithmic fallbacks are permitted; run RxInfer end-to-end.
 
     # Config
@@ -38,12 +42,10 @@ let (GCUtils, GCModel, GCViz) = _resolve_modules()
     outdir = joinpath(@__DIR__, "outputs")
     isdir(outdir) || mkpath(outdir)
 
-    # Generate data
-    x_true, y = GCUtils.generate_gc_car_data(rng, n, dt; σ_a=σ_a, σ_obs_pos=σ_obs_pos, σ_obs_vel=σ_obs_vel)
+    # Scenario via config (still defaulting to constant accel)
+    scen = GCConfig.ScenarioConfig("default_constant_accel", n, dt, σ_a, σ_obs_pos, σ_obs_vel, :constant_accel, Dict{Symbol,Any}())
+    x_true, y, A, Q = GCGenerators.generate_scenario(rng, scen)
 
-    # Build model matrices
-    A, _, Qd = GCUtils.constant_acceleration_ABQ(dt; σ_a=σ_a)
-    Q = Matrix(Qd)
     B = isnan(σ_obs_vel) ? [1.0 0.0 0.0] : [1.0 0.0 0.0; 0.0 1.0 0.0]
     R = isnan(σ_obs_vel) ? Matrix(Diagonal([σ_obs_pos^2])) : Matrix(Diagonal([σ_obs_pos^2, σ_obs_vel^2]))
 
@@ -80,7 +82,7 @@ let (GCUtils, GCModel, GCViz) = _resolve_modules()
     fe = GCUtils.free_energy_timeseries(y, xmarginals, A, B, Q, R, x0_mean, x0_cov)
     println("Final total FE (approx): ", fe.total[end])
 
-    # Save posterior means/vars
+    # Save posterior means/vars and scenario metadata
     open(joinpath(outdir, "gc_posterior_summary.csv"), "w") do io
         header = "t,μ_pos,μ_vel,μ_acc,σ2_pos,σ2_vel,σ2_acc"
         println(io, header)
@@ -93,6 +95,19 @@ let (GCUtils, GCModel, GCViz) = _resolve_modules()
             end
             vdiag = Σraw isa AbstractVector ? Σraw : diag(Σraw)
             println(io, string(t, ",", μt[1], ",", μt[2], ",", μt[3], ",", vdiag[1], ",", vdiag[2], ",", vdiag[3]))
+        end
+    end
+    # Write scenario config snapshot
+    open(joinpath(outdir, "scenario_config.toml"), "w") do io
+        println(io, "name = \"" * scen.name * "\"")
+        println(io, "n = ", scen.n)
+        println(io, "dt = ", scen.dt)
+        println(io, "sigma_a = ", scen.σ_a)
+        println(io, "sigma_obs_pos = ", scen.σ_obs_pos)
+        println(io, "sigma_obs_vel = \"" * string(scen.σ_obs_vel) * "\"")
+        println(io, "generator = \"" * String(Symbol(scen.generator)) * "\"")
+        for (k,v) in scen.generator_kwargs
+            println(io, string(k), " = ", v)
         end
     end
 

@@ -1,0 +1,18 @@
+graph TD
+  Normal["Normal"]
+  P["P"]
+  i["i"]
+  mean["mean"]
+  var["var"]
+  x["x"]
+  x_prior["x_prior"]
+  y["y"]
+  Normal --> x_prior
+  Normal --> y
+  P --> y
+  i --> y
+  mean --> x_prior
+  mean --> y
+  var --> x_prior
+  var --> y
+  x --> y

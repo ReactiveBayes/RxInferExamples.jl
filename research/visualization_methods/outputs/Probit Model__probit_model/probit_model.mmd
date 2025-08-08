@@ -1,0 +1,34 @@
+graph TD
+  Normal["Normal"]
+  RequireMessageFunctionalDependencies["RequireMessageFunctionalDependencies"]
+  data_y["data_y"]
+  dependencies["dependencies"]
+  in["in"]
+  label["label"]
+  legend["legend"]
+  mean["mean"]
+  model["model"]
+  p["p"]
+  plot["plot"]
+  precision["precision"]
+  probit_model["probit_model"]
+  scatter["scatter"]
+  x["x"]
+  x_prev["x_prev"]
+  xlabel["xlabel"]
+  ylabel["ylabel"]
+  Normal --> x
+  RequireMessageFunctionalDependencies --> dependencies
+  data_y --> p
+  in --> dependencies
+  label --> p
+  legend --> p
+  mean --> x
+  p --> p
+  plot --> p
+  precision --> x
+  probit_model --> model
+  scatter --> p
+  x_prev --> x
+  xlabel --> p
+  ylabel --> p

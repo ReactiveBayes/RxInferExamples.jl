@@ -5,7 +5,7 @@ using Random
 using StableRNGs
 using Logging
 
-export HGFParams, default_hgf_params, generate_data
+export HGFParams, default_hgf_params, generate_data, get_output_dir, ensure_output_dir
 
 Base.@kwdef struct HGFParams
     seed::Int = 42
@@ -17,6 +17,16 @@ Base.@kwdef struct HGFParams
 end
 
 default_hgf_params() = HGFParams()
+
+function get_output_dir()
+    return normpath(joinpath(@__DIR__, "output"))
+end
+
+function ensure_output_dir()
+    outdir = get_output_dir()
+    isdir(outdir) || mkpath(outdir)
+    return outdir
+end
 
 function generate_data(params::HGFParams)
     rng = StableRNG(params.seed)

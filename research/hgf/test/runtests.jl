@@ -19,6 +19,10 @@ using .HGF
     @test haskey(smoothing_result.posteriors, :x)
     @test haskey(smoothing_result.posteriors, :κ)
     @test haskey(smoothing_result.posteriors, :ω)
+
+    # Smoke-save a tiny output to ensure output dir exists and is writable
+    outdir = ensure_output_dir()
+    isdir(outdir) || error("Output directory not created: " * outdir)
 end
 
 

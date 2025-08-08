@@ -1,0 +1,30 @@
+graph TD
+  Gamma["Gamma"]
+  Normal["Normal"]
+  P["P"]
+  i["i"]
+  mean["mean"]
+  precision["precision"]
+  scale["scale"]
+  shape["shape"]
+  var["var"]
+  x["x"]
+  x_prev["x_prev"]
+  x_prior["x_prior"]
+  y["y"]
+  Gamma --> P
+  Normal --> x
+  Normal --> x_prior
+  Normal --> y
+  P --> y
+  i --> y
+  mean --> x
+  mean --> x_prior
+  mean --> y
+  precision --> x
+  precision --> y
+  scale --> P
+  shape --> P
+  var --> x_prior
+  x --> y
+  x_prev --> x

@@ -1,0 +1,29 @@
+digraph G {
+  "Gamma" [label="Gamma"];
+  "Normal" [label="Normal"];
+  "mean" [label="mean"];
+  "precision" [label="precision"];
+  "rate" [label="rate"];
+  "shape" [label="shape"];
+  "t" [label="t"];
+  "y" [label="y"];
+  "z" [label="z"];
+  "γ" [label="γ"];
+  "τ" [label="τ"];
+  "Gamma" -> "γ";
+  "Gamma" -> "τ";
+  "Normal" -> "y";
+  "Normal" -> "z";
+  "mean" -> "y";
+  "mean" -> "z";
+  "precision" -> "y";
+  "precision" -> "z";
+  "rate" -> "γ";
+  "rate" -> "τ";
+  "shape" -> "γ";
+  "shape" -> "τ";
+  "t" -> "y";
+  "z" -> "z";
+  "γ" -> "y";
+  "τ" -> "z";
+}

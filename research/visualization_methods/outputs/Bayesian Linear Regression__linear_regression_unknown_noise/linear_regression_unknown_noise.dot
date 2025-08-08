@@ -1,0 +1,25 @@
+digraph G {
+  "InverseGamma" [label="InverseGamma"];
+  "Normal" [label="Normal"];
+  "a" [label="a"];
+  "b" [label="b"];
+  "mean" [label="mean"];
+  "s" [label="s"];
+  "variance" [label="variance"];
+  "x" [label="x"];
+  "y" [label="y "];
+  "InverseGamma" -> "s";
+  "Normal" -> "a";
+  "Normal" -> "b";
+  "Normal" -> "y";
+  "a" -> "y";
+  "b" -> "y";
+  "mean" -> "a";
+  "mean" -> "b";
+  "mean" -> "y";
+  "s" -> "y";
+  "variance" -> "a";
+  "variance" -> "b";
+  "variance" -> "y";
+  "x" -> "y";
+}

@@ -1,0 +1,28 @@
+digraph G {
+  "Normal" [label="Normal"];
+  "a" [label="a"];
+  "b" [label="b"];
+  "mean" [label="mean"];
+  "variance" [label="variance"];
+  "x" [label="x"];
+  "y" [label="y"];
+  "y" [label="y "];
+  "Normal" -> "a";
+  "Normal" -> "b";
+  "Normal" -> "y";
+  "Normal" -> "y";
+  "a" -> "y";
+  "a" -> "y";
+  "b" -> "y";
+  "b" -> "y";
+  "mean" -> "a";
+  "mean" -> "b";
+  "mean" -> "y";
+  "mean" -> "y";
+  "variance" -> "a";
+  "variance" -> "b";
+  "variance" -> "y";
+  "variance" -> "y";
+  "x" -> "y";
+  "x" -> "y";
+}

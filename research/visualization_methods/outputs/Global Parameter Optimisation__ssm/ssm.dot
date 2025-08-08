@@ -1,0 +1,34 @@
+digraph G {
+  "As" [label="As"];
+  "B" [label="B"];
+  "Matrix" [label="Matrix"];
+  "MvNormal" [label="MvNormal"];
+  "Q" [label="Q"];
+  "R" [label="R"];
+  "cov" [label="cov"];
+  "i" [label="i"];
+  "mean" [label="mean"];
+  "x" [label="x"];
+  "x_prior_cov" [label="x_prior_cov"];
+  "x_prior_mean" [label="x_prior_mean"];
+  "y" [label="y"];
+  "zeros" [label="zeros"];
+  "As" -> "x";
+  "B" -> "y";
+  "Matrix" -> "x_prior_cov";
+  "MvNormal" -> "x";
+  "MvNormal" -> "y";
+  "Q" -> "x";
+  "R" -> "y";
+  "cov" -> "x";
+  "cov" -> "y";
+  "i" -> "x";
+  "i" -> "y";
+  "mean" -> "x";
+  "mean" -> "y";
+  "x" -> "x";
+  "x" -> "y";
+  "x_prior_cov" -> "x";
+  "x_prior_mean" -> "x";
+  "zeros" -> "x_prior_mean";
+}

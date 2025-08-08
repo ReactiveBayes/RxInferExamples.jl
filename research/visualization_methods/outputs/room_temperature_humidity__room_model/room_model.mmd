@@ -1,0 +1,125 @@
+graph TD
+  Int["Int"]
+  MersenneTwister["MersenneTwister"]
+  Normal["Normal"]
+  T["T"]
+  T0["T0"]
+  T0noise_Trandn["T0noise_Trandn"]
+  T_marginals["T_marginals"]
+  T_means["T_means"]
+  T_stds["T_stds"]
+  Truetemperature["Truetemperature"]
+  Trueα["Trueα"]
+  VectorFloat64["VectorFloat64"]
+  VectorVectorFloat64["VectorVectorFloat64"]
+  abs["abs"]
+  alphas["alphas"]
+  anim["anim"]
+  animateforiin1min["animateforiin1min"]
+  argmin["argmin"]
+  collect["collect"]
+  data["data"]
+  dt["dt"]
+  energies["energies"]
+  energy["energy"]
+  error_pct["error_pct"]
+  f["f"]
+  fe["fe"]
+  fe_history["fe_history"]
+  generate_room_data["generate_room_data"]
+  gif_path["gif_path"]
+  i["i"]
+  idx["idx"]
+  indices["indices"]
+  joinpath["joinpath"]
+  label["label"]
+  length["length"]
+  max["max"]
+  mean["mean"]
+  min["min"]
+  min_idx["min_idx"]
+  n_frames["n_frames"]
+  n_hours["n_hours"]
+  n_points["n_points"]
+  n_steps["n_steps"]
+  output_dir["output_dir"]
+  p["p"]
+  p1["p1"]
+  p2["p2"]
+  params["params"]
+  params_history["params_history"]
+  plot["plot"]
+  plot!(p1, values, label["plot!(p1, values, label"]
+  range["range"]
+  rng["rng"]
+  round["round"]
+  seed["seed"]
+  sqrt["sqrt"]
+  step["step"]
+  temp_obs["temp_obs"]
+  temp_true["temp_true"]
+  temp_trueinoise_Trandn["temp_trueinoise_Trandn"]
+  times["times"]
+  variance["variance"]
+  zeros["zeros"]
+  α["α"]
+  α_true["α_true"]
+  Int --> idx
+  Int --> indices
+  Int --> n_steps
+  MersenneTwister --> rng
+  Normal --> T0
+  Normal --> temp_obs
+  T --> temp_obs
+  T0noise_Trandn --> temp_obs
+  T_marginals --> T_means
+  Truetemperature --> label
+  Trueα --> label
+  VectorFloat64 --> fe_history
+  VectorVectorFloat64 --> params_history
+  abs --> error_pct
+  animateforiin1min --> anim
+  argmin --> min_idx
+  collect --> times
+  dt --> data
+  dt --> n_steps
+  energies --> min_idx
+  f --> energy
+  f --> fe
+  generate_room_data --> data
+  i --> error_pct
+  i --> temp_obs
+  joinpath --> gif_path
+  length --> n_points
+  max --> step
+  mean --> T0
+  mean --> T_means
+  mean --> temp_obs
+  min --> n_frames
+  n_hours --> data
+  n_hours --> n_steps
+  n_points --> anim
+  n_points --> idx
+  n_steps --> temp_obs
+  n_steps --> temp_true
+  output_dir --> gif_path
+  p1 --> p
+  p2 --> p
+  params --> fe
+  params_history --> error_pct
+  plot --> p
+  range --> alphas
+  rng --> temp_obs
+  round --> indices
+  seed --> rng
+  sqrt --> T_stds
+  temp_obs --> T0
+  temp_trueinoise_Trandn --> temp_obs
+  variance --> T0
+  variance --> temp_obs
+  zeros --> temp_obs
+  zeros --> temp_true
+  α --> energy
+  α --> plot!(p1, values, label
+  α_true --> data
+  α_true --> error_pct

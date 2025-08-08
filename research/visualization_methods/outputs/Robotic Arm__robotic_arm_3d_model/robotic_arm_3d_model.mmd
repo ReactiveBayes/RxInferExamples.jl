@@ -1,0 +1,44 @@
+graph TD
+  I["I"]
+  MvNormal["MvNormal"]
+  arm["arm"]
+  covariance["covariance"]
+  dt["dt"]
+  environment["environment"]
+  g["g"]
+  get_gravity["get_gravity"]
+  get_properties["get_properties"]
+  goal["goal"]
+  gravity_compensation["gravity_compensation"]
+  i["i"]
+  initial_state["initial_state"]
+  mean["mean"]
+  num_links, _, link_masses, _["num_links, _, link_masses, _"]
+  s["s"]
+  state_transition_3d["state_transition_3d"]
+  u["u"]
+  zeros["zeros"]
+  Σ["Σ"]
+  μ["μ"]
+  I --> s
+  MvNormal --> s
+  MvNormal --> u
+  arm --> num_links, _, link_masses, _
+  arm --> μ
+  covariance --> s
+  dt --> μ
+  environment --> g
+  environment --> μ
+  get_gravity --> g
+  get_properties --> num_links, _, link_masses, _
+  goal --> s
+  gravity_compensation --> u
+  i --> μ
+  initial_state --> s
+  mean --> s
+  s --> μ
+  state_transition_3d --> μ
+  u --> μ
+  zeros --> gravity_compensation
+  Σ --> u
+  μ --> u

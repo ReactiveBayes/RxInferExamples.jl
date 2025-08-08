@@ -1,0 +1,70 @@
+graph TD
+  Gamma["Gamma"]
+  Normal["Normal"]
+  a_w["a_w"]
+  a_x["a_x"]
+  a_y["a_y"]
+  b_w["b_w"]
+  b_x["b_x"]
+  b_y["b_y"]
+  f["f"]
+  m_w_0["m_w_0"]
+  m_x_0["m_x_0"]
+  mean["mean"]
+  precision["precision"]
+  rate["rate"]
+  s["s"]
+  shape["shape"]
+  w["w"]
+  w0["w0"]
+  x["x"]
+  x0["x0"]
+  y["y"]
+  τ_w["τ_w"]
+  τ_w_0["τ_w_0"]
+  τ_x["τ_x"]
+  τ_x_0["τ_x_0"]
+  τ_y["τ_y"]
+  Gamma --> τ_w
+  Gamma --> τ_x
+  Gamma --> τ_y
+  Normal --> w
+  Normal --> w0
+  Normal --> x
+  Normal --> x0
+  Normal --> y
+  a_w --> τ_w
+  a_x --> τ_x
+  a_y --> τ_y
+  b_w --> τ_w
+  b_x --> τ_x
+  b_y --> τ_y
+  f --> s
+  m_w_0 --> w0
+  m_x_0 --> x0
+  mean --> w
+  mean --> w0
+  mean --> x
+  mean --> x0
+  mean --> y
+  precision --> w
+  precision --> w0
+  precision --> x
+  precision --> x0
+  precision --> y
+  rate --> τ_w
+  rate --> τ_x
+  rate --> τ_y
+  s --> y
+  shape --> τ_w
+  shape --> τ_x
+  shape --> τ_y
+  w --> s
+  w0 --> w
+  x --> s
+  x0 --> x
+  τ_w --> w
+  τ_w_0 --> w0
+  τ_x --> x
+  τ_x_0 --> x0
+  τ_y --> y

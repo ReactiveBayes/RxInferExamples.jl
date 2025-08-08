@@ -1,0 +1,42 @@
+graph TD
+  I["I"]
+  MvNormal["MvNormal"]
+  covariance["covariance"]
+  drone["drone"]
+  dt["dt"]
+  environment["environment"]
+  g["g"]
+  get_gravity["get_gravity"]
+  get_mass["get_mass"]
+  goal["goal"]
+  i["i"]
+  initial_state["initial_state"]
+  m["m"]
+  mean["mean"]
+  s["s"]
+  state_transition["state_transition"]
+  u["u"]
+  Σ["Σ"]
+  μ["μ"]
+  I --> s
+  MvNormal --> s
+  MvNormal --> u
+  covariance --> s
+  drone --> m
+  drone --> μ
+  dt --> μ
+  environment --> g
+  environment --> μ
+  g --> u
+  get_gravity --> g
+  get_mass --> m
+  goal --> s
+  i --> μ
+  initial_state --> s
+  m --> u
+  mean --> s
+  s --> μ
+  state_transition --> μ
+  u --> μ
+  Σ --> u
+  μ --> u

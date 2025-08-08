@@ -1,0 +1,28 @@
+digraph G {
+  "b" [label="b"];
+  "bkdot" [label="bkdot"];
+  "c" [label="c"];
+  "dot_sequence" [label="dot_sequence"];
+  "i" [label="i"];
+  "if k" [label="if k"];
+  "k" [label="k"];
+  "length" [label="length"];
+  "next" [label="next"];
+  "orders" [label="orders"];
+  "out" [label="out"];
+  "x" [label="x"];
+  "b" -> "next";
+  "bkdot" -> "out";
+  "c" -> "next";
+  "c" -> "out";
+  "dot_sequence" -> "next";
+  "i" -> "next";
+  "i" -> "out";
+  "k" -> "next";
+  "k" -> "out";
+  "length" -> "if k";
+  "orders" -> "if k";
+  "orders" -> "next";
+  "x" -> "next";
+  "x" -> "out";
+}

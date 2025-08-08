@@ -1,0 +1,31 @@
+graph TD
+  A["A"]
+  MvNormal["MvNormal"]
+  Normal["Normal"]
+  P["P"]
+  Q["Q"]
+  f["f"]
+  f_prev["f_prev"]
+  i["i"]
+  var["var"]
+  var_noise["var_noise"]
+  y["y"]
+  Σ["Σ"]
+  μ["μ"]
+  A --> f
+  MvNormal --> f
+  MvNormal --> f_prev
+  Normal --> y
+  P --> f_prev
+  Q --> f
+  f --> y
+  f_prev --> f
+  i --> f
+  i --> y
+  var --> y
+  var_noise --> y
+  Σ --> f
+  Σ --> f_prev
+  μ --> f
+  μ --> f_prev
+  μ --> y

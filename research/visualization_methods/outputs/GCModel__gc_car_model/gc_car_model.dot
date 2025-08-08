@@ -1,0 +1,29 @@
+digraph G {
+  "A" [label="A"];
+  "B" [label="B"];
+  "MvNormal" [label="MvNormal"];
+  "Q" [label="Q"];
+  "R" [label="R"];
+  "t" [label="t"];
+  "x" [label="x"];
+  "x0_cov" [label="x0_cov"];
+  "x0_mean" [label="x0_mean"];
+  "y" [label="y"];
+  "Σ" [label="Σ"];
+  "μ" [label="μ"];
+  "A" -> "x";
+  "B" -> "y";
+  "MvNormal" -> "x";
+  "MvNormal" -> "y";
+  "Q" -> "x";
+  "R" -> "y";
+  "t" -> "y";
+  "x" -> "x";
+  "x" -> "y";
+  "x0_cov" -> "x";
+  "x0_mean" -> "x";
+  "Σ" -> "x";
+  "Σ" -> "y";
+  "μ" -> "x";
+  "μ" -> "y";
+}

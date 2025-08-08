@@ -1,0 +1,29 @@
+digraph G {
+  "MvNormalMeanCovariance" [label="MvNormalMeanCovariance"];
+  "Vprev" [label="Vprev"];
+  "Vθ" [label="Vθ"];
+  "dt" [label="dt"];
+  "lotka_volterra_rk4_transformed" [label="lotka_volterra_rk4_transformed"];
+  "mprev" [label="mprev"];
+  "mθ" [label="mθ"];
+  "noisev" [label="noisev"];
+  "obs" [label="obs"];
+  "t" [label="t"];
+  "x" [label="x"];
+  "xprev" [label="xprev"];
+  "θ" [label="θ"];
+  "MvNormalMeanCovariance" -> "obs";
+  "MvNormalMeanCovariance" -> "xprev";
+  "MvNormalMeanCovariance" -> "θ";
+  "Vprev" -> "xprev";
+  "Vθ" -> "θ";
+  "dt" -> "x";
+  "lotka_volterra_rk4_transformed" -> "x";
+  "mprev" -> "xprev";
+  "mθ" -> "θ";
+  "noisev" -> "obs";
+  "t" -> "x";
+  "x" -> "obs";
+  "xprev" -> "x";
+  "θ" -> "x";
+}

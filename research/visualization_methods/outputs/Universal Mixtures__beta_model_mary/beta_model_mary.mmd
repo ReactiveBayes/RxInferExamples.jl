@@ -1,0 +1,25 @@
+graph TD
+  Bernoulli["Bernoulli"]
+  Beta["Beta"]
+  Mixture["Mixture"]
+  inputs["inputs"]
+  john_is_right["john_is_right"]
+  switch["switch"]
+  y["y"]
+  y ["y "]
+  θ["θ"]
+  θ_jane["θ_jane"]
+  θ_john["θ_john"]
+  Bernoulli --> john_is_right
+  Bernoulli --> y
+  Bernoulli --> y 
+  Beta --> θ_jane
+  Beta --> θ_john
+  Mixture --> θ
+  inputs --> θ
+  john_is_right --> θ
+  switch --> θ
+  θ --> y
+  θ --> y 
+  θ_jane --> θ
+  θ_john --> θ

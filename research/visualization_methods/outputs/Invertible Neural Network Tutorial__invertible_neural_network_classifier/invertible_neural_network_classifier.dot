@@ -1,0 +1,24 @@
+digraph G {
+  "Flow" [label="Flow"];
+  "MvNormalMeanPrecision" [label="MvNormalMeanPrecision"];
+  "Probit" [label="Probit"];
+  "dot" [label="dot"];
+  "k" [label="k"];
+  "x" [label="x"];
+  "x_lat" [label="x_lat"];
+  "y" [label="y"];
+  "y_lat1" [label="y_lat1"];
+  "y_lat2" [label="y_lat2"];
+  "Flow" -> "y_lat1";
+  "MvNormalMeanPrecision" -> "x_lat";
+  "Probit" -> "y";
+  "dot" -> "y_lat2";
+  "k" -> "x_lat";
+  "k" -> "y";
+  "k" -> "y_lat1";
+  "k" -> "y_lat2";
+  "x" -> "x_lat";
+  "x_lat" -> "y_lat1";
+  "y_lat1" -> "y_lat2";
+  "y_lat2" -> "y";
+}

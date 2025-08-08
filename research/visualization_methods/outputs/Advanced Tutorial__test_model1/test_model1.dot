@@ -1,0 +1,18 @@
+digraph G {
+  "Normal" [label="Normal"];
+  "mean" [label="mean"];
+  "precision" [label="precision"];
+  "s" [label="s"];
+  "s_mean" [label="s_mean"];
+  "s_precision" [label="s_precision"];
+  "y" [label="y"];
+  "Normal" -> "s";
+  "Normal" -> "y";
+  "mean" -> "s";
+  "mean" -> "y";
+  "precision" -> "s";
+  "precision" -> "y";
+  "s" -> "y";
+  "s_mean" -> "s";
+  "s_precision" -> "s";
+}

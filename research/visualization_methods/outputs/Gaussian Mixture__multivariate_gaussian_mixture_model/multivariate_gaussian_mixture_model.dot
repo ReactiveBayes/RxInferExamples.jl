@@ -1,0 +1,25 @@
+digraph G {
+  "Categorical" [label="Categorical"];
+  "Dirichlet" [label="Dirichlet"];
+  "NormalMixture" [label="NormalMixture"];
+  "Wishart" [label="Wishart"];
+  "m" [label="m"];
+  "n" [label="n"];
+  "p" [label="p"];
+  "s" [label="s"];
+  "switch" [label="switch"];
+  "w" [label="w"];
+  "y" [label="y"];
+  "z" [label="z"];
+  "Categorical" -> "z";
+  "Dirichlet" -> "s";
+  "NormalMixture" -> "y";
+  "Wishart" -> "w";
+  "m" -> "y";
+  "n" -> "y";
+  "p" -> "y";
+  "s" -> "z";
+  "switch" -> "y";
+  "w" -> "y";
+  "z" -> "y";
+}

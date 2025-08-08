@@ -1,0 +1,37 @@
+digraph G {
+  "A" [label="A"];
+  "C" [label="C"];
+  "MvNormal" [label="MvNormal"];
+  "Wu" [label="Wu"];
+  "Wy" [label="Wy"];
+  "dim_lat" [label="dim_lat"];
+  "dim_out" [label="dim_out"];
+  "i" [label="i"];
+  "mean" [label="mean"];
+  "precision" [label="precision"];
+  "size" [label="size"];
+  "u" [label="u"];
+  "y" [label="y"];
+  "z" [label="z"];
+  "z_prev" [label="z_prev"];
+  "μu" [label="μu"];
+  "A" -> "dim_lat";
+  "C" -> "dim_out";
+  "C" -> "y";
+  "MvNormal" -> "u";
+  "MvNormal" -> "y";
+  "MvNormal" -> "z_prev";
+  "Wu" -> "u";
+  "Wy" -> "y";
+  "i" -> "y";
+  "mean" -> "u";
+  "mean" -> "y";
+  "mean" -> "z_prev";
+  "precision" -> "u";
+  "precision" -> "y";
+  "precision" -> "z_prev";
+  "size" -> "dim_lat";
+  "size" -> "dim_out";
+  "z" -> "y";
+  "μu" -> "u";
+}

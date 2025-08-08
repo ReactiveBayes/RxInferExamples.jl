@@ -1,0 +1,22 @@
+graph TD
+  MultinomialPolya["MultinomialPolya"]
+  MvNormalWeightedMeanPrecision["MvNormalWeightedMeanPrecision"]
+  N["N"]
+  Wβ["Wβ"]
+  X["X"]
+  i["i"]
+  obs["obs"]
+  Ψ["Ψ"]
+  β["β"]
+  ξβ["ξβ"]
+  ϕ["ϕ"]
+  MultinomialPolya --> obs
+  MvNormalWeightedMeanPrecision --> β
+  N --> obs
+  Wβ --> β
+  X --> Ψ
+  i --> obs
+  i --> Ψ
+  Ψ --> obs
+  ξβ --> β
+  ϕ --> Ψ
