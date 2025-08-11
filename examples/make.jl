@@ -16,6 +16,9 @@ function parse_commandline()
         help = "Use cached results for notebooks"
         "--rxinfer-path"
         help = "Path to RxInfer.jl repository (overrides default ../RxInfer.jl)"
+        "--strict-env"
+        action = :store_true
+        help = "Fail if required environment variables are missing (use for CI)"
         "filter"
         help = "Filter pattern for notebook names"
         required = false
@@ -28,6 +31,7 @@ const ARGS = parse_commandline()
 const FILTER = get(ARGS, "filter", nothing)
 const USE_DEV = ARGS["use-dev"]
 const USE_CACHE = ARGS["use-cache"]
+const STRICT_ENV = ARGS["strict-env"]
 const CUSTOM_RXINFER_PATH = get(ARGS, "rxinfer-path", nothing)
 
 const RXINFER_PATH = if USE_DEV
@@ -106,6 +110,26 @@ CACHE_DIR: $CACHE_DIR
             copy_files(item, dst_subdir; exclude)
         end
     end
+end
+
+# Function to check if required environment variables are available
+@everywhere function check_env_requirements(meta)
+    if !hasfield(typeof(meta), :env_required) || isnothing(meta.env_required)
+        return true, nothing
+    end
+
+    missing_vars = String[]
+    for var in meta.env_required
+        if isempty(get(ENV, var, ""))
+            push!(missing_vars, var)
+        end
+    end
+
+    if !isempty(missing_vars)
+        return false, missing_vars
+    end
+
+    return true, nothing
 end
 
 # Function to check markdown for error blocks
@@ -271,6 +295,17 @@ end
 
         meta = include(joinpath(output_dir, "meta.jl"))
 
+        # Check environment variable requirements
+        env_ok, missing_vars = check_env_requirements(meta)
+        if !env_ok
+            if $STRICT_ENV
+                error("Missing required environment variables: $(join(missing_vars, ", ")). Set STRICT_ENV=false to skip examples with missing env vars.")
+            else
+                @warn "Skipping $(basename(notebook_path)) - missing required environment variables: $(join(missing_vars, ", "))"
+                return nothing
+            end
+        end
+
         weave(build_input_path;
             out_path=output_path,
             doctype="github",
@@ -401,18 +436,21 @@ is_processing_failed(output_path) = isnothing(output_path) || has_error_blocks(o
 # Check for errors in output files
 final_results = [(notebook, output_path, is_processing_failed(output_path)) for (notebook, output_path) in results]
 
-# Split results into successful and failed
-successful_notebooks = [notebook for (notebook, _, failed) in final_results if !failed]
-failed_notebooks = [notebook for (notebook, _, failed) in final_results if failed]
+# Split results into successful, failed, and skipped
+successful_notebooks = [notebook for (notebook, output_path, failed) in final_results if !failed && !isnothing(output_path)]
+failed_notebooks = [notebook for (notebook, output_path, failed) in final_results if failed && !isnothing(output_path)]
+skipped_notebooks = [notebook for (notebook, output_path, _) in final_results if isnothing(output_path)]
 
 @info """
 Processing Report:
 Total notebooks: $(length(final_results))
 Successful: $(length(successful_notebooks))
 Failed: $(length(failed_notebooks))
+Skipped: $(length(skipped_notebooks))
 
 $(isempty(successful_notebooks) ? "" : "Successfully processed notebooks:\n" * join(["  • " * notebook for notebook in successful_notebooks], "\n"))
 $(isempty(failed_notebooks) ? "" : "Failed notebooks:\n" * join(["  • " * notebook for notebook in failed_notebooks], "\n"))
+$(isempty(skipped_notebooks) ? "" : "Skipped notebooks:\n" * join(["  • " * notebook for notebook in skipped_notebooks], "\n"))
 """
 
 if !isempty(failed_notebooks)
@@ -426,9 +464,19 @@ if !isempty(failed_notebooks)
     """
 end
 
+if !isempty(skipped_notebooks)
+    @warn """
+    Some notebooks were skipped due to missing environment variables.
+    To run these examples, set the required environment variables:
+    $(join(unique([join(meta.env_required, ", ") for meta in [include(joinpath(@__DIR__, dirname(notebook), "meta.jl")) for notebook in skipped_notebooks] if hasfield(typeof(meta), :env_required) && !isnothing(meta.env_required)]), "\n"))
+
+    Or use --strict-env flag to fail instead of skip.
+    """
+end
+
 if isempty(failed_notebooks)
     @info """
-    All notebooks processed successfully! 🎉
+    Notebooks processed successfully! 🎉 $(isempty(skipped_notebooks) ? "" : "(Some notebooks were skipped due to missing environment variables. See above for details.)")
 
     Next steps:
     Run `make docs` to generate the documentation website.

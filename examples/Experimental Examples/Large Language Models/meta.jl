@@ -7,5 +7,6 @@ meta = (
         "experimental examples",
         "large language models",
         "llm",
-    ]
+    ],
+    env_required = ["OPENAI_KEY"]
 )

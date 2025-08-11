@@ -5,11 +5,11 @@ all: examples docs
 
 # Build examples (optionally with a filter)
 examples: examples-setup
-	julia --project=examples examples/make.jl $(if $(FILTER),$(FILTER),) $(if $(USE_CACHE),--use-cache,)
+	julia --project=examples examples/make.jl $(if $(FILTER),$(FILTER),) $(if $(USE_CACHE),--use-cache,) $(if $(STRICT_ENV),--strict-env,)
 
 # Build examples with local development version of RxInfer
 examples-dev: examples-setup
-	julia --project=examples examples/make.jl --use-dev $(if $(RXINFER),--rxinfer-path=$(RXINFER),) $(if $(FILTER),$(FILTER),) $(if $(USE_CACHE),--use-cache,)
+	julia --project=examples examples/make.jl --use-dev $(if $(RXINFER),--rxinfer-path=$(RXINFER),) $(if $(FILTER),$(FILTER),) $(if $(USE_CACHE),--use-cache,) $(if $(STRICT_ENV),--strict-env,)
 
 # Clean build artifacts
 clean:
@@ -39,8 +39,8 @@ preview:
 help:
 	@echo "Available targets:"
 	@echo "  all        - Build all examples and documentation (default)"
-	@echo "  examples   - Build all examples or a specific example (usage: make examples [FILTER=pattern] [USE_CACHE=true/false])"
-	@echo "  examples-dev - Build examples with local RxInfer development version (usage: make examples-dev [FILTER=pattern] [USE_CACHE=true/false])"
+	@echo "  examples   - Build all examples or a specific example (usage: make examples [FILTER=pattern] [USE_CACHE=true/false] [STRICT_ENV=true/false])"
+	@echo "  examples-dev - Build examples with local RxInfer development version (usage: make examples-dev [FILTER=pattern] [USE_CACHE=true/false] [STRICT_ENV=true/false])"
 	@echo "  docs       - Build the documentation website"
 	@echo "  preview    - Open documentation in browser"
 	@echo "  clean      - Remove all build artifacts and caches"
@@ -59,9 +59,11 @@ help:
 	@echo "  make examples                                  # Build all examples"
 	@echo "  make examples FILTER=Coin                      # Build specific example"
 	@echo "  make examples USE_CACHE=true                   # Build all examples with caching (!actual value of USE_CACHE is ignored!)"
+	@echo "  make examples STRICT_ENV=true                  # Fail if env vars missing (for CI)"
 	@echo "  make examples-dev                              # Build all examples with local RxInfer"
 	@echo "  make examples-dev FILTER=Coin                  # Build specific example with local RxInfer"
 	@echo "  make examples-dev RXINFER=/path/to/RxInfer.jl  # Build with specific RxInfer at path"
 	@echo "  make examples-dev USE_CACHE=true               # Build all examples with local RxInfer with caching"
+	@echo "  make examples-dev STRICT_ENV=true              # Build with local RxInfer, fail if env vars missing"
 	@echo "  make clean && make all                         # Clean build everything"
 	@echo "  make all && make preview                       # Build and view docs"
