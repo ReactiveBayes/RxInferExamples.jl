@@ -1,0 +1,14 @@
+{
+  "timestamp": "20250819_084714",
+  "n": 1000,
+  "interval_ms": 10,
+  "iterations": 10,
+  "rt_iterations": 8,
+  "keephistory": 10000,
+  "rt_fe_every": 1,
+  "seed": 123,
+  "make_gif": true,
+  "gif_stride": 5,
+  "rt_gif_stride": 5,
+  "output_dir": "output"
+}

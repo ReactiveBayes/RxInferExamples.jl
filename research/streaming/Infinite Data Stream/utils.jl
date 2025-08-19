@@ -40,6 +40,8 @@ function load_config()
     cfg["gif_stride"] = parse(Int, get(ENV, "IDS_GIF_STRIDE", string(get(cfg, "gif_stride", 5))))
     cfg["rt_gif_stride"] = parse(Int, get(ENV, "IDS_RT_GIF_STRIDE", string(get(cfg, "rt_gif_stride", 5))))
     cfg["skip_fe_replot"] = get(ENV, "IDS_SKIP_FE_REPLOT", "0") in ("1","true","TRUE")
+    # Optional realtime strict FE cadence
+    cfg["rt_fe_every"] = parse(Int, get(ENV, "IDS_RT_FE_EVERY", string(get(cfg, "rt_fe_every", 1))))
     # Optional test-speed overrides
     if haskey(ENV, "IDS_N")
         try cfg["n"] = parse(Int, ENV["IDS_N"]) catch; end

@@ -1,8 +1,0 @@
-realtime_run_completed=true at 2025-08-19T08:36:50
-n=1000, interval_ms=10
-iterations=8
-seed=123
-posterior_samples_captured=0
-free_energy_points_captured=0
-mae_realtime_avg=1.427643363291249
-mse_realtime_avg=3.081364558425094

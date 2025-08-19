@@ -43,7 +43,9 @@ open(joinpath(outdir, "provenance.json"), "w") do io
     println(io, "  \"n\": $(Int(get(IDS_CFG, "n", 0))),")
     println(io, "  \"interval_ms\": $(Int(get(IDS_CFG, "interval_ms", 0))),")
     println(io, "  \"iterations\": $(Int(get(IDS_CFG, "iterations", 0))),")
+    println(io, "  \"rt_iterations\": $(Int(get(IDS_CFG, "rt_iterations", get(IDS_CFG, "iterations", 0)))),")
     println(io, "  \"keephistory\": $(Int(get(IDS_CFG, "keephistory", 0))),")
+    println(io, "  \"rt_fe_every\": $(Int(get(IDS_CFG, "rt_fe_every", 1))),")
     println(io, "  \"seed\": $(Int(get(IDS_CFG, "seed", 0))),")
     println(io, "  \"make_gif\": $(get(IDS_CFG, "make_gif", false)),")
     println(io, "  \"gif_stride\": $(Int(get(IDS_CFG, "gif_stride", 0))),")
@@ -270,10 +272,16 @@ begin
         1
     end
     # Count observations as they arrive to show progress
-    _ = subscribe!(datastream, y -> begin
+    _ = subscribe!(datastream, d -> begin
         obs_count[] += 1
         # Accumulate observations for strict online FE computation
-        push!(obs_buffer, Float64(y))
+        local yval
+        try
+            yval = hasproperty(d, :y) ? getfield(d, :y) : d
+        catch
+            yval = d
+        end
+        push!(obs_buffer, Float64(yval))
         if fe_every > 0 && (length(obs_buffer) % fe_every == 0)
             # Compute FE for current prefix using realtime iteration budget
             try
@@ -512,13 +520,13 @@ try
     # Free energy comparison (if both available)
     try
         fe_static = readdlm(joinpath(static_dir, "static_free_energy.csv"))[:]
-        fe_rt = readdlm(joinpath(realtime_dir, "realtime_free_energy.csv"))[:]
-        upto_fe = min(length(fe_static), length(fe_rt))
-        pfe_cmp = InfiniteDataStreamViz.plot_fe_comparison(fe_static[1:upto_fe], fe_rt[1:upto_fe])
+        fe_rt_cmp = readdlm(joinpath(realtime_dir, "realtime_free_energy.csv"))[:]
+        upto_fe = min(length(fe_static), length(fe_rt_cmp))
+        pfe_cmp = InfiniteDataStreamViz.plot_fe_comparison(fe_static[1:upto_fe], fe_rt_cmp[1:upto_fe])
         png(pfe_cmp, joinpath(cmp_dir, "free_energy_compare.png"))
         if get(ENV, "IDS_MAKE_GIF", get(IDS_CFG, "make_gif", true) ? "1" : "0") == "1"
             stride_cmp = parse(Int, get(ENV, "IDS_GIF_STRIDE", "5"))
-            anim_cmp = InfiniteDataStreamViz.animate_comparison_static_vs_realtime(static_truth, μs, σ2s, μr, σ2r, fe_static, fe_rt; stride=stride_cmp)
+            anim_cmp = InfiniteDataStreamViz.animate_comparison_static_vs_realtime(static_truth, μs, σ2s, μr, σ2r, fe_static, fe_rt_cmp; stride=stride_cmp)
             InfiniteDataStreamViz.save_gif(anim_cmp, joinpath(cmp_dir, "static_vs_realtime_composed.gif"))
         end
     catch

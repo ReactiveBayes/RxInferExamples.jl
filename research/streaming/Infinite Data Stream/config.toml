@@ -12,6 +12,7 @@ interval_ms = 10        # realtime timer interval in milliseconds (faster sampli
 # Inference
 iterations = 10         # variational updates per timestep (static default)
 rt_iterations = 8       # variational updates per timestep in realtime (more iterations for accuracy)
+rt_fe_every = 1         # strict online FE computation cadence in realtime: 1 = every point, k = every k points
 keephistory = 10000
 
 # Animation/output

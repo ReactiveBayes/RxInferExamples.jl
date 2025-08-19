@@ -5,9 +5,11 @@ from manim import *
 
 class SourceCodePanel(Scene):
     def construct(self):
+        self.random_seed = 42
         src_path = self.get_src_path()
         # Use Text instead of Tex to avoid LaTeX escaping issues on filenames
         title = Text(Path(src_path).parent.name).to_edge(UP)
+        self.next_section("title")
         self.play(Write(title), run_time=1.5)
         # Use Manim's Code API for v0.19: pass the file path positionally
         code = Code(
@@ -17,8 +19,10 @@ class SourceCodePanel(Scene):
             language="julia",
         ).scale(0.6)
         code.to_edge(DOWN)
+        self.next_section("code")
         self.play(FadeIn(code), run_time=1.5)
         # Scroll the code block slowly to show more content
+        self.next_section("scroll")
         for _ in range(3):
             self.play(code.animate.shift(UP * 0.5), run_time=2)
         for _ in range(3):

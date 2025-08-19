@@ -7,6 +7,7 @@ Files:
 - `run_static.jl` / `run_realtime.jl`: standalone entry points for focused runs.
 - `config.toml`: central configuration for number of steps, timer cadence, inference iterations/history, and GIF/output settings.
   - Supports `seed` (or `IDS_SEED`) for reproducible environment generation.
+  - Realtime-specific keys: `rt_iterations` (or `IDS_RT_ITERATIONS`) controls per-step updates; `rt_fe_every` (or `IDS_RT_FE_EVERY`) controls strict online FE frequency (1 = every point).
 
 How to run:
 ```julia
@@ -19,8 +20,7 @@ include("run_static.jl")
 ```
 
 Outputs:
-- `output/<ts>/static_inference.gif`
-- `output/<ts>/static_free_energy.png`
-- `output/<ts>/realtime_summary.txt`
- - if enabled: `static_free_energy.gif`, `static_composed_estimates_fe.gif`, `realtime_inference.gif`, and `comparison/overlay_means.gif`
+- `output/<ts>/static/{static_inference.png,gif,static_free_energy.csv,png,gif,static_composed_estimates_fe.gif,static_posterior_x_current.csv,static_posterior_tau_shape_rate.csv,static_tau_mean.png,static_truth_history.csv,static_observations.csv,static_metrics_stepwise.csv}`
+- `output/<ts>/realtime/{realtime_inference.png,gif,realtime_free_energy.csv,png,gif,realtime_composed_estimates_fe.gif,realtime_posterior_x_current.csv,realtime_posterior_tau_shape_rate.csv,realtime_tau_mean.png,realtime_truth_history.csv,realtime_observations.csv,realtime_metrics_stepwise.csv,realtime_summary.txt}`
+- `output/<ts>/comparison/{metrics.txt,means_compare.png,scatter_static_vs_realtime.png,residuals_static.png,residuals_realtime.png,overlay_means.gif,free_energy_compare.png}`
 

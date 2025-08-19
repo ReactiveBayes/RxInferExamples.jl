@@ -24,6 +24,8 @@ class DotGraphScene(MovingCameraScene):
       - PNG_PATH: show an image thumbnail on the left
     """
     def construct(self) -> None:
+        # Deterministic behavior for any randomness in animations
+        self.random_seed = 42
         dot_path = os.environ.get("DOT_PATH")
         if not dot_path:
             raise ValueError("DOT_PATH env var is required")
@@ -113,8 +115,10 @@ class DotGraphScene(MovingCameraScene):
                 edges.add(Arrow(a, b, stroke_width=sw, color=col, max_tip_length_to_length_ratio=0.05))
 
         graph_group = VGroup(edges, *node_mobs.values())
+        self.next_section("reveal-graph")
         self.play(LaggedStart(*[FadeIn(m) for m in graph_group], lag_ratio=0.02), run_time=3)
         self.wait(1)
+        self.next_section("highlight")
         self.play(Circumscribe(graph_group, color=YELLOW), run_time=2)
         # Legend
         legend_items = []
@@ -150,6 +154,7 @@ class DotGraphScene(MovingCameraScene):
         self.play(Write(caption), run_time=1)
         # Slow camera pan to showcase the graph
         frame = self.camera.frame
+        self.next_section("pan")
         self.play(frame.animate.shift(RIGHT * 0.5), run_time=2)
         self.play(frame.animate.shift(LEFT * 1.0), run_time=2)
         self.play(frame.animate.shift(RIGHT * 0.5), run_time=2)

@@ -15,7 +15,7 @@ What is covered:
 - Integration test in `runtests.jl`: runs `run.jl`, validates artifacts in `static/`, `realtime/`, `comparison/`, and asserts numerical equivalence of static vs realtime estimates.
 
 Notes:
-- GIFs are optional in CI. Enable with `IDS_MAKE_GIF=1` to render animation artifacts (`static_free_energy.gif`, `static_composed_estimates_fe.gif`, `realtime_inference.gif`, `comparison/overlay_means.gif`).
+- GIFs are optional in CI. Enable with `IDS_MAKE_GIF=1` to render animation artifacts (`static_free_energy.gif`, `static_composed_estimates_fe.gif`, `realtime_inference.gif`, `realtime_free_energy.gif`, `comparison/overlay_means.gif`).
 - Use `IDS_SEED` to fix the RNG for reproducible environment generation in both static and realtime runs.
-- Realtime free-energy is only written if the engine exposes a FE stream; there is no fallback/mirroring from the static run.
+- Realtime free-energy is written from either a live FE stream (if exposed) or from strict online per-prefix computation controlled by `IDS_RT_FE_EVERY` (fallback: offline per-prefix after the run). Static FE is always computed per-prefix offline.
 
