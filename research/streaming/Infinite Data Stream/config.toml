@@ -6,11 +6,12 @@ observation_precision = 0.1
 seed = 123
 
 # Data length and timing
-n = 300                 # number of timesteps to simulate/consume
-interval_ms = 41        # realtime timer interval in milliseconds
+n = 1000                # number of timesteps to simulate/consume
+interval_ms = 10        # realtime timer interval in milliseconds (faster sampling)
 
 # Inference
-iterations = 10         # variational updates per timestep
+iterations = 10         # variational updates per timestep (static default)
+rt_iterations = 8       # variational updates per timestep in realtime (more iterations for accuracy)
 keephistory = 10000
 
 # Animation/output

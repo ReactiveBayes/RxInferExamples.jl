@@ -1,0 +1,10 @@
+# This file is used internally by FFMPEG.
+file 'file:/Users/4d/Documents/GitHub/RxInferExamples.jl/research/manim/output/manim_renders/videos/source_code_panel/1080p60/partial_movie_files/SourceCodePanel/3529212410_2264212026_223132457.mp4'
+file 'file:/Users/4d/Documents/GitHub/RxInferExamples.jl/research/manim/output/manim_renders/videos/source_code_panel/1080p60/partial_movie_files/SourceCodePanel/3040924799_1173678493_1934687638.mp4'
+file 'file:/Users/4d/Documents/GitHub/RxInferExamples.jl/research/manim/output/manim_renders/videos/source_code_panel/1080p60/partial_movie_files/SourceCodePanel/3040924799_3102694230_3943513335.mp4'
+file 'file:/Users/4d/Documents/GitHub/RxInferExamples.jl/research/manim/output/manim_renders/videos/source_code_panel/1080p60/partial_movie_files/SourceCodePanel/3040924799_2575703854_3943513335.mp4'
+file 'file:/Users/4d/Documents/GitHub/RxInferExamples.jl/research/manim/output/manim_renders/videos/source_code_panel/1080p60/partial_movie_files/SourceCodePanel/3040924799_2164921843_3943513335.mp4'
+file 'file:/Users/4d/Documents/GitHub/RxInferExamples.jl/research/manim/output/manim_renders/videos/source_code_panel/1080p60/partial_movie_files/SourceCodePanel/3040924799_2904232102_3943513335.mp4'
+file 'file:/Users/4d/Documents/GitHub/RxInferExamples.jl/research/manim/output/manim_renders/videos/source_code_panel/1080p60/partial_movie_files/SourceCodePanel/3040924799_2631538406_3943513335.mp4'
+file 'file:/Users/4d/Documents/GitHub/RxInferExamples.jl/research/manim/output/manim_renders/videos/source_code_panel/1080p60/partial_movie_files/SourceCodePanel/3040924799_3648831462_3943513335.mp4'
+file 'file:/Users/4d/Documents/GitHub/RxInferExamples.jl/research/manim/output/manim_renders/videos/source_code_panel/1080p60/partial_movie_files/SourceCodePanel/3040924799_1839128356_2319094747.mp4'

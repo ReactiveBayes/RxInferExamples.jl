@@ -1,0 +1,15 @@
+Metadata-Version: 2.4
+Name: rxinfer-manim
+Version: 0.1.0
+Summary: Manim scenes for RxInferExamples.jl visualizations
+Author: RxInferExamples
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+Requires-Dist: manim>=0.18
+Requires-Dist: networkx>=3.2
+Requires-Dist: pydot>=1.4
+Requires-Dist: pytest>=7.0
+
+# rxinfer-manim
+
+Manim scenes for RxInferExamples.jl visualizations.

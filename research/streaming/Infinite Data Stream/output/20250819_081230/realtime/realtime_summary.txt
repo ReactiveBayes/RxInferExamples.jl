@@ -1,0 +1,6 @@
+realtime_run_completed=true at 2025-08-19T08:18:22
+n=1000, interval_ms=10
+iterations=8
+seed=123
+posterior_samples_captured=0
+free_energy_points_captured=0

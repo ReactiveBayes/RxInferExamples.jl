@@ -34,6 +34,23 @@ mkpath(static_dir); mkpath(realtime_dir); mkpath(cmp_dir)
 
 log(msg) = println("[", Dates.format(now(), "HH:MM:SS"), "] ", msg)
 log("Writing artifacts under: $(outdir)")
+log("Config: n=$(Int(get(IDS_CFG, "n", 0))), interval_ms=$(Int(get(IDS_CFG, "interval_ms", 0))), iterations=$(Int(get(IDS_CFG, "iterations", 0))), seed=$(Int(get(IDS_CFG, "seed", 0)))")
+
+# Write a minimal provenance file (JSON-like) for reproducibility
+open(joinpath(outdir, "provenance.json"), "w") do io
+    println(io, "{")
+    println(io, "  \"timestamp\": \"$(ts)\",")
+    println(io, "  \"n\": $(Int(get(IDS_CFG, "n", 0))),")
+    println(io, "  \"interval_ms\": $(Int(get(IDS_CFG, "interval_ms", 0))),")
+    println(io, "  \"iterations\": $(Int(get(IDS_CFG, "iterations", 0))),")
+    println(io, "  \"keephistory\": $(Int(get(IDS_CFG, "keephistory", 0))),")
+    println(io, "  \"seed\": $(Int(get(IDS_CFG, "seed", 0))),")
+    println(io, "  \"make_gif\": $(get(IDS_CFG, "make_gif", false)),")
+    println(io, "  \"gif_stride\": $(Int(get(IDS_CFG, "gif_stride", 0))),")
+    println(io, "  \"rt_gif_stride\": $(Int(get(IDS_CFG, "rt_gif_stride", 0))),")
+    println(io, "  \"output_dir\": \"$(get(IDS_CFG, "output_dir", "output"))\"")
+    println(io, "}")
+end
 
 # Helper: compute per-timestep FE by re-inferring on growing prefixes
 function compute_per_timestep_fe(observations::Vector{Float64}; iterations::Int=10)
@@ -84,10 +101,11 @@ begin
 
     initial_state         = Float64(get(IDS_CFG, "initial_state", 0.0))
     observation_precision = Float64(get(IDS_CFG, "observation_precision", 0.1))
+    seed_env              = Int(get(IDS_CFG, "seed", 123))
     n = Int(get(IDS_CFG, "n", 300))
 
     log("[static] generating $(n) observations …")
-    env = Environment(initial_state, observation_precision)
+    env = Environment(initial_state, observation_precision; seed=seed_env)
     for i in 1:n
         getnext!(env)
         if i % 50 == 0
@@ -124,6 +142,12 @@ begin
     σ2 = var.(estimated)
     p = InfiniteDataStreamViz.plot_estimates(μ, σ2, history, observations; upto=n)
     png(p, joinpath(static_dir, "static_inference.png"))
+    # Persist stepwise metrics for diagnostics and parity with realtime
+    upto_s = min(length(μ), length(history), length(observations))
+    r_s = history[1:upto_s] .- μ[1:upto_s]
+    mae_s = abs.(r_s)
+    mse_s = r_s .^ 2
+    writedlm(joinpath(static_dir, "static_metrics_stepwise.csv"), hcat(collect(1:upto_s), μ[1:upto_s], σ2[1:upto_s], history[1:upto_s], observations[1:upto_s], r_s, mae_s, mse_s))
 
     # Optional animations controlled by config/env (default: enabled)
     if get(ENV, "IDS_MAKE_GIF", get(IDS_CFG, "make_gif", true) ? "1" : "0") == "1"
@@ -142,6 +166,8 @@ begin
         log("[static] saved: $(joinpath(static_dir, "static_inference.gif"))")
         # Free-energy animation (per-timestep via prefix re-inference)
         fe_t = compute_per_timestep_fe(observations; iterations=10)
+        # Persist numeric outputs (CSV) immediately to allow reuse later without recomputation
+        writedlm(joinpath(static_dir, "static_free_energy.csv"), fe_t)
         anim_fe = InfiniteDataStreamViz.animate_free_energy(fe_t; stride=stride)
         static_fe_gif = joinpath(static_dir, "static_free_energy.gif")
         InfiniteDataStreamViz.save_gif(anim_fe, static_fe_gif)
@@ -196,10 +222,12 @@ begin
 
     initial_state         = Float64(get(IDS_CFG, "initial_state", 0.0))
     observation_precision = Float64(get(IDS_CFG, "observation_precision", 0.1))
+    seed_env              = Int(get(IDS_CFG, "seed", 123))
     n = Int(get(IDS_CFG, "n", 300))
     interval_ms = Int(get(IDS_CFG, "interval_ms", 41))
+    rt_iters = Int(get(IDS_CFG, "rt_iterations", get(IDS_CFG, "iterations", 10)))
 
-    env = Environment(initial_state, observation_precision)
+    env = Environment(initial_state, observation_precision; seed=seed_env)
 
     producer() = getnext!(env)
     observations = timer_observations(interval_ms, n, producer)
@@ -216,31 +244,59 @@ begin
         autoupdates    = autoupdates,
         returnvars     = (:x_current, ),
         initialization = init,
-        iterations     = 10,
+        iterations     = rt_iters,
         free_energy    = true,
+        keephistory    = Int(get(IDS_CFG, "keephistory", 10_000)),
+        historyvars    = (x_current = KeepLast(), τ = KeepLast()),
         autostart      = false,
     )
 
-    # Subscribe to collect posterior snapshots for plotting later
+    # Collect streamed free energy if exposed and simple progress counter
     mu_rt = Float64[]
     var_rt = Float64[]
     fe_rt  = Float64[]
     tau_shape_rt = Float64[]
     tau_rate_rt  = Float64[]
+    # For consistent summary accounting across inner scopes
+    posterior_samples_written = 0
+    fe_points_written = 0
     obs_count = Ref(0)
-    _ = subscribe!(engine.posteriors[:x_current], q_current -> begin
-        push!(mu_rt, mean(q_current))
-        push!(var_rt, var(q_current))
-    end)
-    # τ (observation precision) time series
-    if haskey(engine.posteriors, :τ)
-        _ = subscribe!(engine.posteriors[:τ], qτ -> begin
-            push!(tau_shape_rt, shape(qτ))
-            push!(tau_rate_rt, rate(qτ))
-        end)
+    # Strict FE per-step computation buffer (online), configurable frequency
+    obs_buffer = Float64[]
+    fe_rt_strict = Float64[]
+    fe_every = try
+        Int(get(IDS_CFG, "rt_fe_every", 1))
+    catch
+        1
     end
     # Count observations as they arrive to show progress
-    _ = subscribe!(datastream, _ -> (obs_count[] += 1))
+    _ = subscribe!(datastream, y -> begin
+        obs_count[] += 1
+        # Accumulate observations for strict online FE computation
+        push!(obs_buffer, Float64(y))
+        if fe_every > 0 && (length(obs_buffer) % fe_every == 0)
+            # Compute FE for current prefix using realtime iteration budget
+            try
+                ds_t = Main.InfiniteDataStreamStreams.to_namedtuple_stream(obs_buffer)
+                au = Main.InfiniteDataStreamUpdates.make_autoupdates()
+                init = Main.InfiniteDataStreamUpdates.make_initialization()
+                eng_t = infer(
+                    model          = Main.InfiniteDataStreamModel.kalman_filter(),
+                    constraints    = Main.InfiniteDataStreamModel.filter_constraints(),
+                    datastream     = ds_t,
+                    autoupdates    = au,
+                    returnvars     = (:x_current,),
+                    initialization = init,
+                    iterations     = rt_iters,
+                    free_energy    = true,
+                    keephistory    = 1,
+                    autostart      = true,
+                )
+                push!(fe_rt_strict, eng_t.free_energy_history[end])
+            catch
+            end
+        end
+    end)
     # Streamed free-energy (if exposed by engine)
     try
         if hasproperty(engine, :free_energy) && engine.free_energy !== nothing
@@ -260,18 +316,19 @@ begin
             log("[realtime] elapsed $(s)/$(total)s, observed=$(obs_count[]) / $(n) ($(pct)%)")
         end
     end
-    # Stop engine explicitly (defensive) and persist artifacts
-    try
-        RxInfer.stop(engine)
-    catch
-    end
+    # Persist artifacts
 
     # Save realtime posterior snapshot plot and CSVs
-    let m = length(mu_rt)
+    # Prefer history snapshots for alignment with truth/obs
+    let hist = gethistory(env), obs = getobservations(env)
+        # If engine kept history, use it; otherwise fall back to subscribed arrays
+        if haskey(engine.history, :x_current)
+            est_rt = engine.history[:x_current]
+            mu_rt = mean.(est_rt)
+            var_rt = var.(est_rt)
+        end
+        m = length(mu_rt)
         if m > 0
-            # Align lengths in case timer delivered slightly fewer points
-            hist = gethistory(env)
-            obs  = getobservations(env)
             upto = min(m, length(hist), length(obs))
             p_rt = InfiniteDataStreamViz.plot_estimates(mu_rt[1:upto], var_rt[1:upto], hist, obs; upto=upto)
             png(p_rt, joinpath(realtime_dir, "realtime_inference.png"))
@@ -282,17 +339,14 @@ begin
             end
             InfiniteDataStreamViz.save_gif(anim_rt, joinpath(realtime_dir, "realtime_inference.gif"))
             log("[realtime] saved: $(joinpath(realtime_dir, "realtime_inference.gif"))")
-            try
-                cp(joinpath(static_dir, "static_free_energy.csv"), joinpath(realtime_dir, "realtime_free_energy.csv"), force=true)
-                if isfile(joinpath(static_dir, "static_free_energy.gif"))
-                    cp(joinpath(static_dir, "static_free_energy.gif"), joinpath(realtime_dir, "realtime_free_energy.gif"), force=true)
-                    log("[realtime] mirrored FE GIF from static")
-                end
-            catch
-            end
+            # Do not mirror static FE artifacts; only persist realtime FE if exposed below
             # Persist realtime FE if captured
+            # Track the FE time series we actually persisted for subsequent PNG plotting
+            fe_series_used = Float64[]
             if !isempty(fe_rt)
                 writedlm(joinpath(realtime_dir, "realtime_free_energy.csv"), fe_rt)
+                fe_points_written = length(fe_rt)
+                fe_series_used = fe_rt
                 if get(ENV, "IDS_MAKE_GIF", get(IDS_CFG, "make_gif", true) ? "1" : "0") == "1"
                     anim_fe_rt = InfiniteDataStreamViz.animate_free_energy(fe_rt; stride=stride_rt)
                     InfiniteDataStreamViz.save_gif(anim_fe_rt, joinpath(realtime_dir, "realtime_free_energy.gif"))
@@ -302,8 +356,35 @@ begin
                     InfiniteDataStreamViz.save_gif(anim_rt_comp, joinpath(realtime_dir, "realtime_composed_estimates_fe.gif"))
                     log("[realtime] saved: $(joinpath(realtime_dir, "realtime_composed_estimates_fe.gif"))")
                 end
-            elseif get(ENV, "IDS_MAKE_GIF", get(IDS_CFG, "make_gif", true) ? "1" : "0") == "1"
-                log("[realtime] FE stream not exposed; mirroring static FE artifacts")
+            else
+                # If no live FE stream is exposed, compute a realtime-specific FE trace offline
+                if !isempty(fe_rt_strict)
+                    log("[realtime] FE live stream not exposed; using strict online per-step FE series")
+                    writedlm(joinpath(realtime_dir, "realtime_free_energy.csv"), fe_rt_strict[1:upto])
+                    fe_points_written = min(length(fe_rt_strict), upto)
+                    fe_series_used = fe_rt_strict[1:upto]
+                else
+                    log("[realtime] FE stream not exposed; computing offline FE from observations…")
+                    # Use the same helper as static, but with realtime iteration budget
+                    fe_offline = compute_per_timestep_fe(obs[1:upto]; iterations=rt_iters)
+                    writedlm(joinpath(realtime_dir, "realtime_free_energy.csv"), fe_offline)
+                    fe_points_written = length(fe_offline)
+                    fe_series_used = fe_offline
+                end
+                if get(ENV, "IDS_MAKE_GIF", get(IDS_CFG, "make_gif", true) ? "1" : "0") == "1"
+                    anim_fe_rt = InfiniteDataStreamViz.animate_free_energy(fe_series_used; stride=stride_rt)
+                    InfiniteDataStreamViz.save_gif(anim_fe_rt, joinpath(realtime_dir, "realtime_free_energy.gif"))
+                    log("[realtime] saved: $(joinpath(realtime_dir, "realtime_free_energy.gif"))")
+                    # Two-panel composed realtime animation (estimates + FE)
+                    anim_rt_comp = InfiniteDataStreamViz.animate_composed_estimates_fe(mu_rt[1:upto], var_rt[1:upto], hist, obs, fe_series_used; stride=stride_rt)
+                    InfiniteDataStreamViz.save_gif(anim_rt_comp, joinpath(realtime_dir, "realtime_composed_estimates_fe.gif"))
+                    log("[realtime] saved: $(joinpath(realtime_dir, "realtime_composed_estimates_fe.gif"))")
+                end
+            end
+            # Save a static FE PNG comparable to the static mode
+            if !isempty(fe_series_used)
+                pfe_rt = plot(fe_series_used; label="Bethe Free Energy (averaged)")
+                png(pfe_rt, joinpath(realtime_dir, "realtime_free_energy.png"))
             end
             # Realtime composed GIFs
             if get(ENV, "IDS_MAKE_GIF", get(IDS_CFG, "make_gif", true) ? "1" : "0") == "1"
@@ -312,6 +393,18 @@ begin
                 log("[realtime] GIF generation disabled (set IDS_MAKE_GIF=1 to enable)")
             end
             writedlm(joinpath(realtime_dir, "realtime_posterior_x_current.csv"), hcat(mu_rt[1:upto], var_rt[1:upto]))
+            # Stepwise metrics and tracing
+            r_rt = hist[1:upto] .- mu_rt[1:upto]
+            mae_rt = abs.(r_rt)
+            mse_rt = r_rt .^ 2
+            writedlm(joinpath(realtime_dir, "realtime_metrics_stepwise.csv"), hcat(collect(1:upto), mu_rt[1:upto], var_rt[1:upto], hist[1:upto], obs[1:upto], r_rt, mae_rt, mse_rt))
+            posterior_samples_written = upto
+            # τ from history if present
+            if haskey(engine.history, :τ)
+                τ_hist = engine.history[:τ]
+                tau_shape_rt = shape.(τ_hist)
+                tau_rate_rt = rate.(τ_hist)
+            end
             if !isempty(tau_shape_rt)
                 writedlm(joinpath(realtime_dir, "realtime_posterior_tau_shape_rate.csv"), hcat(tau_shape_rt[1:upto], tau_rate_rt[1:upto]))
                 tau_mean_rt = tau_shape_rt[1:upto] ./ tau_rate_rt[1:upto]
@@ -320,14 +413,35 @@ begin
             end
         end
     end
-    writedlm(joinpath(realtime_dir, "realtime_truth_history.csv"), gethistory(env))
-    writedlm(joinpath(realtime_dir, "realtime_observations.csv"), getobservations(env))
+    # Persist truth/observations matched to posterior length to avoid misalignment
+    if posterior_samples_written > 0
+        hist_full = gethistory(env)
+        obs_full = getobservations(env)
+        upto_io = min(posterior_samples_written, length(hist_full), length(obs_full))
+        writedlm(joinpath(realtime_dir, "realtime_truth_history.csv"), hist_full[1:upto_io])
+        writedlm(joinpath(realtime_dir, "realtime_observations.csv"), obs_full[1:upto_io])
+    else
+        # Fallback if something unexpected happened
+        writedlm(joinpath(realtime_dir, "realtime_truth_history.csv"), gethistory(env))
+        writedlm(joinpath(realtime_dir, "realtime_observations.csv"), getobservations(env))
+    end
 
     open(joinpath(realtime_dir, "realtime_summary.txt"), "w") do io
         println(io, "realtime_run_completed=true at ", Dates.format(now(), "yyyy-mm-ddTHH:MM:SS"))
         println(io, "n=$(n), interval_ms=$(interval_ms)")
-        println(io, "posterior_samples_captured=$(length(mu_rt))")
-        println(io, "free_energy_points_captured=$(length(fe_rt))")
+        println(io, "iterations=$(rt_iters)")
+        println(io, "seed=$(seed_env)")
+        println(io, "posterior_samples_captured=$(posterior_samples_written)")
+        println(io, "free_energy_points_captured=$(fe_points_written)")
+        # Aggregate metrics if available
+        try
+            met_rt = readdlm(joinpath(realtime_dir, "realtime_metrics_stepwise.csv"))
+            avg_mae = mean(met_rt[:,7])
+            avg_mse = mean(met_rt[:,8])
+            println(io, "mae_realtime_avg=$(avg_mae)")
+            println(io, "mse_realtime_avg=$(avg_mse)")
+        catch
+        end
     end
     log("[realtime] done")
 end
@@ -340,11 +454,13 @@ try
     static_truth = readdlm(joinpath(static_dir, "static_truth_history.csv"))[:]
     static_est   = readdlm(joinpath(static_dir, "static_posterior_x_current.csv"))
     μs = static_est[:,1]
+    σ2s = static_est[:,2]
 
     # Load realtime
     rt_truth = readdlm(joinpath(realtime_dir, "realtime_truth_history.csv"))[:]
     rt_est   = readdlm(joinpath(realtime_dir, "realtime_posterior_x_current.csv"))
     μr = rt_est[:,1]
+    σ2r = rt_est[:,2]
 
     upto = min(length(static_truth), length(μs), length(rt_truth), length(μr))
     mse_static = mean((μs[1:upto] .- static_truth[1:upto]).^2)
@@ -359,6 +475,7 @@ try
         println(io, "mae_static=", mae_static)
         println(io, "mae_realtime=", mae_rt)
         println(io, "n_compare=", upto)
+        println(io, "matched_timesteps=", upto)
     end
 
     # Overlay plot
@@ -390,6 +507,35 @@ try
         InfiniteDataStreamViz.save_gif(anim_overlay, joinpath(cmp_dir, "overlay_means.gif"))
     else
         @info "[comparison] overlay animation disabled (set IDS_MAKE_GIF=1 to enable)"
+    end
+
+    # Free energy comparison (if both available)
+    try
+        fe_static = readdlm(joinpath(static_dir, "static_free_energy.csv"))[:]
+        fe_rt = readdlm(joinpath(realtime_dir, "realtime_free_energy.csv"))[:]
+        upto_fe = min(length(fe_static), length(fe_rt))
+        pfe_cmp = InfiniteDataStreamViz.plot_fe_comparison(fe_static[1:upto_fe], fe_rt[1:upto_fe])
+        png(pfe_cmp, joinpath(cmp_dir, "free_energy_compare.png"))
+        if get(ENV, "IDS_MAKE_GIF", get(IDS_CFG, "make_gif", true) ? "1" : "0") == "1"
+            stride_cmp = parse(Int, get(ENV, "IDS_GIF_STRIDE", "5"))
+            anim_cmp = InfiniteDataStreamViz.animate_comparison_static_vs_realtime(static_truth, μs, σ2s, μr, σ2r, fe_static, fe_rt; stride=stride_cmp)
+            InfiniteDataStreamViz.save_gif(anim_cmp, joinpath(cmp_dir, "static_vs_realtime_composed.gif"))
+        end
+    catch
+        @info "[comparison] FE series missing; skipping FE comparison"
+    end
+
+    # τ comparison if both present (τ is observation precision, i.e., inverse variance)
+    try
+        tau_sr = readdlm(joinpath(static_dir, "static_posterior_tau_shape_rate.csv"))
+        tau_rr = readdlm(joinpath(realtime_dir, "realtime_posterior_tau_shape_rate.csv"))
+        tau_mean_s = tau_sr[:,1] ./ tau_sr[:,2]
+        tau_mean_r = tau_rr[:,1] ./ tau_rr[:,2]
+        upto_tau = min(length(tau_mean_s), length(tau_mean_r))
+        pτcmp = InfiniteDataStreamViz.plot_tau_comparison(tau_mean_s[1:upto_tau], tau_mean_r[1:upto_tau])
+        png(pτcmp, joinpath(cmp_dir, "tau_comparison.png"))
+    catch
+        @info "[comparison] τ series missing; skipping tau comparison"
     end
 catch e
     @warn "comparison report failed" error=e

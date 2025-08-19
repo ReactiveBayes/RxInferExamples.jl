@@ -6,6 +6,7 @@ Files:
 - `run.jl`: unified driver. Creates `output/<timestamp>/` and runs both static and realtime.
 - `run_static.jl` / `run_realtime.jl`: standalone entry points for focused runs.
 - `config.toml`: central configuration for number of steps, timer cadence, inference iterations/history, and GIF/output settings.
+  - Supports `seed` (or `IDS_SEED`) for reproducible environment generation.
 
 How to run:
 ```julia

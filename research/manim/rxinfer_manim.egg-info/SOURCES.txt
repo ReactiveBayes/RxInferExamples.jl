@@ -1,0 +1,10 @@
+README.md
+pyproject.toml
+manim_project/__init__.py
+rxinfer_manim.egg-info/PKG-INFO
+rxinfer_manim.egg-info/SOURCES.txt
+rxinfer_manim.egg-info/dependency_links.txt
+rxinfer_manim.egg-info/requires.txt
+rxinfer_manim.egg-info/top_level.txt
+tests/test_graph_io.py
+tests/test_paths.py

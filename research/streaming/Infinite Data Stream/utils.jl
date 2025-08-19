@@ -27,9 +27,11 @@ function load_config()
     # Defaults
     cfg["initial_state"] = get(cfg, "initial_state", 0.0)
     cfg["observation_precision"] = get(cfg, "observation_precision", 0.1)
+    cfg["seed"] = get(cfg, "seed", 123)
     cfg["n"] = get(cfg, "n", 300)
     cfg["interval_ms"] = get(cfg, "interval_ms", 41)
     cfg["iterations"] = get(cfg, "iterations", 10)
+    cfg["rt_iterations"] = get(cfg, "rt_iterations", cfg["iterations"])
     cfg["keephistory"] = get(cfg, "keephistory", 10_000)
     cfg["output_dir"] = get(cfg, "output_dir", "output")
     cfg["fe_log_stride"] = get(cfg, "fe_log_stride", 10)
@@ -47,6 +49,9 @@ function load_config()
     end
     if haskey(ENV, "IDS_ITERATIONS")
         try cfg["iterations"] = parse(Int, ENV["IDS_ITERATIONS"]) catch; end
+    end
+    if haskey(ENV, "IDS_SEED")
+        try cfg["seed"] = parse(Int, ENV["IDS_SEED"]) catch; end
     end
     return cfg
 end

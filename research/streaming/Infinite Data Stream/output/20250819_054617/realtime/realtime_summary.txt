@@ -1,4 +1,0 @@
-realtime_run_completed=true at 2025-08-19T05:46:59
-n=300, interval_ms=41
-posterior_samples_captured=300
-free_energy_points_captured=0

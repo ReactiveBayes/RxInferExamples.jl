@@ -6,7 +6,9 @@ export plot_hidden_and_obs, plot_estimates, save_gif,
        animate_estimates, plot_tau, plot_overlay_means,
        plot_scatter_static_vs_realtime, plot_residuals,
        animate_free_energy, animate_composed_estimates_fe,
-       animate_overlay_means
+       animate_overlay_means,
+       plot_fe_comparison, animate_comparison_static_vs_realtime,
+       plot_tau_comparison
 
 plot_hidden_and_obs(history::AbstractVector{<:Real}, observations::AbstractVector{<:Real}; size=(1000,300)) = begin
     p = plot(size=size)
@@ -18,6 +20,7 @@ plot_estimates(μ::AbstractVector{<:Real}, σ2::AbstractVector{<:Real}, history:
     p = plot(1:upto, μ[1:upto]; ribbon=σ2[1:upto], label="Estimation")
     plot!(p, history[1:upto]; label="Real states")
     scatter!(p, observations[1:upto]; ms=2, label="Observations")
+    xlims!(p, (max(1, upto - 250), upto))
     plot(p; size=size, legend=:bottomright)
 end
 
@@ -45,6 +48,56 @@ end
 
 plot_tau(tau_mean::AbstractVector{<:Real}; label::AbstractString="E[τ]", xlabel::AbstractString="t", ylabel::AbstractString="precision", size=(800,300)) = begin
     plot(tau_mean; label=label, xlabel=xlabel, ylabel=ylabel, size=size)
+end
+
+# Side-by-side comparisons for static vs realtime
+
+"""
+    plot_fe_comparison(fe_static, fe_rt; upto=min(length(fe_static), length(fe_rt)))
+
+Return a 2-panel plot with Bethe Free Energy time series for static vs realtime.
+Includes legends and captions.
+"""
+plot_fe_comparison(fe_static::AbstractVector{<:Real}, fe_rt::AbstractVector{<:Real}; upto::Int=min(length(fe_static), length(fe_rt)), size=(1000,300)) = begin
+    p = plot(fe_static[1:upto]; label="Static: Bethe Free Energy (avg)", xlabel="t", size=size, color=:blue)
+    plot!(p, fe_rt[1:upto]; label="Realtime: Bethe Free Energy (avg)", color=:orange)
+    title!(p, "Bethe Free Energy comparison")
+    plot(p; legend=:topright)
+end
+
+"""
+    animate_comparison_static_vs_realtime(truth, μ_static, σ2_static, μ_rt, σ2_rt, fe_static, fe_rt; stride=5)
+
+Animated side-by-side visualization: top row overlays truth, static μ, realtime μ; bottom row compares FE.
+"""
+animate_comparison_static_vs_realtime(truth::AbstractVector{<:Real},
+                                      μ_static::AbstractVector{<:Real}, σ2_static::AbstractVector{<:Real},
+                                      μ_rt::AbstractVector{<:Real}, σ2_rt::AbstractVector{<:Real},
+                                      fe_static::AbstractVector{<:Real}, fe_rt::AbstractVector{<:Real};
+                                      stride::Int=5) = @animate for i in 1:stride:min(length(truth), length(μ_static), length(μ_rt), length(fe_static), length(fe_rt))
+    p_overlay = plot(truth[1:i]; label="truth", color=:black, size=(1000,300))
+    plot!(p_overlay, μ_static[1:i]; ribbon=σ2_static[1:i], label="static μ ± σ", color=:blue)
+    plot!(p_overlay, μ_rt[1:i]; ribbon=σ2_rt[1:i], label="realtime μ ± σ", color=:orange)
+    xlims!(p_overlay, (1, i))
+    title!(p_overlay, "State estimates")
+
+    p_fe = plot(fe_static[1:i]; label="static FE", xlabel="t", size=(1000,300), color=:blue)
+    plot!(p_fe, fe_rt[1:i]; label="realtime FE", color=:orange)
+    xlims!(p_fe, (1, i))
+    title!(p_fe, "Bethe Free Energy (avg)")
+    plot(p_overlay, p_fe; layout=(2,1), link=:x, size=(1000,620))
+end
+
+"""
+    plot_tau_comparison(tau_static, tau_rt; upto=min(length(tau_static), length(tau_rt)))
+
+Compare expected precision τ over time for static vs realtime.
+"""
+plot_tau_comparison(tau_static::AbstractVector{<:Real}, tau_rt::AbstractVector{<:Real}; upto::Int=min(length(tau_static), length(tau_rt)), size=(1000,300)) = begin
+    p = plot(tau_static[1:upto]; label="static E[τ]", xlabel="t", ylabel="precision (τ)", size=size, color=:blue)
+    plot!(p, tau_rt[1:upto]; label="realtime E[τ]", color=:orange)
+    title!(p, "Observation precision τ (inverse variance)")
+    plot(p; legend=:topright)
 end
 
 plot_overlay_means(truth::AbstractVector{<:Real}, μ_static::AbstractVector{<:Real}, μ_rt::AbstractVector{<:Real}; upto::Int=min(length(truth), min(length(μ_static), length(μ_rt))), size=(1000,300)) = begin
