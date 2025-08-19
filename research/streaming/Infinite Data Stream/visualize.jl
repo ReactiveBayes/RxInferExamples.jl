@@ -4,7 +4,9 @@ using Plots
 
 export plot_hidden_and_obs, plot_estimates, save_gif,
        animate_estimates, plot_tau, plot_overlay_means,
-       plot_scatter_static_vs_realtime, plot_residuals
+       plot_scatter_static_vs_realtime, plot_residuals,
+       animate_free_energy, animate_composed_estimates_fe,
+       animate_overlay_means
 
 plot_hidden_and_obs(history::AbstractVector{<:Real}, observations::AbstractVector{<:Real}; size=(1000,300)) = begin
     p = plot(size=size)
@@ -23,6 +25,20 @@ save_gif(anim, path::AbstractString; fps::Int=24) = gif(anim, path; fps=fps, sho
 
 animate_estimates(μ::AbstractVector{<:Real}, σ2::AbstractVector{<:Real}, history::AbstractVector{<:Real}, observations::AbstractVector{<:Real}; stride::Int=5, size=(1000,300)) = @animate for i in 1:stride:length(μ)
     plot_estimates(μ, σ2, history, observations; upto=i, size=size)
+end
+
+animate_free_energy(free_energy::AbstractVector{<:Real}; stride::Int=5, size=(800,300)) = @animate for i in 1:stride:length(free_energy)
+    plot(free_energy[1:i]; label="Bethe Free Energy (avg)", xlabel="t", size=size)
+end
+
+animate_composed_estimates_fe(μ::AbstractVector{<:Real}, σ2::AbstractVector{<:Real}, history::AbstractVector{<:Real}, observations::AbstractVector{<:Real}, free_energy::AbstractVector{<:Real}; stride::Int=5) = @animate for i in 1:stride:min(length(μ), length(free_energy))
+    p1 = plot_estimates(μ, σ2, history, observations; upto=i, size=(900,300))
+    p2 = plot(free_energy[1:i]; label="Bethe Free Energy (avg)", xlabel="t", size=(700,300))
+    plot(p1, p2; layout=(1,2), size=(1600,320))
+end
+
+animate_overlay_means(truth::AbstractVector{<:Real}, μ_static::AbstractVector{<:Real}, μ_rt::AbstractVector{<:Real}; stride::Int=5) = @animate for i in 1:stride:min(length(truth), min(length(μ_static), length(μ_rt)))
+    plot_overlay_means(truth, μ_static, μ_rt; upto=i)
 end
 
 plot_tau(tau_mean::AbstractVector{<:Real}; label::AbstractString="E[τ]", xlabel::AbstractString="t", ylabel::AbstractString="precision", size=(800,300)) = begin

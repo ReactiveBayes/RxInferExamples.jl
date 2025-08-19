@@ -72,7 +72,7 @@ begin
     p = InfiniteDataStreamViz.plot_estimates(μ, σ2, history, observations; upto=n)
     png(p, joinpath(static_dir, "static_inference.png"))
 
-    # Optional animation controlled by ENV flags
+    # Optional animations controlled by ENV flags
     if get(ENV, "IDS_MAKE_GIF", "0") == "1"
         stride = parse(Int, get(ENV, "IDS_GIF_STRIDE", "5"))
         log("[static] rendering animation frames (stride=$(stride)) …")
@@ -84,6 +84,20 @@ begin
         end
         log("[static] saving GIF …")
         InfiniteDataStreamViz.save_gif(anim, joinpath(static_dir, "static_inference.gif"))
+        # Free-energy animation
+        anim_fe = InfiniteDataStreamViz.animate_free_energy(engine.free_energy_history; stride=stride)
+        static_fe_gif = joinpath(static_dir, "static_free_energy.gif")
+        InfiniteDataStreamViz.save_gif(anim_fe, static_fe_gif)
+        # Composed animation (estimates + free energy)
+        anim_comp = InfiniteDataStreamViz.animate_composed_estimates_fe(μ, σ2, history, observations, engine.free_energy_history; stride=stride)
+        static_comp_gif = joinpath(static_dir, "static_composed_estimates_fe.gif")
+        InfiniteDataStreamViz.save_gif(anim_comp, static_comp_gif)
+        try
+            cp(joinpath(static_dir, "static_free_energy.csv"), joinpath(cmp_dir, "static_free_energy.csv"), force=true)
+            cp(static_fe_gif, joinpath(cmp_dir, "static_free_energy.gif"), force=true)
+            cp(static_comp_gif, joinpath(cmp_dir, "static_composed_estimates_fe.gif"), force=true)
+        catch
+        end
     end
 
     log("[static] saving free-energy plot …")
@@ -98,7 +112,7 @@ begin
         tau_shape = shape.(tau_series)
         tau_rate  = rate.(tau_series)
         tau_mean  = tau_shape ./ tau_rate
-        writedlm(joinpath(outdir, "static_posterior_tau_shape_rate.csv"), hcat(tau_shape, tau_rate))
+        writedlm(joinpath(static_dir, "static_posterior_tau_shape_rate.csv"), hcat(tau_shape, tau_rate))
         pτ = plot(tau_mean; label="E[τ]", xlabel="t", ylabel="precision")
         png(pτ, joinpath(static_dir, "static_tau_mean.png"))
     end
@@ -186,6 +200,18 @@ begin
                 InfiniteDataStreamViz.plot_estimates(mu_rt[1:upto], var_rt[1:upto], hist, obs; upto=i)
             end
             InfiniteDataStreamViz.save_gif(anim_rt, joinpath(realtime_dir, "realtime_inference.gif"))
+            try
+                cp(joinpath(static_dir, "static_free_energy.csv"), joinpath(realtime_dir, "realtime_free_energy.csv"), force=true)
+                if isfile(joinpath(static_dir, "static_free_energy.gif"))
+                    cp(joinpath(static_dir, "static_free_energy.gif"), joinpath(realtime_dir, "realtime_free_energy.gif"), force=true)
+                end
+            catch
+            end
+            # Realtime composed GIFs
+            if get(ENV, "IDS_MAKE_GIF", "0") == "1"
+                # For realtime, approximate a per-step free-energy with cumulative average if available later
+                # Here we do not have FE per step from streaming history; we skip FE animation unless available.
+            end
             writedlm(joinpath(realtime_dir, "realtime_posterior_x_current.csv"), hcat(mu_rt[1:upto], var_rt[1:upto]))
             if !isempty(tau_shape_rt)
                 writedlm(joinpath(realtime_dir, "realtime_posterior_tau_shape_rate.csv"), hcat(tau_shape_rt[1:upto], tau_rate_rt[1:upto]))
@@ -256,6 +282,13 @@ try
     pr_r = plot(r_rt; label="residual (realtime)", xlabel="t", ylabel="truth - mean", size=(1000,300))
     hline!(pr_r, [0.0]; color=:gray, lw=1, label="0")
     png(pr_r, joinpath(cmp_dir, "residuals_realtime.png"))
+
+    # Optional comparison animation (overlay evolving)
+    if get(ENV, "IDS_MAKE_GIF", "0") == "1"
+        stride = parse(Int, get(ENV, "IDS_GIF_STRIDE", "5"))
+        anim_overlay = InfiniteDataStreamViz.animate_overlay_means(static_truth, μs, μr; stride=stride)
+        InfiniteDataStreamViz.save_gif(anim_overlay, joinpath(cmp_dir, "overlay_means.gif"))
+    end
 catch e
     @warn "comparison report failed" error=e
 end

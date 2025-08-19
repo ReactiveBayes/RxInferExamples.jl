@@ -1,0 +1,5 @@
+mse_static=5.22126352504982
+mse_realtime=5.22126352504982
+mae_static=1.864879751380014
+mae_realtime=1.864879751380014
+n_compare=300

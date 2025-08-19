@@ -1,0 +1,3 @@
+realtime_run_completed=true at 2025-08-18T21:40:07
+n=300, interval_ms=41
+posterior_samples_captured=300
