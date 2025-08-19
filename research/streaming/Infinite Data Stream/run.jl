@@ -440,8 +440,8 @@ begin
         catch
         end
     end
-    # Simple progress while we wait for stream completion
-    total = ceil(Int, n * interval_ms / 1000) + 1
+    # Wait for all observations to be processed
+    total = ceil(Int, n * interval_ms / 1000) + 2  # Add buffer time
     fe_history_idx = Ref(0)
     for s in 1:total
         sleep(1)
@@ -449,7 +449,12 @@ begin
             pct = round(100 * min(obs_count[], n) / n; digits=1)
             log("[realtime] elapsed $(s)/$(total)s, observed=$(obs_count[]) / $(n) ($(pct)%)")
         end
-        # If a real FE stream is not available, we do not fabricate values.
+        # Continue until we have processed all n observations
+        if obs_count[] >= n
+            log("[realtime] all $(n) observations processed, waiting for final inference...")
+            sleep(2)  # Allow final inference to complete
+            break
+        end
     end
     # Persist artifacts
 
@@ -607,19 +612,119 @@ try
     σ2r = rt_est[:,2]
 
     upto = min(length(static_truth), length(μs), length(rt_truth), length(μr))
-    mse_static = mean((μs[1:upto] .- static_truth[1:upto]).^2)
-    mse_rt     = mean((μr[1:upto] .- rt_truth[1:upto]).^2)
-    mae_static = mean(abs.(μs[1:upto] .- static_truth[1:upto]))
-    mae_rt     = mean(abs.(μr[1:upto] .- rt_truth[1:upto]))
+    
+    # Comprehensive error metrics
+    residuals_static = μs[1:upto] .- static_truth[1:upto]
+    residuals_rt = μr[1:upto] .- rt_truth[1:upto]
+    
+    # Basic metrics
+    mse_static = mean(residuals_static.^2)
+    mse_rt = mean(residuals_rt.^2)
+    mae_static = mean(abs.(residuals_static))
+    mae_rt = mean(abs.(residuals_rt))
+    rmse_static = sqrt(mse_static)
+    rmse_rt = sqrt(mse_rt)
+    
+    # Advanced statistical metrics
+    using Statistics
+    
+    # Bias (systematic error)
+    bias_static = mean(residuals_static)
+    bias_rt = mean(residuals_rt)
+    
+    # Variance of residuals
+    var_residuals_static = var(residuals_static)
+    var_residuals_rt = var(residuals_rt)
+    
+    # Standard deviation of residuals
+    std_residuals_static = std(residuals_static)
+    std_residuals_rt = std(residuals_rt)
+    
+    # Correlation between predictions and truth
+    cor_static = cor(μs[1:upto], static_truth[1:upto])
+    cor_rt = cor(μr[1:upto], rt_truth[1:upto])
+    
+    # R-squared (coefficient of determination)
+    ss_res_static = sum(residuals_static.^2)
+    ss_tot_static = sum((static_truth[1:upto] .- mean(static_truth[1:upto])).^2)
+    r2_static = 1 - ss_res_static / ss_tot_static
+    
+    ss_res_rt = sum(residuals_rt.^2)
+    ss_tot_rt = sum((rt_truth[1:upto] .- mean(rt_truth[1:upto])).^2)
+    r2_rt = 1 - ss_res_rt / ss_tot_rt
+    
+    # Quantile-based metrics
+    q25_abs_err_static = quantile(abs.(residuals_static), 0.25)
+    q50_abs_err_static = quantile(abs.(residuals_static), 0.50)  # median absolute error
+    q75_abs_err_static = quantile(abs.(residuals_static), 0.75)
+    q95_abs_err_static = quantile(abs.(residuals_static), 0.95)
+    
+    q25_abs_err_rt = quantile(abs.(residuals_rt), 0.25)
+    q50_abs_err_rt = quantile(abs.(residuals_rt), 0.50)
+    q75_abs_err_rt = quantile(abs.(residuals_rt), 0.75)
+    q95_abs_err_rt = quantile(abs.(residuals_rt), 0.95)
+    
+    # Maximum absolute error
+    max_abs_err_static = maximum(abs.(residuals_static))
+    max_abs_err_rt = maximum(abs.(residuals_rt))
+    
+    # Normalized metrics (relative to truth range)
+    truth_range_static = maximum(static_truth[1:upto]) - minimum(static_truth[1:upto])
+    truth_range_rt = maximum(rt_truth[1:upto]) - minimum(rt_truth[1:upto])
+    
+    nrmse_static = rmse_static / truth_range_static
+    nrmse_rt = rmse_rt / truth_range_rt
+    nmae_static = mae_static / truth_range_static
+    nmae_rt = mae_rt / truth_range_rt
 
-    # Save metrics
+    # Save comprehensive metrics
     open(joinpath(cmp_dir, "metrics.txt"), "w") do io
+        println(io, "# Basic Error Metrics")
         println(io, "mse_static=", mse_static)
         println(io, "mse_realtime=", mse_rt)
         println(io, "mae_static=", mae_static)
         println(io, "mae_realtime=", mae_rt)
+        println(io, "rmse_static=", rmse_static)
+        println(io, "rmse_realtime=", rmse_rt)
+        println(io, "")
+        println(io, "# Bias and Variance")
+        println(io, "bias_static=", bias_static)
+        println(io, "bias_realtime=", bias_rt)
+        println(io, "var_residuals_static=", var_residuals_static)
+        println(io, "var_residuals_realtime=", var_residuals_rt)
+        println(io, "std_residuals_static=", std_residuals_static)
+        println(io, "std_residuals_realtime=", std_residuals_rt)
+        println(io, "")
+        println(io, "# Correlation and R-squared")
+        println(io, "correlation_static=", cor_static)
+        println(io, "correlation_realtime=", cor_rt)
+        println(io, "r2_static=", r2_static)
+        println(io, "r2_realtime=", r2_rt)
+        println(io, "")
+        println(io, "# Quantile-based Metrics")
+        println(io, "q25_abs_err_static=", q25_abs_err_static)
+        println(io, "q50_abs_err_static=", q50_abs_err_static)
+        println(io, "q75_abs_err_static=", q75_abs_err_static)
+        println(io, "q95_abs_err_static=", q95_abs_err_static)
+        println(io, "max_abs_err_static=", max_abs_err_static)
+        println(io, "")
+        println(io, "q25_abs_err_realtime=", q25_abs_err_rt)
+        println(io, "q50_abs_err_realtime=", q50_abs_err_rt)
+        println(io, "q75_abs_err_realtime=", q75_abs_err_rt)
+        println(io, "q95_abs_err_realtime=", q95_abs_err_rt)
+        println(io, "max_abs_err_realtime=", max_abs_err_rt)
+        println(io, "")
+        println(io, "# Normalized Metrics")
+        println(io, "nrmse_static=", nrmse_static)
+        println(io, "nrmse_realtime=", nrmse_rt)
+        println(io, "nmae_static=", nmae_static)
+        println(io, "nmae_realtime=", nmae_rt)
+        println(io, "")
+        println(io, "# Sample Size")
         println(io, "n_compare=", upto)
         println(io, "matched_timesteps=", upto)
+        println(io, "truth_range_static=", truth_range_static)
+        println(io, "truth_range_realtime=", truth_range_rt)
     end
 
     # Write a JSON-like summary for downstream analysis
@@ -638,16 +743,55 @@ try
                 fe_rt_stats = "{\"count\": $(length(fe_r)), \"median\": $(median(fe_r)), \"p90\": $(quantile(fe_r, 0.90))}"
             end
         catch; end
-        # Persist
+        # Persist comprehensive summary
         open(joinpath(outdir, "summary.json"), "w") do io
             println(io, "{")
-            println(io, "  \"n_compare\": $(upto),")
-            println(io, "  \"mae_static\": $(mae_static),")
-            println(io, "  \"mse_static\": $(mse_static),")
-            println(io, "  \"mae_realtime\": $(mae_rt),")
-            println(io, "  \"mse_realtime\": $(mse_rt),")
-            println(io, "  \"fe_static\": $(fe_static_stats),")
-            println(io, "  \"fe_realtime\": $(fe_rt_stats)")
+            println(io, "  \"sample_size\": {")
+            println(io, "    \"n_compare\": $(upto),")
+            println(io, "    \"matched_timesteps\": $(upto)")
+            println(io, "  },")
+            println(io, "  \"basic_metrics\": {")
+            println(io, "    \"mae_static\": $(mae_static),")
+            println(io, "    \"mae_realtime\": $(mae_rt),")
+            println(io, "    \"mse_static\": $(mse_static),")
+            println(io, "    \"mse_realtime\": $(mse_rt),")
+            println(io, "    \"rmse_static\": $(rmse_static),")
+            println(io, "    \"rmse_realtime\": $(rmse_rt)")
+            println(io, "  },")
+            println(io, "  \"bias_variance\": {")
+            println(io, "    \"bias_static\": $(bias_static),")
+            println(io, "    \"bias_realtime\": $(bias_rt),")
+            println(io, "    \"var_residuals_static\": $(var_residuals_static),")
+            println(io, "    \"var_residuals_realtime\": $(var_residuals_rt)")
+            println(io, "  },")
+            println(io, "  \"correlation\": {")
+            println(io, "    \"correlation_static\": $(cor_static),")
+            println(io, "    \"correlation_realtime\": $(cor_rt),")
+            println(io, "    \"r2_static\": $(r2_static),")
+            println(io, "    \"r2_realtime\": $(r2_rt)")
+            println(io, "  },")
+            println(io, "  \"quantile_metrics\": {")
+            println(io, "    \"q50_abs_err_static\": $(q50_abs_err_static),")
+            println(io, "    \"q50_abs_err_realtime\": $(q50_abs_err_rt),")
+            println(io, "    \"q95_abs_err_static\": $(q95_abs_err_static),")
+            println(io, "    \"q95_abs_err_realtime\": $(q95_abs_err_rt),")
+            println(io, "    \"max_abs_err_static\": $(max_abs_err_static),")
+            println(io, "    \"max_abs_err_realtime\": $(max_abs_err_rt)")
+            println(io, "  },")
+            println(io, "  \"normalized_metrics\": {")
+            println(io, "    \"nrmse_static\": $(nrmse_static),")
+            println(io, "    \"nrmse_realtime\": $(nrmse_rt),")
+            println(io, "    \"nmae_static\": $(nmae_static),")
+            println(io, "    \"nmae_realtime\": $(nmae_rt)")
+            println(io, "  },")
+            println(io, "  \"coverage\": {")
+            println(io, "    \"coverage_static_95\": $(coverage_static),")
+            println(io, "    \"coverage_realtime_95\": $(coverage_rt)")
+            println(io, "  },")
+            println(io, "  \"fe_stats\": {")
+            println(io, "    \"fe_static\": $(fe_static_stats),")
+            println(io, "    \"fe_realtime\": $(fe_rt_stats)")
+            println(io, "  }")
             println(io, "}")
         end
     catch
@@ -659,21 +803,125 @@ try
     plot!(pcmp, μr[1:upto]; label="realtime μ", color=:orange)
     png(pcmp, joinpath(cmp_dir, "means_compare.png"))
 
-    # Additional comparisons
-    # 1) Scatter: static vs realtime means
+    # Comprehensive visualizations
+    
+    # 1) Scatter: static vs realtime means with statistics
     pscatter = scatter(μs[1:upto], μr[1:upto]; ms=3, alpha=0.7, label="points", xlabel="static μ", ylabel="realtime μ")
     plot!(pscatter, [minimum(μs[1:upto]); maximum(μs[1:upto])], [minimum(μs[1:upto]); maximum(μs[1:upto])]; label="y=x", color=:gray, lw=1.5)
+    # Add correlation info to title
+    title!(pscatter, "Static vs Realtime Predictions (r=$(round(cor(μs[1:upto], μr[1:upto]); digits=3)))")
     png(pscatter, joinpath(cmp_dir, "scatter_static_vs_realtime.png"))
 
-    # 2) Residuals (truth - mean)
-    r_static = static_truth[1:upto] .- μs[1:upto]
-    r_rt     = rt_truth[1:upto] .- μr[1:upto]
-    pr_s = plot(r_static; label="residual (static)", xlabel="t", ylabel="truth - mean", size=(1000,300))
-    hline!(pr_s, [0.0]; color=:gray, lw=1, label="0")
+    # 2) Residuals analysis with enhanced plots
+    r_static = residuals_static
+    r_rt = residuals_rt
+    
+    # Individual residual plots
+    pr_s = plot(r_static; label="residual (static)", xlabel="t", ylabel="truth - mean", size=(1000,300), color=:blue)
+    hline!(pr_s, [0.0]; color=:gray, lw=1, label="zero line")
+    hline!(pr_s, [bias_static]; color=:red, lw=1, linestyle=:dash, label="bias=$(round(bias_static; digits=3))")
+    title!(pr_s, "Static Residuals (RMSE=$(round(rmse_static; digits=3)))")
     png(pr_s, joinpath(cmp_dir, "residuals_static.png"))
-    pr_r = plot(r_rt; label="residual (realtime)", xlabel="t", ylabel="truth - mean", size=(1000,300))
-    hline!(pr_r, [0.0]; color=:gray, lw=1, label="0")
+    
+    pr_r = plot(r_rt; label="residual (realtime)", xlabel="t", ylabel="truth - mean", size=(1000,300), color=:orange)
+    hline!(pr_r, [0.0]; color=:gray, lw=1, label="zero line")
+    hline!(pr_r, [bias_rt]; color=:red, lw=1, linestyle=:dash, label="bias=$(round(bias_rt; digits=3))")
+    title!(pr_r, "Realtime Residuals (RMSE=$(round(rmse_rt; digits=3)))")
     png(pr_r, joinpath(cmp_dir, "residuals_realtime.png"))
+    
+    # Combined residuals plot
+    pr_combined = plot(r_static; label="static residuals", xlabel="t", ylabel="residual", size=(1200,400), color=:blue, alpha=0.7)
+    plot!(pr_combined, r_rt; label="realtime residuals", color=:orange, alpha=0.7)
+    hline!(pr_combined, [0.0]; color=:gray, lw=2, label="zero line")
+    title!(pr_combined, "Residuals Comparison")
+    png(pr_combined, joinpath(cmp_dir, "residuals_combined.png"))
+    
+    # 3) Box plots for error distribution comparison
+    using StatsPlots
+    abs_err_static = abs.(r_static)
+    abs_err_rt = abs.(r_rt)
+    
+    pbox = boxplot(["Static"], abs_err_static; label="", color=:blue, alpha=0.7)
+    boxplot!(pbox, ["Realtime"], abs_err_rt; label="", color=:orange, alpha=0.7)
+    ylabel!(pbox, "Absolute Error")
+    title!(pbox, "Error Distribution Comparison")
+    png(pbox, joinpath(cmp_dir, "error_boxplot.png"))
+    
+    # 4) Histogram of errors
+    phist = histogram(abs_err_static; bins=30, alpha=0.7, label="static |error|", color=:blue, normalize=:probability)
+    histogram!(phist, abs_err_rt; bins=30, alpha=0.7, label="realtime |error|", color=:orange, normalize=:probability)
+    xlabel!(phist, "Absolute Error")
+    ylabel!(phist, "Probability Density")
+    title!(phist, "Error Distribution")
+    png(phist, joinpath(cmp_dir, "error_histogram.png"))
+    
+    # 5) Q-Q plot for error distribution comparison
+    using Plots
+    sorted_static = sort(abs_err_static)
+    sorted_rt = sort(abs_err_rt)
+    n_min = min(length(sorted_static), length(sorted_rt))
+    quantiles = (1:n_min) ./ n_min
+    
+    pqq = scatter(sorted_static[1:n_min], sorted_rt[1:n_min]; ms=2, alpha=0.7, label="", xlabel="Static |Error| Quantiles", ylabel="Realtime |Error| Quantiles")
+    plot!(pqq, [0; maximum([sorted_static[n_min], sorted_rt[n_min]])], [0; maximum([sorted_static[n_min], sorted_rt[n_min]])]; color=:gray, lw=1.5, label="y=x")
+    title!(pqq, "Q-Q Plot: Error Distributions")
+    png(pqq, joinpath(cmp_dir, "qq_plot_errors.png"))
+    
+    # 6) Uncertainty comparison (using variance estimates)
+    punc = plot(σ2s[1:upto]; label="static variance", xlabel="t", ylabel="variance", color=:blue, alpha=0.7)
+    plot!(punc, σ2r[1:upto]; label="realtime variance", color=:orange, alpha=0.7)
+    title!(punc, "Uncertainty Estimates Comparison")
+    png(punc, joinpath(cmp_dir, "uncertainty_comparison.png"))
+    
+    # 7) Prediction intervals comparison
+    # 95% prediction intervals
+    ci_static_lower = μs[1:upto] .- 1.96 .* sqrt.(σ2s[1:upto])
+    ci_static_upper = μs[1:upto] .+ 1.96 .* sqrt.(σ2s[1:upto])
+    ci_rt_lower = μr[1:upto] .- 1.96 .* sqrt.(σ2r[1:upto])
+    ci_rt_upper = μr[1:upto] .+ 1.96 .* sqrt.(σ2r[1:upto])
+    
+    # Coverage analysis
+    coverage_static = mean((static_truth[1:upto] .>= ci_static_lower) .& (static_truth[1:upto] .<= ci_static_upper))
+    coverage_rt = mean((rt_truth[1:upto] .>= ci_rt_lower) .& (rt_truth[1:upto] .<= ci_rt_upper))
+    
+    pci = plot(static_truth[1:upto]; label="truth", color=:black, lw=2)
+    plot!(pci, μs[1:upto]; ribbon=(μs[1:upto] .- ci_static_lower, ci_static_upper .- μs[1:upto]), 
+          label="static (coverage=$(round(coverage_static*100; digits=1))%)", alpha=0.3, color=:blue)
+    plot!(pci, μr[1:upto]; ribbon=(μr[1:upto] .- ci_rt_lower, ci_rt_upper .- μr[1:upto]), 
+          label="realtime (coverage=$(round(coverage_rt*100; digits=1))%)", alpha=0.3, color=:orange)
+    xlabel!(pci, "t")
+    ylabel!(pci, "value")
+    title!(pci, "95% Prediction Intervals")
+    png(pci, joinpath(cmp_dir, "prediction_intervals.png"))
+    
+    # 8) Running metrics over time
+    window_size = max(10, upto ÷ 20)  # Adaptive window size
+    running_mae_static = Float64[]
+    running_mae_rt = Float64[]
+    running_rmse_static = Float64[]
+    running_rmse_rt = Float64[]
+    
+    for i in window_size:upto
+        start_idx = max(1, i - window_size + 1)
+        push!(running_mae_static, mean(abs.(r_static[start_idx:i])))
+        push!(running_mae_rt, mean(abs.(r_rt[start_idx:i])))
+        push!(running_rmse_static, sqrt(mean(r_static[start_idx:i].^2)))
+        push!(running_rmse_rt, sqrt(mean(r_rt[start_idx:i].^2)))
+    end
+    
+    prun = plot(window_size:upto, running_mae_static; label="static MAE", color=:blue, lw=2)
+    plot!(prun, window_size:upto, running_mae_rt; label="realtime MAE", color=:orange, lw=2)
+    xlabel!(prun, "t")
+    ylabel!(prun, "Running MAE")
+    title!(prun, "Running Mean Absolute Error (window=$(window_size))")
+    png(prun, joinpath(cmp_dir, "running_mae.png"))
+    
+    prun_rmse = plot(window_size:upto, running_rmse_static; label="static RMSE", color=:blue, lw=2)
+    plot!(prun_rmse, window_size:upto, running_rmse_rt; label="realtime RMSE", color=:orange, lw=2)
+    xlabel!(prun_rmse, "t")
+    ylabel!(prun_rmse, "Running RMSE")
+    title!(prun_rmse, "Running Root Mean Square Error (window=$(window_size))")
+    png(prun_rmse, joinpath(cmp_dir, "running_rmse.png"))
 
     # Optional comparison animation (overlay evolving)
     if get(ENV, "IDS_MAKE_GIF", get(IDS_CFG, "make_gif", true) ? "1" : "0") == "1"
