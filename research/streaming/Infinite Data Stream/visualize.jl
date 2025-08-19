@@ -20,7 +20,7 @@ plot_estimates(μ::AbstractVector{<:Real}, σ2::AbstractVector{<:Real}, history:
     p = plot(1:upto, μ[1:upto]; ribbon=σ2[1:upto], label="Estimation")
     plot!(p, history[1:upto]; label="Real states")
     scatter!(p, observations[1:upto]; ms=2, label="Observations")
-    xlims!(p, (max(1, upto - 250), upto))
+    xlims!(p, (1, upto))
     plot(p; size=size, legend=:bottomright)
 end
 

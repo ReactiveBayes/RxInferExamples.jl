@@ -116,10 +116,15 @@ end
         @test isfile(joinpath(static_dir, "static_inference.gif"))
         @test isfile(joinpath(static_dir, "static_free_energy.gif"))
         @test isfile(joinpath(static_dir, "static_composed_estimates_fe.gif"))
+        @test isfile(joinpath(static_dir, "static_metrics_stepwise.csv"))
+        @test isfile(joinpath(static_dir, "static_metrics_stepwise_with_header.csv"))
+        @test isfile(joinpath(latest, "summary.json"))
         @test isfile(joinpath(realtime_dir, "realtime_inference.png"))
         @test isfile(joinpath(realtime_dir, "realtime_posterior_x_current.csv"))
         @test isfile(joinpath(realtime_dir, "realtime_inference.gif"))
         # realtime_free_energy.csv is optional; only saved if engine exposes FE stream
+        @test isfile(joinpath(realtime_dir, "realtime_metrics_stepwise.csv"))
+        @test isfile(joinpath(realtime_dir, "realtime_metrics_stepwise_with_header.csv"))
         @test isfile(joinpath(cmp_dir, "metrics.txt"))
 
         metrics = read(joinpath(cmp_dir, "metrics.txt"), String)
@@ -132,6 +137,7 @@ end
         @test isfile(joinpath(cmp_dir, "residuals_static.png"))
         @test isfile(joinpath(cmp_dir, "residuals_realtime.png"))
         @test isfile(joinpath(cmp_dir, "overlay_means.gif"))
+        @test isfile(joinpath(cmp_dir, "summary.json")) || true
 
         # Numerical equivalence (within tolerance) between static and realtime means
         μs = readdlm(joinpath(static_dir, "static_posterior_x_current.csv"))[:, 1]

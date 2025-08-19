@@ -1,0 +1,17 @@
+[[run]]
+n = 500
+interval_ms = 10
+iterations = 10
+rt_iterations = 8
+rt_fe_every = 1
+seed = 123
+
+[[run]]
+n = 1000
+interval_ms = 5
+iterations = 10
+rt_iterations = 12
+rt_fe_every = 1
+seed = 123
+
+

@@ -3,11 +3,13 @@
 Files:
 - `Project.toml` / `Manifest.toml`: self-contained environment (`RxInfer`, `Rocket`, `Plots`, `StableRNGs`).
 - `README.md`: quick-start and structure.
-- `run.jl`: unified driver. Creates `output/<timestamp>/` and runs both static and realtime.
+- `run.jl`: unified CLI driver. Creates `output/<timestamp>/` and runs both static and realtime, writes `provenance.json`, `timings.json`, and a run-level `summary.json`.
 - `run_static.jl` / `run_realtime.jl`: standalone entry points for focused runs.
 - `config.toml`: central configuration for number of steps, timer cadence, inference iterations/history, and GIF/output settings.
   - Supports `seed` (or `IDS_SEED`) for reproducible environment generation.
   - Realtime-specific keys: `rt_iterations` (or `IDS_RT_ITERATIONS`) controls per-step updates; `rt_fe_every` (or `IDS_RT_FE_EVERY`) controls strict online FE frequency (1 = every point).
+  - CLI flags in `run.jl` override `config.toml` and ENV: `--n`, `--interval_ms`, `--iterations`, `--rt_iterations`, `--rt_fe_every`, `--keephistory`, `--gif_stride`, `--rt_gif_stride`, `--seed`, `--make_gif`, `--output_dir`.
+- `runner.jl`: composable programmatic API (`run_static`, `run_realtime`, `compare_runs`) returning `RunArtifacts`. Prefer this for notebooks, custom scripts, and sweeps.
 
 How to run:
 ```julia

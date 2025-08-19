@@ -1,5 +1,15 @@
+try
+    @eval begin
+        import Pkg
+        Pkg.activate(@__DIR__)
+        Pkg.instantiate()
+    end
+catch
+end
+
 include("utils.jl"); using .InfiniteDataStreamUtils; InfiniteDataStreamUtils.load_modules!(); const IDS_CFG = InfiniteDataStreamUtils.load_config()
-using Dates, DelimitedFiles, Plots, RxInfer
+include("engine_wrapper.jl"); using .InfiniteDataStreamEngineWrapper
+using Dates, DelimitedFiles, Plots, RxInfer, Rocket
 using .InfiniteDataStreamModel
 using .InfiniteDataStreamEnv
 using .InfiniteDataStreamUpdates
@@ -13,44 +23,7 @@ end
 
 log(msg) = println("[", Dates.format(now(), "HH:MM:SS"), "] ", msg)
 
-# Helper: compute per-timestep FE by re-inferring on growing prefixes (no mirroring)
-function compute_per_timestep_fe(observations::Vector{Float64}; iterations::Int=10)
-    fe_series = Float64[]
-    total = length(observations)
-    log_stride = try
-        Int(get(IDS_CFG, "fe_log_stride", 10))
-    catch
-        10
-    end
-    start_t = time()
-    log("[realtime] FE prefix re-inference: total=$(total), iters/step=$(iterations), log_stride=$(log_stride)")
-    for t in 1:length(observations)
-        ds_t = Main.InfiniteDataStreamStreams.to_namedtuple_stream(observations[1:t])
-        au = Main.InfiniteDataStreamUpdates.make_autoupdates()
-        init = Main.InfiniteDataStreamUpdates.make_initialization()
-        eng_t = infer(
-            model          = Main.InfiniteDataStreamModel.kalman_filter(),
-            constraints    = Main.InfiniteDataStreamModel.filter_constraints(),
-            datastream     = ds_t,
-            autoupdates    = au,
-            returnvars     = (:x_current,),
-            initialization = init,
-            iterations     = iterations,
-            free_energy    = true,
-            keephistory    = 1,
-            autostart      = true,
-        )
-        push!(fe_series, eng_t.free_energy_history[end])
-        if (t % log_stride == 0) || (t == total)
-            elapsed = time() - start_t
-            rate = elapsed / t
-            eta_s = round(Int, max(0, rate * (total - t)))
-            pct = round(100 * t / total; digits=1)
-            log("[realtime] FE computed for t=$(t)/$(total) ($(pct)%); ETA ≈ $(eta_s)s")
-        end
-    end
-    return fe_series
-end
+# No FE fabrication in realtime: we only record a live engine FE stream when exposed
 
 mkpath(get(IDS_CFG, "output_dir", "output"))
 ts = Dates.format(now(), "yyyymmdd_HHMMSS")
@@ -74,8 +47,8 @@ datastream = observations |> map(NamedTuple{(:y,), Tuple{Float64}}, d -> (y = d,
 autoupdates = make_autoupdates()
 init = make_initialization()
 
-log("[realtime] building engine …")
-engine = infer(
+log("[realtime] building engine with live FE stream …")
+engine = create_engine_with_fe_stream(
     model          = kalman_filter(),
     constraints    = filter_constraints(),
     datastream     = datastream,
@@ -90,15 +63,31 @@ engine = infer(
 )
 
 # Subscriptions for FE stream and progress
-fe_rt  = Float64[]
-fe_idx = Ref(0)
+fe_rt = Float64[]
 obs_count = Ref(0)
 _ = subscribe!(datastream, _ -> (obs_count[] += 1))
+
+# Subscribe to the live FE stream from our wrapper
+fe_stream_subscribed = Ref(false)
 try
     if hasproperty(engine, :free_energy) && engine.free_energy !== nothing
-        _ = subscribe!(engine.free_energy, fe -> push!(fe_rt, Float64(fe)))
+        _ = subscribe!(engine.free_energy, fe -> begin
+            try
+                push!(fe_rt, Float64(fe))
+                if length(fe_rt) % 25 == 0
+                    log("[realtime] FE stream captured $(length(fe_rt)) points …")
+                end
+            catch e
+                @warn "Error capturing FE value" error=e
+            end
+        end)
+        fe_stream_subscribed[] = true
+        log("[realtime] subscribed to live FE stream from engine wrapper …")
+    else
+        log("[realtime] FE stream not available from wrapper")
     end
-catch
+catch e
+    @warn "[realtime] failed to subscribe to FE stream" error=e
 end
 
 log("[realtime] starting engine (interval=$(interval_ms)ms, n=$(n)) …")
@@ -152,7 +141,7 @@ if haskey(engine.history, :x_current)
     end
 end
 
-# Persist realtime FE if captured
+# Persist realtime FE strictly from live stream if present; otherwise write empty and a placeholder
 if !isempty(fe_rt)
     writedlm(joinpath(realtime_dir, "realtime_free_energy.csv"), fe_rt)
     if get(ENV, "IDS_MAKE_GIF", get(IDS_CFG, "make_gif", true) ? "1" : "0") == "1"
@@ -161,14 +150,11 @@ if !isempty(fe_rt)
         InfiniteDataStreamViz.save_gif(anim_fe_rt, joinpath(realtime_dir, "realtime_free_energy.gif"))
     end
 else
-    # No FE stream exposed: compute FE offline from the realtime observations (still realtime-only)
-    fe_rt_offline = compute_per_timestep_fe(obs; iterations=Int(get(IDS_CFG, "iterations", 10)))
-    writedlm(joinpath(realtime_dir, "realtime_free_energy.csv"), fe_rt_offline)
-    if get(ENV, "IDS_MAKE_GIF", get(IDS_CFG, "make_gif", true) ? "1" : "0") == "1"
-        stride_rt = Int(get(IDS_CFG, "rt_gif_stride", 5))
-        anim_fe_rt = InfiniteDataStreamViz.animate_free_energy(fe_rt_offline; stride=stride_rt)
-        InfiniteDataStreamViz.save_gif(anim_fe_rt, joinpath(realtime_dir, "realtime_free_energy.gif"))
-    end
+    open(joinpath(realtime_dir, "realtime_free_energy.csv"), "w") do io; end
+    try
+        pfe_rt_empty = plot(title="Realtime FE stream not available", xaxis=false, yaxis=false)
+        png(pfe_rt_empty, joinpath(realtime_dir, "realtime_free_energy.png"))
+    catch; end
 end
 
 writedlm(joinpath(realtime_dir, "realtime_truth_history.csv"), hist)
@@ -181,6 +167,14 @@ open(joinpath(realtime_dir, "realtime_summary.txt"), "w") do io
     println(io, "seed=$(seed_env)")
     println(io, "posterior_samples_captured=$(min(length(hist), length(obs)))")
     println(io, "free_energy_points_captured=$(length(fe_rt))")
+end
+
+# Clean up the engine wrapper
+try
+    InfiniteDataStreamEngineWrapper.stop!(engine)
+    log("[realtime] engine wrapper stopped and cleaned up")
+catch e
+    @warn "Error stopping engine wrapper" error=e
 end
 
 log("[realtime] done; artifacts in $(realtime_dir)")

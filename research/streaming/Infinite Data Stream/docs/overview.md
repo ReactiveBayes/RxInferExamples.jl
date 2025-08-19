@@ -6,6 +6,7 @@ Key goals:
 - Keep the original logic intact and verifiable against the notebook
 - Single-responsibility files with narrow interfaces
 - Unified `run.jl` that exercises both static and realtime modes and writes timestamped artifacts under `output/`
+- Composable API via `runner.jl` and batch sweeps via `sweep.jl` to support experimentation and parameter searches.
 
 Reading order:
 1. `project.md` — environment, dependencies, entry points
