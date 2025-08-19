@@ -240,6 +240,22 @@ try
     plot!(pcmp, μs[1:upto]; label="static μ", color=:blue)
     plot!(pcmp, μr[1:upto]; label="realtime μ", color=:orange)
     png(pcmp, joinpath(cmp_dir, "means_compare.png"))
+
+    # Additional comparisons
+    # 1) Scatter: static vs realtime means
+    pscatter = scatter(μs[1:upto], μr[1:upto]; ms=3, alpha=0.7, label="points", xlabel="static μ", ylabel="realtime μ")
+    plot!(pscatter, [minimum(μs[1:upto]); maximum(μs[1:upto])], [minimum(μs[1:upto]); maximum(μs[1:upto])]; label="y=x", color=:gray, lw=1.5)
+    png(pscatter, joinpath(cmp_dir, "scatter_static_vs_realtime.png"))
+
+    # 2) Residuals (truth - mean)
+    r_static = static_truth[1:upto] .- μs[1:upto]
+    r_rt     = rt_truth[1:upto] .- μr[1:upto]
+    pr_s = plot(r_static; label="residual (static)", xlabel="t", ylabel="truth - mean", size=(1000,300))
+    hline!(pr_s, [0.0]; color=:gray, lw=1, label="0")
+    png(pr_s, joinpath(cmp_dir, "residuals_static.png"))
+    pr_r = plot(r_rt; label="residual (realtime)", xlabel="t", ylabel="truth - mean", size=(1000,300))
+    hline!(pr_r, [0.0]; color=:gray, lw=1, label="0")
+    png(pr_r, joinpath(cmp_dir, "residuals_realtime.png"))
 catch e
     @warn "comparison report failed" error=e
 end

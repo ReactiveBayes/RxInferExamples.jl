@@ -4,17 +4,20 @@ using DelimitedFiles
 latest_output_root() = begin
     root = joinpath(@__DIR__, "..", "output")
     isdir(root) || return nothing
-    d = sort(filter(isdir, joinpath(root, name) for name in readdir(root)); by=basename)
-    isempty(d) ? nothing : last(d)
+    paths = [joinpath(root, name) for name in readdir(root)]
+    dirs = filter(isdir, paths)
+    isempty(dirs) && return nothing
+    sort(dirs; by=basename) |> last
 end
 
 project_root = normpath(joinpath(@__DIR__, ".."))
 run_script_path = normpath(joinpath(project_root, "run.jl"))
 
 @testset "Infinite Data Stream pipeline" begin
-    # Build a Julia command that evaluates include with a raw string path
-    julia_cmd = `julia --project=$(project_root) --eval $("ENV[\\\"GKSwstype\\\"]=\\\"100\\\"; include(raw\\\"$(run_script_path)\\\")")`
-    run(julia_cmd)
+    # Launch using Julia's absolute executable to avoid PATH/ENOENT issues
+    julia_exe = Base.julia_cmd()
+    cmd = `$julia_exe --project=$(project_root) $(run_script_path)`
+    run(setenv(cmd, "GKSwstype" => "100"))
 
     latest = latest_output_root()
     @test latest !== nothing
@@ -32,5 +35,17 @@ run_script_path = normpath(joinpath(project_root, "run.jl"))
     metrics = read(joinpath(cmp_dir, "metrics.txt"), String)
     @test occursin("mse_static=", metrics)
     @test occursin("mse_realtime=", metrics)
+
+    # Extended comparison artifacts
+    @test isfile(joinpath(cmp_dir, "means_compare.png"))
+    @test isfile(joinpath(cmp_dir, "scatter_static_vs_realtime.png"))
+    @test isfile(joinpath(cmp_dir, "residuals_static.png"))
+    @test isfile(joinpath(cmp_dir, "residuals_realtime.png"))
+
+    # Numerical equivalence (within tolerance) between static and realtime means
+    μs = readdlm(joinpath(static_dir, "static_posterior_x_current.csv"))[:, 1]
+    μr = readdlm(joinpath(realtime_dir, "realtime_posterior_x_current.csv"))[:, 1]
+    upto = min(length(μs), length(μr))
+    @test isapprox(μs[1:upto], μr[1:upto]; atol=1e-8, rtol=1e-8)
 end
 

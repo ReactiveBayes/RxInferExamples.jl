@@ -15,9 +15,13 @@ Reading order:
 5. `updates.md` — autoupdates and initialization
 6. `visualize.md` — plotting and artifact writing
 7. `run.md` — orchestration of static and realtime runs
+8. `comparison.md` — why static and realtime estimates coincide and how we test it
 
 Validation parity with the notebook:
 - The same state evolution (`10 * sin(0.1 * t)`) and NormalMeanPrecision observation model
 - The same variational structure and updates
 - The same plotting semantics for hidden state, observations, and estimated posterior mean/variance
+
+Static vs realtime equivalence:
+- In this setting both modes process the same sequence of observations with the same priors, model, constraints and fixed iteration budget per time step. Under these conditions, the posterior means are expected to match pointwise, which is why the scatter plot sits on the y=x line. See `comparison.md` for caveats and scenarios where they may differ.
 
