@@ -83,6 +83,35 @@ log(msg) = println("[", Dates.format(now(), "HH:MM:SS"), "] ", msg)
 log("Writing artifacts under: $(outdir)")
 log("Config: n=$(Int(get(IDS_CFG, "n", 0))), interval_ms=$(Int(get(IDS_CFG, "interval_ms", 0))), iterations=$(Int(get(IDS_CFG, "iterations", 0))), seed=$(Int(get(IDS_CFG, "seed", 0)))")
 
+# Plot safety helper to avoid GR/GKS "SET_WINDOW" precision warnings
+# Ensures finite limits and adds minimal padding when series is flat
+function _apply_safe_limits!(plt, ys::AbstractVector{<:Real})
+    finite_vals = filter(isfinite, ys)
+    if isempty(finite_vals)
+        try
+            xlims!(plt, (0.0, 1.0)); ylims!(plt, (0.0, 1.0))
+        catch; end
+        return plt
+    end
+    ymin = minimum(finite_vals)
+    ymax = maximum(finite_vals)
+    # Ensure non-zero height window
+    pad = max(1e-9, (ymax - ymin) * 0.05)
+    if !isfinite(pad) || pad <= 0
+        pad = 1e-6
+    end
+    yl = (ymin - pad, ymax + pad)
+    try
+        ylims!(plt, yl)
+    catch; end
+    # Set x-limits based on length if not already set explicitly
+    try
+        xl = (1.0, max(1.0, float(length(ys))))
+        xlims!(plt, xl)
+    catch; end
+    return plt
+end
+
 # Phase timings for provenance
 const _timings = Dict{String,Float64}()
 function _tstart(name::String)
@@ -275,6 +304,7 @@ begin
         writedlm(joinpath(static_dir, "static_free_energy.csv"), fe_t_plot)
     end
     pfe = plot(fe_t_plot; label="Bethe Free Energy (averaged)")
+    _apply_safe_limits!(pfe, fe_t_plot)
     png(pfe, joinpath(static_dir, "static_free_energy.png"))
     writedlm(joinpath(static_dir, "static_posterior_x_current.csv"), hcat(μ, σ2))
     writedlm(joinpath(static_dir, "static_truth_history.csv"), history)
@@ -292,6 +322,7 @@ begin
         tau_mean  = tau_shape ./ tau_rate
         writedlm(joinpath(static_dir, "static_posterior_tau_shape_rate.csv"), hcat(tau_shape, tau_rate))
         pτ = plot(tau_mean; label="E[τ]", xlabel="t", ylabel="precision")
+        _apply_safe_limits!(pτ, tau_mean)
         png(pτ, joinpath(static_dir, "static_tau_mean.png"))
     end
     log("[static] done")
@@ -307,9 +338,9 @@ begin
     initial_state         = Float64(get(IDS_CFG, "initial_state", 0.0))
     observation_precision = Float64(get(IDS_CFG, "observation_precision", 0.1))
     seed_env              = Int(get(IDS_CFG, "seed", 123))
-    n = Int(get(IDS_CFG, "n", 300))
-    interval_ms = Int(get(IDS_CFG, "interval_ms", 41))
-    rt_iters = Int(get(IDS_CFG, "rt_iterations", get(IDS_CFG, "iterations", 10)))
+    n = Int(get(IDS_CFG, "n", 1000))  # Match static mode
+    interval_ms = Int(get(IDS_CFG, "interval_ms", 10))  # Higher frequency: 100Hz instead of ~24Hz
+    rt_iters = Int(get(IDS_CFG, "rt_iterations", get(IDS_CFG, "iterations", 50)))  # Much more iterations per step for better convergence
 
     env = Environment(initial_state, observation_precision; seed=seed_env)
 
@@ -350,10 +381,15 @@ begin
     obs_buffer = Float64[]
     fe_rt_strict = Float64[]
     fe_every = try
-        Int(get(IDS_CFG, "rt_fe_every", 1))
+        Int(get(IDS_CFG, "rt_fe_every", 1))  # Compute FE every observation for maximum tracking
     catch
         1
     end
+    
+    # Adaptive convergence parameters
+    convergence_threshold = Float64(get(IDS_CFG, "convergence_threshold", 1e-4))  # Slightly relaxed for speed
+    max_adaptive_iters = Int(get(IDS_CFG, "max_adaptive_iters", 100))  # Allow more iterations if needed
+    min_adaptive_iters = Int(get(IDS_CFG, "min_adaptive_iters", rt_iters))
     # Count observations as they arrive to show progress
     _ = subscribe!(datastream, d -> begin
         obs_count[] += 1
@@ -366,25 +402,67 @@ begin
         end
         push!(obs_buffer, Float64(yval))
         if fe_every > 0 && (length(obs_buffer) % fe_every == 0)
-            # Compute FE for current prefix using realtime iteration budget
+            # Compute FE for current prefix using adaptive convergence
             try
                 ds_t = Main.InfiniteDataStreamStreams.to_namedtuple_stream(obs_buffer)
                 au = Main.InfiniteDataStreamUpdates.make_autoupdates()
                 init = Main.InfiniteDataStreamUpdates.make_initialization()
-                eng_t = infer(
-                    model          = Main.InfiniteDataStreamModel.kalman_filter(),
-                    constraints    = Main.InfiniteDataStreamModel.filter_constraints(),
-                    datastream     = ds_t,
-                    autoupdates    = au,
-                    returnvars     = (:x_current,),
-                    initialization = init,
-                    iterations     = rt_iters,
-                    free_energy    = true,
-                    keephistory    = 1,
-                    autostart      = true,
-                )
-                push!(fe_rt_strict, eng_t.free_energy_history[end])
-            catch
+                
+                # Adaptive convergence: start with minimum iterations and increase if needed
+                current_iters = min_adaptive_iters
+                converged = false
+                prev_fe = Inf
+                
+                while current_iters <= max_adaptive_iters && !converged
+                    eng_t = infer(
+                        model          = Main.InfiniteDataStreamModel.kalman_filter(),
+                        constraints    = Main.InfiniteDataStreamModel.filter_constraints(),
+                        datastream     = ds_t,
+                        autoupdates    = au,
+                        returnvars     = (:x_current,),
+                        initialization = init,
+                        iterations     = current_iters,
+                        free_energy    = true,
+                        keephistory    = 1,
+                        autostart      = true,
+                    )
+                    
+                    current_fe = eng_t.free_energy_history[end]
+                    
+                    # Check convergence
+                    if abs(current_fe - prev_fe) < convergence_threshold
+                        converged = true
+                        push!(fe_rt_strict, current_fe)
+                        break
+                    end
+                    
+                    prev_fe = current_fe
+                    current_iters += 5  # Increase iterations gradually
+                end
+                
+                # If not converged, use the last computed value
+                if !converged && current_iters > max_adaptive_iters
+                    push!(fe_rt_strict, prev_fe)
+                end
+                
+            catch e
+                # Fallback to basic computation if adaptive fails
+                try
+                    eng_t = infer(
+                        model          = Main.InfiniteDataStreamModel.kalman_filter(),
+                        constraints    = Main.InfiniteDataStreamModel.filter_constraints(),
+                        datastream     = ds_t,
+                        autoupdates    = au,
+                        returnvars     = (:x_current,),
+                        initialization = init,
+                        iterations     = rt_iters,
+                        free_energy    = true,
+                        keephistory    = 1,
+                        autostart      = true,
+                    )
+                    push!(fe_rt_strict, eng_t.free_energy_history[end])
+                catch
+                end
             end
         end
     end)
@@ -440,19 +518,34 @@ begin
         catch
         end
     end
-    # Wait for all observations to be processed
-    total = ceil(Int, n * interval_ms / 1000) + 2  # Add buffer time
+    # Wait for all observations to be processed with improved synchronization
+    total = ceil(Int, n * interval_ms / 1000) + 15  # Much more buffer time for higher frequency and convergence
     fe_history_idx = Ref(0)
+    local last_obs_count = 0
+    local stable_count = 0
+    
     for s in 1:total
-        sleep(1)
-        if s % 2 == 0 || s == total
-            pct = round(100 * min(obs_count[], n) / n; digits=1)
-            log("[realtime] elapsed $(s)/$(total)s, observed=$(obs_count[]) / $(n) ($(pct)%)")
+        sleep(0.5)  # More frequent checks for higher frequency updates
+        current_obs = obs_count[]
+        
+        if s % 4 == 0 || s == total  # Log every 2 seconds
+            pct = round(100 * min(current_obs, n) / n; digits=1)
+            fe_computed = length(fe_rt_strict)
+            log("[realtime] elapsed $(s*0.5)s, observed=$(current_obs) / $(n) ($(pct)%), FE computed=$(fe_computed)")
         end
-        # Continue until we have processed all n observations
-        if obs_count[] >= n
-            log("[realtime] all $(n) observations processed, waiting for final inference...")
-            sleep(2)  # Allow final inference to complete
+        
+        # Check if observations have stabilized
+        if current_obs == last_obs_count
+            stable_count += 1
+        else
+            stable_count = 0
+        end
+        last_obs_count = current_obs
+        
+        # Continue until we have processed all n observations and they're stable
+        if current_obs >= n && stable_count >= 4  # 2 seconds of stability
+            log("[realtime] all $(n) observations processed and stable, waiting for final inference...")
+            sleep(3)  # Allow final inference and FE computation to complete
             break
         end
     end
@@ -508,6 +601,7 @@ begin
             # Save a static FE PNG comparable to the static mode
             if !isempty(fe_series_used)
                 pfe_rt = plot(fe_series_used; label="Bethe Free Energy (averaged)")
+                _apply_safe_limits!(pfe_rt, fe_series_used)
                 png(pfe_rt, joinpath(realtime_dir, "realtime_free_energy.png"))
             end
             # Realtime composed GIFs
@@ -539,6 +633,7 @@ begin
                 writedlm(joinpath(realtime_dir, "realtime_posterior_tau_shape_rate.csv"), hcat(tau_shape_rt[1:upto], tau_rate_rt[1:upto]))
                 tau_mean_rt = tau_shape_rt[1:upto] ./ tau_rate_rt[1:upto]
                 pτrt = plot(tau_mean_rt; label="E[τ] realtime", xlabel="t", ylabel="precision")
+                _apply_safe_limits!(pτrt, tau_mean_rt)
                 png(pτrt, joinpath(realtime_dir, "realtime_tau_mean.png"))
             end
         end
@@ -799,6 +894,7 @@ try
 
     # Overlay plot
     pcmp = plot(static_truth[1:upto]; label="truth", color=:black)
+    _apply_safe_limits!(pcmp, static_truth[1:upto])
     plot!(pcmp, μs[1:upto]; label="static μ", color=:blue)
     plot!(pcmp, μr[1:upto]; label="realtime μ", color=:orange)
     png(pcmp, joinpath(cmp_dir, "means_compare.png"))
@@ -818,12 +914,14 @@ try
     
     # Individual residual plots
     pr_s = plot(r_static; label="residual (static)", xlabel="t", ylabel="truth - mean", size=(1000,300), color=:blue)
+    _apply_safe_limits!(pr_s, r_static)
     hline!(pr_s, [0.0]; color=:gray, lw=1, label="zero line")
     hline!(pr_s, [bias_static]; color=:red, lw=1, linestyle=:dash, label="bias=$(round(bias_static; digits=3))")
     title!(pr_s, "Static Residuals (RMSE=$(round(rmse_static; digits=3)))")
     png(pr_s, joinpath(cmp_dir, "residuals_static.png"))
     
     pr_r = plot(r_rt; label="residual (realtime)", xlabel="t", ylabel="truth - mean", size=(1000,300), color=:orange)
+    _apply_safe_limits!(pr_r, r_rt)
     hline!(pr_r, [0.0]; color=:gray, lw=1, label="zero line")
     hline!(pr_r, [bias_rt]; color=:red, lw=1, linestyle=:dash, label="bias=$(round(bias_rt; digits=3))")
     title!(pr_r, "Realtime Residuals (RMSE=$(round(rmse_rt; digits=3)))")
@@ -831,6 +929,7 @@ try
     
     # Combined residuals plot
     pr_combined = plot(r_static; label="static residuals", xlabel="t", ylabel="residual", size=(1200,400), color=:blue, alpha=0.7)
+    _apply_safe_limits!(pr_combined, vcat(r_static, r_rt))
     plot!(pr_combined, r_rt; label="realtime residuals", color=:orange, alpha=0.7)
     hline!(pr_combined, [0.0]; color=:gray, lw=2, label="zero line")
     title!(pr_combined, "Residuals Comparison")
@@ -869,6 +968,7 @@ try
     
     # 6) Uncertainty comparison (using variance estimates)
     punc = plot(σ2s[1:upto]; label="static variance", xlabel="t", ylabel="variance", color=:blue, alpha=0.7)
+    _apply_safe_limits!(punc, vcat(σ2s[1:upto], σ2r[1:upto]))
     plot!(punc, σ2r[1:upto]; label="realtime variance", color=:orange, alpha=0.7)
     title!(punc, "Uncertainty Estimates Comparison")
     png(punc, joinpath(cmp_dir, "uncertainty_comparison.png"))
@@ -885,6 +985,7 @@ try
     coverage_rt = mean((rt_truth[1:upto] .>= ci_rt_lower) .& (rt_truth[1:upto] .<= ci_rt_upper))
     
     pci = plot(static_truth[1:upto]; label="truth", color=:black, lw=2)
+    _apply_safe_limits!(pci, static_truth[1:upto])
     plot!(pci, μs[1:upto]; ribbon=(μs[1:upto] .- ci_static_lower, ci_static_upper .- μs[1:upto]), 
           label="static (coverage=$(round(coverage_static*100; digits=1))%)", alpha=0.3, color=:blue)
     plot!(pci, μr[1:upto]; ribbon=(μr[1:upto] .- ci_rt_lower, ci_rt_upper .- μr[1:upto]), 
@@ -910,6 +1011,7 @@ try
     end
     
     prun = plot(window_size:upto, running_mae_static; label="static MAE", color=:blue, lw=2)
+    _apply_safe_limits!(prun, vcat(running_mae_static, running_mae_rt))
     plot!(prun, window_size:upto, running_mae_rt; label="realtime MAE", color=:orange, lw=2)
     xlabel!(prun, "t")
     ylabel!(prun, "Running MAE")
@@ -917,6 +1019,7 @@ try
     png(prun, joinpath(cmp_dir, "running_mae.png"))
     
     prun_rmse = plot(window_size:upto, running_rmse_static; label="static RMSE", color=:blue, lw=2)
+    _apply_safe_limits!(prun_rmse, vcat(running_rmse_static, running_rmse_rt))
     plot!(prun_rmse, window_size:upto, running_rmse_rt; label="realtime RMSE", color=:orange, lw=2)
     xlabel!(prun_rmse, "t")
     ylabel!(prun_rmse, "Running RMSE")
@@ -938,6 +1041,7 @@ try
         fe_rt_cmp = readdlm(joinpath(realtime_dir, "realtime_free_energy.csv"))[:]
         upto_fe = min(length(fe_static), length(fe_rt_cmp))
         pfe_cmp = InfiniteDataStreamViz.plot_fe_comparison(fe_static[1:upto_fe], fe_rt_cmp[1:upto_fe])
+        _apply_safe_limits!(pfe_cmp, vcat(fe_static[1:upto_fe], fe_rt_cmp[1:upto_fe]))
         png(pfe_cmp, joinpath(cmp_dir, "free_energy_compare.png"))
         # Scatter plot of free energies through time for both modes
         try

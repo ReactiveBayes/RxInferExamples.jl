@@ -33,9 +33,9 @@ log("Writing realtime artifacts under: $(outdir)")
 
 initial_state         = Float64(get(IDS_CFG, "initial_state", 0.0))
 observation_precision = Float64(get(IDS_CFG, "observation_precision", 0.1))
-n = Int(get(IDS_CFG, "n", 300))
-interval_ms = Int(get(IDS_CFG, "interval_ms", 41))
-rt_iters = Int(get(IDS_CFG, "rt_iterations", get(IDS_CFG, "iterations", 10)))
+n = Int(get(IDS_CFG, "n", 1000))  # Match static mode
+interval_ms = Int(get(IDS_CFG, "interval_ms", 10))  # Higher frequency: 100Hz
+rt_iters = Int(get(IDS_CFG, "rt_iterations", get(IDS_CFG, "iterations", 50)))  # Much more iterations for better convergence
 seed_env = Int(get(IDS_CFG, "seed", 123))
 
 env = Environment(initial_state, observation_precision; seed=seed_env)
@@ -93,10 +93,15 @@ end
 log("[realtime] starting engine (interval=$(interval_ms)ms, n=$(n)) …")
 RxInfer.start(engine)
 
-# Wait for completion with simple progress
-total = ceil(Int, n * interval_ms / 1000) + 1
+# Wait for completion with improved synchronization
+total = ceil(Int, n * interval_ms / 1000) + 15  # Much more buffer time for higher frequency and convergence
+local last_obs_count = 0
+local stable_count = 0
+
 for s in 1:total
-    sleep(1)
+    sleep(0.5)  # More frequent checks
+    current_obs = obs_count[]
+    
     # opportunistically collect any new FE history entries if available
     try
         if hasproperty(engine, :free_energy_history) && engine.free_energy_history !== nothing
@@ -108,9 +113,26 @@ for s in 1:total
         end
     catch
     end
-    if s % 2 == 0 || s == total
-        pct = round(100 * min(obs_count[], n) / n; digits=1)
-        log("[realtime] elapsed $(s)/$(total)s, observed=$(obs_count[]) / $(n) ($(pct)%)")
+    
+    if s % 4 == 0 || s == total  # Log every 2 seconds
+        pct = round(100 * min(current_obs, n) / n; digits=1)
+        fe_captured = length(fe_rt)
+        log("[realtime] elapsed $(s*0.5)s, observed=$(current_obs) / $(n) ($(pct)%), FE captured=$(fe_captured)")
+    end
+    
+    # Check if observations have stabilized
+    if current_obs == last_obs_count
+        stable_count += 1
+    else
+        stable_count = 0
+    end
+    last_obs_count = current_obs
+    
+    # Continue until we have processed all n observations and they're stable
+    if current_obs >= n && stable_count >= 4  # 2 seconds of stability
+        log("[realtime] all $(n) observations processed and stable, waiting for final inference...")
+        sleep(3)  # Allow final inference to complete
+        break
     end
 end
 
