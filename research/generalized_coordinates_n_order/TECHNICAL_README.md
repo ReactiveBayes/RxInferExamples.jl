@@ -21,7 +21,7 @@ A_{ij} = \begin{cases}
   0, & j < i
 \end{cases}, \quad Q = \operatorname{diag}(\sigma_p^2, \sigma_v^2, \sigma_a^2, \varepsilon, \ldots, \varepsilon).
 \]
-Observation matrix \(B\) is either `1×K` with \(B_{1,1}=1\) (position only) or `2×K` with \(B_{1,1}=1, B_{2,2}=1\) (position+velocity). \(R\) is diagonal with respective observation variances.
+Observation matrix \(B\) is either `1×K` with \(B_{1,1}=1\) (position only) or `2×K` with \(B_{1,1}=1, B_{2,2}=1\) (position+velocity). \(R\) is taken diagonal with respective observation variances in the provided scripts.
 
 The initial prior is \(x_1 \sim \mathcal{N}(x_0^{\text{mean}}, x_0^{\text{cov}})\).
 
@@ -54,7 +54,7 @@ F_t^{\text{dyn}} &= \tfrac{1}{2}\Big( d_x \ln 2\pi + \ln|Q| + \operatorname{tr}(
 where \(\Sigma_{y,t} = B\Sigma_t B^\top\), and \(d_x, d_y\) are state and observation dimensions. We plot
 \[ F_t^{\text{total}} = F_t^{\text{obs}} + \begin{cases} F_1^{\text{prior}}, & t=1,\\ F_t^{\text{dyn}}, & t\ge 2.\end{cases} \]
 
-This decomposition is useful for diagnostics but is not the exact ELBO that RxInfer optimizes; it is consistent under Gaussian assumptions and helps assess fit quality over time.
+This decomposition is useful for diagnostics but is not the exact ELBO that RxInfer optimizes; it is consistent under Gaussian assumptions and helps assess fit quality over time. The `rxinfer_free_energy.csv` contains the exact per-iteration ELBO reported by RxInfer.
 
 ### 4. Connections to Generalized Filtering and FEP
 
@@ -73,7 +73,7 @@ The Free Energy Principle (FEP) frames inference and action as minimizing (expec
 
 - `GCUtils.constant_acceleration_ABQ` builds the K×K Taylor-integrator `A` and diagonal `Q`, and safeguards positive definiteness by thresholding variances with a small epsilon. The first three diagonal entries correspond to `(σ_p^2, σ_v^2, σ_a^2)`; higher orders default to `ε`.
 - `run_gc_car.jl` collects full posterior history and writes diagnostics including `rxinfer_free_energy.csv` (exact ELBO per iteration with deltas) and a Gaussian per-time FE decomposition (`gc_free_energy_timeseries.csv`, split into observation, prior, and dynamics). When `R` is diagonal, it additionally writes `gc_free_energy_obs_dim_terms.csv` with per-dimension observation contributions.
-- `GCViz` renders a K-order dashboard (`summary_dashboard_all`) stacking all state panels (1..K) and the free-energy panel; other PPC plots (residuals, QQ/ACF, coverage, RMSE) adapt to K.
+- `GCViz` renders a K-order dashboard (`summary_dashboard_all`) stacking all state panels (1..K) and the free-energy panel; other PPC plots (residuals, QQ/ACF, standardized-residuals time series, coverage, RMSE) adapt to K. It also includes a finite-difference consistency check of generalized coordinates (`plot_derivative_consistency`).
 
 ### 7. Reproducibility
 
@@ -83,7 +83,7 @@ The Free Energy Principle (FEP) frames inference and action as minimizing (expec
 ### 8. How to Extend
 
 - Add jerk (third derivative) or higher by increasing `order = K` and, if needed, tuning the corresponding diagonal entries of `Q` in `constant_acceleration_ABQ`.
-- Introduce control inputs via an input matrix `G` and a known control sequence `u_t` with `x_t = A x_{t-1} + G u_t + w_t`.
+- Introduce control inputs via an input matrix `G` and a known control sequence `u_t` with `x_t = A x_{t-1} + G u_t + w_t` (not implemented in this module but straightforward to add).
 - Replace position-only observation with nonlinear sensors by changing `B x_t` to `h(x_t)` and using appropriate nodes in RxInfer; then reassess PPC plots.
 
 ### 9. References and Further Reading
@@ -94,3 +94,14 @@ The Free Energy Principle (FEP) frames inference and action as minimizing (expec
 - Standard references on Kalman filtering and Gaussian graphical models
 
 
+
+### 10. Suite and Meta-Analysis
+
+- Batch runs (`run_gc_suite.jl`) evaluate orders `K=1..8` across scenario generators in `GCGenerators` (constant acceleration, sinusoids, polynomials, piecewise mixed). Each run writes plots and CSVs per scenario under `outputs/order_K/<scenario>/`.
+- Meta-analysis (`run_meta_analysis.jl`) scans suite outputs and produces CSV tables and heatmaps in `outputs/meta_analysis/` summarizing RMSE, 95% coverage, mean correlation, and free-energy diagnostics across orders and scenarios.
+
+### 11. Practical Notes
+
+- Initialization uses a broad Gaussian prior on `x_1` and `@initialization` to seed `q(x)` in RxInfer; this stabilizes early iterations for higher orders.
+- Scripts force a non-interactive GR backend (`ENV["GKSwstype"] = "100"`) to ensure plots render in headless setups.
+- For deeper models or long sequences, consider adjusting `iterations`, `keephistory`, and `limit_stack_depth` in run configs to balance speed and memory.

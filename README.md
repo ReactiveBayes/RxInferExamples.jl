@@ -60,6 +60,23 @@ Navigate to the [Examples](https://examples.rxinfer.com) page to check the pre-r
 
 All the examples are Jupyter notebooks, which also can be run with [Jupyter](https://jupyter.org/).
 
+## Unified research runner
+
+For end-to-end setup, notebook conversion, and running research examples, use:
+
+```bash
+research/run_research/run.sh --incremental
+# or overwrite all conversions
+research/run_research/run.sh --overwrite
+```
+
+Defaults are configured in `research/run_research/run_config.yaml`. You can override via CLI:
+
+```bash
+research/run_research/run.sh --interactive
+research/run_research/run.sh --config /abs/path/custom.yaml --no-docs --quiet
+```
+
 ## Contributing
 
 We welcome contributions! Please check our [contribution guide](https://examples.rxinfer.com/how_to_contribute/) for guidelines.

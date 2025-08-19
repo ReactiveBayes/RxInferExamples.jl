@@ -1,0 +1,79 @@
+{
+  "env": {
+    "ANTHROPIC_API_KEY": "your-api-key-here",
+    "CLAUDE_MODEL": "claude-4-opus-20250514",
+    "PROJECT_CONTEXT": "Julia scientific computing with RxInfer",
+    "LANGUAGE": "julia",
+    "FRAMEWORK": "rxinfer",
+    "DEFAULT_TEMPERATURE": 0.1,
+    "MAX_TOKENS": 4000
+  },
+  "permissions": {
+    "allow": [
+      "code_execution",
+      "file_operations",
+      "web_search"
+    ],
+    "deny": [
+      "system_access",
+      "network_access"
+    ]
+  },
+  "context": {
+    "include_patterns": [
+      "*.jl",
+      "*.md",
+      "*.toml",
+      "*.jmd",
+      "*.ipynb"
+    ],
+    "exclude_patterns": [
+      "*.git/*",
+      "outputs/*",
+      "*.log",
+      "*.tmp",
+      "*.cache",
+      "build/*",
+      "deps/*",
+      ".julia/*"
+    ],
+    "max_file_size": "2MB",
+    "recursive": true
+  },
+  "ui": {
+    "theme": "auto",
+    "font_size": 14,
+    "show_line_numbers": true,
+    "syntax_highlighting": true
+  },
+  "julia_specific": {
+    "package_manager": "Pkg",
+    "test_framework": "Test",
+    "documentation_tool": "Documenter.jl",
+    "code_style": "JuliaFormatter",
+    "linting": "JET.jl",
+    "profiling": "Profile.jl"
+  },
+  "analysis_focus": [
+    "julia_best_practices",
+    "performance_optimization",
+    "type_stability",
+    "memory_efficiency",
+    "scientific_computing",
+    "bayesian_inference",
+    "probabilistic_programming"
+  ],
+  "code_generation": {
+    "include_tests": true,
+    "include_documentation": true,
+    "follow_julia_style": true,
+    "use_multiple_dispatch": true,
+    "prefer_immutable": true
+  },
+  "refactoring": {
+    "preserve_type_stability": true,
+    "maintain_multiple_dispatch": true,
+    "optimize_memory_usage": true,
+    "improve_readability": true
+  }
+}

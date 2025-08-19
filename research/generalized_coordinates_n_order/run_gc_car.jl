@@ -175,8 +175,12 @@ let (GCUtils, GCModel, GCViz, GCConfig, GCGenerators) = _resolve_modules()
     savefig(GCViz.plot_stdres_hist(y, xmarginals, B, R), joinpath(outdir, "gc_stdres_hist.png"))
     savefig(GCViz.plot_stdres_qq(y, xmarginals, B, R), joinpath(outdir, "gc_stdres_qq.png"))
     savefig(GCViz.plot_stdres_acf(y, xmarginals, B, R), joinpath(outdir, "gc_stdres_acf.png"))
+    # Additional PPC time-series view
+    savefig(GCViz.plot_stdres_time(y, xmarginals, B, R), joinpath(outdir, "gc_stdres_time.png"))
     savefig(GCViz.plot_mse_time(x_true, xmarginals), joinpath(outdir, "gc_mse_time.png"))
     savefig(GCViz.plot_state_coverage_time(x_true, xmarginals), joinpath(outdir, "gc_state_coverage_time.png"))
+    # Generalized-derivative consistency diagnostics
+    savefig(GCViz.plot_derivative_consistency(xmarginals, dt), joinpath(outdir, "gc_derivative_consistency.png"))
 
     # Save CSV report (time, obs_term, prior_term, dyn_term, total)
     open(joinpath(outdir, "gc_free_energy_timeseries.csv"), "w") do io

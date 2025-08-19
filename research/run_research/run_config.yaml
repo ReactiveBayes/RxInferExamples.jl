@@ -1,0 +1,55 @@
+######################################################################
+# Unified research runner configuration (run_research)
+#
+# Used by:
+#   - research/run_research/run.sh
+#   - research/run_research/run_examples.jl
+#
+# Precedence (highest wins):
+#   1) CLI flags to run.sh
+#   2) Interactive prompts (when --interactive is used)
+#   3) This YAML file (defaults)
+#
+# Booleans accept: true/false or 1/0 or yes/no (case-insensitive)
+######################################################################
+
+## Conversion mode for notebooks -> scripts
+## incremental: convert only when target script missing/older
+## overwrite  : re-convert all targeted notebooks (fresh overwrite)
+mode: incremental
+
+## Setup build toggles (affect support/setup.jl behavior)
+## examples: 1 => skip building examples; 0 => build
+## docs    : 1 => skip building docs; 0 => build
+build:
+  examples: 0
+  docs: 0
+
+## Logging and error-handling behavior
+## quiet: 1 => reduce setup/convert output
+## force: 1 => continue on non-critical errors
+quiet: 0
+force: 0
+
+## Which research runs to execute
+## - gc_single  : research/generalized_coordinates/run_gc_car.jl
+## - gc_suite   : research/generalized_coordinates/run_gc_suite.jl
+## - gcn_single : research/generalized_coordinates_n_order/run_gc_car.jl
+## - gcn_suite  : research/generalized_coordinates_n_order/run_gc_suite.jl
+## - hgf        : research/hgf/run_hgf.jl
+runs:
+  gc_single: true
+  gc_suite: true
+  gcn_single: true
+  gcn_suite: true
+  hgf: true
+
+## Examples:
+## Overwrite mode, quiet, skip docs:
+##   research/run_research/run.sh --overwrite --quiet --no-docs
+## Incremental with custom YAML:
+##   research/run_research/run.sh --config /abs/path/custom.yaml --incremental
+## Interactive prompts:
+##   research/run_research/run.sh --interactive
+
+

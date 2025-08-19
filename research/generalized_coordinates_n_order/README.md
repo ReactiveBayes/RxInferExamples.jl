@@ -7,13 +7,18 @@ Demonstrates variational inference in generalized coordinates for a continuous s
 - **Observations**: noisy position; optionally velocity.
 
 ### Contents
-- `src/GeneralizedCoordinatesExamples.jl`: module entrypoint exporting `GCUtils`, `GCModel`, `GCViz`
+- `src/GeneralizedCoordinatesExamples.jl`: module entrypoint exporting `GCUtils`, `GCModel`, `GCViz`, `GCConfig`, `GCGenerators`, `GCReport`
 - `src/GCUtils.jl`: n-order `(A,B,Q)` via Taylor-integrator, data generation, per-time Gaussian free-energy terms
 - `src/GCModel.jl`: RxInfer `@model` and mean-field constraints (dimension-agnostic)
 - `src/GCViz.jl`: plotting helpers and dashboards
-- `run_gc_car.jl`: end-to-end run script
+- `src/GCConfig.jl`: `ScenarioConfig`, `RunConfig`, `default_run_config`
+- `src/GCGenerators.jl`: truth/observation generators for multiple scenarios (constant-accel, sinusoids, polynomials, piecewise)
+- `src/GCReport.jl`: minimal Markdown report writer for suite runs
+- `run_gc_car.jl`: single end-to-end run script
+- `run_gc_suite.jl`: batch runner across orders and scenarios
+- `run_meta_analysis.jl`: aggregate metrics and plot heatmaps into `outputs/meta_analysis/`
 - `test/runtests.jl`: tests
-- `gen_coord_fep_research.md`: background article linking FEP, generalized filtering, HGF, and message passing
+- Background: `research/generalized_coordinates/gen_coord_fep_research.md`
 
 ### Quickstart
 ```julia
@@ -36,30 +41,36 @@ Outputs are written to `research/generalized_coordinates_n_order/outputs/`.
 
 The model matrices are built via `GCUtils.constant_acceleration_ABQ(dt; order=..., σ_a=...)` and the observation matrix `B` is selected based on whether velocity is observed.
 
-### What the script does
+### What the scripts do
 1. Simulates ground-truth `x_true` and observations `y` in generalized coordinates.
 2. Builds a linear-Gaussian SSM `@model` in `GCModel.gc_car_model`.
 3. Runs RxInfer with mean-field constraints, history collection, and `free_energy=true`.
 4. Saves posteriors, diagnostic plots, animations, and CSV reports.
 
-To batch-generate outputs for multiple orders `K=1..10`, run:
+To batch-generate outputs for multiple orders `K=1..8`, run:
 ```julia
 julia --project=research/generalized_coordinates_n_order research/generalized_coordinates_n_order/run_gc_suite.jl
 ```
-This produces subfolders `outputs/order_1`, ..., `outputs/order_10`, each with scenario subfolders.
+This produces subfolders `outputs/order_1`, ..., `outputs/order_8`, each with scenario subfolders. Then run:
+```julia
+julia --project=research/generalized_coordinates_n_order research/generalized_coordinates_n_order/run_meta_analysis.jl
+```
+to write summary heatmaps into `outputs/meta_analysis/` (RMSE, coverage, correlation, FE).
 
 ### Key outputs (in `outputs/`)
 - `gc_pos.png` or `gc_pos_vel.png`: inference vs truth
 - `gc_states.png`: all states with credible ribbons
 - `gc_free_energy_terms.png`: per-time observation/dynamics and total terms (Gaussian approximation)
 - `gc_dashboard.png`: compact overview
-- `gc_y_fit.png`, `gc_stdres_hist.png`, `gc_stdres_qq.png`, `gc_stdres_acf.png`: posterior predictive checks
-- `gc_rmse.png`, `gc_mse_time.png`, `gc_coverage.png`, `gc_state_coverage_time.png`: error/coverage diagnostics
+- `gc_y_fit.png`, `gc_stdres_hist.png`, `gc_stdres_qq.png`, `gc_stdres_acf.png`, `gc_stdres_time.png`: posterior predictive checks
+- `gc_rmse.png`, `gc_mse_time.png`, `gc_coverage.png`, `gc_state_coverage_time.png`, `gc_derivative_consistency.png`: error/coverage and generalized-derivative diagnostics
 - `gc_posterior_summary.csv`: posterior mean/variance by time
 - `gc_free_energy_timeseries.csv`: approximate per-time FE decomposition (obs, prior, dyn, total)
 - `gc_free_energy_obs_dim_terms.csv`: per-dimension observation contributions (if `R` diagonal)
-- `rxinfer_free_energy.csv`: RxInfer free energy per iteration with deltas
+- `gc_fe_iterations.png`, `rxinfer_free_energy.csv`: FE diagnostics (per-iteration; single run includes deltas)
 - `gc_position_animation.gif`, `gc_states_animation.gif`: animations (when supported)
+
+- Batch runs additionally write per-scenario: `metrics.csv`, `x_true.csv`, `post_mean.csv`, `post_var.csv`, `y.csv`, and a `REPORT.md`.
 
 ### Switching observation modalities
 - Position-only: set `σ_obs_vel = NaN` (default). `B` is `1×K` with `B[1,1]=1`.
@@ -75,10 +86,16 @@ This produces subfolders `outputs/order_1`, ..., `outputs/order_10`, each with s
   - `make_constraints()`: mean-field `q(x,y) = q(x) q(y)`
 - `GCViz`
   - Plotting and PPC utilities: state ribbons, residuals, standardized residuals, ACF/QQ, coverage, RMSE, animations
+- `GCConfig`
+  - `ScenarioConfig`, `RunConfig`, `default_run_config()`
+- `GCGenerators`
+  - Scenario truth/observation generators: `:constant_accel`, `:sinusoid`, `:sinusoid_mixed`, `:poly`, `:trend_plus_osc`, `:poly_sin_mixed`, `:piecewise_mixed`
+- `GCReport`
+  - `write_markdown_report(outdir, scen; extra=Dict())`
 
 ### Tests
 ```julia
-julia --project=research/generalized_coordinates -e 'using Pkg; Pkg.test()'
+julia --project=research/generalized_coordinates_n_order -e 'using Pkg; Pkg.test()'
 ```
 Tests cover:
 - Inference fidelity under position-only and pos+vel observations
@@ -91,4 +108,4 @@ Tests cover:
 - For longer GIFs, ensure the environment supports writing large animations or disable animation blocks.
 
 ### Technical background
-See `gen_coord_fep_research.md` and the accompanying `TECHNICAL_README.md` for the full mathematical treatment (FEP, generalized filtering, HGF, variational message passing) and how they map onto the implementation here.
+See `research/generalized_coordinates/gen_coord_fep_research.md` and the accompanying `TECHNICAL_README.md` for the full mathematical treatment (FEP, generalized filtering, HGF, variational message passing) and how they map onto the implementation here.
