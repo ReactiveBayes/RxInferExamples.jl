@@ -32,9 +32,11 @@ animate_free_energy(free_energy::AbstractVector{<:Real}; stride::Int=5, size=(80
 end
 
 animate_composed_estimates_fe(μ::AbstractVector{<:Real}, σ2::AbstractVector{<:Real}, history::AbstractVector{<:Real}, observations::AbstractVector{<:Real}, free_energy::AbstractVector{<:Real}; stride::Int=5) = @animate for i in 1:stride:min(length(μ), length(free_energy))
-    p1 = plot_estimates(μ, σ2, history, observations; upto=i, size=(900,300))
-    p2 = plot(free_energy[1:i]; label="Bethe Free Energy (avg)", xlabel="t", size=(700,300))
-    plot(p1, p2; layout=(1,2), size=(1600,320))
+    p1 = plot_estimates(μ, σ2, history, observations; upto=i, size=(1000,300))
+    xlims!(p1, (1, i))
+    p2 = plot(free_energy[1:i]; label="Bethe Free Energy (avg)", xlabel="t", size=(1000,300))
+    xlims!(p2, (1, i))
+    plot(p1, p2; layout=(2,1), link=:x, size=(1000,620))
 end
 
 animate_overlay_means(truth::AbstractVector{<:Real}, μ_static::AbstractVector{<:Real}, μ_rt::AbstractVector{<:Real}; stride::Int=5) = @animate for i in 1:stride:min(length(truth), min(length(μ_static), length(μ_rt)))

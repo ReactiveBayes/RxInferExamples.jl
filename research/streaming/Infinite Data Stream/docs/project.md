@@ -5,6 +5,7 @@ Files:
 - `README.md`: quick-start and structure.
 - `run.jl`: unified driver. Creates `output/<timestamp>/` and runs both static and realtime.
 - `run_static.jl` / `run_realtime.jl`: standalone entry points for focused runs.
+- `config.toml`: central configuration for number of steps, timer cadence, inference iterations/history, and GIF/output settings.
 
 How to run:
 ```julia
@@ -20,4 +21,5 @@ Outputs:
 - `output/<ts>/static_inference.gif`
 - `output/<ts>/static_free_energy.png`
 - `output/<ts>/realtime_summary.txt`
+ - if enabled: `static_free_energy.gif`, `static_composed_estimates_fe.gif`, `realtime_inference.gif`, and `comparison/overlay_means.gif`
 

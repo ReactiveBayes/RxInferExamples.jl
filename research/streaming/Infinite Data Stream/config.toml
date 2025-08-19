@@ -1,0 +1,24 @@
+# Infinite Data Stream configuration (TOML)
+
+# Signal/environment
+initial_state = 0.0
+observation_precision = 0.1
+seed = 123
+
+# Data length and timing
+n = 300                 # number of timesteps to simulate/consume
+interval_ms = 41        # realtime timer interval in milliseconds
+
+# Inference
+iterations = 10         # variational updates per timestep
+keephistory = 10000
+
+# Animation/output
+make_gif = true         # default; can still be overridden by ENV IDS_MAKE_GIF
+gif_stride = 5
+rt_gif_stride = 5
+
+# Output
+output_dir = "output"
+
+

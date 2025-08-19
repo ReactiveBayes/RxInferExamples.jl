@@ -12,6 +12,7 @@ Structure:
 - `streams.jl`: stream helpers (Rocket pipelines).
 - `visualize.jl`: plotting helpers.
 - `utils.jl`: helper to `include` modules when running scripts directly.
+- `config.toml`: central configuration (n, intervals, iterations, GIF settings, output dir).
 
 Usage (Julia):
 ```julia
@@ -19,9 +20,9 @@ include("utils.jl"); using .InfiniteDataStreamUtils; InfiniteDataStreamUtils.loa
 include("run_static.jl")
 ```
 
-Headless full run with realtime GIF stride 6:
+Headless full run (configurable via `config.toml`, env can override):
 ```bash
-env GKSwstype=100 IDS_RT_GIF_STRIDE=6 \
+GKSwstype=100 IDS_MAKE_GIF=1 IDS_GIF_STRIDE=5 IDS_RT_GIF_STRIDE=6 \
 julia --project=. run.jl
 ```
 
@@ -32,4 +33,5 @@ Visual tools exported in `visualize.jl`:
 Advanced:
 - Swap `Environment` with a custom producer for heterogeneous empirical data
 - Control GIF stride via `IDS_GIF_STRIDE` or `IDS_RT_GIF_STRIDE`
+ - Toggle animation generation with `IDS_MAKE_GIF=1` (writes `static_free_energy.gif`, `static_composed_estimates_fe.gif`, `realtime_inference.gif`, and `comparison/overlay_means.gif`)
 

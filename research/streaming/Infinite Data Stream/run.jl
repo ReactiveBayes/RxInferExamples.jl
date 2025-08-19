@@ -1,6 +1,17 @@
 using Dates
 using Plots
 using DelimitedFiles
+
+# Ensure the example runs with its local project even if invoked without --project
+try
+    @eval begin
+        import Pkg
+        Pkg.activate(@__DIR__)
+        Pkg.instantiate()
+    end
+catch
+end
+
 using Random, StableRNGs, RxInfer, Rocket
 
 # Ensure headless GR to avoid blocking when encoding images/animations
@@ -8,11 +19,14 @@ if get(ENV, "GKSwstype", nothing) === nothing
     ENV["GKSwstype"] = "100"
 end
 
-include("utils.jl"); using .InfiniteDataStreamUtils; InfiniteDataStreamUtils.load_modules!()
+include("utils.jl")
+using .InfiniteDataStreamUtils
+InfiniteDataStreamUtils.load_modules!()
+const IDS_CFG = InfiniteDataStreamUtils.load_config()
 
-mkpath("output")
+mkpath(get(IDS_CFG, "output_dir", "output"))
 ts = Dates.format(now(), "yyyymmdd_HHMMSS")
-outdir = joinpath("output", ts)
+outdir = joinpath(get(IDS_CFG, "output_dir", "output"), ts)
 static_dir = joinpath(outdir, "static")
 realtime_dir = joinpath(outdir, "realtime")
 cmp_dir = joinpath(outdir, "comparison")
@@ -20,6 +34,45 @@ mkpath(static_dir); mkpath(realtime_dir); mkpath(cmp_dir)
 
 log(msg) = println("[", Dates.format(now(), "HH:MM:SS"), "] ", msg)
 log("Writing artifacts under: $(outdir)")
+
+# Helper: compute per-timestep FE by re-inferring on growing prefixes
+function compute_per_timestep_fe(observations::Vector{Float64}; iterations::Int=10)
+    fe_series = Float64[]
+    total = length(observations)
+    log_stride = try
+        Int(get(IDS_CFG, "fe_log_stride", 10))
+    catch
+        10
+    end
+    start_t = time()
+    log("[static] FE prefix re-inference: total=$(total), iters/step=$(iterations), log_stride=$(log_stride)")
+    for t in 1:length(observations)
+        ds_t = Main.InfiniteDataStreamStreams.to_namedtuple_stream(observations[1:t])
+        au = Main.InfiniteDataStreamUpdates.make_autoupdates()
+        init = Main.InfiniteDataStreamUpdates.make_initialization()
+        eng_t = infer(
+            model          = Main.InfiniteDataStreamModel.kalman_filter(),
+            constraints    = Main.InfiniteDataStreamModel.filter_constraints(),
+            datastream     = ds_t,
+            autoupdates    = au,
+            returnvars     = (:x_current,),
+            initialization = init,
+            iterations     = iterations,
+            free_energy    = true,
+            keephistory    = 1,
+            autostart      = true,
+        )
+        push!(fe_series, eng_t.free_energy_history[end])
+        if (t % log_stride == 0) || (t == total)
+            elapsed = time() - start_t
+            rate = elapsed / t
+            eta_s = round(Int, max(0, rate * (total - t)))
+            pct = round(100 * t / total; digits=1)
+            log("[static] FE computed for t=$(t)/$(total) ($(pct)%); ETA ≈ $(eta_s)s")
+        end
+    end
+    return fe_series
+end
 
 # Static case
 begin
@@ -29,9 +82,9 @@ begin
     using .InfiniteDataStreamStreams
     using .InfiniteDataStreamViz
 
-    initial_state         = 0.0
-    observation_precision = 0.1
-    n = 300
+    initial_state         = Float64(get(IDS_CFG, "initial_state", 0.0))
+    observation_precision = Float64(get(IDS_CFG, "observation_precision", 0.1))
+    n = Int(get(IDS_CFG, "n", 300))
 
     log("[static] generating $(n) observations …")
     env = Environment(initial_state, observation_precision)
@@ -72,39 +125,48 @@ begin
     p = InfiniteDataStreamViz.plot_estimates(μ, σ2, history, observations; upto=n)
     png(p, joinpath(static_dir, "static_inference.png"))
 
-    # Optional animations controlled by ENV flags
-    if get(ENV, "IDS_MAKE_GIF", "0") == "1"
-        stride = parse(Int, get(ENV, "IDS_GIF_STRIDE", "5"))
+    # Optional animations controlled by config/env (default: enabled)
+    if get(ENV, "IDS_MAKE_GIF", get(IDS_CFG, "make_gif", true) ? "1" : "0") == "1"
+        log("[static] GIF generation enabled via IDS_MAKE_GIF=1")
+        stride = Int(get(IDS_CFG, "gif_stride", 5))
         log("[static] rendering animation frames (stride=$(stride)) …")
         anim = @animate for i in 1:stride:n
             InfiniteDataStreamViz.plot_estimates(μ, σ2, history, observations; upto=i)
-            if i % (50*stride) == 0
-                @info "[static] rendered frame $i/$n"
+            if i % (50*stride) == 0 || i == n
+                pct = round(100 * i / n; digits=1)
+                @info "[static] rendered frame $i/$n ($(pct)%)"
             end
         end
         log("[static] saving GIF …")
         InfiniteDataStreamViz.save_gif(anim, joinpath(static_dir, "static_inference.gif"))
-        # Free-energy animation
-        anim_fe = InfiniteDataStreamViz.animate_free_energy(engine.free_energy_history; stride=stride)
+        log("[static] saved: $(joinpath(static_dir, "static_inference.gif"))")
+        # Free-energy animation (per-timestep via prefix re-inference)
+        fe_t = compute_per_timestep_fe(observations; iterations=10)
+        anim_fe = InfiniteDataStreamViz.animate_free_energy(fe_t; stride=stride)
         static_fe_gif = joinpath(static_dir, "static_free_energy.gif")
         InfiniteDataStreamViz.save_gif(anim_fe, static_fe_gif)
+        log("[static] saved: $(static_fe_gif)")
         # Composed animation (estimates + free energy)
-        anim_comp = InfiniteDataStreamViz.animate_composed_estimates_fe(μ, σ2, history, observations, engine.free_energy_history; stride=stride)
+        anim_comp = InfiniteDataStreamViz.animate_composed_estimates_fe(μ, σ2, history, observations, fe_t; stride=stride)
         static_comp_gif = joinpath(static_dir, "static_composed_estimates_fe.gif")
         InfiniteDataStreamViz.save_gif(anim_comp, static_comp_gif)
+        log("[static] saved: $(static_comp_gif)")
         try
             cp(joinpath(static_dir, "static_free_energy.csv"), joinpath(cmp_dir, "static_free_energy.csv"), force=true)
             cp(static_fe_gif, joinpath(cmp_dir, "static_free_energy.gif"), force=true)
             cp(static_comp_gif, joinpath(cmp_dir, "static_composed_estimates_fe.gif"), force=true)
         catch
         end
+    else
+        log("[static] GIF generation disabled (set IDS_MAKE_GIF=1 to enable)")
     end
 
     log("[static] saving free-energy plot …")
-    pfe = plot(engine.free_energy_history; label="Bethe Free Energy (averaged)")
+    fe_t_plot = compute_per_timestep_fe(observations; iterations=Int(get(IDS_CFG, "iterations", 10)))
+    pfe = plot(fe_t_plot; label="Bethe Free Energy (averaged)")
     png(pfe, joinpath(static_dir, "static_free_energy.png"))
     # Persist numeric outputs (CSV)
-    writedlm(joinpath(static_dir, "static_free_energy.csv"), engine.free_energy_history)
+    writedlm(joinpath(static_dir, "static_free_energy.csv"), fe_t_plot)
     writedlm(joinpath(static_dir, "static_posterior_x_current.csv"), hcat(μ, σ2))
     writedlm(joinpath(static_dir, "static_truth_history.csv"), history)
     writedlm(joinpath(static_dir, "static_observations.csv"), observations)
@@ -126,10 +188,10 @@ begin
     using .InfiniteDataStreamUpdates
     using .InfiniteDataStreamStreams
 
-    initial_state         = 0.0
-    observation_precision = 0.1
-    n = 300
-    interval_ms = 41
+    initial_state         = Float64(get(IDS_CFG, "initial_state", 0.0))
+    observation_precision = Float64(get(IDS_CFG, "observation_precision", 0.1))
+    n = Int(get(IDS_CFG, "n", 300))
+    interval_ms = Int(get(IDS_CFG, "interval_ms", 41))
 
     env = Environment(initial_state, observation_precision)
 
@@ -149,14 +211,17 @@ begin
         returnvars     = (:x_current, ),
         initialization = init,
         iterations     = 10,
+        free_energy    = true,
         autostart      = false,
     )
 
     # Subscribe to collect posterior snapshots for plotting later
     mu_rt = Float64[]
     var_rt = Float64[]
+    fe_rt  = Float64[]
     tau_shape_rt = Float64[]
     tau_rate_rt  = Float64[]
+    obs_count = Ref(0)
     _ = subscribe!(engine.posteriors[:x_current], q_current -> begin
         push!(mu_rt, mean(q_current))
         push!(var_rt, var(q_current))
@@ -168,6 +233,15 @@ begin
             push!(tau_rate_rt, rate(qτ))
         end)
     end
+    # Count observations as they arrive to show progress
+    _ = subscribe!(datastream, _ -> (obs_count[] += 1))
+    # Streamed free-energy (if exposed by engine)
+    try
+        if hasproperty(engine, :free_energy) && engine.free_energy !== nothing
+            _ = subscribe!(engine.free_energy, fe -> push!(fe_rt, Float64(fe)))
+        end
+    catch
+    end
 
     log("[realtime] starting engine (interval=$(interval_ms)ms, n=$(n)) …")
     RxInfer.start(engine)
@@ -175,8 +249,9 @@ begin
     total = ceil(Int, n * interval_ms / 1000) + 1
     for s in 1:total
         sleep(1)
-        if s % 5 == 0 || s == total
-            log("[realtime] elapsed $(s)/$(total) seconds …")
+        if s % 2 == 0 || s == total
+            pct = round(100 * min(obs_count[], n) / n; digits=1)
+            log("[realtime] elapsed $(s)/$(total)s, observed=$(obs_count[]) / $(n) ($(pct)%)")
         end
     end
     # Stop engine explicitly (defensive) and persist artifacts
@@ -195,22 +270,40 @@ begin
             p_rt = InfiniteDataStreamViz.plot_estimates(mu_rt[1:upto], var_rt[1:upto], hist, obs; upto=upto)
             png(p_rt, joinpath(realtime_dir, "realtime_inference.png"))
             # Realtime GIF (ensure present by default, stride to limit cost)
-            stride_rt = parse(Int, get(ENV, "IDS_RT_GIF_STRIDE", "5"))
+            stride_rt = Int(get(IDS_CFG, "rt_gif_stride", 5))
             anim_rt = @animate for i in 1:stride_rt:upto
                 InfiniteDataStreamViz.plot_estimates(mu_rt[1:upto], var_rt[1:upto], hist, obs; upto=i)
             end
             InfiniteDataStreamViz.save_gif(anim_rt, joinpath(realtime_dir, "realtime_inference.gif"))
+            log("[realtime] saved: $(joinpath(realtime_dir, "realtime_inference.gif"))")
             try
                 cp(joinpath(static_dir, "static_free_energy.csv"), joinpath(realtime_dir, "realtime_free_energy.csv"), force=true)
                 if isfile(joinpath(static_dir, "static_free_energy.gif"))
                     cp(joinpath(static_dir, "static_free_energy.gif"), joinpath(realtime_dir, "realtime_free_energy.gif"), force=true)
+                    log("[realtime] mirrored FE GIF from static")
                 end
             catch
             end
+            # Persist realtime FE if captured
+            if !isempty(fe_rt)
+                writedlm(joinpath(realtime_dir, "realtime_free_energy.csv"), fe_rt)
+                if get(ENV, "IDS_MAKE_GIF", get(IDS_CFG, "make_gif", true) ? "1" : "0") == "1"
+                    anim_fe_rt = InfiniteDataStreamViz.animate_free_energy(fe_rt; stride=stride_rt)
+                    InfiniteDataStreamViz.save_gif(anim_fe_rt, joinpath(realtime_dir, "realtime_free_energy.gif"))
+                    log("[realtime] saved: $(joinpath(realtime_dir, "realtime_free_energy.gif"))")
+                    # Two-panel composed realtime animation (estimates + FE)
+                    anim_rt_comp = InfiniteDataStreamViz.animate_composed_estimates_fe(mu_rt[1:upto], var_rt[1:upto], hist, obs, fe_rt; stride=stride_rt)
+                    InfiniteDataStreamViz.save_gif(anim_rt_comp, joinpath(realtime_dir, "realtime_composed_estimates_fe.gif"))
+                    log("[realtime] saved: $(joinpath(realtime_dir, "realtime_composed_estimates_fe.gif"))")
+                end
+            elseif get(ENV, "IDS_MAKE_GIF", get(IDS_CFG, "make_gif", true) ? "1" : "0") == "1"
+                log("[realtime] FE stream not exposed; mirroring static FE artifacts")
+            end
             # Realtime composed GIFs
-            if get(ENV, "IDS_MAKE_GIF", "0") == "1"
-                # For realtime, approximate a per-step free-energy with cumulative average if available later
-                # Here we do not have FE per step from streaming history; we skip FE animation unless available.
+            if get(ENV, "IDS_MAKE_GIF", get(IDS_CFG, "make_gif", true) ? "1" : "0") == "1"
+                log("[realtime] GIF generation enabled via IDS_MAKE_GIF=1")
+            else
+                log("[realtime] GIF generation disabled (set IDS_MAKE_GIF=1 to enable)")
             end
             writedlm(joinpath(realtime_dir, "realtime_posterior_x_current.csv"), hcat(mu_rt[1:upto], var_rt[1:upto]))
             if !isempty(tau_shape_rt)
@@ -228,6 +321,7 @@ begin
         println(io, "realtime_run_completed=true at ", Dates.format(now(), "yyyy-mm-ddTHH:MM:SS"))
         println(io, "n=$(n), interval_ms=$(interval_ms)")
         println(io, "posterior_samples_captured=$(length(mu_rt))")
+        println(io, "free_energy_points_captured=$(length(fe_rt))")
     end
     log("[realtime] done")
 end
@@ -284,10 +378,12 @@ try
     png(pr_r, joinpath(cmp_dir, "residuals_realtime.png"))
 
     # Optional comparison animation (overlay evolving)
-    if get(ENV, "IDS_MAKE_GIF", "0") == "1"
-        stride = parse(Int, get(ENV, "IDS_GIF_STRIDE", "5"))
-        anim_overlay = InfiniteDataStreamViz.animate_overlay_means(static_truth, μs, μr; stride=stride)
+    if get(ENV, "IDS_MAKE_GIF", get(IDS_CFG, "make_gif", true) ? "1" : "0") == "1"
+        stride_cmp = parse(Int, get(ENV, "IDS_GIF_STRIDE", "5"))
+        anim_overlay = InfiniteDataStreamViz.animate_overlay_means(static_truth, μs, μr; stride=stride_cmp)
         InfiniteDataStreamViz.save_gif(anim_overlay, joinpath(cmp_dir, "overlay_means.gif"))
+    else
+        @info "[comparison] overlay animation disabled (set IDS_MAKE_GIF=1 to enable)"
     end
 catch e
     @warn "comparison report failed" error=e

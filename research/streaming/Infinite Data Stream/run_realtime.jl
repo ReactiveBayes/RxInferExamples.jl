@@ -1,14 +1,14 @@
-include("utils.jl"); using .InfiniteDataStreamUtils; InfiniteDataStreamUtils.load_modules!()
+include("utils.jl"); using .InfiniteDataStreamUtils; InfiniteDataStreamUtils.load_modules!(); const IDS_CFG = InfiniteDataStreamUtils.load_config()
 using RxInfer
 using .InfiniteDataStreamModel
 using .InfiniteDataStreamEnv
 using .InfiniteDataStreamUpdates
 using .InfiniteDataStreamStreams
 
-initial_state         = 0.0
-observation_precision = 0.1
-n = 300
-interval_ms = 41
+initial_state         = Float64(get(IDS_CFG, "initial_state", 0.0))
+observation_precision = Float64(get(IDS_CFG, "observation_precision", 0.1))
+n = Int(get(IDS_CFG, "n", 300))
+interval_ms = Int(get(IDS_CFG, "interval_ms", 41))
 
 env = Environment(initial_state, observation_precision)
 
@@ -26,7 +26,7 @@ engine = infer(
     autoupdates    = autoupdates,
     returnvars     = (:x_current, ),
     initialization = init,
-    iterations     = 10,
+    iterations     = Int(get(IDS_CFG, "iterations", 10)),
     autostart      = false,
 )
 

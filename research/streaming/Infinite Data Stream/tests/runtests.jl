@@ -1,6 +1,14 @@
 using Test
 using DelimitedFiles
 
+# Helper to include module files
+function include_project_modules!()
+    Base.include(Main, joinpath(@__DIR__, "..", "utils.jl"))
+    Base.eval(Main, :(using .InfiniteDataStreamUtils))
+    # Ensure world age updated before calling newly defined function
+    Base.invokelatest(Main.InfiniteDataStreamUtils.load_modules!)
+end
+
 latest_output_root() = begin
     root = joinpath(@__DIR__, "..", "output")
     isdir(root) || return nothing
@@ -12,6 +20,22 @@ end
 
 project_root = normpath(joinpath(@__DIR__, ".."))
 run_script_path = normpath(joinpath(project_root, "run.jl"))
+
+@testset "Modules load" begin
+    include_project_modules!()
+    @test isdefined(Main, :InfiniteDataStreamModel)
+    @test isdefined(Main, :InfiniteDataStreamEnv)
+    @test isdefined(Main, :InfiniteDataStreamUpdates)
+    @test isdefined(Main, :InfiniteDataStreamStreams)
+    @test isdefined(Main, :InfiniteDataStreamViz)
+end
+
+include(joinpath(@__DIR__, "unit_environment.jl"))
+include(joinpath(@__DIR__, "unit_streams.jl"))
+include(joinpath(@__DIR__, "unit_model_updates.jl"))
+include(joinpath(@__DIR__, "unit_visualize.jl"))
+include(joinpath(@__DIR__, "unit_meta_project_docs.jl"))
+include(joinpath(@__DIR__, "unit_free_energy.jl"))
 
 @testset "Infinite Data Stream pipeline" begin
     # Launch using Julia's absolute executable to avoid PATH/ENOENT issues
