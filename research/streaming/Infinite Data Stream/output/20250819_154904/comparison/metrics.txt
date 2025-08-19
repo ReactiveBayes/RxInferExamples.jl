@@ -1,0 +1,46 @@
+# Basic Error Metrics
+mse_static=4.893416920718638
+mse_realtime=60.85706704672168
+mae_static=1.7319859300396165
+mae_realtime=6.692591308654444
+rmse_static=2.212106896313702
+rmse_realtime=7.801093964741207
+
+# Bias and Variance
+bias_static=0.19265060220718883
+bias_realtime=-0.6589053841314296
+var_residuals_static=4.886654557851521
+var_residuals_realtime=60.80055393361857
+std_residuals_static=2.2105778787121526
+std_residuals_realtime=7.797470996010089
+
+# Correlation and R-squared
+correlation_static=0.9480811155537603
+correlation_realtime=0.016305421313747532
+r2_static=0.8970992740045314
+r2_realtime=-0.2797267190842405
+
+# Quantile-based Metrics
+q25_abs_err_static=0.5567731960668034
+q50_abs_err_static=1.4144609275518505
+q75_abs_err_static=2.389379949384585
+q95_abs_err_static=4.46590559859113
+max_abs_err_static=5.647056427132975
+
+q25_abs_err_realtime=3.3800003590458214
+q50_abs_err_realtime=6.632820753141263
+q75_abs_err_realtime=9.921229103516705
+q95_abs_err_realtime=13.200134262348465
+max_abs_err_realtime=14.400782328397694
+
+# Normalized Metrics
+nrmse_static=0.11062947257306278
+nrmse_realtime=0.3901397858532038
+nmae_static=0.08661818751324761
+nmae_realtime=0.33470256245632557
+
+# Sample Size
+n_compare=161
+matched_timesteps=161
+truth_range_static=19.995638095922086
+truth_range_realtime=19.995638095922086

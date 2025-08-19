@@ -8,7 +8,8 @@ This script runs the POMDP Control example and saves all outputs to files.
 const OUTPUT_DIR = dirname(@__FILE__)
 
 # Install required packages if not already installed
-println("Ensuring all required packages are installed...")
+using Dates
+println("[" * string(Dates.now()) * "] Ensuring all required packages are installed...")
 using Pkg
 
 # Read the Project.toml to get package dependencies
@@ -18,7 +19,7 @@ if isfile(project_file)
     Pkg.activate(OUTPUT_DIR)
     # Install all dependencies
     Pkg.instantiate()
-    println("✓ Project dependencies installed")
+    println("[" * string(Dates.now()) * "] ✓ Project dependencies installed")
 else
     # Fallback to installing packages directly if Project.toml is not found
     required_packages = [
@@ -34,16 +35,21 @@ else
         println("Installing $pkg...")
         Pkg.add(pkg)
     end
-    println("✓ Required packages installed")
+    println("[" * string(Dates.now()) * "] ✓ Required packages installed")
 end
 
-println("\nRunning POMDP Control example...")
+ENV["GKSwstype"] = "100" # headless GR
+using Plots
+gr()
+using Statistics
+using JSON
+println("[" * string(Dates.now()) * "] Running POMDP Control example...")
 
 # Include the original script but capture and save all outputs
 include(joinpath(OUTPUT_DIR, "POMDP Control.jl"))
 
 # Now add code to save all outputs
-println("\nSaving outputs to $(OUTPUT_DIR)")
+println("[" * string(Dates.now()) * "] Saving outputs to $(OUTPUT_DIR)")
 
 # Save the final environment plot
 final_plot = plot_environment(env)
@@ -145,3 +151,26 @@ end
 println("✓ Saved experiment data")
 
 println("\nAll outputs have been saved to $(OUTPUT_DIR)") 
+
+# Write machine-readable manifest
+manifest = Dict(
+    "run_at" => string(Dates.now()),
+    "n_experiments" => n_experiments,
+    "planning_horizon" => T,
+    "success_rate" => mean(successes),
+    "outputs" => Dict(
+        "environment_final" => joinpath(OUTPUT_DIR, "environment_final.png"),
+        "success_rate" => joinpath(OUTPUT_DIR, "success_rate.txt"),
+        "transition_model_up" => joinpath(OUTPUT_DIR, "transition_model_up.png"),
+        "transition_model_right" => joinpath(OUTPUT_DIR, "transition_model_right.png"),
+        "transition_model_down" => joinpath(OUTPUT_DIR, "transition_model_down.png"),
+        "transition_model_left" => joinpath(OUTPUT_DIR, "transition_model_left.png"),
+        "observation_model" => joinpath(OUTPUT_DIR, "observation_model.png"),
+        "grid_world" => joinpath(OUTPUT_DIR, "grid_world.png"),
+        "experiment_data" => joinpath(OUTPUT_DIR, "experiment_data.txt")
+    )
+)
+open(joinpath(OUTPUT_DIR, "outputs_manifest.json"), "w") do io
+    JSON.print(io, manifest)
+end
+println("[" * string(Dates.now()) * "] Wrote outputs_manifest.json")

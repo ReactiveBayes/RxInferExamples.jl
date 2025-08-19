@@ -4,6 +4,7 @@ using RxInfer
 using Distributions
 using RxEnvironments
 using Plots
+using Statistics
 
 include("env.jl")
 include("utils.jl")

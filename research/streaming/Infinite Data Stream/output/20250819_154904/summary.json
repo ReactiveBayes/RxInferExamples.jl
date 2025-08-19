@@ -1,0 +1,40 @@
+{
+  "sample_size": {
+    "n_compare": 161,
+    "matched_timesteps": 161
+  },
+  "basic_metrics": {
+    "mae_static": 1.7319859300396165,
+    "mae_realtime": 6.692591308654444,
+    "mse_static": 4.893416920718638,
+    "mse_realtime": 60.85706704672168,
+    "rmse_static": 2.212106896313702,
+    "rmse_realtime": 7.801093964741207
+  },
+  "bias_variance": {
+    "bias_static": 0.19265060220718883,
+    "bias_realtime": -0.6589053841314296,
+    "var_residuals_static": 4.886654557851521,
+    "var_residuals_realtime": 60.80055393361857
+  },
+  "correlation": {
+    "correlation_static": 0.9480811155537603,
+    "correlation_realtime": 0.016305421313747532,
+    "r2_static": 0.8970992740045314,
+    "r2_realtime": -0.2797267190842405
+  },
+  "quantile_metrics": {
+    "q50_abs_err_static": 1.4144609275518505,
+    "q50_abs_err_realtime": 6.632820753141263,
+    "q95_abs_err_static": 4.46590559859113,
+    "q95_abs_err_realtime": 13.200134262348465,
+    "max_abs_err_static": 5.647056427132975,
+    "max_abs_err_realtime": 14.400782328397694
+  },
+  "normalized_metrics": {
+    "nrmse_static": 0.11062947257306278,
+    "nrmse_realtime": 0.3901397858532038,
+    "nmae_static": 0.08661818751324761,
+    "nmae_realtime": 0.33470256245632557
+  },
+  "coverage": {

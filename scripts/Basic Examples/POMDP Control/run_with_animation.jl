@@ -1,3 +1,15 @@
+println("Ensuring all required packages are installed...")
+using Pkg
+const OUTPUT_DIR_ROOT = dirname(@__FILE__)
+if isfile(joinpath(OUTPUT_DIR_ROOT, "Project.toml"))
+    Pkg.activate(OUTPUT_DIR_ROOT)
+    Pkg.instantiate()
+    println("✓ Project dependencies installed")
+else
+    Pkg.activate(OUTPUT_DIR_ROOT)
+end
+
+ENV["GKSwstype"] = "100"
 using RxInfer
 using Distributions
 using Plots
@@ -6,8 +18,11 @@ using Random
 using ProgressMeter
 using RxEnvironments
 using Dates
-using FileIO
 using LinearAlgebra
+using Statistics
+
+include(joinpath(@__DIR__, "src", "POMDPControl.jl"))
+using .POMDPControl
 
 # Define output directories first
 const OUTPUT_DIR = joinpath(dirname(@__FILE__), "outputs")
@@ -16,7 +31,7 @@ const PLOTS_DIR = joinpath(OUTPUT_DIR, "plots")
 const ANIMATION_DIR = joinpath(OUTPUT_DIR, "animations")
 const MATRIX_DIR = joinpath(OUTPUT_DIR, "matrices")
 
-# Create output directories
+println("$(now()) | Creating output directories...")
 for dir in [OUTPUT_DIR, ANALYTICS_DIR, PLOTS_DIR, ANIMATION_DIR, MATRIX_DIR]
     if !isdir(dir)
         mkpath(dir)
@@ -24,114 +39,10 @@ for dir in [OUTPUT_DIR, ANALYTICS_DIR, PLOTS_DIR, ANIMATION_DIR, MATRIX_DIR]
     end
 end
 
-struct WindyGridWorld{N}
-    wind::NTuple{N,Int}
-    agents::Vector
-    goal::Tuple{Int,Int}
-end
+env, agent = create_environment()
+println("$(now()) | Environment initialized")
 
-mutable struct WindyGridWorldAgent
-    position::Tuple{Int,Int}
-end
-
-RxEnvironments.update!(env::WindyGridWorld, dt) = nothing
-
-function RxEnvironments.receive!(env::WindyGridWorld{N}, agent::WindyGridWorldAgent, action::Tuple{Int,Int}) where {N}
-    if action[1] != 0
-        @assert action[2] == 0 "Only one of the two actions can be non-zero"
-    elseif action[2] != 0
-        @assert action[1] == 0 "Only one of the two actions can be non-zero"
-    end
-    new_position = (agent.position[1] + action[1], agent.position[2] + action[2] + env.wind[agent.position[1]])
-    if all(elem -> 0 < elem < N, new_position)
-        agent.position = new_position
-    end
-end
-
-function RxEnvironments.what_to_send(env::WindyGridWorld, agent::WindyGridWorldAgent)
-    return agent.position
-end
-
-function RxEnvironments.what_to_send(agent::WindyGridWorldAgent, env::WindyGridWorld)
-    return agent.position
-end
-
-function RxEnvironments.add_to_state!(env::WindyGridWorld, agent::WindyGridWorldAgent)
-    push!(env.agents, agent)
-end
-
-function reset_env!(environment::RxEnvironments.RxEntity{<:WindyGridWorld,T,S,A}) where {T,S,A}
-    env = environment.decorated
-    for agent in env.agents
-        agent.position = (1, 1)
-    end
-    for subscriber in RxEnvironments.subscribers(environment)
-        send!(subscriber, environment, (1, 1))
-    end
-end
-
-function plot_environment(environment::RxEnvironments.RxEntity{<:WindyGridWorld,T,S,A}) where {T,S,A}
-    env = environment.decorated
-    p1 = scatter([env.goal[1]], [env.goal[2]], color=:blue, label="Goal", xlims=(0, 6), ylims=(0, 6))
-    for agent in env.agents
-        p1 = scatter!([agent.position[1]], [agent.position[2]], color=:red, label="Agent")
-    end
-    return p1
-end
-
-env = RxEnvironment(WindyGridWorld((0, 1, 1, 1, 0), [], (4, 3)))
-agent = add!(env, WindyGridWorldAgent((1, 1)))
-plot_environment(env)
-
-@model function pomdp_model(p_A, p_B, p_goal, p_control, previous_control, p_previous_state, current_y, future_y, T, m_A, m_B)
-    # Instantiate all model parameters with priors
-    A ~ p_A
-    B ~ p_B
-    previous_state ~ p_previous_state
-    
-    # Parameter inference
-    current_state ~ DiscreteTransition(previous_state, B, previous_control)
-    current_y ~ DiscreteTransition(current_state, A)
-
-    prev_state = current_state
-    # Inference-as-planning
-    for t in 1:T
-        controls[t] ~ p_control
-        s[t] ~ DiscreteTransition(prev_state, m_B, controls[t])
-        future_y[t] ~ DiscreteTransition(s[t], m_A)
-        prev_state = s[t]
-    end
-    # Goal prior initialization
-    s[end] ~ p_goal
-end
-
-init = @initialization begin
-    q(A) = DirichletCollection(diageye(25) .+ 0.1)
-    q(B) = DirichletCollection(ones(25, 25, 4))
-end
-
-constraints = @constraints begin
-    q(previous_state, previous_control, current_state, B) = q(previous_state, previous_control, current_state)q(B)
-    q(current_state, current_y, A) = q(current_state, current_y)q(A)
-    q(current_state, s, controls, B) = q(current_state, s, controls), q(B)
-    q(s, future_y, A) = q(s, future_y), q(A)
-end
-
-p_A = DirichletCollection(diageye(25) .+ 0.1)
-p_B = DirichletCollection(ones(25, 25, 4))
-
-function grid_location_to_index(pos::Tuple{Int, Int})
-    return (pos[2] - 1) * 5 + pos[1]
-end
-
-function index_to_grid_location(index::Int)
-    return (index % 5, index ÷ 5 + 1,)
-end
-
-function index_to_one_hot(index::Int)
-    return [i == index ? 1.0 : 0.0 for i in 1:25]
-end
-
+p_A, p_B, init, constraints = build_pomdp()
 goal = Categorical(index_to_one_hot(grid_location_to_index((4, 3))))
 
 # Number of times to run the experiment
@@ -262,12 +173,12 @@ function save_experiment_state(env, step, position_history, policy_probs, belief
 end
 
 # Add this after creating the environment
-println("Saving initial environment state...")
+println("$(now()) | Saving initial environment state...")
 initial_plot = plot_environment(env)
 savefig(initial_plot, joinpath(OUTPUT_DIR, "initial_environment.png"))
 
 # Modify the experiment loop to track more data
-println("\nRunning experiments...")
+println("$(now()) | Running experiments...")
 all_paths = Vector{Vector{Tuple{Int,Int}}}()
 all_step_counts = Int[]
 experiment_data = Dict{Int,Dict{Symbol,Any}}()
@@ -319,7 +230,7 @@ grid_sim_data = []
         last_observation = index_to_one_hot(grid_location_to_index(RxEnvironments.data(last(observations))))
         
         inference_result = infer(
-            model = pomdp_model(
+            model = POMDPControl.pomdp_model(
                 p_A = p_A, p_B = p_B,
                 T = max(T - t, 1),
                 p_previous_state = p_s,
@@ -329,8 +240,8 @@ grid_sim_data = []
                 m_B = mean(p_B)
             ),
             data = (
-                previous_control = UnfactorizedData(prev_u),
-                current_y = UnfactorizedData(last_observation),
+                previous_control = prev_u,
+                current_y = last_observation,
                 future_y = UnfactorizedData(fill(missing, max(T - t, 1)))
             ),
             constraints = constraints,
@@ -372,7 +283,7 @@ end
 
 # Save experiment results
 success_rate = mean(successes)
-println("\nExperiment Results:")
+println("$(now()) | Experiment Results:")
 println("Success rate: $(round(success_rate * 100, digits=1))%")
 
 # Convert successes to Vector{Bool} for proper indexing
@@ -416,7 +327,7 @@ open(joinpath(OUTPUT_DIR, "experiment_results.txt"), "w") do io
 end
 
 # Create and save summary visualizations
-println("\nGenerating summary visualizations...")
+println("$(now()) | Generating summary visualizations...")
 
 # Success rate over time
 if !isempty(successful_steps)
@@ -452,7 +363,7 @@ end
 savefig(final_plot, joinpath(OUTPUT_DIR, "final_environment.png"))
 
 # Generate grid simulation frames
-println("\nGenerating grid simulation frames...")
+println("$(now()) | Generating grid simulation frames...")
 max_steps = maximum(length(data[:position_history]) for data in grid_sim_data)
 for step in 0:max_steps
     frame = create_grid_simulation_frame(grid_sim_data, step)
@@ -460,7 +371,7 @@ for step in 0:max_steps
 end
 
 # After the experiment loop, add animation generation
-println("\nGenerating animations...")
+println("$(now()) | Generating animations...")
 
 # Create environment animation with 2 fps
 if !isempty(env_frames)
@@ -502,7 +413,7 @@ if !isempty(transition_frames)
 end
 
 # After other animation generation code, add:
-println("\nGenerating grid simulation animation...")
+println("$(now()) | Generating grid simulation animation...")
 if !isempty(grid_sim_frames)
     anim = @animate for p in grid_sim_frames
         plot(p)
@@ -511,7 +422,7 @@ if !isempty(grid_sim_frames)
 end
 
 # Create combined matrix animation
-println("\nGenerating combined matrix animation...")
+println("$(now()) | Generating combined matrix animation...")
 if !isempty(observation_frames) && !isempty(transition_frames)
     combined_frames = []
     for (i, (obs_frame, trans_frame)) in enumerate(zip(observation_frames, transition_frames))
@@ -532,4 +443,19 @@ end
 
 println("\nAnimations saved to: $(ANIMATION_DIR)")
 println("Matrix visualizations saved to: $(MATRIX_DIR)")
-println("\nResults and visualizations saved to: $(OUTPUT_DIR)") 
+println("\nResults and visualizations saved to: $(OUTPUT_DIR)")
+
+# Write an outputs index for quick review
+open(joinpath(OUTPUT_DIR, "outputs_index.txt"), "w") do io
+    println(io, "Run completed at: $(now())")
+    println(io, "\nDirectories:")
+    println(io, "- PLOTS_DIR: $(PLOTS_DIR)")
+    println(io, "- ANIMATION_DIR: $(ANIMATION_DIR)")
+    println(io, "- MATRIX_DIR: $(MATRIX_DIR)")
+    println(io, "\nFile counts:")
+    plots_count = isdir(PLOTS_DIR) ? length(readdir(PLOTS_DIR)) : 0
+    anims_count = isdir(ANIMATION_DIR) ? length(readdir(ANIMATION_DIR)) : 0
+    mats_count = isdir(MATRIX_DIR) ? length(readdir(MATRIX_DIR)) : 0
+    println(io, "plots: $plots_count, animations: $anims_count, matrices: $mats_count")
+end
+println("$(now()) | Wrote outputs_index.txt")

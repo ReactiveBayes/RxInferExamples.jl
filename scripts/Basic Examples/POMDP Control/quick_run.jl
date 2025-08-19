@@ -13,12 +13,17 @@ Pkg.activate(OUTPUT_DIR)
 Pkg.instantiate()
 
 # Load required packages
+using Dates
+println("[" * string(Dates.now()) * "] Loading packages...")
 using RxInfer
 using Distributions
+ENV["GKSwstype"] = "100" # headless GR to avoid GUI hangs
 using Plots
+gr()
 using Random
 using RxEnvironments
 using Dates
+println("[" * string(Dates.now()) * "] ✓ Packages loaded")
 
 # Save a record of execution
 open(joinpath(OUTPUT_DIR, "execution_log.txt"), "w") do io
@@ -84,14 +89,19 @@ function plot_environment(environment::RxEnvironments.RxEntity{<:WindyGridWorld,
 end
 
 # Create the environment
-println("Setting up environment...")
+println("[" * string(Dates.now()) * "] Setting up environment...")
 env = RxEnvironment(WindyGridWorld((0, 1, 1, 1, 0), [], (4, 3)))
 agent = add!(env, WindyGridWorldAgent((1, 1)))
 
 # Save initial environment plot
+println("[" * string(Dates.now()) * "] Creating initial environment plot...")
 initial_plot = plot_environment(env)
-savefig(initial_plot, joinpath(OUTPUT_DIR, "initial_environment.png"))
-println("✓ Saved initial environment plot")
+try
+    savefig(initial_plot, joinpath(OUTPUT_DIR, "initial_environment.png"))
+    println("[" * string(Dates.now()) * "] ✓ Saved initial environment plot")
+catch err
+    println("[" * string(Dates.now()) * "] ✗ Failed to save initial environment plot: $(err)")
+end
 
 # Define the POMDP model (simplified from original script)
 function grid_location_to_index(pos::Tuple{Int, Int})
@@ -107,7 +117,7 @@ function index_to_one_hot(index::Int)
 end
 
 # Run a simplified experiment
-println("Running a simplified experiment...")
+println("[" * string(Dates.now()) * "] Running a simplified experiment...")
 reset_env!(env)
 
 # Move the agent manually to demonstrate the environment
@@ -121,7 +131,7 @@ push!(positions, env.decorated.agents[1].position)
 send!(env, agent, (0, 1))  # Move up
 push!(positions, env.decorated.agents[1].position)
 
-# Create a plot showing the path
+println("[" * string(Dates.now()) * "] Creating path plot...")
 path_plot = plot(title="Agent Path", xlims=(0, 6), ylims=(0, 6))
 scatter!(path_plot, [env.decorated.goal[1]], [env.decorated.goal[2]], color=:blue, label="Goal")
 for i in 1:length(positions)
@@ -139,9 +149,14 @@ savefig(path_plot, joinpath(OUTPUT_DIR, "agent_path.png"))
 println("✓ Saved agent path plot")
 
 # Save final environment state
+println("[" * string(Dates.now()) * "] Creating final environment plot...")
 final_plot = plot_environment(env)
-savefig(final_plot, joinpath(OUTPUT_DIR, "final_environment.png"))
-println("✓ Saved final environment plot")
+try
+    savefig(final_plot, joinpath(OUTPUT_DIR, "final_environment.png"))
+    println("[" * string(Dates.now()) * "] ✓ Saved final environment plot")
+catch err
+    println("[" * string(Dates.now()) * "] ✗ Failed to save final environment plot: $(err)")
+end
 
 # Save configuration and results data
 open(joinpath(OUTPUT_DIR, "quick_run_results.txt"), "w") do io

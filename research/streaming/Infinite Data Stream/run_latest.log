@@ -1,0 +1,281 @@
+[15:49:05] Writing artifacts under: output/20250819_154904
+[15:49:05] Config: n=1000, interval_ms=10, iterations=10, seed=123
+[15:49:05] [static] generating 1000 observations …
+[15:49:05] [static] generated 50/1000
+[15:49:05] [static] generated 100/1000
+[15:49:05] [static] generated 150/1000
+[15:49:05] [static] generated 200/1000
+[15:49:05] [static] generated 250/1000
+[15:49:05] [static] generated 300/1000
+[15:49:05] [static] generated 350/1000
+[15:49:05] [static] generated 400/1000
+[15:49:05] [static] generated 450/1000
+[15:49:05] [static] generated 500/1000
+[15:49:06] [static] generated 550/1000
+[15:49:06] [static] generated 600/1000
+[15:49:06] [static] generated 650/1000
+[15:49:06] [static] generated 700/1000
+[15:49:06] [static] generated 750/1000
+[15:49:06] [static] generated 800/1000
+[15:49:06] [static] generated 850/1000
+[15:49:06] [static] generated 900/1000
+[15:49:06] [static] generated 950/1000
+[15:49:06] [static] generated 1000/1000
+[15:49:06] [static] starting inference …
+[15:49:16] [static] GIF generation enabled via IDS_MAKE_GIF=1
+[15:49:16] [static] rendering animation frames (stride=5) …
+[15:49:21] [static] saving GIF …
+[15:49:23] [static] saved: output/20250819_154904/static/static_inference.gif
+[15:49:23] [static] FE prefix re-inference: total=1000, iters/step=10, log_stride=10
+[15:49:24] [static] FE computed for t=10/1000 (1.0%); ETA ≈ 45s
+[15:49:24] [static] FE computed for t=20/1000 (2.0%); ETA ≈ 23s
+[15:49:24] [static] FE computed for t=30/1000 (3.0%); ETA ≈ 16s
+[15:49:24] [static] FE computed for t=40/1000 (4.0%); ETA ≈ 13s
+[15:49:24] [static] FE computed for t=50/1000 (5.0%); ETA ≈ 11s
+[15:49:24] [static] FE computed for t=60/1000 (6.0%); ETA ≈ 10s
+[15:49:24] [static] FE computed for t=70/1000 (7.0%); ETA ≈ 10s
+[15:49:24] [static] FE computed for t=80/1000 (8.0%); ETA ≈ 9s
+[15:49:24] [static] FE computed for t=90/1000 (9.0%); ETA ≈ 9s
+[15:49:24] [static] FE computed for t=100/1000 (10.0%); ETA ≈ 9s
+[15:49:24] [static] FE computed for t=110/1000 (11.0%); ETA ≈ 9s
+[15:49:25] [static] FE computed for t=120/1000 (12.0%); ETA ≈ 9s
+[15:49:25] [static] FE computed for t=130/1000 (13.0%); ETA ≈ 9s
+[15:49:25] [static] FE computed for t=140/1000 (14.0%); ETA ≈ 9s
+[15:49:25] [static] FE computed for t=150/1000 (15.0%); ETA ≈ 9s
+[15:49:25] [static] FE computed for t=160/1000 (16.0%); ETA ≈ 10s
+[15:49:25] [static] FE computed for t=170/1000 (17.0%); ETA ≈ 10s
+[15:49:26] [static] FE computed for t=180/1000 (18.0%); ETA ≈ 10s
+[15:49:26] [static] FE computed for t=190/1000 (19.0%); ETA ≈ 10s
+[15:49:26] [static] FE computed for t=200/1000 (20.0%); ETA ≈ 10s
+[15:49:26] [static] FE computed for t=210/1000 (21.0%); ETA ≈ 11s
+[15:49:26] [static] FE computed for t=220/1000 (22.0%); ETA ≈ 11s
+[15:49:27] [static] FE computed for t=230/1000 (23.0%); ETA ≈ 11s
+[15:49:27] [static] FE computed for t=240/1000 (24.0%); ETA ≈ 11s
+[15:49:27] [static] FE computed for t=250/1000 (25.0%); ETA ≈ 11s
+[15:49:27] [static] FE computed for t=260/1000 (26.0%); ETA ≈ 12s
+[15:49:28] [static] FE computed for t=270/1000 (27.0%); ETA ≈ 12s
+[15:49:28] [static] FE computed for t=280/1000 (28.0%); ETA ≈ 12s
+[15:49:28] [static] FE computed for t=290/1000 (29.0%); ETA ≈ 12s
+[15:49:29] [static] FE computed for t=300/1000 (30.0%); ETA ≈ 12s
+[15:49:29] [static] FE computed for t=310/1000 (31.0%); ETA ≈ 12s
+[15:49:29] [static] FE computed for t=320/1000 (32.0%); ETA ≈ 12s
+[15:49:30] [static] FE computed for t=330/1000 (33.0%); ETA ≈ 13s
+[15:49:30] [static] FE computed for t=340/1000 (34.0%); ETA ≈ 13s
+[15:49:30] [static] FE computed for t=350/1000 (35.0%); ETA ≈ 13s
+[15:49:31] [static] FE computed for t=360/1000 (36.0%); ETA ≈ 13s
+[15:49:31] [static] FE computed for t=370/1000 (37.0%); ETA ≈ 13s
+[15:49:31] [static] FE computed for t=380/1000 (38.0%); ETA ≈ 13s
+[15:49:32] [static] FE computed for t=390/1000 (39.0%); ETA ≈ 13s
+[15:49:32] [static] FE computed for t=400/1000 (40.0%); ETA ≈ 13s
+[15:49:33] [static] FE computed for t=410/1000 (41.0%); ETA ≈ 13s
+[15:49:33] [static] FE computed for t=420/1000 (42.0%); ETA ≈ 14s
+[15:49:34] [static] FE computed for t=430/1000 (43.0%); ETA ≈ 14s
+[15:49:34] [static] FE computed for t=440/1000 (44.0%); ETA ≈ 14s
+[15:49:35] [static] FE computed for t=450/1000 (45.0%); ETA ≈ 14s
+[15:49:35] [static] FE computed for t=460/1000 (46.0%); ETA ≈ 14s
+[15:49:36] [static] FE computed for t=470/1000 (47.0%); ETA ≈ 14s
+[15:49:36] [static] FE computed for t=480/1000 (48.0%); ETA ≈ 14s
+[15:49:37] [static] FE computed for t=490/1000 (49.0%); ETA ≈ 14s
+[15:49:37] [static] FE computed for t=500/1000 (50.0%); ETA ≈ 14s
+[15:49:38] [static] FE computed for t=510/1000 (51.0%); ETA ≈ 14s
+[15:49:38] [static] FE computed for t=520/1000 (52.0%); ETA ≈ 14s
+[15:49:39] [static] FE computed for t=530/1000 (53.0%); ETA ≈ 14s
+[15:49:39] [static] FE computed for t=540/1000 (54.0%); ETA ≈ 14s
+[15:49:40] [static] FE computed for t=550/1000 (55.0%); ETA ≈ 14s
+[15:49:41] [static] FE computed for t=560/1000 (56.0%); ETA ≈ 14s
+[15:49:41] [static] FE computed for t=570/1000 (57.0%); ETA ≈ 13s
+[15:49:42] [static] FE computed for t=580/1000 (58.0%); ETA ≈ 13s
+[15:49:42] [static] FE computed for t=590/1000 (59.0%); ETA ≈ 13s
+[15:49:43] [static] FE computed for t=600/1000 (60.0%); ETA ≈ 13s
+[15:49:44] [static] FE computed for t=610/1000 (61.0%); ETA ≈ 13s
+[15:49:44] [static] FE computed for t=620/1000 (62.0%); ETA ≈ 13s
+[15:49:45] [static] FE computed for t=630/1000 (63.0%); ETA ≈ 13s
+[15:49:46] [static] FE computed for t=640/1000 (64.0%); ETA ≈ 13s
+[15:49:46] [static] FE computed for t=650/1000 (65.0%); ETA ≈ 12s
+[15:49:47] [static] FE computed for t=660/1000 (66.0%); ETA ≈ 12s
+[15:49:48] [static] FE computed for t=670/1000 (67.0%); ETA ≈ 12s
+[15:49:49] [static] FE computed for t=680/1000 (68.0%); ETA ≈ 12s
+[15:49:49] [static] FE computed for t=690/1000 (69.0%); ETA ≈ 12s
+[15:49:50] [static] FE computed for t=700/1000 (70.0%); ETA ≈ 11s
+[15:49:51] [static] FE computed for t=710/1000 (71.0%); ETA ≈ 11s
+[15:49:52] [static] FE computed for t=720/1000 (72.0%); ETA ≈ 11s
+[15:49:52] [static] FE computed for t=730/1000 (73.0%); ETA ≈ 11s
+[15:49:53] [static] FE computed for t=740/1000 (74.0%); ETA ≈ 10s
+[15:49:54] [static] FE computed for t=750/1000 (75.0%); ETA ≈ 10s
+[15:49:55] [static] FE computed for t=760/1000 (76.0%); ETA ≈ 10s
+[15:49:56] [static] FE computed for t=770/1000 (77.0%); ETA ≈ 10s
+[15:49:56] [static] FE computed for t=780/1000 (78.0%); ETA ≈ 9s
+[15:49:57] [static] FE computed for t=790/1000 (79.0%); ETA ≈ 9s
+[15:49:58] [static] FE computed for t=800/1000 (80.0%); ETA ≈ 9s
+[15:49:59] [static] FE computed for t=810/1000 (81.0%); ETA ≈ 8s
+[15:50:00] [static] FE computed for t=820/1000 (82.0%); ETA ≈ 8s
+[15:50:01] [static] FE computed for t=830/1000 (83.0%); ETA ≈ 8s
+[15:50:02] [static] FE computed for t=840/1000 (84.0%); ETA ≈ 7s
+[15:50:02] [static] FE computed for t=850/1000 (85.0%); ETA ≈ 7s
+[15:50:03] [static] FE computed for t=860/1000 (86.0%); ETA ≈ 7s
+[15:50:04] [static] FE computed for t=870/1000 (87.0%); ETA ≈ 6s
+[15:50:05] [static] FE computed for t=880/1000 (88.0%); ETA ≈ 6s
+[15:50:06] [static] FE computed for t=890/1000 (89.0%); ETA ≈ 5s
+[15:50:07] [static] FE computed for t=900/1000 (90.0%); ETA ≈ 5s
+[15:50:08] [static] FE computed for t=910/1000 (91.0%); ETA ≈ 4s
+[15:50:09] [static] FE computed for t=920/1000 (92.0%); ETA ≈ 4s
+[15:50:10] [static] FE computed for t=930/1000 (93.0%); ETA ≈ 3s
+[15:50:11] [static] FE computed for t=940/1000 (94.0%); ETA ≈ 3s
+[15:50:12] [static] FE computed for t=950/1000 (95.0%); ETA ≈ 3s
+[15:50:13] [static] FE computed for t=960/1000 (96.0%); ETA ≈ 2s
+[15:50:14] [static] FE computed for t=970/1000 (97.0%); ETA ≈ 2s
+[15:50:15] [static] FE computed for t=980/1000 (98.0%); ETA ≈ 1s
+[15:50:16] [static] FE computed for t=990/1000 (99.0%); ETA ≈ 1s
+[15:50:17] [static] FE computed for t=1000/1000 (100.0%); ETA ≈ 0s
+[15:50:22] [static] saved: output/20250819_154904/static/static_free_energy.gif
+[15:50:34] [static] saved: output/20250819_154904/static/static_composed_estimates_fe.gif
+[15:50:34] [static] saving free-energy plot …
+[15:50:34] [static] FE prefix re-inference: total=1000, iters/step=10, log_stride=10
+[15:50:34] [static] FE computed for t=10/1000 (1.0%); ETA ≈ 1s
+[15:50:34] [static] FE computed for t=20/1000 (2.0%); ETA ≈ 2s
+[15:50:34] [static] FE computed for t=30/1000 (3.0%); ETA ≈ 2s
+[15:50:34] [static] FE computed for t=40/1000 (4.0%); ETA ≈ 3s
+[15:50:34] [static] FE computed for t=50/1000 (5.0%); ETA ≈ 3s
+[15:50:34] [static] FE computed for t=60/1000 (6.0%); ETA ≈ 4s
+[15:50:34] [static] FE computed for t=70/1000 (7.0%); ETA ≈ 4s
+[15:50:34] [static] FE computed for t=80/1000 (8.0%); ETA ≈ 6s
+[15:50:35] [static] FE computed for t=90/1000 (9.0%); ETA ≈ 7s
+[15:50:35] [static] FE computed for t=100/1000 (10.0%); ETA ≈ 7s
+[15:50:35] [static] FE computed for t=110/1000 (11.0%); ETA ≈ 7s
+[15:50:35] [static] FE computed for t=120/1000 (12.0%); ETA ≈ 8s
+[15:50:35] [static] FE computed for t=130/1000 (13.0%); ETA ≈ 8s
+[15:50:35] [static] FE computed for t=140/1000 (14.0%); ETA ≈ 8s
+[15:50:35] [static] FE computed for t=150/1000 (15.0%); ETA ≈ 9s
+[15:50:36] [static] FE computed for t=160/1000 (16.0%); ETA ≈ 9s
+[15:50:36] [static] FE computed for t=170/1000 (17.0%); ETA ≈ 9s
+[15:50:36] [static] FE computed for t=180/1000 (18.0%); ETA ≈ 9s
+[15:50:36] [static] FE computed for t=190/1000 (19.0%); ETA ≈ 10s
+[15:50:36] [static] FE computed for t=200/1000 (20.0%); ETA ≈ 10s
+[15:50:37] [static] FE computed for t=210/1000 (21.0%); ETA ≈ 10s
+[15:50:37] [static] FE computed for t=220/1000 (22.0%); ETA ≈ 11s
+[15:50:37] [static] FE computed for t=230/1000 (23.0%); ETA ≈ 11s
+[15:50:37] [static] FE computed for t=240/1000 (24.0%); ETA ≈ 11s
+[15:50:38] [static] FE computed for t=250/1000 (25.0%); ETA ≈ 11s
+[15:50:38] [static] FE computed for t=260/1000 (26.0%); ETA ≈ 11s
+[15:50:38] [static] FE computed for t=270/1000 (27.0%); ETA ≈ 12s
+[15:50:39] [static] FE computed for t=280/1000 (28.0%); ETA ≈ 12s
+[15:50:39] [static] FE computed for t=290/1000 (29.0%); ETA ≈ 12s
+[15:50:39] [static] FE computed for t=300/1000 (30.0%); ETA ≈ 12s
+[15:50:39] [static] FE computed for t=310/1000 (31.0%); ETA ≈ 12s
+[15:50:40] [static] FE computed for t=320/1000 (32.0%); ETA ≈ 13s
+[15:50:40] [static] FE computed for t=330/1000 (33.0%); ETA ≈ 13s
+[15:50:41] [static] FE computed for t=340/1000 (34.0%); ETA ≈ 13s
+[15:50:41] [static] FE computed for t=350/1000 (35.0%); ETA ≈ 13s
+[15:50:41] [static] FE computed for t=360/1000 (36.0%); ETA ≈ 13s
+[15:50:42] [static] FE computed for t=370/1000 (37.0%); ETA ≈ 13s
+[15:50:42] [static] FE computed for t=380/1000 (38.0%); ETA ≈ 13s
+[15:50:43] [static] FE computed for t=390/1000 (39.0%); ETA ≈ 14s
+[15:50:43] [static] FE computed for t=400/1000 (40.0%); ETA ≈ 14s
+[15:50:43] [static] FE computed for t=410/1000 (41.0%); ETA ≈ 14s
+[15:50:44] [static] FE computed for t=420/1000 (42.0%); ETA ≈ 14s
+[15:50:44] [static] FE computed for t=430/1000 (43.0%); ETA ≈ 14s
+[15:50:45] [static] FE computed for t=440/1000 (44.0%); ETA ≈ 14s
+[15:50:45] [static] FE computed for t=450/1000 (45.0%); ETA ≈ 14s
+[15:50:46] [static] FE computed for t=460/1000 (46.0%); ETA ≈ 14s
+[15:50:46] [static] FE computed for t=470/1000 (47.0%); ETA ≈ 14s
+[15:50:47] [static] FE computed for t=480/1000 (48.0%); ETA ≈ 14s
+[15:50:47] [static] FE computed for t=490/1000 (49.0%); ETA ≈ 14s
+[15:50:48] [static] FE computed for t=500/1000 (50.0%); ETA ≈ 14s
+[15:50:48] [static] FE computed for t=510/1000 (51.0%); ETA ≈ 14s
+[15:50:49] [static] FE computed for t=520/1000 (52.0%); ETA ≈ 14s
+[15:50:50] [static] FE computed for t=530/1000 (53.0%); ETA ≈ 14s
+[15:50:50] [static] FE computed for t=540/1000 (54.0%); ETA ≈ 14s
+[15:50:51] [static] FE computed for t=550/1000 (55.0%); ETA ≈ 14s
+[15:50:51] [static] FE computed for t=560/1000 (56.0%); ETA ≈ 14s
+[15:50:52] [static] FE computed for t=570/1000 (57.0%); ETA ≈ 14s
+[15:50:53] [static] FE computed for t=580/1000 (58.0%); ETA ≈ 14s
+[15:50:53] [static] FE computed for t=590/1000 (59.0%); ETA ≈ 13s
+[15:50:54] [static] FE computed for t=600/1000 (60.0%); ETA ≈ 13s
+[15:50:55] [static] FE computed for t=610/1000 (61.0%); ETA ≈ 13s
+[15:50:55] [static] FE computed for t=620/1000 (62.0%); ETA ≈ 13s
+[15:50:56] [static] FE computed for t=630/1000 (63.0%); ETA ≈ 13s
+[15:50:57] [static] FE computed for t=640/1000 (64.0%); ETA ≈ 13s
+[15:50:57] [static] FE computed for t=650/1000 (65.0%); ETA ≈ 13s
+[15:50:58] [static] FE computed for t=660/1000 (66.0%); ETA ≈ 12s
+[15:51:00] [static] FE computed for t=670/1000 (67.0%); ETA ≈ 13s
+[15:51:02] [static] FE computed for t=680/1000 (68.0%); ETA ≈ 13s
+[15:51:03] [static] FE computed for t=690/1000 (69.0%); ETA ≈ 13s
+[15:51:04] [static] FE computed for t=700/1000 (70.0%); ETA ≈ 13s
+[15:51:05] [static] FE computed for t=710/1000 (71.0%); ETA ≈ 13s
+[15:51:06] [static] FE computed for t=720/1000 (72.0%); ETA ≈ 13s
+[15:51:07] [static] FE computed for t=730/1000 (73.0%); ETA ≈ 12s
+[15:51:08] [static] FE computed for t=740/1000 (74.0%); ETA ≈ 12s
+[15:51:09] [static] FE computed for t=750/1000 (75.0%); ETA ≈ 12s
+[15:51:10] [static] FE computed for t=760/1000 (76.0%); ETA ≈ 11s
+[15:51:11] [static] FE computed for t=770/1000 (77.0%); ETA ≈ 11s
+[15:51:11] [static] FE computed for t=780/1000 (78.0%); ETA ≈ 11s
+[15:51:12] [static] FE computed for t=790/1000 (79.0%); ETA ≈ 10s
+[15:51:13] [static] FE computed for t=800/1000 (80.0%); ETA ≈ 10s
+[15:51:14] [static] FE computed for t=810/1000 (81.0%); ETA ≈ 9s
+[15:51:15] [static] FE computed for t=820/1000 (82.0%); ETA ≈ 9s
+[15:51:16] [static] FE computed for t=830/1000 (83.0%); ETA ≈ 9s
+[15:51:17] [static] FE computed for t=840/1000 (84.0%); ETA ≈ 8s
+[15:51:18] [static] FE computed for t=850/1000 (85.0%); ETA ≈ 8s
+[15:51:19] [static] FE computed for t=860/1000 (86.0%); ETA ≈ 7s
+[15:51:20] [static] FE computed for t=870/1000 (87.0%); ETA ≈ 7s
+[15:51:21] [static] FE computed for t=880/1000 (88.0%); ETA ≈ 6s
+[15:51:22] [static] FE computed for t=890/1000 (89.0%); ETA ≈ 6s
+[15:51:23] [static] FE computed for t=900/1000 (90.0%); ETA ≈ 5s
+[15:51:24] [static] FE computed for t=910/1000 (91.0%); ETA ≈ 5s
+[15:51:25] [static] FE computed for t=920/1000 (92.0%); ETA ≈ 4s
+[15:51:26] [static] FE computed for t=930/1000 (93.0%); ETA ≈ 4s
+[15:51:27] [static] FE computed for t=940/1000 (94.0%); ETA ≈ 3s
+[15:51:28] [static] FE computed for t=950/1000 (95.0%); ETA ≈ 3s
+[15:51:29] [static] FE computed for t=960/1000 (96.0%); ETA ≈ 2s
+[15:51:30] [static] FE computed for t=970/1000 (97.0%); ETA ≈ 2s
+[15:51:31] [static] FE computed for t=980/1000 (98.0%); ETA ≈ 1s
+[15:51:32] [static] FE computed for t=990/1000 (99.0%); ETA ≈ 1s
+[15:51:33] [static] FE computed for t=1000/1000 (100.0%); ETA ≈ 0s
+[15:51:33] [static] done
+[15:51:33] [realtime] building engine with live FE stream …
+[15:51:35] [realtime] subscribing to engine free-energy stream …
+[15:51:35] [realtime] FE stream subscription active
+[15:51:35] [realtime] starting engine (interval=10ms, n=1000) …
+[15:51:35] [realtime] FE stream points captured=50 …
+[15:51:35] [realtime] FE stream points captured=100 …
+[15:51:35] [realtime] FE stream points captured=150 …
+[15:51:35] [realtime] FE stream points captured=200 …
+[15:51:35] [realtime] FE stream points captured=250 …
+[15:51:36] [realtime] FE stream points captured=300 …
+[15:51:36] [realtime] FE stream points captured=350 …
+[15:51:36] [realtime] FE stream points captured=400 …
+[15:51:37] [realtime] FE stream points captured=450 …
+[15:51:37] [realtime] elapsed 2.0s, observed=108 / 1000 (10.8%), FE computed=108
+[15:51:37] [realtime] FE stream points captured=500 …
+[15:51:37] [realtime] FE stream points captured=550 …
+[15:51:38] [realtime] FE stream points captured=600 …
+[15:51:39] [realtime] FE stream points captured=650 …
+[15:51:39] [realtime] elapsed 4.0s, observed=172 / 1000 (17.2%), FE computed=172
+[15:51:39] [realtime] FE stream points captured=700 …
+[15:51:40] [realtime] FE stream points captured=750 …
+[15:51:41] [realtime] FE stream points captured=800 …
+[15:51:42] [realtime] elapsed 6.0s, observed=223 / 1000 (22.3%), FE computed=223
+[15:51:42] [realtime] FE stream points captured=850 …
+[15:51:43] [realtime] FE stream points captured=900 …
+[15:51:44] [realtime] FE stream points captured=950 …
+[15:51:44] [realtime] elapsed 8.0s, observed=268 / 1000 (26.8%), FE computed=268
+[15:51:45] [realtime] FE stream points captured=1000 …
+[15:51:46] [realtime] FE stream points captured=1050 …
+[15:51:47] [realtime] FE stream points captured=1100 …
+[15:51:47] [realtime] elapsed 10.0s, observed=307 / 1000 (30.7%), FE computed=307
+[15:51:48] [realtime] FE stream points captured=1150 …
+[15:51:49] [realtime] FE stream points captured=1200 …
+[15:51:50] [realtime] elapsed 12.0s, observed=349 / 1000 (34.9%), FE computed=349
+[15:51:50] [realtime] FE stream points captured=1250 …
+[15:51:51] [realtime] elapsed 12.5s, observed=362 / 1000 (36.2%), FE computed=362
+[15:51:52] [realtime] FE stream points captured=1300 …
+[15:51:52] [realtime] saved: output/20250819_154904/realtime/realtime_inference.gif
+[15:51:55] [realtime] FE stream points captured=1350 …
+[15:51:56] [realtime] saved: output/20250819_154904/realtime/realtime_free_energy.gif
+[15:51:57] [realtime] FE stream points captured=1400 …
+[15:51:58] [realtime] saved: output/20250819_154904/realtime/realtime_composed_estimates_fe.gif
+[15:51:59] [realtime] GIF generation enabled via IDS_MAKE_GIF=1
+[15:52:00] [realtime] done
+[15:52:00] All outputs saved to output/20250819_154904
+[15:52:00] [realtime] FE stream points captured=1450 …
+[15:52:05] Engine wrapper cleaned up

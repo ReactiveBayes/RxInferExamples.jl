@@ -1,0 +1,13 @@
+Environment Configuration:
+- Start position: (1, 1)
+- Goal position: (4, 3)
+- Wind settings: (0, 1, 1, 1, 0)
+
+Agent Path:
+  Step 1: (1, 1)
+  Step 2: (1, 2)
+  Step 3: (2, 2)
+  Step 4: (3, 3)
+  Step 5: (3, 3)
+
+Goal Reached: false

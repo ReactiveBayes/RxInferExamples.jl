@@ -1,0 +1,6 @@
+{
+  "realtime_infer": 26.328,
+  "static_infer": 10.456,
+  "generate": 0.055,
+  "static_fe_prefix": 70.641
+}

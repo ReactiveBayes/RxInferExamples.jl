@@ -1,0 +1,10 @@
+realtime_run_completed=true at 2025-08-19T15:51:59
+n=1000, interval_ms=10
+iterations=8
+seed=123
+posterior_samples_captured=0
+fe_stream_subscribed=true
+fe_stream_points=1448
+free_energy_points_captured=0
+mae_realtime_avg=6.692591308654444
+mse_realtime_avg=60.85706704672168
