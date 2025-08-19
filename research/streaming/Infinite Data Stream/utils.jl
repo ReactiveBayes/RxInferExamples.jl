@@ -37,6 +37,17 @@ function load_config()
     cfg["make_gif"] = get(ENV, "IDS_MAKE_GIF", get(cfg, "make_gif", true) ? "1" : "0") in ("1", "true", "TRUE")
     cfg["gif_stride"] = parse(Int, get(ENV, "IDS_GIF_STRIDE", string(get(cfg, "gif_stride", 5))))
     cfg["rt_gif_stride"] = parse(Int, get(ENV, "IDS_RT_GIF_STRIDE", string(get(cfg, "rt_gif_stride", 5))))
+    cfg["skip_fe_replot"] = get(ENV, "IDS_SKIP_FE_REPLOT", "0") in ("1","true","TRUE")
+    # Optional test-speed overrides
+    if haskey(ENV, "IDS_N")
+        try cfg["n"] = parse(Int, ENV["IDS_N"]) catch; end
+    end
+    if haskey(ENV, "IDS_INTERVAL_MS")
+        try cfg["interval_ms"] = parse(Int, ENV["IDS_INTERVAL_MS"]) catch; end
+    end
+    if haskey(ENV, "IDS_ITERATIONS")
+        try cfg["iterations"] = parse(Int, ENV["IDS_ITERATIONS"]) catch; end
+    end
     return cfg
 end
 

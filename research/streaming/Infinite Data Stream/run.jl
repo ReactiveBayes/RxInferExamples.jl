@@ -162,11 +162,17 @@ begin
     end
 
     log("[static] saving free-energy plot …")
-    fe_t_plot = compute_per_timestep_fe(observations; iterations=Int(get(IDS_CFG, "iterations", 10)))
+    # Allow tests to skip the second FE prefix pass (already done above for GIF)
+    if get(IDS_CFG, "skip_fe_replot", false)
+        log("[static] skipping FE recomputation (IDS_SKIP_FE_REPLOT=1)")
+        fe_t_plot = readdlm(joinpath(static_dir, "static_free_energy.csv"))[:]
+    else
+        fe_t_plot = compute_per_timestep_fe(observations; iterations=Int(get(IDS_CFG, "iterations", 10)))
+        # Persist numeric outputs (CSV)
+        writedlm(joinpath(static_dir, "static_free_energy.csv"), fe_t_plot)
+    end
     pfe = plot(fe_t_plot; label="Bethe Free Energy (averaged)")
     png(pfe, joinpath(static_dir, "static_free_energy.png"))
-    # Persist numeric outputs (CSV)
-    writedlm(joinpath(static_dir, "static_free_energy.csv"), fe_t_plot)
     writedlm(joinpath(static_dir, "static_posterior_x_current.csv"), hcat(μ, σ2))
     writedlm(joinpath(static_dir, "static_truth_history.csv"), history)
     writedlm(joinpath(static_dir, "static_observations.csv"), observations)
