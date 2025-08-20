@@ -1,11 +1,11 @@
 Experiment configuration:
-- Number of experiments: 10
+- Number of experiments: 100
 - Planning horizon: 4
 - Start position: (1, 1)
 - Goal position: (4, 3)
 - Wind settings: (0, 1, 1, 1, 0)
 
 Experiment results:
-- Success rate: 0.0%
-- 0 experiments reached the goal
-- 10 experiments failed to reach the goal
+- Success rate: 85.0%
+- 85 experiments reached the goal
+- 15 experiments failed to reach the goal

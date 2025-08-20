@@ -1,9 +1,0 @@
-Run completed at: 2025-08-19T16:20:59.363
-
-Directories:
-- PLOTS_DIR: /Users/4d/Documents/GitHub/RxInferExamples.jl/scripts/Basic Examples/POMDP Control/outputs/plots
-- ANIMATION_DIR: /Users/4d/Documents/GitHub/RxInferExamples.jl/scripts/Basic Examples/POMDP Control/outputs/animations
-- MATRIX_DIR: /Users/4d/Documents/GitHub/RxInferExamples.jl/scripts/Basic Examples/POMDP Control/outputs/matrices
-
-File counts:
-plots: 92, animations: 7, matrices: 60

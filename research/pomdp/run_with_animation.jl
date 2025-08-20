@@ -20,12 +20,14 @@ using RxEnvironments
 using Dates
 using LinearAlgebra
 using Statistics
+using DelimitedFiles
 
 include(joinpath(@__DIR__, "src", "POMDPControl.jl"))
 using .POMDPControl
 
 # Define output directories first
-const OUTPUT_DIR = joinpath(dirname(@__FILE__), "outputs")
+const OUTPUT_DIR_ROOT = dirname(@__FILE__)
+const OUTPUT_DIR = joinpath(OUTPUT_DIR_ROOT, "outputs")
 const ANALYTICS_DIR = joinpath(OUTPUT_DIR, "analytics")
 const PLOTS_DIR = joinpath(OUTPUT_DIR, "plots")
 const ANIMATION_DIR = joinpath(OUTPUT_DIR, "animations")
@@ -186,6 +188,22 @@ experiment_data = Dict{Int,Dict{Symbol,Any}}()
 # Modify experiment loop to collect grid simulation data
 grid_sim_data = []
 
+# Analytics tracing containers
+free_energy_series = Float64[]
+entropy_series = Float64[]
+policy_timeseries = Vector{Vector{Float64}}()
+action_series = Int[]
+efe_timeseries = Vector{Vector{Float64}}()
+
+# VFE model (no planning horizon)
+@model function vfe_model(p_A, p_B, p_previous_state)
+    A ~ p_A
+    B ~ p_B
+    previous_state ~ p_previous_state
+    current_state ~ DiscreteTransition(previous_state, B, previous_control)
+    current_y ~ DiscreteTransition(current_state, A)
+end
+
 @showprogress for i in 1:n_experiments
     # Reset environment and initialize
     reset_env!(env)
@@ -246,7 +264,8 @@ grid_sim_data = []
             ),
             constraints = constraints,
             initialization = init,
-            iterations = 10
+            iterations = 10,
+            free_energy = false
         )
         
         p_s = last(inference_result.posteriors[:current_state])
@@ -254,6 +273,70 @@ grid_sim_data = []
         
         global p_A = last(inference_result.posteriors[:A])
         global p_B = last(inference_result.posteriors[:B])
+
+        # Track analytics for the first experiment
+        if i == 1
+            # VFE computation using simplified single-step model
+            try
+                vfe_result = infer(
+                    model = vfe_model(
+                        p_A = p_A,
+                        p_B = p_B,
+                        p_previous_state = p_s,
+                        previous_control = prev_u,
+                        current_y = last_observation
+                    ),
+                    iterations = 10,
+                    free_energy = true
+                )
+                vfe_val = try
+                    fe = vfe_result.free_energy
+                    if isnothing(fe) || (isa(fe, AbstractVector) && isempty(fe))
+                        NaN
+                    else
+                        isa(fe, AbstractVector) ? Float64(fe[end]) : Float64(fe)
+                    end
+                catch e
+                    println("VFE computation failed: ", e)
+                    NaN
+                end
+                push!(free_energy_series, vfe_val)
+            catch e
+                println("VFE model failed: ", e)
+                push!(free_energy_series, NaN)
+            end
+
+            # Belief entropy of current state posterior
+            probs = pdf.(p_s, 1:25)
+            h = -sum(probs .* log.(probs .+ 1e-12))
+            push!(entropy_series, h)
+
+            # Policy probabilities and chosen action
+            pol_probs = pdf.(first(policy), 1:4)
+            push!(policy_timeseries, pol_probs)
+            push!(action_series, current_action)
+
+            # EFE computation for each action
+            A_mean = mean(p_A)
+            B_mean = mean(p_B)
+            goal_probs = pdf(goal, 1:25)
+
+            efe_actions = Float64[]
+            for a in 1:4
+                # Predict next state belief: q(s'|s,a) = B[:,:,a]^T * q(s)
+                q_s_next = B_mean[:,:,a]' * pdf.(p_s, 1:25)
+
+                # Predict observation belief: q(o'|s') = A^T * q(s')
+                q_o_next = A_mean' * q_s_next
+
+                # Compute EFE: E[KL(q(o'|s') || p(o'|goal))] - H[q(o'|a)]
+                kl_term = sum(q_o_next .* (log.(q_o_next .+ 1e-12) .- log.(goal_probs .+ 1e-12)))
+                entropy_term = -sum(q_o_next .* log.(q_o_next .+ 1e-12))
+                efe = kl_term - entropy_term
+                push!(efe_actions, efe)
+            end
+            push!(efe_timeseries, efe_actions)
+        end
         
         if RxEnvironments.data(last(observations)) == (4, 3)
             break
@@ -459,3 +542,191 @@ open(joinpath(OUTPUT_DIR, "outputs_index.txt"), "w") do io
     println(io, "plots: $plots_count, animations: $anims_count, matrices: $mats_count")
 end
 println("$(now()) | Wrote outputs_index.txt")
+
+# Save analytics CSVs and plots (first experiment tracing)
+if !isempty(free_energy_series)
+    steps = collect(1:length(free_energy_series))
+    # VFE CSV
+    open(joinpath(ANALYTICS_DIR, "vfe_timeseries.csv"), "w") do io
+        write(io, "step,vfe_last_iter\n")
+        for k in eachindex(steps)
+            write(io, string(steps[k], ",", free_energy_series[k], "\n"))
+        end
+    end
+    # VFE plot
+    vfe_plot = plot(steps, free_energy_series, label="VFE", xlabel="Step", ylabel="Value", title="Variational Free Energy", legend=false)
+    savefig(vfe_plot, joinpath(PLOTS_DIR, "vfe_timeseries.png"))
+
+    # FE and entropy CSV
+    open(joinpath(ANALYTICS_DIR, "free_energy_entropy.csv"), "w") do io
+        write(io, "step,free_energy,entropy\n")
+        for k in eachindex(steps)
+            write(io, string(steps[k], ",", free_energy_series[k], ",", entropy_series[k], "\n"))
+        end
+    end
+
+    # Enhanced entropy analysis plot
+    entropy_plot = plot(steps, entropy_series,
+                       label="Belief Entropy",
+                       xlabel="Step", ylabel="Entropy (bits)",
+                       title="Belief Entropy Evolution - Perception/Sensemaking Quality",
+                       linewidth=2, color=:blue)
+    # Add interpretation zones
+    hline!([3.0], label="High Uncertainty", line=:dash, color=:red, alpha=0.7)
+    hline!([1.0], label="Medium Uncertainty", line=:dash, color=:orange, alpha=0.7)
+    hline!([0.1], label="Low Uncertainty", line=:dash, color=:green, alpha=0.7)
+    savefig(entropy_plot, joinpath(PLOTS_DIR, "belief_entropy_perception.png"))
+
+    # Combined FE and entropy analysis
+    fe_plot = plot(layout=(2,1), size=(800,600))
+    plot!(fe_plot[1], steps, free_energy_series, label="VFE (NaN - architectural limitation)",
+          xlabel="", ylabel="VFE", title="Free Energy & Entropy Analysis", linewidth=2)
+    plot!(fe_plot[2], steps, entropy_series, label="Belief Entropy",
+          xlabel="Step", ylabel="Entropy", linewidth=2)
+    savefig(fe_plot, joinpath(PLOTS_DIR, "free_energy_entropy_analysis.png"))
+    savefig(fe_plot, joinpath(PLOTS_DIR, "free_energy_entropy.png"))  # Keep original for compatibility
+end
+
+if !isempty(policy_timeseries)
+    steps = collect(1:length(policy_timeseries))
+    # CSV
+    open(joinpath(ANALYTICS_DIR, "policy_timeseries.csv"), "w") do io
+        write(io, "step,up,right,down,left,action\n")
+        for (k, probs) in enumerate(policy_timeseries)
+            write(io, string(steps[k], ",", probs[1], ",", probs[2], ",", probs[3], ",", probs[4], ",", action_series[k], "\n"))
+        end
+    end
+    # Plot
+    pol_mat = reduce(vcat, (probs' for probs in policy_timeseries))
+    pol_plot = plot(steps, pol_mat[:,1], label="Up", xlabel="Step", ylabel="Probability", ylim=(0,1), title="Policy Probabilities Over Time")
+    plot!(pol_plot, steps, pol_mat[:,2], label="Right")
+    plot!(pol_plot, steps, pol_mat[:,3], label="Down")
+    plot!(pol_plot, steps, pol_mat[:,4], label="Left")
+    savefig(pol_plot, joinpath(PLOTS_DIR, "policy_timeseries.png"))
+end
+
+if !isempty(efe_timeseries)
+    steps = collect(1:length(efe_timeseries))
+
+    # Enhanced EFE time series analysis
+    efe_mat = reduce(vcat, (efe' for efe in efe_timeseries))
+
+    # 1. EFE evolution plot
+    efe_plot = plot(steps, efe_mat[:,1], label="G(up)", xlabel="Step", ylabel="Expected Free Energy",
+                   title="Expected Free Energy per Action", linewidth=2)
+    plot!(efe_plot, steps, efe_mat[:,2], label="G(right)", linewidth=2)
+    plot!(efe_plot, steps, efe_mat[:,3], label="G(down)", linewidth=2)
+    plot!(efe_plot, steps, efe_mat[:,4], label="G(left)", linewidth=2)
+    # Highlight chosen actions
+    chosen_efe = [efe_mat[k, action_series[k]] for k in 1:length(action_series)]
+    scatter!(efe_plot, steps, chosen_efe, label="Chosen Action EFE", color=:red, markersize=4)
+    savefig(efe_plot, joinpath(PLOTS_DIR, "efe_timeseries.png"))
+
+    # 2. EFE vs Policy overlay (enhanced)
+    if !isempty(policy_timeseries)
+        pol_mat = reduce(vcat, (probs' for probs in policy_timeseries))
+        combined_plot = plot(layout=(2,1), size=(1000,800))
+
+        # Top subplot: EFE values
+        plot!(combined_plot[1], steps, efe_mat[:,1], label="G(up)", xlabel="", ylabel="EFE",
+              title="Expected Free Energy vs Policy Probabilities", line=:solid, linewidth=2)
+        plot!(combined_plot[1], steps, efe_mat[:,2], label="G(right)", line=:solid, linewidth=2)
+        plot!(combined_plot[1], steps, efe_mat[:,3], label="G(down)", line=:solid, linewidth=2)
+        plot!(combined_plot[1], steps, efe_mat[:,4], label="G(left)", line=:solid, linewidth=2)
+
+        # Bottom subplot: Policy probabilities
+        plot!(combined_plot[2], steps, pol_mat[:,1], label="P(up)", xlabel="Step", ylabel="Policy Probability",
+              line=:dash, linewidth=2)
+        plot!(combined_plot[2], steps, pol_mat[:,2], label="P(right)", line=:dash, linewidth=2)
+        plot!(combined_plot[2], steps, pol_mat[:,3], label="P(down)", line=:dash, linewidth=2)
+        plot!(combined_plot[2], steps, pol_mat[:,4], label="P(left)", line=:dash, linewidth=2)
+
+        savefig(combined_plot, joinpath(PLOTS_DIR, "efe_vs_policy_detailed.png"))
+        savefig(combined_plot, joinpath(PLOTS_DIR, "efe_vs_policy.png"))  # Keep original for compatibility
+    end
+
+    # 3. Action selection efficiency plot
+    if !isempty(action_series)
+        action_efficiency = Float64[]
+        for (k, chosen_action) in enumerate(action_series)
+            other_efes = [efe_mat[k,j] for j in 1:4 if j != chosen_action]
+            efficiency = chosen_efe[k] - maximum(other_efes)  # How much better than next best
+            push!(action_efficiency, efficiency)
+        end
+
+        efficiency_plot = plot(steps, action_efficiency,
+                              label="Action Selection Efficiency",
+                              xlabel="Step", ylabel="EFE Advantage",
+                              title="Action Selection Efficiency Over Time")
+        hline!([0], label="No Advantage", line=:dash, color=:gray)
+        savefig(efficiency_plot, joinpath(PLOTS_DIR, "action_selection_efficiency.png"))
+    end
+end
+
+# Graphical abstract of POMDP matrices (means)
+try
+    A_mean = mean(p_A)
+    B_mean = mean(p_B)
+
+    # Enhanced graphical abstract with perception-action insights
+    abs_plot = plot(layout=(3,2), size=(1200,1400))
+    pA = heatmap(A_mean, title="Observation Model A\n(State → Observation Likelihood)", xlabel="State", ylabel="Observation")
+    pB1 = heatmap(B_mean[:,:,1], title="Transition B - Up Action\n(State → Next State)")
+    pB2 = heatmap(B_mean[:,:,2], title="Transition B - Right Action")
+    pB3 = heatmap(B_mean[:,:,3], title="Transition B - Down Action")
+    pB4 = heatmap(B_mean[:,:,4], title="Transition B - Left Action")
+    plot!(abs_plot, pA, pB1, pB2, pB3, pB4)
+    savefig(abs_plot, joinpath(PLOTS_DIR, "graphical_abstract_matrices.png"))
+
+    # Perception summary statistics
+    if !isempty(entropy_series)
+        final_entropy = entropy_series[end]
+        avg_entropy = mean(entropy_series)
+        entropy_reduction = entropy_series[1] - entropy_series[end]
+
+        # Create perception quality summary plot
+        summary_stats = [final_entropy, avg_entropy, entropy_reduction, length(entropy_series)]
+        summary_labels = ["Final Entropy", "Average Entropy", "Entropy Reduction", "Time Steps"]
+
+        summary_plot = bar(summary_labels, summary_stats,
+                          title="Perception/Sensemaking Summary",
+                          ylabel="Value", legend=false,
+                          color=[:blue, :green, :red, :purple])
+        annotate!(1, summary_stats[1]/2, text("$(round(final_entropy, digits=3))", :white, :center, 10))
+        annotate!(2, summary_stats[2]/2, text("$(round(avg_entropy, digits=3))", :white, :center, 10))
+        annotate!(3, summary_stats[3]/2, text("$(round(entropy_reduction, digits=3))", :white, :center, 10))
+        annotate!(4, summary_stats[4]/2, text("$(summary_stats[4])", :white, :center, 10))
+        savefig(summary_plot, joinpath(PLOTS_DIR, "perception_summary.png"))
+    end
+
+    # Complete system overview
+    if !isempty(efe_timeseries) && !isempty(policy_timeseries) && !isempty(entropy_series)
+        local overview_plot = plot(layout=(3,1), size=(1000,1200))
+
+        # Top: EFE landscape evolution
+        local efe_mat = reduce(vcat, (efe' for efe in efe_timeseries))
+        local steps = collect(1:length(efe_timeseries))
+        plot!(overview_plot[1], steps, efe_mat[:,1], label="Up", title="Decision-Making Landscape Evolution",
+              ylabel="Expected Free Energy", xlabel="", linewidth=2)
+        plot!(overview_plot[1], steps, efe_mat[:,2], label="Right", linewidth=2)
+        plot!(overview_plot[1], steps, efe_mat[:,3], label="Down", linewidth=2)
+        plot!(overview_plot[1], steps, efe_mat[:,4], label="Left", linewidth=2)
+
+        # Middle: Policy evolution
+        local pol_mat = reduce(vcat, (probs' for probs in policy_timeseries))
+        plot!(overview_plot[2], steps, pol_mat[:,1], label="P(Up)", ylabel="Policy Probability", xlabel="", linewidth=2)
+        plot!(overview_plot[2], steps, pol_mat[:,2], label="P(Right)", linewidth=2)
+        plot!(overview_plot[2], steps, pol_mat[:,3], label="P(Down)", linewidth=2)
+        plot!(overview_plot[2], steps, pol_mat[:,4], label="P(Left)", linewidth=2)
+
+        # Bottom: Perception quality
+        plot!(overview_plot[3], steps, entropy_series, label="Belief Entropy",
+              ylabel="Entropy (bits)", xlabel="Step", linewidth=2, color=:blue)
+        hline!([2.0], label="Reference", line=:dash, color=:gray, alpha=0.5)
+
+        savefig(overview_plot, joinpath(PLOTS_DIR, "system_overview_perception_action.png"))
+    end
+
+catch err
+    @warn "Failed to generate enhanced visualizations" err
+end

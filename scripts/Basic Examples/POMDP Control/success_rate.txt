@@ -1,2 +1,0 @@
-Success rate: 0.0%
-0 successes out of 10 experiments

@@ -25,8 +25,12 @@ using RxEnvironments
 using Dates
 println("[" * string(Dates.now()) * "] ✓ Packages loaded")
 
+# Create outputs directory structure
+mkpath(joinpath(OUTPUT_DIR, "outputs", "plots"))
+mkpath(joinpath(OUTPUT_DIR, "outputs", "analytics"))
+
 # Save a record of execution
-open(joinpath(OUTPUT_DIR, "execution_log.txt"), "w") do io
+open(joinpath(OUTPUT_DIR, "outputs", "analytics", "execution_log.txt"), "w") do io
     println(io, "POMDP Control Quick Run")
     println(io, "Executed at: $(now())")
     println(io, "------------------")
@@ -97,7 +101,7 @@ agent = add!(env, WindyGridWorldAgent((1, 1)))
 println("[" * string(Dates.now()) * "] Creating initial environment plot...")
 initial_plot = plot_environment(env)
 try
-    savefig(initial_plot, joinpath(OUTPUT_DIR, "initial_environment.png"))
+    savefig(initial_plot, joinpath(OUTPUT_DIR, "outputs", "plots", "initial_environment.png"))
     println("[" * string(Dates.now()) * "] ✓ Saved initial environment plot")
 catch err
     println("[" * string(Dates.now()) * "] ✗ Failed to save initial environment plot: $(err)")
@@ -145,21 +149,21 @@ end
 scatter!(path_plot, [positions[1][1]], [positions[1][2]], color=:green, label="Start")
 scatter!(path_plot, [positions[end][1]], [positions[end][2]], color=:purple, label="Current")
 
-savefig(path_plot, joinpath(OUTPUT_DIR, "agent_path.png"))
+savefig(path_plot, joinpath(OUTPUT_DIR, "outputs", "plots", "agent_path.png"))
 println("✓ Saved agent path plot")
 
 # Save final environment state
 println("[" * string(Dates.now()) * "] Creating final environment plot...")
 final_plot = plot_environment(env)
 try
-    savefig(final_plot, joinpath(OUTPUT_DIR, "final_environment.png"))
+    savefig(final_plot, joinpath(OUTPUT_DIR, "outputs", "plots", "final_environment.png"))
     println("[" * string(Dates.now()) * "] ✓ Saved final environment plot")
 catch err
     println("[" * string(Dates.now()) * "] ✗ Failed to save final environment plot: $(err)")
 end
 
 # Save configuration and results data
-open(joinpath(OUTPUT_DIR, "quick_run_results.txt"), "w") do io
+open(joinpath(OUTPUT_DIR, "outputs", "analytics", "quick_run_results.txt"), "w") do io
     println(io, "Environment Configuration:")
     println(io, "- Start position: (1, 1)")
     println(io, "- Goal position: (4, 3)")

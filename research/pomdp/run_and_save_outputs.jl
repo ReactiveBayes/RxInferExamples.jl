@@ -51,13 +51,17 @@ include(joinpath(OUTPUT_DIR, "POMDP Control.jl"))
 # Now add code to save all outputs
 println("[" * string(Dates.now()) * "] Saving outputs to $(OUTPUT_DIR)")
 
+# Create outputs directory structure
+mkpath(joinpath(OUTPUT_DIR, "outputs", "plots"))
+mkpath(joinpath(OUTPUT_DIR, "outputs", "analytics"))
+
 # Save the final environment plot
 final_plot = plot_environment(env)
-savefig(final_plot, joinpath(OUTPUT_DIR, "environment_final.png"))
+savefig(final_plot, joinpath(OUTPUT_DIR, "outputs", "plots", "environment_final.png"))
 println("✓ Saved final environment plot")
 
 # Save the success rate
-open(joinpath(OUTPUT_DIR, "success_rate.txt"), "w") do io
+open(joinpath(OUTPUT_DIR, "outputs", "analytics", "success_rate.txt"), "w") do io
     success_rate = mean(successes)
     println(io, "Success rate: $(success_rate * 100)%")
     println(io, "$(sum(successes)) successes out of $(length(successes)) experiments")
@@ -72,31 +76,31 @@ heatmap_B = heatmap(
     xlabel="Next State", 
     ylabel="Current State"
 )
-savefig(heatmap_B, joinpath(OUTPUT_DIR, "transition_model_up.png"))
+savefig(heatmap_B, joinpath(OUTPUT_DIR, "outputs", "plots", "transition_model_up.png"))
 
 heatmap_B = heatmap(
-    mean(p_B)[:,:,2], 
-    title="Transition Model (Action 2 - Right)", 
-    xlabel="Next State", 
+    mean(p_B)[:,:,2],
+    title="Transition Model (Action 2 - Right)",
+    xlabel="Next State",
     ylabel="Current State"
 )
-savefig(heatmap_B, joinpath(OUTPUT_DIR, "transition_model_right.png"))
+savefig(heatmap_B, joinpath(OUTPUT_DIR, "outputs", "plots", "transition_model_right.png"))
 
 heatmap_B = heatmap(
-    mean(p_B)[:,:,3], 
-    title="Transition Model (Action 3 - Down)", 
-    xlabel="Next State", 
+    mean(p_B)[:,:,3],
+    title="Transition Model (Action 3 - Down)",
+    xlabel="Next State",
     ylabel="Current State"
 )
-savefig(heatmap_B, joinpath(OUTPUT_DIR, "transition_model_down.png"))
+savefig(heatmap_B, joinpath(OUTPUT_DIR, "outputs", "plots", "transition_model_down.png"))
 
 heatmap_B = heatmap(
-    mean(p_B)[:,:,4], 
-    title="Transition Model (Action 4 - Left)", 
-    xlabel="Next State", 
+    mean(p_B)[:,:,4],
+    title="Transition Model (Action 4 - Left)",
+    xlabel="Next State",
     ylabel="Current State"
 )
-savefig(heatmap_B, joinpath(OUTPUT_DIR, "transition_model_left.png"))
+savefig(heatmap_B, joinpath(OUTPUT_DIR, "outputs", "plots", "transition_model_left.png"))
 println("✓ Saved transition model visualizations")
 
 # Visualize and save observation model (A)
@@ -106,7 +110,7 @@ heatmap_A = heatmap(
     xlabel="Observation", 
     ylabel="State"
 )
-savefig(heatmap_A, joinpath(OUTPUT_DIR, "observation_model.png"))
+savefig(heatmap_A, joinpath(OUTPUT_DIR, "outputs", "plots", "observation_model.png"))
 println("✓ Saved observation model visualization")
 
 # Save a visualization of the grid world with wind
@@ -132,11 +136,11 @@ for (x, wind) in enumerate(env.decorated.wind)
         annotate!(grid_world_vis, [(x, 0.5, text("↑"^wind, 14, :black))])
     end
 end
-savefig(grid_world_vis, joinpath(OUTPUT_DIR, "grid_world.png"))
+savefig(grid_world_vis, joinpath(OUTPUT_DIR, "outputs", "plots", "grid_world.png"))
 println("✓ Saved grid world visualization")
 
 # Save experiment data
-open(joinpath(OUTPUT_DIR, "experiment_data.txt"), "w") do io
+open(joinpath(OUTPUT_DIR, "outputs", "analytics", "experiment_data.txt"), "w") do io
     println(io, "Experiment configuration:")
     println(io, "- Number of experiments: $n_experiments")
     println(io, "- Planning horizon: $T")
@@ -159,18 +163,18 @@ manifest = Dict(
     "planning_horizon" => T,
     "success_rate" => mean(successes),
     "outputs" => Dict(
-        "environment_final" => joinpath(OUTPUT_DIR, "environment_final.png"),
-        "success_rate" => joinpath(OUTPUT_DIR, "success_rate.txt"),
-        "transition_model_up" => joinpath(OUTPUT_DIR, "transition_model_up.png"),
-        "transition_model_right" => joinpath(OUTPUT_DIR, "transition_model_right.png"),
-        "transition_model_down" => joinpath(OUTPUT_DIR, "transition_model_down.png"),
-        "transition_model_left" => joinpath(OUTPUT_DIR, "transition_model_left.png"),
-        "observation_model" => joinpath(OUTPUT_DIR, "observation_model.png"),
-        "grid_world" => joinpath(OUTPUT_DIR, "grid_world.png"),
-        "experiment_data" => joinpath(OUTPUT_DIR, "experiment_data.txt")
+        "environment_final" => joinpath(OUTPUT_DIR, "outputs", "plots", "environment_final.png"),
+        "success_rate" => joinpath(OUTPUT_DIR, "outputs", "analytics", "success_rate.txt"),
+        "transition_model_up" => joinpath(OUTPUT_DIR, "outputs", "plots", "transition_model_up.png"),
+        "transition_model_right" => joinpath(OUTPUT_DIR, "outputs", "plots", "transition_model_right.png"),
+        "transition_model_down" => joinpath(OUTPUT_DIR, "outputs", "plots", "transition_model_down.png"),
+        "transition_model_left" => joinpath(OUTPUT_DIR, "outputs", "plots", "transition_model_left.png"),
+        "observation_model" => joinpath(OUTPUT_DIR, "outputs", "plots", "observation_model.png"),
+        "grid_world" => joinpath(OUTPUT_DIR, "outputs", "plots", "grid_world.png"),
+        "experiment_data" => joinpath(OUTPUT_DIR, "outputs", "analytics", "experiment_data.txt")
     )
 )
-open(joinpath(OUTPUT_DIR, "outputs_manifest.json"), "w") do io
+open(joinpath(OUTPUT_DIR, "outputs", "analytics", "outputs_manifest.json"), "w") do io
     JSON.print(io, manifest)
 end
 println("[" * string(Dates.now()) * "] Wrote outputs_manifest.json")
