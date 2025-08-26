@@ -1,0 +1,2 @@
+Inference completed. Iterations = 5
+Posterior keys: [:w, :m, :s, :y, :z]

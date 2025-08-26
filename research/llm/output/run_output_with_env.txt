@@ -1,0 +1,5 @@
+  Activating project at `~/Documents/GitHub/RxInferExamples.jl/research/llm`
+Progress:  40%|████████████████▍                        |  ETA: 0:00:29[KProgress:  60%|████████████████████████▋                |  ETA: 0:00:19[KProgress:  80%|████████████████████████████████▊        |  ETA: 0:00:10[KProgress: 100%|█████████████████████████████████████████| Time: 0:00:48[K
+Running RxInferLLM example...
+Running RxInferLLM.main with model=gpt-4o-mini-2024-07-18
+Saved summary to output/inference_summary.txt

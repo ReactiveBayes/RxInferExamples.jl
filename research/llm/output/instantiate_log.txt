@@ -1,0 +1,26 @@
+Precompiling project...
+           ✗ RxInferLLM
+  0 dependencies successfully precompiled in 5 seconds. 298 already precompiled.
+
+The following 1 direct dependency failed to precompile:
+
+RxInferLLM 
+
+Failed to precompile RxInferLLM [6f1d9b8a-3c4b-4f09-9d2a-123456789abc] to "/Users/4d/.julia/compiled/v1.11/RxInferLLM/jl_I63j6l".
+ERROR: LoadError: ArgumentError: Package RxInferLLM does not have Dates in its dependencies:
+- You may have a partially installed environment. Try `Pkg.instantiate()`
+  to ensure all packages in the environment are installed.
+- Or, if you have RxInferLLM checked out for development and have
+  added Dates as a dependency but haven't updated your primary
+  environment's manifest file, try `Pkg.resolve()`.
+- Otherwise you may need to report an issue with RxInferLLM
+Stacktrace:
+ [1] include(x::String)
+   @ RxInferLLM ~/Documents/GitHub/RxInferExamples.jl/research/llm/src/RxInferLLM.jl:4
+ [2] top-level scope
+   @ ~/Documents/GitHub/RxInferExamples.jl/research/llm/src/RxInferLLM.jl:8
+ [3] top-level scope
+   @ stdin:6
+in expression starting at /Users/4d/Documents/GitHub/RxInferExamples.jl/research/llm/src/Rules.jl:1
+in expression starting at /Users/4d/Documents/GitHub/RxInferExamples.jl/research/llm/src/RxInferLLM.jl:4
+in expression starting at stdin:
