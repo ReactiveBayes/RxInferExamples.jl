@@ -1,10 +1,32 @@
-### Generalized Coordinates: Constant-Acceleration Car (1D)
+# Generalized Coordinates: Constant-Acceleration Car (1D)
 
-Demonstrates variational inference in generalized coordinates for a continuous state-space model using RxInfer.
+## Overview
 
-- **State**: `x = [position, velocity, acceleration]`.
-- **Dynamics**: constant-acceleration with Gaussian process noise.
-- **Observations**: noisy position; optionally velocity.
+This research implementation demonstrates variational inference in generalized coordinates for a continuous state-space model using RxInfer. It extends the basic Kalman filtering examples with advanced analytics, comprehensive visualization, and detailed free energy analysis.
+
+**Integration with Repository Workflow**:
+- Builds upon baseline scripts converted from `examples/Kalman filtering and smoothing/`
+- Enhances basic filtering with generalized coordinate transformations
+- Provides comprehensive analytics and validation not available in baseline examples
+
+### Core Research Features
+
+- **State**: `x = [position, velocity, acceleration]` in generalized coordinates
+- **Dynamics**: constant-acceleration with Gaussian process noise
+- **Observations**: noisy position; optionally velocity
+- **Analytics**: Comprehensive free energy analysis and posterior predictive checks
+- **Visualization**: Multi-panel dashboards and animated state evolution
+
+### Repository Integration
+
+```mermaid
+graph TD
+    A[Kalman Filtering Example] --> B[Notebook Conversion]
+    B --> C[Baseline Script]
+    C --> D[Research Extension]
+    D --> E[Enhanced Analytics]
+    D --> F[Comprehensive Validation]
+```
 
 ### Contents
 - `src/GeneralizedCoordinatesExamples.jl`: module entrypoint exporting `GCUtils`, `GCModel`, `GCViz`
@@ -12,7 +34,7 @@ Demonstrates variational inference in generalized coordinates for a continuous s
 - `src/GCModel.jl`: RxInfer `@model` and mean-field constraints
 - `src/GCViz.jl`: plotting helpers and dashboards
 - `run_gc_car.jl`: end-to-end run script
-- `test/runtests.jl`: tests
+- `test/runtests.jl`: comprehensive test suite
 - `gen_coord_fep_research.md`: background article linking FEP, generalized filtering, HGF, and message passing
 
 ### Quickstart

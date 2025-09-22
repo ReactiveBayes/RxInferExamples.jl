@@ -1,0 +1,9 @@
+{
+  "naive_final_position": -0.1327335253437295,
+  "ai_total_energy": 64.52638013766399,
+  "ai_final_position": 0.7155754632849127,
+  "improvement": 0.8483089886286422,
+  "naive_success": false,
+  "naive_total_energy": 5000.0,
+  "ai_success": false
+}

@@ -1,0 +1,128 @@
+---
+description: Project-specific guidelines for Cursor AI in RxInferExamples.jl symbiotic fork
+globs:
+  - "**/*.jl"
+  - "**/*.md"
+  - "**/*.ipynb"
+  - "**/*.toml"
+  - "**/*.yaml"
+  - "**/*.json"
+alwaysApply: true
+---
+
+# RxInferExamples.jl Symbiotic Fork Guidelines
+
+## Overview
+This repository is an enhanced fork of RxInferExamples.jl that maintains upstream compatibility while adding:
+- Automated setup and validation tools in `support/`
+- Notebook-to-script conversion via `notebooks_to_scripts.jl`
+- Extended research implementations in `research/`
+- Enhanced analytics and visualizations for key examples
+
+## Repository Structure Understanding
+- `examples/`: Original Jupyter notebooks from upstream
+- `scripts/`: Mirrored Julia scripts generated from notebooks
+- `support/`: Setup, validation, and utility scripts for environment management
+- `research/`: Extended implementations, analytics, and research explorations
+- `docs/`: Documentation build system and assets
+
+## Workflow Priorities
+1. **Preserve Upstream Compatibility**: Never modify `examples/` directly - work through `scripts/` and `research/`
+2. **Test-Driven Development**: Use TDD with modular testing for all modifications
+3. **Incremental Enhancement**: Extend existing examples rather than creating new ones from scratch
+4. **Validation First**: Always run validation scripts before proposing changes
+5. **Documentation Integration**: Ensure changes are reflected in relevant README files
+
+## Julia-Specific Guidelines
+- **Code Style**: Follow Julia conventions - snake_case for functions/variables, PascalCase for types
+- **Type Annotations**: Use explicit type annotations for function signatures and struct fields
+- **Multiple Dispatch**: Leverage Julia's multiple dispatch for extensible, performant code
+- **Docstrings**: Provide comprehensive docstrings for all public functions, types, and modules
+- **Error Handling**: Implement robust error handling with custom exception types where appropriate
+- **Performance**: Use `@views`, type stability, and appropriate data structures for computational efficiency
+
+## RxInfer-Specific Best Practices
+- **Model Definition**: Use RxInfer's reactive message passing paradigm effectively
+- **Factor Graph Construction**: Build clear, modular factor graphs with proper node definitions
+- **Inference Configuration**: Document inference methods, priors, and convergence criteria
+- **Data Handling**: Handle real data analysis scenarios - avoid mocks, use actual datasets
+- **Visualization**: Integrate Plots.jl, Makie, or similar for meaningful data visualization
+- **Analytics**: Include statistical analysis and performance metrics where relevant
+
+## Development Workflow
+1. **Setup Phase**: Run `julia support/setup.jl --convert --verify` to initialize environment
+2. **Conversion Phase**: Use `julia support/notebooks_to_scripts.jl` to generate script baselines
+3. **Extension Phase**: Modify scripts in `scripts/` or develop extensions in `research/`
+4. **Testing Phase**: Run tests with `julia --project=test -e 'using Pkg; Pkg.test()'`
+5. **Documentation Phase**: Update relevant README files and ensure consistency
+
+## Key Directories and Their Purposes
+
+### support/
+- **setup.jl**: Comprehensive environment setup and validation
+- **notebooks_to_scripts.jl**: Converts Jupyter notebooks to executable Julia scripts
+- **Purpose**: Environment management and workflow automation
+- **AI Behavior**: Use these tools to validate changes and ensure reproducibility
+
+### scripts/
+- **Purpose**: Executable Julia versions of notebook examples
+- **AI Behavior**: Modify these files for enhancements, never create new examples from scratch
+- **Best Practice**: Maintain 1:1 correspondence with examples/ notebooks
+
+### research/
+- **Purpose**: Extended implementations, analytics, and research explorations
+- **AI Behavior**: Develop new features, analytics, and research extensions here
+- **Structure**: Each subdirectory should have its own Project.toml and README.md
+
+### examples/
+- **Purpose**: Original upstream notebooks - preserve integrity
+- **AI Behavior**: Read-only for understanding, never modify directly
+
+## Testing Requirements
+- **Unit Tests**: Create comprehensive unit tests for all new functions and types
+- **Integration Tests**: Test full workflows from notebook conversion to research extension
+- **Performance Tests**: Include benchmarks for computationally intensive components
+- **Validation Tests**: Ensure scripts run successfully and produce expected outputs
+
+## Documentation Standards
+- **Docstrings**: All functions and types must have clear, example-rich docstrings
+- **README Files**: Keep README files concise, modular, and focused on specific components
+- **Workflow Documentation**: Clearly document how changes integrate with the overall symbiotic workflow
+- **Examples**: Provide practical usage examples in documentation
+
+## Error Handling and Validation
+- **Graceful Degradation**: Scripts should handle errors gracefully and provide meaningful feedback
+- **Input Validation**: Validate all inputs to functions and models
+- **Logging**: Implement appropriate logging for debugging and monitoring
+- **Recovery**: Provide mechanisms for recovering from common failure modes
+
+## Performance Optimization
+- **Profiling**: Use Julia's profiling tools to identify bottlenecks
+- **Memory Management**: Ensure efficient memory usage in data processing
+- **Parallelization**: Leverage Julia's parallel computing capabilities where appropriate
+- **Caching**: Implement intelligent caching for expensive computations
+
+## Collaboration Guidelines
+- **Modular Changes**: Make focused, incremental changes rather than large refactoring
+- **Review Readiness**: Ensure code is ready for review with proper tests and documentation
+- **Upstream Awareness**: Be mindful of upstream compatibility when proposing changes
+- **Clear Communication**: Use clear, concise commit messages and documentation
+
+## Specific File Handling
+- **.jl Files**: Follow Julia best practices with proper module structure and exports
+- **.md Files**: Use clear, structured Markdown with appropriate headers and code blocks
+- **.ipynb Files**: Only read for understanding - never modify directly
+- **.toml Files**: Maintain proper project structure with accurate dependencies
+
+## AI Assistance Priorities
+1. **Understand Context**: Always scan relevant files before making changes
+2. **Follow Workflow**: Respect the notebook→script→research progression
+3. **Validate Changes**: Use support/ tools to validate modifications
+4. **Document Thoroughly**: Ensure all changes are properly documented
+5. **Test Comprehensively**: Implement or run tests for all modifications
+
+## Prohibited Actions
+- **Direct Modification of examples/**: Never edit original notebooks
+- **Breaking Upstream Compatibility**: Avoid changes that would prevent merging upstream updates
+- **Mock Data**: Always use real data analysis scenarios
+- **Incomplete Documentation**: Never leave documentation gaps when making changes
