@@ -60,7 +60,7 @@ function validate_experiment_config()
     return true
 end
 
-function run_naive_policy(run_naive::Bool)
+function run_naive_policy(run_naive::Bool, args::Vector{String})
     @info "Running naive policy simulation..."
 
     timer = Timer("naive_policy_simulation")
@@ -77,6 +77,7 @@ function run_naive_policy(run_naive::Bool)
 
     # Generate naive actions (full power forward)
     naive_actions = fill(SIMULATION.naive_action, SIMULATION.time_steps_naive)
+    naive_engine_forces = Vector{Float64}(undef, SIMULATION.time_steps_naive)  # Store actual engine forces
 
     # Initialize storage for results
     naive_states = Vector{Vector{Float64}}(undef, SIMULATION.time_steps_naive + 1)
@@ -93,6 +94,8 @@ function run_naive_policy(run_naive::Bool)
     if SIMULATION.time_steps_naive > 50
         pb = ProgressBar(SIMULATION.time_steps_naive)
         for t in 1:SIMULATION.time_steps_naive
+            # Store actual engine force applied (after physics clamping)
+            naive_engine_forces[t] = Fa(naive_actions[t])
             execute_naive(naive_actions[t])
             naive_states[t + 1] = observe_naive()
             naive_positions[t + 1] = naive_states[t + 1][1]
@@ -101,12 +104,14 @@ function run_naive_policy(run_naive::Bool)
 
             # Detailed logging every 25 steps
             if t % 25 == 0
-                @info "Naive simulation step $t: Position=$(round(naive_positions[t+1], digits=3)), Velocity=$(round(naive_velocities[t+1], digits=3))"
+                @info "Naive simulation step $t: Position=$(round(naive_positions[t+1], digits=3)), Velocity=$(round(naive_velocities[t+1], digits=3)), Engine Force=$(round(naive_engine_forces[t], digits=4))"
             end
         end
         finish!(pb)
     else
         for t in 1:SIMULATION.time_steps_naive
+            # Store actual engine force applied (after physics clamping)
+            naive_engine_forces[t] = Fa(naive_actions[t])
             execute_naive(naive_actions[t])
             naive_states[t + 1] = observe_naive()
             naive_positions[t + 1] = naive_states[t + 1][1]
@@ -114,7 +119,7 @@ function run_naive_policy(run_naive::Bool)
 
             # Logging for shorter simulations
             if t % 10 == 0
-                @info "Naive simulation step $t: Position=$(round(naive_positions[t+1], digits=3)), Velocity=$(round(naive_velocities[t+1], digits=3))"
+                @info "Naive simulation step $t: Position=$(round(naive_positions[t+1], digits=3)), Velocity=$(round(naive_velocities[t+1], digits=3)), Engine Force=$(round(naive_engine_forces[t], digits=4))"
             end
         end
     end
@@ -157,6 +162,7 @@ function run_naive_policy(run_naive::Bool)
         "distance_traveled" => distance_traveled,
         "time_steps" => SIMULATION.time_steps_naive,
         "actions" => naive_actions,
+        "engine_forces" => naive_engine_forces,  # Actual forces applied
         "positions" => naive_positions,
         "velocities" => naive_velocities,
         "states" => naive_states,
@@ -167,15 +173,19 @@ function run_naive_policy(run_naive::Bool)
         )
     )
 
-    return naive_results, naive_states, naive_actions
+    return naive_results, naive_states, naive_actions, naive_engine_forces
 end
 
-function create_naive_animation(states::Vector{Vector{Float64}})
+function create_naive_animation(states::Vector{Vector{Float64}}, engine_forces::Union{Vector{Float64}, Nothing} = nothing)
     # Get landscape coordinates
     x_coords, y_coords = get_landscape_coordinates()
 
-    # Create actions vector (constant for naive policy)
-    actions = [SIMULATION.naive_action for _ in 1:length(states)]
+    # Create engine forces vector (actual forces applied, not raw actions)
+    if engine_forces !== nothing
+        actions = engine_forces
+    else
+        actions = [SIMULATION.naive_action for _ in 1:length(states)]  # Fallback for backward compatibility
+    end
 
     anim = @animate for i in 1:length(states)
         # Create landscape plot
@@ -438,10 +448,11 @@ Args:
 - agent_actions: Active inference action sequence
 - predicted_states: Predicted future states from active inference
 """
-function export_comprehensive_data(results_dir::String, 
+function export_comprehensive_data(results_dir::String,
                                   naive_states::Union{Vector{Vector{Float64}}, Nothing},
                                   naive_actions::Union{Vector{Float64}, Nothing},
-                                  agent_states::Union{Vector{Vector{Float64}}, Nothing}, 
+                                  naive_engine_forces::Union{Vector{Float64}, Nothing},
+                                  agent_states::Union{Vector{Vector{Float64}}, Nothing},
                                   agent_actions::Union{Vector{Float64}, Nothing},
                                   predicted_states::Union{Matrix{Float64}, Nothing})
     
@@ -468,16 +479,25 @@ function export_comprehensive_data(results_dir::String,
         min_length = min(length(naive_states), length(naive_actions))
         
         # Create comprehensive DataFrame with consistent lengths
+        # Use actual engine forces if available, otherwise use raw actions
+        engine_forces_to_use = if naive_engine_forces !== nothing
+            naive_engine_forces[1:min_length]
+        else
+            naive_actions[1:min_length]
+        end
+
         naive_df = DataFrame(
             time_step = 1:min_length,
             position = naive_positions[1:min_length],
             velocity = naive_velocities[1:min_length],
-            action = naive_actions[1:min_length],
+            action = naive_actions[1:min_length],  # Raw actions (for reference)
+            engine_force = engine_forces_to_use,   # Actual forces applied
             distance_to_goal = naive_distances_to_goal[1:min_length],
             progress_percent = naive_progress[1:min_length],
             kinetic_energy = [0.5 * naive_states[i][2]^2 for i in 1:min_length],
             potential_energy = [height_at_position(naive_states[i][1]) for i in 1:min_length],
             cumulative_action_magnitude = cumsum(abs.(naive_actions[1:min_length])),
+            cumulative_engine_force = cumsum(abs.(engine_forces_to_use)),
             velocity_change = [i == 1 ? 0.0 : naive_states[i][2] - naive_states[i-1][2] for i in 1:min_length],
             position_change = [i == 1 ? 0.0 : naive_states[i][1] - naive_states[i-1][1] for i in 1:min_length]
         )
@@ -490,6 +510,11 @@ function export_comprehensive_data(results_dir::String,
             "metadata" => Dict(
                 "policy_type" => "naive",
                 "constant_action" => SIMULATION.naive_action,
+                "actual_engine_force" => if naive_engine_forces !== nothing
+                    mean(naive_engine_forces)  # Average actual force applied
+                else
+                    PHYSICS.engine_force_limit  # Clamped force limit
+                end,
                 "total_steps" => length(naive_states),
                 "final_position" => naive_positions[end],
                 "final_velocity" => naive_velocities[end],
@@ -604,8 +629,9 @@ Args:
 function generate_all_visualizations(results_dir::String,
                                     naive_states::Union{Vector{Vector{Float64}}, Nothing},
                                     naive_actions::Union{Vector{Float64}, Nothing},
+                                    naive_engine_forces::Union{Vector{Float64}, Nothing},
                                     agent_states::Union{Vector{Vector{Float64}}, Nothing},
-                                    agent_actions::Union{Vector{Float64}, Nothing}, 
+                                    agent_actions::Union{Vector{Float64}, Nothing},
                                     predicted_states::Union{Matrix{Float64}, Nothing})
     
     @info "Generating comprehensive visualization suite..."
@@ -650,7 +676,12 @@ function generate_all_visualizations(results_dir::String,
                           xlabel = "Time Step", ylabel = "Engine Force",
                           grid = true, gridalpha = 0.3)
         
-        if naive_actions !== nothing
+        if naive_engine_forces !== nothing
+            # Use actual engine forces for proper scaling
+            plot!(action_plot, 1:length(naive_engine_forces), naive_engine_forces,
+                  label = "Naive Policy (Constant Force)", color = "blue", linewidth = 2)
+        elseif naive_actions !== nothing
+            # Fallback to raw actions if engine forces not available
             plot!(action_plot, 1:length(naive_actions), naive_actions,
                   label = "Naive Policy (Constant)", color = "blue", linewidth = 2)
         end
@@ -807,10 +838,11 @@ function run_experiment()
     # Variables to store naive simulation data for comparison animation
     naive_states = nothing
     naive_actions = nothing
+    naive_engine_forces = nothing
 
     if run_naive
         @info "Running naive policy comparison..."
-        naive_results, naive_states, naive_actions = run_naive_policy(run_naive)
+        naive_results, naive_states, naive_actions, naive_engine_forces = run_naive_policy(run_naive, ARGS)
         experiment_results["results"]["naive"] = naive_results
     end
 
@@ -848,7 +880,8 @@ function run_experiment()
 
             # Create comparison animation
             comparison_filename = "outputs/ai-mountain-car-comparison.gif"
-            create_comparison_animation(naive_states, naive_actions, agent_states[2:end], agent_actions, predicted_states, "Naive vs Active Inference Comparison", comparison_filename)
+            create_comparison_animation(naive_states, naive_actions, agent_states[2:end], agent_actions, predicted_states, "Naive vs Active Inference Comparison", comparison_filename;
+                                      naive_engine_forces = naive_engine_forces)
 
             @info "Comparison animation saved to: $comparison_filename"
         catch e
@@ -862,10 +895,10 @@ function run_experiment()
     results_dir = save_experiment_results("mountain_car_experiment", experiment_results)
     
     # Export detailed raw data for all tracked variables
-    export_comprehensive_data(results_dir, naive_states, naive_actions, agent_states, agent_actions, predicted_states)
+    export_comprehensive_data(results_dir, naive_states, naive_actions, naive_engine_forces, agent_states, agent_actions, predicted_states)
     
     # Generate all individual visualizations
-    generate_all_visualizations(results_dir, naive_states, naive_actions, agent_states, agent_actions, predicted_states)
+    generate_all_visualizations(results_dir, naive_states, naive_actions, naive_engine_forces, agent_states, agent_actions, predicted_states)
     
     @info "Comprehensive results exported to: $results_dir"
 

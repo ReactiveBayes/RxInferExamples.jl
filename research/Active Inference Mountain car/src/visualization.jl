@@ -865,7 +865,8 @@ Args:
 Returns:
 - Nothing (saves animation to file)
 """
-function create_comparison_animation(naive_states, naive_actions, ai_states, ai_actions, ai_predicted_states, title::String, filename::String; fps::Int = 24)
+function create_comparison_animation(naive_states, naive_actions, ai_states, ai_actions, ai_predicted_states, title::String, filename::String;
+                                   naive_engine_forces::Union{Vector{Float64}, Nothing} = nothing, fps::Int = 24)
     @info "Creating comprehensive comparison animation: $title"
 
     # Use the shorter of states or actions length to avoid index errors
@@ -908,7 +909,13 @@ function create_comparison_animation(naive_states, naive_actions, ai_states, ai_
             end
 
             # Naive engine force plot with adaptive scaling
-            naive_engine = plot_engine_force(naive_actions[1:i], i,
+            # Use actual engine forces for proper scaling
+            actual_naive_forces = if naive_engine_forces !== nothing && i <= length(naive_engine_forces)
+                naive_engine_forces[1:i]
+            else
+                naive_actions[1:i]  # Fallback for backward compatibility
+            end
+            naive_engine = plot_engine_force(actual_naive_forces, i,
                                            show_limits = true,
                                            show_statistics = false,
                                            adaptive_scaling = true,

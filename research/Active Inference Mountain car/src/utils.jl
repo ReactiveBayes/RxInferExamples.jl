@@ -289,14 +289,25 @@ end
 Calculate statistics for a vector of numbers.
 """
 function calculate_stats(data::Vector{T} where T <: Number)
-    Dict(
-        "mean" => mean(data),
-        "std" => std(data),
-        "min" => minimum(data),
-        "max" => maximum(data),
-        "median" => median(data),
-        "length" => length(data)
-    )
+    if isempty(data)
+        return Dict(
+            "mean" => NaN,
+            "std" => NaN,
+            "min" => NaN,
+            "max" => NaN,
+            "median" => NaN,
+            "length" => 0
+        )
+    else
+        Dict(
+            "mean" => mean(data),
+            "std" => std(data),
+            "min" => minimum(data),
+            "max" => maximum(data),
+            "median" => median(data),
+            "length" => length(data)
+        )
+    end
 end
 
 @doc """
