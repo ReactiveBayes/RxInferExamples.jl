@@ -393,3 +393,4 @@ This project is based on the RxInferExamples.jl repository and follows the same 
 
 *This framework demonstrates the power of active inference for complex control problems and serves as both a research tool and educational resource for the active inference community.*
 
+

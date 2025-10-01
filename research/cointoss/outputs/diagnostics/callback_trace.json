@@ -1,0 +1,172 @@
+[
+  {
+    "event": "start",
+    "iteration": 1,
+    "timestamp": "2025-10-01T11:46:38.300"
+  },
+  {
+    "event": "end",
+    "iteration": 1,
+    "timestamp": "2025-10-01T11:46:38.817"
+  },
+  {
+    "event": "start",
+    "iteration": 2,
+    "timestamp": "2025-10-01T11:46:38.817"
+  },
+  {
+    "event": "end",
+    "iteration": 2,
+    "timestamp": "2025-10-01T11:46:38.961"
+  },
+  {
+    "event": "start",
+    "iteration": 3,
+    "timestamp": "2025-10-01T11:46:38.961"
+  },
+  {
+    "event": "end",
+    "iteration": 3,
+    "timestamp": "2025-10-01T11:46:38.970"
+  },
+  {
+    "event": "start",
+    "iteration": 4,
+    "timestamp": "2025-10-01T11:46:38.970"
+  },
+  {
+    "event": "end",
+    "iteration": 4,
+    "timestamp": "2025-10-01T11:46:38.971"
+  },
+  {
+    "event": "start",
+    "iteration": 5,
+    "timestamp": "2025-10-01T11:46:38.971"
+  },
+  {
+    "event": "end",
+    "iteration": 5,
+    "timestamp": "2025-10-01T11:46:38.972"
+  },
+  {
+    "event": "start",
+    "iteration": 6,
+    "timestamp": "2025-10-01T11:46:38.972"
+  },
+  {
+    "event": "end",
+    "iteration": 6,
+    "timestamp": "2025-10-01T11:46:38.973"
+  },
+  {
+    "event": "start",
+    "iteration": 7,
+    "timestamp": "2025-10-01T11:46:38.973"
+  },
+  {
+    "event": "end",
+    "iteration": 7,
+    "timestamp": "2025-10-01T11:46:38.973"
+  },
+  {
+    "event": "start",
+    "iteration": 8,
+    "timestamp": "2025-10-01T11:46:38.973"
+  },
+  {
+    "event": "end",
+    "iteration": 8,
+    "timestamp": "2025-10-01T11:46:38.974"
+  },
+  {
+    "event": "start",
+    "iteration": 9,
+    "timestamp": "2025-10-01T11:46:38.974"
+  },
+  {
+    "event": "end",
+    "iteration": 9,
+    "timestamp": "2025-10-01T11:46:38.975"
+  },
+  {
+    "event": "start",
+    "iteration": 10,
+    "timestamp": "2025-10-01T11:46:38.975"
+  },
+  {
+    "event": "end",
+    "iteration": 10,
+    "timestamp": "2025-10-01T11:46:38.976"
+  },
+  {
+    "distribution": "ReactiveMP.Marginal{Beta{Float64}, Tuple{ReactiveMP.AddonMemory{ReactiveMP.AddonMemoryProd{Any}}}}",
+    "timestamp": "2025-10-01T11:46:38.490",
+    "variable": "θ",
+    "mean": 0.736328125,
+    "std": 0.019454000191684466
+  },
+  {
+    "distribution": "ReactiveMP.Marginal{Beta{Float64}, Tuple{ReactiveMP.AddonMemory{ReactiveMP.AddonMemoryProd{Any}}}}",
+    "timestamp": "2025-10-01T11:46:38.818",
+    "variable": "θ",
+    "mean": 0.736328125,
+    "std": 0.019454000191684466
+  },
+  {
+    "distribution": "ReactiveMP.Marginal{Beta{Float64}, Tuple{ReactiveMP.AddonMemory{ReactiveMP.AddonMemoryProd{Any}}}}",
+    "timestamp": "2025-10-01T11:46:38.961",
+    "variable": "θ",
+    "mean": 0.736328125,
+    "std": 0.019454000191684466
+  },
+  {
+    "distribution": "ReactiveMP.Marginal{Beta{Float64}, Tuple{ReactiveMP.AddonMemory{ReactiveMP.AddonMemoryProd{Any}}}}",
+    "timestamp": "2025-10-01T11:46:38.971",
+    "variable": "θ",
+    "mean": 0.736328125,
+    "std": 0.019454000191684466
+  },
+  {
+    "distribution": "ReactiveMP.Marginal{Beta{Float64}, Tuple{ReactiveMP.AddonMemory{ReactiveMP.AddonMemoryProd{Any}}}}",
+    "timestamp": "2025-10-01T11:46:38.972",
+    "variable": "θ",
+    "mean": 0.736328125,
+    "std": 0.019454000191684466
+  },
+  {
+    "distribution": "ReactiveMP.Marginal{Beta{Float64}, Tuple{ReactiveMP.AddonMemory{ReactiveMP.AddonMemoryProd{Any}}}}",
+    "timestamp": "2025-10-01T11:46:38.972",
+    "variable": "θ",
+    "mean": 0.736328125,
+    "std": 0.019454000191684466
+  },
+  {
+    "distribution": "ReactiveMP.Marginal{Beta{Float64}, Tuple{ReactiveMP.AddonMemory{ReactiveMP.AddonMemoryProd{Any}}}}",
+    "timestamp": "2025-10-01T11:46:38.973",
+    "variable": "θ",
+    "mean": 0.736328125,
+    "std": 0.019454000191684466
+  },
+  {
+    "distribution": "ReactiveMP.Marginal{Beta{Float64}, Tuple{ReactiveMP.AddonMemory{ReactiveMP.AddonMemoryProd{Any}}}}",
+    "timestamp": "2025-10-01T11:46:38.974",
+    "variable": "θ",
+    "mean": 0.736328125,
+    "std": 0.019454000191684466
+  },
+  {
+    "distribution": "ReactiveMP.Marginal{Beta{Float64}, Tuple{ReactiveMP.AddonMemory{ReactiveMP.AddonMemoryProd{Any}}}}",
+    "timestamp": "2025-10-01T11:46:38.974",
+    "variable": "θ",
+    "mean": 0.736328125,
+    "std": 0.019454000191684466
+  },
+  {
+    "distribution": "ReactiveMP.Marginal{Beta{Float64}, Tuple{ReactiveMP.AddonMemory{ReactiveMP.AddonMemoryProd{Any}}}}",
+    "timestamp": "2025-10-01T11:46:38.975",
+    "variable": "θ",
+    "mean": 0.736328125,
+    "std": 0.019454000191684466
+  }
+]

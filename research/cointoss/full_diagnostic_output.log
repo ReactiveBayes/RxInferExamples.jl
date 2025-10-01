@@ -1,0 +1,206 @@
+  Activating project at `~/Documents/GitHub/RxInferExamples.jl/research/cointoss`
+[ Info: ================================================================================
+[ Info: Coin Toss Model - Bayesian Inference with Advanced Diagnostics
+[ Info: ================================================================================
+┌ Info: Logging configured
+│   verbose = true
+│   structured = true
+└   performance = true
+[ Info: Configuration Summary:
+[ Info:   Data: n=500, θ=0.75, seed=42
+[ Info:   Prior: Beta(4.0, 8.0)
+[ Info:   Inference: 10 iterations
+[ Info:   Diagnostics: Memory=true, Callbacks=true, Benchmark=true
+[ Info:   Theme: default
+[ Info: 
+[ Info: ================================================================================
+[ Info: Step 1: Data Generation
+[ Info: ================================================================================
+[ Info: Generated 500 coin tosses
+[ Info:   True θ: 0.75
+[ Info:   Observed heads: 373.0 (74.6%)
+[ Info: Saved observations to: outputs/data/coin_toss_observations.csv
+[ Info: 
+[ Info: ================================================================================
+[ Info: Step 2: Bayesian Inference with Advanced Diagnostics
+[ Info: ================================================================================
+[ Info: Running inference with diagnostics...
+[ Info:   Observations: 500
+[ Info:   Prior: Beta(4.0, 8.0)
+[ Info:   Iterations: 10
+[ Info:   Benchmark runs: 3
+┌ Info: Running inference with diagnostics
+└   config = DiagnosticConfig(true, true, false, true, true)
+[ Info: Memory Addon enabled - will trace message computations
+[ Info: Benchmark run 1/3
+[ Info: Starting iteration 1
+┌ Info: Updated θ
+│   mean = 0.736328125
+└   std = 0.019454000191684466
+[ Info: Completed iteration 1
+[ Info: Starting iteration 2
+┌ Info: Updated θ
+│   mean = 0.736328125
+└   std = 0.019454000191684466
+Progress:  20%|████████▎                                |  ETA: 0:00:02[K[ Info: Completed iteration 2
+[ Info: Starting iteration 3
+┌ Info: Updated θ
+│   mean = 0.736328125
+└   std = 0.019454000191684466
+[ Info: Completed iteration 3
+[ Info: Starting iteration 4
+┌ Info: Updated θ
+│   mean = 0.736328125
+└   std = 0.019454000191684466
+[ Info: Completed iteration 4
+[ Info: Starting iteration 5
+┌ Info: Updated θ
+│   mean = 0.736328125
+└   std = 0.019454000191684466
+[ Info: Completed iteration 5
+[ Info: Starting iteration 6
+┌ Info: Updated θ
+│   mean = 0.736328125
+└   std = 0.019454000191684466
+[ Info: Completed iteration 6
+[ Info: Starting iteration 7
+┌ Info: Updated θ
+│   mean = 0.736328125
+└   std = 0.019454000191684466
+[ Info: Completed iteration 7
+[ Info: Starting iteration 8
+┌ Info: Updated θ
+│   mean = 0.736328125
+└   std = 0.019454000191684466
+[ Info: Completed iteration 8
+[ Info: Starting iteration 9
+┌ Info: Updated θ
+│   mean = 0.736328125
+└   std = 0.019454000191684466
+[ Info: Completed iteration 9
+[ Info: Starting iteration 10
+┌ Info: Updated θ
+│   mean = 0.736328125
+└   std = 0.019454000191684466
+Progress: 100%|█████████████████████████████████████████| Time: 0:00:00[K
+[ Info: Completed iteration 10
+[ Info: Benchmark run 2/3
+[ Info: Benchmark run 3/3
+[ Info: Extracting memory trace...
+[ Info: Extracting benchmark statistics...
+[ Info: Inference completed
+[ Info:   Posterior: Beta{Float64}
+[ Info:   Parameters: (377.0, 135.0)
+[ Info: 
+[ Info: ================================================================================
+[ Info: Step 3: Processing Diagnostic Results
+[ Info: ================================================================================
+[ Info: Saving diagnostic results to outputs/diagnostics
+┌ Info: Saved memory trace
+└   filepath = "outputs/diagnostics/memory_trace.json"
+┌ Info: Saved callback trace
+└   filepath = "outputs/diagnostics/callback_trace.json"
+┌ Info: Saved iteration events
+└   filepath = "outputs/diagnostics/iteration_events.csv"
+┌ Info: Saved marginal updates
+└   filepath = "outputs/diagnostics/marginal_updates.csv"
+┌ Info: Saved benchmark statistics
+└   filepath = "outputs/diagnostics/benchmark_stats.csv"
+┌ Info: Saved benchmark summary
+└   filepath = "outputs/diagnostics/benchmark_summary.json"
+┌ Info: Saved message trace report
+└   filepath = "outputs/diagnostics/message_trace_report.txt"
+┌ Info: Saved iteration trace report
+└   filepath = "outputs/diagnostics/iteration_trace_report.txt"
+[ Info: 
+[ Info: Performance Benchmark Statistics (3 runs):
+┌────────────────┬────────────┬─────────────┬─────────────┬─────────────┬─────────────┬─────────┬─────────┬─────────┬───────────┬─────────┐
+│      Operation │     Min_ns │      Max_ns │     Mean_ns │   Median_ns │      Std_ns │  Min_μs │  Max_μs │ Mean_μs │ Median_μs │  Std_μs │
+├────────────────┼────────────┼─────────────┼─────────────┼─────────────┼─────────────┼─────────┼─────────┼─────────┼───────────┼─────────┤
+│ Model creation │ 4139292.00 │ 20015583.00 │ 12077437.50 │ 12077437.50 │ 11226233.03 │ 4139.29 │ 20015.6 │ 12077.4 │   12077.4 │ 11226.2 │
+│      Inference │ 3359833.00 │ 22962833.00 │ 13161333.00 │ 13161333.00 │ 13861414.23 │ 3359.83 │ 22962.8 │ 13161.3 │   13161.3 │ 13861.4 │
+│      Iteration │  306708.00 │  4504709.00 │   534960.45 │   324083.00 │   934470.30 │  306.71 │ 4504.71 │  534.96 │   324.083 │  934.47 │
+└────────────────┴────────────┴─────────────┴─────────────┴─────────────┴─────────────┴─────────┴─────────┴─────────┴───────────┴─────────┘
+[ Info: 
+[ Info: Message Trace Summary:
+[ Info:   Variable: θ
+[ Info:   Posterior Type: ReactiveMP.Marginal{Beta{Float64}, Tuple{ReactiveMP.AddonMemory{ReactiveMP.AddonMemoryProd{Any}}}}
+[ Info:   Posterior Parameters: (377.0, 135.0)
+[ Info:   Full trace saved to: outputs/diagnostics/message_trace_report.txt
+[ Info: 
+[ Info: Callback Trace Summary:
+[ Info:   Total events: 30
+[ Info:   Marginal updates: 10
+[ Info:   Updated variables: ["θ"]
+[ Info: 
+[ Info: ================================================================================
+[ Info: Step 4: Statistical Analysis
+[ Info: ================================================================================
+[ Info: Posterior Statistics:
+┌ Error: Exception while generating log record in module Main at /Users/4d/Documents/GitHub/RxInferExamples.jl/research/cointoss/run_with_diagnostics.jl:282
+│   exception =
+│    type Dict has no field mean
+│    Stacktrace:
+│     [1] getproperty
+│       @ ./Base.jl:49 [inlined]
+│     [2] macro expansion
+│       @ ./logging/logging.jl:385 [inlined]
+│     [3] run_experiment_with_diagnostics(config::Dict{String, Any}; skip_animation::Bool)
+│       @ Main ~/Documents/GitHub/RxInferExamples.jl/research/cointoss/run_with_diagnostics.jl:282
+│     [4] top-level scope
+│       @ ~/Documents/GitHub/RxInferExamples.jl/research/cointoss/run_with_diagnostics.jl:474
+└ @ Main ~/Documents/GitHub/RxInferExamples.jl/research/cointoss/run_with_diagnostics.jl:282
+┌ Error: Exception while generating log record in module Main at /Users/4d/Documents/GitHub/RxInferExamples.jl/research/cointoss/run_with_diagnostics.jl:283
+│   exception =
+│    type Dict has no field mode
+│    Stacktrace:
+│     [1] getproperty
+│       @ ./Base.jl:49 [inlined]
+│     [2] macro expansion
+│       @ ./logging/logging.jl:385 [inlined]
+│     [3] run_experiment_with_diagnostics(config::Dict{String, Any}; skip_animation::Bool)
+│       @ Main ~/Documents/GitHub/RxInferExamples.jl/research/cointoss/run_with_diagnostics.jl:283
+│     [4] top-level scope
+│       @ ~/Documents/GitHub/RxInferExamples.jl/research/cointoss/run_with_diagnostics.jl:474
+└ @ Main ~/Documents/GitHub/RxInferExamples.jl/research/cointoss/run_with_diagnostics.jl:283
+┌ Error: Exception while generating log record in module Main at /Users/4d/Documents/GitHub/RxInferExamples.jl/research/cointoss/run_with_diagnostics.jl:284
+│   exception =
+│    type Dict has no field std
+│    Stacktrace:
+│     [1] getproperty
+│       @ ./Base.jl:49 [inlined]
+│     [2] macro expansion
+│       @ ./logging/logging.jl:385 [inlined]
+│     [3] run_experiment_with_diagnostics(config::Dict{String, Any}; skip_animation::Bool)
+│       @ Main ~/Documents/GitHub/RxInferExamples.jl/research/cointoss/run_with_diagnostics.jl:284
+│     [4] top-level scope
+│       @ ~/Documents/GitHub/RxInferExamples.jl/research/cointoss/run_with_diagnostics.jl:474
+└ @ Main ~/Documents/GitHub/RxInferExamples.jl/research/cointoss/run_with_diagnostics.jl:284
+┌ Error: Exception while generating log record in module Main at /Users/4d/Documents/GitHub/RxInferExamples.jl/research/cointoss/run_with_diagnostics.jl:285
+│   exception =
+│    type Dict has no field ci_lower
+│    Stacktrace:
+│     [1] getproperty
+│       @ ./Base.jl:49 [inlined]
+│     [2] macro expansion
+│       @ ./logging/logging.jl:385 [inlined]
+│     [3] run_experiment_with_diagnostics(config::Dict{String, Any}; skip_animation::Bool)
+│       @ Main ~/Documents/GitHub/RxInferExamples.jl/research/cointoss/run_with_diagnostics.jl:285
+│     [4] top-level scope
+│       @ ~/Documents/GitHub/RxInferExamples.jl/research/cointoss/run_with_diagnostics.jl:474
+└ @ Main ~/Documents/GitHub/RxInferExamples.jl/research/cointoss/run_with_diagnostics.jl:285
+[ Info: Analytical vs RxInfer comparison:
+[ Info:   Analytical: α=377.0, β=135.0
+[ Info:   RxInfer: α=377.0, β=135.0
+[ Info: Log marginal likelihood: -289.5483
+┌ Error: Experiment failed
+│   exception =
+│    type Dict has no field mean
+│    Stacktrace:
+│     [1] getproperty
+│       @ ./Base.jl:49 [inlined]
+│     [2] run_experiment_with_diagnostics(config::Dict{String, Any}; skip_animation::Bool)
+│       @ Main ~/Documents/GitHub/RxInferExamples.jl/research/cointoss/run_with_diagnostics.jl:306
+│     [3] top-level scope
+│       @ ~/Documents/GitHub/RxInferExamples.jl/research/cointoss/run_with_diagnostics.jl:474
+└ @ Main ~/Documents/GitHub/RxInferExamples.jl/research/cointoss/run_with_diagnostics.jl:481

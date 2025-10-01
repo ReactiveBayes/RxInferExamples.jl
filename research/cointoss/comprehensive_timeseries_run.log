@@ -1,0 +1,198 @@
+  Activating project at `~/Documents/GitHub/RxInferExamples.jl/research/cointoss`
+[ Info: ================================================================================
+[ Info: Coin Toss Model - Bayesian Inference with Advanced Diagnostics
+[ Info: ================================================================================
+┌ Info: Created directory
+└   path = "outputs/results"
+┌ Info: Created directory
+└   path = "outputs/logs"
+┌ Info: Created directory
+└   path = "outputs/animations"
+┌ Info: Created directory
+└   path = "outputs/plots"
+┌ Info: Created directory
+└   path = "outputs/data"
+┌ Info: Logging configured
+│   verbose = true
+│   structured = true
+└   performance = true
+[ Info: Configuration Summary:
+[ Info:   Data: n=500, θ=0.75, seed=42
+[ Info:   Prior: Beta(4.0, 8.0)
+[ Info:   Inference: 10 iterations
+[ Info:   Diagnostics: Memory=true, Callbacks=true, Benchmark=true
+[ Info:   Theme: default
+[ Info: 
+[ Info: ================================================================================
+[ Info: Step 1: Data Generation
+[ Info: ================================================================================
+[ Info: Generated 500 coin tosses
+[ Info:   True θ: 0.75
+[ Info:   Observed heads: 373.0 (74.6%)
+[ Info: Saved observations to: outputs/data/coin_toss_observations.csv
+[ Info: 
+[ Info: ================================================================================
+[ Info: Step 2: Bayesian Inference with Advanced Diagnostics
+[ Info: ================================================================================
+[ Info: Running inference with diagnostics...
+[ Info:   Observations: 500
+[ Info:   Prior: Beta(4.0, 8.0)
+[ Info:   Iterations: 10
+[ Info:   Benchmark runs: 3
+┌ Info: Running inference with diagnostics
+└   config = DiagnosticConfig(true, true, false, true, true)
+[ Info: Memory Addon enabled - will trace message computations
+[ Info: Benchmark run 1/3
+[ Info: Starting iteration 1
+┌ Info: Updated θ
+│   mean = 0.736328125
+└   std = 0.019454000191684466
+[ Info: Completed iteration 1
+[ Info: Starting iteration 2
+┌ Info: Updated θ
+│   mean = 0.736328125
+└   std = 0.019454000191684466
+Progress:  20%|████████▎                                |  ETA: 0:00:03[K[ Info: Completed iteration 2
+[ Info: Starting iteration 3
+┌ Info: Updated θ
+│   mean = 0.736328125
+└   std = 0.019454000191684466
+[ Info: Completed iteration 3
+[ Info: Starting iteration 4
+┌ Info: Updated θ
+│   mean = 0.736328125
+└   std = 0.019454000191684466
+[ Info: Completed iteration 4
+[ Info: Starting iteration 5
+┌ Info: Updated θ
+│   mean = 0.736328125
+└   std = 0.019454000191684466
+[ Info: Completed iteration 5
+[ Info: Starting iteration 6
+┌ Info: Updated θ
+│   mean = 0.736328125
+└   std = 0.019454000191684466
+[ Info: Completed iteration 6
+[ Info: Starting iteration 7
+┌ Info: Updated θ
+│   mean = 0.736328125
+└   std = 0.019454000191684466
+[ Info: Completed iteration 7
+[ Info: Starting iteration 8
+┌ Info: Updated θ
+│   mean = 0.736328125
+└   std = 0.019454000191684466
+[ Info: Completed iteration 8
+[ Info: Starting iteration 9
+┌ Info: Updated θ
+│   mean = 0.736328125
+└   std = 0.019454000191684466
+[ Info: Completed iteration 9
+[ Info: Starting iteration 10
+┌ Info: Updated θ
+│   mean = 0.736328125
+└   std = 0.019454000191684466
+Progress: 100%|█████████████████████████████████████████| Time: 0:00:00[K
+[ Info: Completed iteration 10
+[ Info: Benchmark run 2/3
+[ Info: Benchmark run 3/3
+[ Info: Extracting memory trace...
+[ Info: Extracting benchmark statistics...
+[ Info: Inference completed
+[ Info:   Posterior: Beta{Float64}
+[ Info:   Parameters: (377.0, 135.0)
+[ Info: 
+[ Info: ================================================================================
+[ Info: Step 3: Processing Diagnostic Results
+[ Info: ================================================================================
+[ Info: Saving diagnostic results to outputs/diagnostics
+┌ Info: Saved memory trace
+└   filepath = "outputs/diagnostics/memory_trace.json"
+┌ Info: Saved callback trace
+└   filepath = "outputs/diagnostics/callback_trace.json"
+┌ Info: Saved iteration events
+└   filepath = "outputs/diagnostics/iteration_events.csv"
+┌ Info: Saved marginal updates
+└   filepath = "outputs/diagnostics/marginal_updates.csv"
+┌ Info: Saved benchmark statistics
+└   filepath = "outputs/diagnostics/benchmark_stats.csv"
+┌ Info: Saved benchmark summary
+└   filepath = "outputs/diagnostics/benchmark_summary.json"
+┌ Info: Saved message trace report
+└   filepath = "outputs/diagnostics/message_trace_report.txt"
+┌ Info: Saved iteration trace report
+└   filepath = "outputs/diagnostics/iteration_trace_report.txt"
+[ Info: 
+[ Info: Performance Benchmark Statistics (3 runs):
+┌────────────────┬────────────┬─────────────┬─────────────┬─────────────┬─────────────┬─────────┬─────────┬─────────┬───────────┬─────────┐
+│      Operation │     Min_ns │      Max_ns │     Mean_ns │   Median_ns │      Std_ns │  Min_μs │  Max_μs │ Mean_μs │ Median_μs │  Std_μs │
+├────────────────┼────────────┼─────────────┼─────────────┼─────────────┼─────────────┼─────────┼─────────┼─────────┼───────────┼─────────┤
+│ Model creation │ 4339541.00 │ 19545791.00 │ 11942666.00 │ 11942666.00 │ 10752442.49 │ 4339.54 │ 19545.8 │ 11942.7 │   11942.7 │ 10752.4 │
+│      Inference │ 4515458.00 │ 23659917.00 │ 14087687.50 │ 14087687.50 │ 13537176.78 │ 4515.46 │ 23659.9 │ 14087.7 │   14087.7 │ 13537.2 │
+│      Iteration │  414208.00 │  4508625.00 │   650976.95 │   447374.50 │   908365.02 │  414.21 │ 4508.62 │ 650.977 │   447.375 │ 908.365 │
+└────────────────┴────────────┴─────────────┴─────────────┴─────────────┴─────────────┴─────────┴─────────┴─────────┴───────────┴─────────┘
+[ Info: 
+[ Info: Message Trace Summary:
+[ Info:   Variable: θ
+[ Info:   Posterior Type: ReactiveMP.Marginal{Beta{Float64}, Tuple{ReactiveMP.AddonMemory{ReactiveMP.AddonMemoryProd{Any}}}}
+[ Info:   Posterior Parameters: (377.0, 135.0)
+[ Info:   Full trace saved to: outputs/diagnostics/message_trace_report.txt
+[ Info: 
+[ Info: Callback Trace Summary:
+[ Info:   Total events: 30
+[ Info:   Marginal updates: 10
+[ Info:   Updated variables: ["θ"]
+[ Info: 
+[ Info: ================================================================================
+[ Info: Step 4: Statistical Analysis
+[ Info: ================================================================================
+[ Info: Posterior Statistics:
+[ Info:   Mean: 0.7363
+[ Info:   Mode: 0.7373
+[ Info:   Std: 0.0195
+[ Info:   95% CI: [0.6973, 0.7736]
+[ Info: Analytical vs RxInfer comparison:
+[ Info:   Analytical: α=377.0, β=135.0
+[ Info:   RxInfer: α=377.0, β=135.0
+[ Info: Log marginal likelihood: -289.5483
+[ Info: 
+[ Info: ================================================================================
+[ Info: Step 5: Visualization
+[ Info: ================================================================================
+[ Info: Creating comprehensive dashboard...
+┌ Info: Saved plot
+└   filepath = "outputs/plots/comprehensive_dashboard.png"
+[ Info: Creating individual diagnostic plots...
+┌ Info: Saved plot
+└   filepath = "outputs/plots/prior_posterior.png"
+┌ Info: Saved plot
+└   filepath = "outputs/plots/credible_interval.png"
+┌ Info: Saved plot
+└   filepath = "outputs/plots/data_histogram.png"
+┌ Info: Saved plot
+└   filepath = "outputs/plots/posterior_predictive.png"
+┌ Info: Saved plot
+└   filepath = "outputs/plots/free_energy_convergence.png"
+[ Info: Creating posterior evolution timeseries...
+┌ Info: Saved plot
+└   filepath = "outputs/plots/posterior_evolution.png"
+[ Info: Creating comprehensive timeseries dashboard (ALL metrics)...
+┌ Error: Experiment failed
+│   exception =
+│    MethodError: no method matching var"#compute_temporal_evolution#1"(::Nothing, ::typeof(compute_temporal_evolution), ::Vector{Float64}, ::Float64, ::Float64)
+│    The function `#compute_temporal_evolution#1` exists, but no method is defined for this combination of argument types.
+│    
+│    Closest candidates are:
+│      var"#compute_temporal_evolution#1"(!Matched::Vector{Int64}, ::typeof(compute_temporal_evolution), ::Vector{Float64}, ::Float64, ::Float64)
+│       @ Main.TimeseriesDiagnostics ~/Documents/GitHub/RxInferExamples.jl/research/cointoss/src/timeseries_diagnostics.jl:28
+│    
+│    Stacktrace:
+│     [1] compute_temporal_evolution(data::Vector{Float64}, prior_a::Float64, prior_b::Float64)
+│       @ Main.TimeseriesDiagnostics ~/Documents/GitHub/RxInferExamples.jl/research/cointoss/src/timeseries_diagnostics.jl:28
+│     [2] create_comprehensive_timeseries_dashboard(data::Vector{Float64}, prior_a::Float64, prior_b::Float64; true_theta::Float64, theme::String)
+│       @ Main.TimeseriesDiagnostics ~/Documents/GitHub/RxInferExamples.jl/research/cointoss/src/timeseries_diagnostics.jl:161
+│     [3] run_experiment_with_diagnostics(config::Dict{String, Any}; skip_animation::Bool)
+│       @ Main ~/Documents/GitHub/RxInferExamples.jl/research/cointoss/run_with_diagnostics.jl:386
+│     [4] top-level scope
+│       @ ~/Documents/GitHub/RxInferExamples.jl/research/cointoss/run_with_diagnostics.jl:506
+└ @ Main ~/Documents/GitHub/RxInferExamples.jl/research/cointoss/run_with_diagnostics.jl:513

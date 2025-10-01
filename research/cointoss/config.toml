@@ -1,0 +1,93 @@
+# Coin Toss Model Configuration
+# Plaintext configuration for comprehensive Bayesian inference experiments
+
+# Data generation parameters
+[data]
+n_samples = 500                 # Number of coin tosses
+theta_real = 0.75               # True coin bias parameter (probability of heads)
+seed = 42                       # Random seed for reproducibility
+generate_new = true             # Whether to generate new data or load from file
+data_file = "outputs/data/coin_toss_data.csv"  # File to load/save data
+
+# Model prior parameters
+[model]
+prior_a = 4.0                   # Beta prior parameter a (pseudo-count of heads)
+prior_b = 8.0                   # Beta prior parameter b (pseudo-count of tails)
+# Note: Beta(4, 8) gives prior mean = 4/(4+8) = 0.333
+
+# Inference configuration
+[inference]
+iterations = 10                 # Number of variational inference iterations (if applicable)
+free_energy_tracking = true     # Track free energy during inference
+convergence_check = true        # Check for convergence
+convergence_tolerance = 1e-6    # Convergence threshold for free energy
+showprogress = true            # Show progress bar during inference
+
+# Statistical analysis parameters
+[analysis]
+credible_interval = 0.95       # Credible interval level (e.g., 95%)
+n_posterior_samples = 10000    # Number of samples from posterior for analysis
+compute_bayes_factor = false   # Compute Bayes factor (requires alternative hypothesis)
+diagnostic_plots = true        # Generate diagnostic plots
+posterior_predictive = true    # Generate posterior predictive checks
+
+# Visualization parameters
+[visualization]
+theme = "default"              # Options: "default", "dark", "colorblind"
+plot_resolution = 1000         # Resolution for PDF plots
+figure_size = [800, 600]       # Figure size (width, height)
+dpi = 100                      # DPI for saved figures
+animation_fps = 10             # Frames per second for animations
+show_plots = false             # Display plots interactively (vs. save only)
+save_plots = true              # Save plots to disk
+
+# Animation parameters
+[animation]
+enabled = true                 # Create animations
+sample_increments = [10, 25, 50, 100, 200, 500]  # Sample sizes to show in animation
+fps = 10                       # Animation frames per second
+
+# Output configuration
+[output]
+output_dir = "outputs"
+data_dir = "outputs/data"
+plots_dir = "outputs/plots"
+animations_dir = "outputs/animations"
+results_dir = "outputs/results"
+logs_dir = "outputs/logs"
+
+# Logging configuration
+[logging]
+verbose = true                  # Enable detailed logging
+structured = true               # Use structured JSON logging
+performance = true              # Log performance metrics
+log_level = "info"             # Options: "debug", "info", "warn", "error"
+log_to_file = true             # Save logs to file
+log_file = "outputs/logs/cointoss.log"
+structured_log_file = "outputs/logs/cointoss_structured.jsonl"
+performance_log_file = "outputs/logs/cointoss_performance.csv"
+
+# Advanced RxInfer Diagnostics
+[diagnostics]
+enable_memory_addon = true      # Trace message computations (Memory Addon)
+enable_callbacks = true         # Track iteration progress and marginal updates
+enable_pipeline_logger = false  # Trace message passing (very verbose)
+enable_benchmark = true         # Performance benchmarking
+n_benchmark_runs = 3            # Number of runs for benchmark statistics
+verbose = true                  # Verbose diagnostic output
+save_diagnostics = true         # Save diagnostic data to files
+
+# Export configuration
+[export]
+formats = ["csv", "json"]      # Export formats
+export_posterior = true         # Export posterior distribution parameters
+export_diagnostics = true       # Export diagnostic information
+export_predictions = true       # Export posterior predictive samples
+comprehensive = true            # Export comprehensive results bundle
+
+# Performance benchmarking
+[benchmark]
+enabled = false                 # Run performance benchmarks
+iterations = 100               # Number of benchmark iterations
+track_memory = true            # Track memory usage
+
