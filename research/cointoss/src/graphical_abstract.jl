@@ -18,6 +18,12 @@ export create_graphical_abstract, create_mega_dashboard
 
 """
 Create comprehensive graphical abstract with all metrics, diagnostics, and computational logs
+
+Includes change/delta metrics for:
+- Free Energy rate of change
+- Model Evidence rate of change  
+- Learning rate (information gain per observation)
+- Convergence rate (uncertainty reduction per observation)
 """
 function create_graphical_abstract(
     data::Vector{Float64},
@@ -31,7 +37,7 @@ function create_graphical_abstract(
     theme::String="default"
 )
     
-    # Create 6x4 mega grid (24 panels)
+    # Create 7x4 mega grid (28 panels)
     plots_array = []
     
     # Extract key data
@@ -192,7 +198,41 @@ function create_graphical_abstract(
     push!(plots_array, p16)
     
     # ============================================================================
-    # ROW 5: FINAL DISTRIBUTIONS & COMPARISONS
+    # ROW 5: CHANGE/DELTA METRICS (Rates of Change)
+    # ============================================================================
+    
+    # Plot 16a: Delta Free Energy (per observation)
+    p16a = plot(n_samples, temporal_evolution["delta_free_energy"],
+                label="ΔFE/n", lw=2, color=colors[9],
+                xlabel="n", ylabel="ΔFE/n", title="Free Energy Change Rate",
+                legend=:topright, grid=true)
+    hline!(p16a, [0], label="No Change", lw=1, ls=:dash, color=:gray, alpha=0.5)
+    push!(plots_array, p16a)
+    
+    # Plot 16b: Delta Log Marginal Likelihood (per observation)
+    p16b = plot(n_samples, temporal_evolution["delta_log_ml"],
+                label="Δlog P(y)/n", lw=2, color=colors[10],
+                xlabel="n", ylabel="Δlog P(y)/n", title="Model Evidence Change Rate",
+                legend=:topright, grid=true)
+    hline!(p16b, [0], label="No Change", lw=1, ls=:dash, color=:gray, alpha=0.5)
+    push!(plots_array, p16b)
+    
+    # Plot 16c: Learning Rate (ΔKL per observation)
+    p16c = plot(n_samples, temporal_evolution["learning_rate"],
+                label="ΔKL/n", lw=2, color=colors[8], fill=0, fillalpha=0.2,
+                xlabel="n", ylabel="ΔKL/n", title="Learning Rate (Info Gain/obs)",
+                legend=:topright, grid=true)
+    push!(plots_array, p16c)
+    
+    # Plot 16d: Convergence Rate (Δσ² per observation)
+    p16d = plot(n_samples, temporal_evolution["convergence_rate"],
+                label="Δσ²/n", lw=2, color=colors[4], fill=0, fillalpha=0.2,
+                xlabel="n", ylabel="Δσ²/n", title="Convergence Rate (Uncertainty Reduction/obs)",
+                legend=:topright, grid=true)
+    push!(plots_array, p16d)
+    
+    # ============================================================================
+    # ROW 6: FINAL DISTRIBUTIONS & COMPARISONS
     # ============================================================================
     
     # Plot 17: Prior vs Posterior PDFs
@@ -244,7 +284,7 @@ function create_graphical_abstract(
     push!(plots_array, p20)
     
     # ============================================================================
-    # ROW 6: COMPUTATIONAL DIAGNOSTICS & SUMMARY
+    # ROW 7: COMPUTATIONAL DIAGNOSTICS & SUMMARY
     # ============================================================================
     
     # Plot 21: Summary Statistics Table (as annotation plot)
@@ -310,11 +350,11 @@ function create_graphical_abstract(
     annotate!(p24, [(0.5, 0.5, text(config_text, :center, 8))])
     push!(plots_array, p24)
     
-    # Combine into mega dashboard
+    # Combine into mega dashboard (7 rows × 4 columns = 28 panels)
     mega_dashboard = plot(plots_array...,
-                         layout=(6, 4),
-                         size=(2400, 3600),
-                         plot_title="COMPREHENSIVE GRAPHICAL ABSTRACT: Bayesian Coin Toss Inference",
+                         layout=(7, 4),
+                         size=(2400, 4200),
+                         plot_title="COMPREHENSIVE GRAPHICAL ABSTRACT: Bayesian Coin Toss Inference with Change Metrics",
                          plot_titlefontsize=20,
                          plot_titlevspan=0.02,
                          margin=3Plots.mm,

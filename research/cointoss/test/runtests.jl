@@ -97,7 +97,7 @@ test_start_time = time()
     # Quick Integration Tests (from original runtests.jl)
     @testset "Quick Configuration Checks" begin
         @testset "Load Configuration" begin
-            config = load_config("../config.toml")
+            config = load_config(joinpath(dirname(@__DIR__), "config.toml"))
             @test haskey(config, "data")
             @test haskey(config, "model")
             @test haskey(config, "inference")

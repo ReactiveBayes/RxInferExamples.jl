@@ -71,6 +71,18 @@ function compute_temporal_evolution(data::Vector{Float64}, prior_a::Float64, pri
     evolution["posterior_prior_diff"] = Float64[]
     evolution["uncertainty_reduction"] = Float64[]
     
+    # Change/Delta metrics (rates of change)
+    evolution["delta_free_energy"] = Float64[]
+    evolution["delta_log_ml"] = Float64[]
+    evolution["delta_expected_ll"] = Float64[]
+    evolution["delta_kl"] = Float64[]
+    evolution["delta_alpha"] = Float64[]
+    evolution["delta_beta"] = Float64[]
+    evolution["delta_posterior_mean"] = Float64[]
+    evolution["delta_posterior_std"] = Float64[]
+    evolution["convergence_rate"] = Float64[]
+    evolution["learning_rate"] = Float64[]
+    
     # Prior statistics
     prior = Beta(prior_a, prior_b)
     prior_mean_val = mean(prior)
@@ -141,6 +153,52 @@ function compute_temporal_evolution(data::Vector{Float64}, prior_a::Float64, pri
         push!(evolution["prior_mean"], prior_mean_val)
         push!(evolution["posterior_prior_diff"], post_mean - prior_mean_val)
         push!(evolution["uncertainty_reduction"], prior_var - post_var)
+        
+        # Compute delta/change metrics (rate of change per observation)
+        idx = length(evolution["n_samples"])
+        if idx == 1
+            # First point: no previous value to compare, use 0
+            push!(evolution["delta_free_energy"], 0.0)
+            push!(evolution["delta_log_ml"], 0.0)
+            push!(evolution["delta_expected_ll"], 0.0)
+            push!(evolution["delta_kl"], 0.0)
+            push!(evolution["delta_alpha"], 0.0)
+            push!(evolution["delta_beta"], 0.0)
+            push!(evolution["delta_posterior_mean"], 0.0)
+            push!(evolution["delta_posterior_std"], 0.0)
+            push!(evolution["convergence_rate"], 0.0)
+            push!(evolution["learning_rate"], 0.0)
+        else
+            # Compute changes from previous point
+            n_prev = evolution["n_samples"][idx-1]
+            delta_n = n_obs - n_prev
+            
+            delta_fe = (fe - evolution["free_energy"][idx-1]) / delta_n
+            delta_lml = (lml - evolution["log_marginal_likelihood"][idx-1]) / delta_n
+            delta_ell = (expected_ll - evolution["expected_log_likelihood"][idx-1]) / delta_n
+            delta_kl_val = (kl_div - evolution["kl_divergence"][idx-1]) / delta_n
+            delta_alpha_val = (α_post - evolution["posterior_alpha"][idx-1]) / delta_n
+            delta_beta_val = (β_post - evolution["posterior_beta"][idx-1]) / delta_n
+            delta_mean = (post_mean - evolution["posterior_mean"][idx-1]) / delta_n
+            delta_std = (post_std - evolution["posterior_std"][idx-1]) / delta_n
+            
+            # Convergence rate: reduction in variance per observation
+            conv_rate = (evolution["posterior_var"][idx-1] - post_var) / delta_n
+            
+            # Learning rate: information gain per observation
+            learn_rate = delta_kl_val
+            
+            push!(evolution["delta_free_energy"], delta_fe)
+            push!(evolution["delta_log_ml"], delta_lml)
+            push!(evolution["delta_expected_ll"], delta_ell)
+            push!(evolution["delta_kl"], delta_kl_val)
+            push!(evolution["delta_alpha"], delta_alpha_val)
+            push!(evolution["delta_beta"], delta_beta_val)
+            push!(evolution["delta_posterior_mean"], delta_mean)
+            push!(evolution["delta_posterior_std"], delta_std)
+            push!(evolution["convergence_rate"], conv_rate)
+            push!(evolution["learning_rate"], learn_rate)
+        end
     end
     
     return evolution
@@ -312,7 +370,18 @@ function plot_all_metrics_through_time(
         ("empirical_mean", "Empirical Mean (Data)", "Empirical θ"),
         ("head_rate", "Head Rate", "P(heads)"),
         ("uncertainty_reduction", "Variance Reduction", "Δσ²"),
-        ("posterior_prior_diff", "Posterior - Prior Mean", "Δμ")
+        ("posterior_prior_diff", "Posterior - Prior Mean", "Δμ"),
+        # Delta/change metrics
+        ("delta_free_energy", "ΔFree Energy (per obs)", "ΔFE/n"),
+        ("delta_log_ml", "ΔLog Marginal Likelihood (per obs)", "Δlog P(y)/n"),
+        ("delta_expected_ll", "ΔExpected LL (per obs)", "ΔE[LL]/n"),
+        ("delta_kl", "ΔKL Divergence (per obs)", "ΔKL/n"),
+        ("delta_alpha", "Δα (per obs)", "Δα/n"),
+        ("delta_beta", "Δβ (per obs)", "Δβ/n"),
+        ("delta_posterior_mean", "ΔPosterior Mean (per obs)", "Δμ/n"),
+        ("delta_posterior_std", "ΔPosterior Std (per obs)", "Δσ/n"),
+        ("convergence_rate", "Convergence Rate (Δσ²/n)", "Rate"),
+        ("learning_rate", "Learning Rate (ΔKL/n)", "Rate")
     ]
     
     for (key, title, ylabel) in metrics

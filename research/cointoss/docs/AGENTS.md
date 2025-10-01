@@ -47,6 +47,25 @@ This document provides a comprehensive technical reference for all components, m
           │  └──────────┬───────────────────┘  │
           │             │                       │
           │  ┌──────────┴───────────────────┐  │
+          │  │   CoinTossDiagnostics        │  │
+          │  │  - Memory Addon Agent        │  │
+          │  │  - Callback Tracker Agent    │  │
+          │  │  - Benchmark Agent           │  │
+          │  └──────────┬───────────────────┘  │
+          │             │                       │
+          │  ┌──────────┴───────────────────┐  │
+          │  │  TimeseriesDiagnostics       │  │
+          │  │  - Evolution Tracker Agent   │  │
+          │  │  - Metrics Computer Agent    │  │
+          │  └──────────┬───────────────────┘  │
+          │             │                       │
+          │  ┌──────────┴───────────────────┐  │
+          │  │    GraphicalAbstract         │  │
+          │  │  - Mega Dashboard Agent      │  │
+          │  │  - 24-Panel Compositor       │  │
+          │  └──────────┬───────────────────┘  │
+          │             │                       │
+          │  ┌──────────┴───────────────────┐  │
           │  │     CoinTossUtils            │  │
           │  │  - Logging Agent             │  │
           │  │  - Export Agent              │  │
