@@ -24,6 +24,7 @@ All comprehensive documentation is in the [`docs/`](docs/) directory:
 - **[Architecture Guide](docs/AGENTS.md)** - Component architecture
 - **[Output Structure](docs/OUTPUTS.md)** - Output files reference
 - **[RxInfer Diagnostics](docs/RXINFER_DIAGNOSTICS_GUIDE.md)** - Advanced diagnostics
+- **[Change Metrics Guide](docs/CHANGE_METRICS_GUIDE.md)** - Delta/rate analysis
 - **[Test Suite](docs/TEST_SUMMARY.md)** - Testing documentation
 - **[Documentation Index](docs/DOCUMENTATION_INDEX.md)** - Complete docs index
 
@@ -41,13 +42,14 @@ All comprehensive documentation is in the [`docs/`](docs/) directory:
 - Free energy tracking
 
 ✅ **Temporal Evolution Tracking**
-- 24 metrics through time
+- 34 metrics through time (including 10 delta/change metrics)
 - Complete learning dynamics
 - Information gain analysis
+- Change rate analysis (Free Energy, Model Evidence, Parameters)
 
 ✅ **Rich Visualizations**
-- 24-panel graphical abstract
-- 15+ individual timeseries plots
+- 28-panel graphical abstract (2400×4200, including change metrics)
+- 25 individual timeseries plots
 - Comprehensive dashboards
 - Bayesian update animations
 
@@ -61,8 +63,8 @@ All comprehensive documentation is in the [`docs/`](docs/) directory:
 
 ```
 outputs/
-├── plots/           # All visualizations including graphical abstract
-├── timeseries/      # Temporal evolution plots (15+)
+├── plots/           # All visualizations including graphical abstract (28 panels)
+├── timeseries/      # Temporal evolution plots (25) + CSV (34 metrics)
 ├── diagnostics/     # RxInfer diagnostic data (8 files)
 ├── data/            # Generated/processed data
 ├── results/         # Experiment results (JSON/CSV)
@@ -102,11 +104,13 @@ julia --project=. test/runtests.jl
 
 ## 🚀 Key Outputs
 
-1. **Graphical Abstract** (`graphical_abstract.png`) - 24-panel mega-visualization
+1. **Graphical Abstract** (`graphical_abstract.png`) - 28-panel mega-visualization (2400×4200)
 2. **Timeseries Dashboard** (`comprehensive_timeseries_dashboard.png`) - 12 metrics
-3. **Individual Plots** - 15+ separate timeseries visualizations
-4. **Diagnostic Data** - Complete RxInfer traces & benchmarks
-5. **Results Bundle** - JSON/CSV exports with metadata
+3. **Individual Plots** - 25 separate timeseries visualizations
+4. **Temporal Evolution CSV** - 34 metrics × 28 time points
+5. **Change Metrics** - 10 delta/rate calculations
+6. **Diagnostic Data** - Complete RxInfer traces & benchmarks
+7. **Results Bundle** - JSON/CSV exports with metadata
 
 ## 📖 Citation
 

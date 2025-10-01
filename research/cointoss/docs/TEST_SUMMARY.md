@@ -2,7 +2,7 @@
 
 ## Overview
 
-A complete, production-ready test suite with **400+ test assertions** across **75+ test sets**, organized in **6 modular test files** covering every aspect of the Coin Toss Model research fork.
+A complete, production-ready test suite with **405+ test assertions** across **75+ test sets**, organized in **6 modular test files** covering every aspect of the Coin Toss Model research fork.
 
 ## Test Suite Statistics
 
@@ -10,13 +10,13 @@ A complete, production-ready test suite with **400+ test assertions** across **7
 
 | File | Size | Test Sets | Assertions | Coverage |
 |------|------|-----------|------------|----------|
-| `test_model.jl` | 12 KB | ~15 | ~80 | CoinTossModel module |
-| `test_inference.jl` | 16 KB | ~15 | ~90 | CoinTossInference module |
-| `test_visualization.jl` | 14 KB | ~15 | ~70 | CoinTossVisualization module |
-| `test_utils.jl` | 18 KB | ~20 | ~100 | CoinTossUtils module |
-| `test_performance.jl` | 13 KB | ~12 | ~50 | Performance benchmarks |
-| `runtests.jl` | 6.3 KB | 1 | - | Main orchestrator |
-| **Total** | **~80 KB** | **~75+** | **400+** | **Complete coverage** |
+| `test_model.jl` | 12 KB | ~15 | 77 | CoinTossModel module |
+| `test_inference.jl` | 16 KB | ~15 | 104 | CoinTossInference module |
+| `test_visualization.jl` | 14 KB | ~15 | 77 | CoinTossVisualization module |
+| `test_utils.jl` | 18 KB | ~20 | 114 | CoinTossUtils module |
+| `test_performance.jl` | 13 KB | ~12 | 25 | Performance benchmarks |
+| `runtests.jl` | 6.3 KB | 1 | 8 | Main orchestrator |
+| **Total** | **~80 KB** | **~78+** | **405+** | **Complete coverage** |
 
 ## Module Coverage Details
 

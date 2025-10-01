@@ -1,11 +1,11 @@
 distribution,timestamp,variable,mean,std
-"ReactiveMP.Marginal{Beta{Float64}, Tuple{ReactiveMP.AddonMemory{ReactiveMP.AddonMemoryProd{Any}}}}",2025-10-01T12:08:59.617,θ,0.736328125,0.019454000191684466
-"ReactiveMP.Marginal{Beta{Float64}, Tuple{ReactiveMP.AddonMemory{ReactiveMP.AddonMemoryProd{Any}}}}",2025-10-01T12:08:59.97,θ,0.736328125,0.019454000191684466
-"ReactiveMP.Marginal{Beta{Float64}, Tuple{ReactiveMP.AddonMemory{ReactiveMP.AddonMemoryProd{Any}}}}",2025-10-01T12:09:00.138,θ,0.736328125,0.019454000191684466
-"ReactiveMP.Marginal{Beta{Float64}, Tuple{ReactiveMP.AddonMemory{ReactiveMP.AddonMemoryProd{Any}}}}",2025-10-01T12:09:00.147,θ,0.736328125,0.019454000191684466
-"ReactiveMP.Marginal{Beta{Float64}, Tuple{ReactiveMP.AddonMemory{ReactiveMP.AddonMemoryProd{Any}}}}",2025-10-01T12:09:00.149,θ,0.736328125,0.019454000191684466
-"ReactiveMP.Marginal{Beta{Float64}, Tuple{ReactiveMP.AddonMemory{ReactiveMP.AddonMemoryProd{Any}}}}",2025-10-01T12:09:00.149,θ,0.736328125,0.019454000191684466
-"ReactiveMP.Marginal{Beta{Float64}, Tuple{ReactiveMP.AddonMemory{ReactiveMP.AddonMemoryProd{Any}}}}",2025-10-01T12:09:00.15,θ,0.736328125,0.019454000191684466
-"ReactiveMP.Marginal{Beta{Float64}, Tuple{ReactiveMP.AddonMemory{ReactiveMP.AddonMemoryProd{Any}}}}",2025-10-01T12:09:00.151,θ,0.736328125,0.019454000191684466
-"ReactiveMP.Marginal{Beta{Float64}, Tuple{ReactiveMP.AddonMemory{ReactiveMP.AddonMemoryProd{Any}}}}",2025-10-01T12:09:00.152,θ,0.736328125,0.019454000191684466
-"ReactiveMP.Marginal{Beta{Float64}, Tuple{ReactiveMP.AddonMemory{ReactiveMP.AddonMemoryProd{Any}}}}",2025-10-01T12:09:00.152,θ,0.736328125,0.019454000191684466
+"ReactiveMP.Marginal{Beta{Float64}, Tuple{ReactiveMP.AddonMemory{ReactiveMP.AddonMemoryProd{Any}}}}",2025-10-01T14:11:37.439,θ,0.736328125,0.019454000191684466
+"ReactiveMP.Marginal{Beta{Float64}, Tuple{ReactiveMP.AddonMemory{ReactiveMP.AddonMemoryProd{Any}}}}",2025-10-01T14:11:37.782,θ,0.736328125,0.019454000191684466
+"ReactiveMP.Marginal{Beta{Float64}, Tuple{ReactiveMP.AddonMemory{ReactiveMP.AddonMemoryProd{Any}}}}",2025-10-01T14:11:37.935,θ,0.736328125,0.019454000191684466
+"ReactiveMP.Marginal{Beta{Float64}, Tuple{ReactiveMP.AddonMemory{ReactiveMP.AddonMemoryProd{Any}}}}",2025-10-01T14:11:37.943,θ,0.736328125,0.019454000191684466
+"ReactiveMP.Marginal{Beta{Float64}, Tuple{ReactiveMP.AddonMemory{ReactiveMP.AddonMemoryProd{Any}}}}",2025-10-01T14:11:37.944,θ,0.736328125,0.019454000191684466
+"ReactiveMP.Marginal{Beta{Float64}, Tuple{ReactiveMP.AddonMemory{ReactiveMP.AddonMemoryProd{Any}}}}",2025-10-01T14:11:37.945,θ,0.736328125,0.019454000191684466
+"ReactiveMP.Marginal{Beta{Float64}, Tuple{ReactiveMP.AddonMemory{ReactiveMP.AddonMemoryProd{Any}}}}",2025-10-01T14:11:37.946,θ,0.736328125,0.019454000191684466
+"ReactiveMP.Marginal{Beta{Float64}, Tuple{ReactiveMP.AddonMemory{ReactiveMP.AddonMemoryProd{Any}}}}",2025-10-01T14:11:37.946,θ,0.736328125,0.019454000191684466
+"ReactiveMP.Marginal{Beta{Float64}, Tuple{ReactiveMP.AddonMemory{ReactiveMP.AddonMemoryProd{Any}}}}",2025-10-01T14:11:37.947,θ,0.736328125,0.019454000191684466
+"ReactiveMP.Marginal{Beta{Float64}, Tuple{ReactiveMP.AddonMemory{ReactiveMP.AddonMemoryProd{Any}}}}",2025-10-01T14:11:37.948,θ,0.736328125,0.019454000191684466

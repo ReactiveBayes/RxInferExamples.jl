@@ -2,26 +2,26 @@
 ITERATION CALLBACK TRACE
 ================================================================================
 
-Iteration 1 - start: 2025-10-01T12:08:59.367
-Iteration 1 - end: 2025-10-01T12:08:59.967
-Iteration 2 - start: 2025-10-01T12:08:59.969
-Iteration 2 - end: 2025-10-01T12:09:00.137
-Iteration 3 - start: 2025-10-01T12:09:00.138
-Iteration 3 - end: 2025-10-01T12:09:00.147
-Iteration 4 - start: 2025-10-01T12:09:00.147
-Iteration 4 - end: 2025-10-01T12:09:00.148
-Iteration 5 - start: 2025-10-01T12:09:00.148
-Iteration 5 - end: 2025-10-01T12:09:00.149
-Iteration 6 - start: 2025-10-01T12:09:00.149
-Iteration 6 - end: 2025-10-01T12:09:00.150
-Iteration 7 - start: 2025-10-01T12:09:00.150
-Iteration 7 - end: 2025-10-01T12:09:00.150
-Iteration 8 - start: 2025-10-01T12:09:00.150
-Iteration 8 - end: 2025-10-01T12:09:00.151
-Iteration 9 - start: 2025-10-01T12:09:00.151
-Iteration 9 - end: 2025-10-01T12:09:00.152
-Iteration 10 - start: 2025-10-01T12:09:00.152
-Iteration 10 - end: 2025-10-01T12:09:00.153
+Iteration 1 - start: 2025-10-01T14:11:37.223
+Iteration 1 - end: 2025-10-01T14:11:37.781
+Iteration 2 - start: 2025-10-01T14:11:37.781
+Iteration 2 - end: 2025-10-01T14:11:37.934
+Iteration 3 - start: 2025-10-01T14:11:37.934
+Iteration 3 - end: 2025-10-01T14:11:37.943
+Iteration 4 - start: 2025-10-01T14:11:37.943
+Iteration 4 - end: 2025-10-01T14:11:37.944
+Iteration 5 - start: 2025-10-01T14:11:37.944
+Iteration 5 - end: 2025-10-01T14:11:37.944
+Iteration 6 - start: 2025-10-01T14:11:37.944
+Iteration 6 - end: 2025-10-01T14:11:37.945
+Iteration 7 - start: 2025-10-01T14:11:37.945
+Iteration 7 - end: 2025-10-01T14:11:37.946
+Iteration 8 - start: 2025-10-01T14:11:37.946
+Iteration 8 - end: 2025-10-01T14:11:37.947
+Iteration 9 - start: 2025-10-01T14:11:37.947
+Iteration 9 - end: 2025-10-01T14:11:37.947
+Iteration 10 - start: 2025-10-01T14:11:37.947
+Iteration 10 - end: 2025-10-01T14:11:37.949
   Updated θ: μ=0.736328125, σ=0.019454000191684466
   Updated θ: μ=0.736328125, σ=0.019454000191684466
   Updated θ: μ=0.736328125, σ=0.019454000191684466

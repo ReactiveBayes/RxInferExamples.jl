@@ -7,7 +7,7 @@ config.diagnostics.enable_benchmark,true
 config.inference.free_energy_tracking,true
 metadata.config_file,config.toml
 config.export.export_diagnostics,true
-metadata.timestamp,2025-10-01T12:08:53.582
+metadata.timestamp,2025-10-01T14:11:32.120
 results.inference.credible_interval,"[0.6973478819707667, 0.7735597165867283]"
 config.output.results_dir,outputs/results
 results.inference.posterior_mode,0.7372549019607844

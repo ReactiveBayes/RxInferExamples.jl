@@ -62,7 +62,8 @@ This document provides a comprehensive technical reference for all components, m
           │  ┌──────────┴───────────────────┐  │
           │  │    GraphicalAbstract         │  │
           │  │  - Mega Dashboard Agent      │  │
-          │  │  - 24-Panel Compositor       │  │
+          │  │  - 28-Panel Compositor       │  │
+          │  │  - Change Metrics Integrator │  │
           │  └──────────┬───────────────────┘  │
           │             │                       │
           │  ┌──────────┴───────────────────┐  │
@@ -484,6 +485,65 @@ Save as GIF with specified FPS
 - Consistent y-axis scaling across frames
 - Progressive uncertainty reduction visualization
 - Statistics overlay per frame
+
+---
+
+### 5.4 Temporal Evolution Agent
+**Module**: `TimeseriesDiagnostics` in `src/timeseries_diagnostics.jl`  
+**Primary Function**: `compute_temporal_evolution()`
+
+**Responsibilities**:
+- Compute 34 metrics at each time point
+- Track posterior evolution through data accumulation
+- Calculate change/delta metrics (10 new metrics)
+- Generate timeseries visualizations
+- Export temporal data to CSV
+
+**Metrics Computed**:
+- Posterior statistics (mean, mode, std, variance, CI)
+- Parameter evolution (α, β growth)
+- Information theory (KL, free energy, model evidence)
+- **Change metrics** (Δ Free Energy, Δ Model Evidence, Learning Rate, Convergence Rate, etc.)
+
+**Outputs**:
+- 25 individual timeseries plots
+- Comprehensive timeseries dashboard (12 metrics)
+- Temporal evolution CSV (34 columns)
+
+**Key Function**:
+```julia
+evolution = compute_temporal_evolution(data, prior_a, prior_b)
+# Returns: Dict with 34 metric arrays
+```
+
+---
+
+### 5.5 Graphical Abstract Agent
+**Module**: `GraphicalAbstract` in `src/graphical_abstract.jl`  
+**Primary Function**: `create_graphical_abstract()`
+
+**Responsibilities**:
+- Compose 28-panel mega-visualization
+- Integrate statistical, computational, and diagnostic information
+- Include change metrics visualization (ROW 5)
+- Generate summary tables and annotations
+- Create publication-ready output
+
+**Layout**:
+- 7 rows × 4 columns = 28 panels
+- Size: 2400×4200 pixels
+- Includes: posteriors, timeseries, change metrics, diagnostics, summaries
+
+**Key Panels**:
+- ROW 1: Posterior distributions and statistics
+- ROW 2: Data analysis and validation
+- ROW 3: Temporal evolution (key metrics)
+- ROW 4: Parameter evolution
+- ROW 5: **Change metrics** (ΔFE, ΔML, Learning Rate, Convergence Rate)
+- ROW 6: Final distributions
+- ROW 7: Computational diagnostics and summary
+
+**Output**: Single comprehensive PNG file
 
 ---
 

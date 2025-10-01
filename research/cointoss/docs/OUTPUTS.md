@@ -156,8 +156,42 @@ Store all static diagnostic visualizations.
 
 ---
 
+#### `graphical_abstract.png`
+**Type**: Comprehensive mega-visualization  
+**Dimensions**: 2400×4200 pixels  
+**Layout**: 7 rows × 4 columns = 28 panels  
+**When Created**: run_with_diagnostics.jl only  
+**Content**:
+- ROW 1: Posterior distributions and statistics
+- ROW 2: Data analysis and validation
+- ROW 3: Temporal evolution (key metrics)
+- ROW 4: Parameter evolution
+- ROW 5: **Change metrics** (ΔFE, ΔML, Learning Rate, Convergence Rate)
+- ROW 6: Final distributions and comparisons
+- ROW 7: Computational diagnostics and summary
+
+**File Size**: ~1.5-2.5 MB
+
+**Purpose**: Single publication-ready visualization integrating all statistical, computational, and diagnostic information.
+
+**See**: [Change Metrics Guide](CHANGE_METRICS_GUIDE.md) for ROW 5 interpretation
+
+---
+
+#### `comprehensive_timeseries_dashboard.png`
+**Type**: 12-metric timeseries overview  
+**Dimensions**: 2400×2400 pixels  
+**Layout**: 4×3 grid  
+**When Created**: run_with_diagnostics.jl only  
+**Content**: 12 key metrics plotted through time
+
+**File Size**: ~500-800 KB
+
+---
+
 ### Total Plots Directory Size
-Typical: ~600 KB - 1.2 MB for complete experiment
+- Standard run: ~600 KB - 1.2 MB (6-9 plots)
+- Diagnostic run: ~3-5 MB (10+ plots including graphical abstract)
 
 ---
 
@@ -207,7 +241,85 @@ Store dynamic visualizations showing temporal evolution.
 
 ---
 
-## 4. Results Directory (`outputs/results/`)
+## 4. Timeseries Directory (`outputs/timeseries/`)
+
+### Purpose
+Store temporal evolution analysis and change metrics visualizations.
+
+### Files Generated
+
+#### Temporal Evolution Data
+
+##### `temporal_evolution_data.csv`
+**Format**: CSV with 34 columns  
+**When Created**: During temporal analysis (run_with_diagnostics.jl)  
+**Content**: 34 metrics tracked across 28 time points
+
+**Columns** (34 total):
+- **Basic metrics** (13): n_samples, posterior_mean, posterior_mode, posterior_std, posterior_var, ci_lower, ci_upper, ci_width, empirical_mean, n_heads, n_tails, head_rate, etc.
+- **Parameter evolution** (4): posterior_alpha, posterior_beta, alpha_growth, beta_growth
+- **Information theory** (5): kl_divergence, information_gain, free_energy, log_marginal_likelihood, expected_log_likelihood
+- **Learning dynamics** (2): posterior_prior_diff, uncertainty_reduction
+- **Change/Delta metrics** (10): delta_free_energy, delta_log_ml, delta_expected_ll, delta_kl, delta_alpha, delta_beta, delta_posterior_mean, delta_posterior_std, convergence_rate, learning_rate
+
+**File Size**: ~15-25 KB
+
+---
+
+#### Timeseries Visualizations (25 plots)
+
+**Standard Metrics** (15 plots):
+- `posterior_mean_timeseries.png`
+- `posterior_mode_timeseries.png`
+- `posterior_std_timeseries.png`
+- `posterior_var_timeseries.png`
+- `ci_width_timeseries.png`
+- `posterior_alpha_timeseries.png`
+- `posterior_beta_timeseries.png`
+- `kl_divergence_timeseries.png`
+- `free_energy_timeseries.png`
+- `log_marginal_likelihood_timeseries.png`
+- `expected_log_likelihood_timeseries.png`
+- `empirical_mean_timeseries.png`
+- `head_rate_timeseries.png`
+- `uncertainty_reduction_timeseries.png`
+- `posterior_prior_diff_timeseries.png`
+
+**Change/Delta Metrics** (10 plots):
+- `delta_free_energy_timeseries.png` - Free energy change rate
+- `delta_log_ml_timeseries.png` - Model evidence change rate
+- `delta_expected_ll_timeseries.png` - Expected LL change rate
+- `delta_kl_timeseries.png` - Information gain rate
+- `delta_alpha_timeseries.png` - α parameter change rate
+- `delta_beta_timeseries.png` - β parameter change rate
+- `delta_posterior_mean_timeseries.png` - Mean change rate
+- `delta_posterior_std_timeseries.png` - Std change rate
+- `convergence_rate_timeseries.png` - Uncertainty reduction rate
+- `learning_rate_timeseries.png` - Learning efficiency
+
+**Dimensions**: 800×600 pixels per plot  
+**File Size**: ~50-100 KB per plot
+
+---
+
+#### Comprehensive Timeseries Dashboard
+
+##### `comprehensive_timeseries_dashboard.png`
+**Type**: 12-metric dashboard  
+**Dimensions**: 2400×2400 pixels  
+**Layout**: 4×3 grid  
+**Content**: 12 key metrics plotted through time
+
+**File Size**: ~500-800 KB
+
+---
+
+### Total Timeseries Directory Size
+Typical: 2-3 MB (25 plots + dashboard + CSV)
+
+---
+
+## 5. Results Directory (`outputs/results/`)
 
 ### Purpose
 Store comprehensive experiment results in multiple formats.
@@ -375,7 +487,36 @@ Typical: ~10-25 KB per experiment
 
 ---
 
-## 5. Logs Directory (`outputs/logs/`)
+## 6. Diagnostics Directory (`outputs/diagnostics/`)
+
+### Purpose
+Store advanced RxInfer diagnostic data from Memory Addon, Callbacks, and Benchmarks.
+
+### Files Generated (8 total)
+
+**When Created**: Only with `run_with_diagnostics.jl`
+
+#### Message Tracing Files
+- `memory_trace.json` (320KB) - Complete message computation history
+- `message_trace_report.txt` (157KB) - Human-readable trace report
+
+#### Callback Files
+- `callback_trace.json` (4.3KB) - Complete event log
+- `iteration_events.csv` (646B) - Iteration timing data
+- `marginal_updates.csv` (1.6KB) - Posterior evolution
+- `iteration_trace_report.txt` (1.6KB) - Event summary
+
+#### Benchmark Files
+- `benchmark_stats.csv` (489B) - Detailed statistics
+- `benchmark_summary.json` (258B) - Summary metrics
+
+**Total Directory Size**: ~485 KB
+
+**See**: [RxInfer Diagnostics Guide](RXINFER_DIAGNOSTICS_GUIDE.md) for details
+
+---
+
+## 7. Logs Directory (`outputs/logs/`)
 
 ### Purpose
 Store execution logs and performance metrics.
@@ -499,16 +640,29 @@ max_memory = maximum(perf.memory_mb)
 
 ## Output Size Summary
 
-### Typical Experiment Output Sizes
+### Standard Experiment (run.jl)
 
 | Directory | Files | Total Size |
 |-----------|-------|------------|
 | `data/` | 1 | ~10 KB |
-| `plots/` | 6 | ~600 KB - 1.2 MB |
+| `plots/` | 9 | ~1-2 MB |
 | `animations/` | 1 | ~800 KB - 2 MB |
 | `results/` | 3 | ~10-25 KB |
-| `logs/` | 3 | ~25-50 KB |
-| **Total** | **14** | **~1.5-3.5 MB** |
+| `logs/` | 1-3 | ~25-50 KB |
+| **Total** | **15-17** | **~2-4 MB** |
+
+### Advanced Diagnostics (run_with_diagnostics.jl)
+
+| Directory | Files | Total Size |
+|-----------|-------|------------|
+| `data/` | 1 | ~10 KB |
+| `plots/` | 10 | ~3-5 MB |
+| `timeseries/` | 26 | ~2-3 MB |
+| `diagnostics/` | 8 | ~485 KB |
+| `animations/` | 1 | ~800 KB - 2 MB |
+| `results/` | 3 | ~10-25 KB |
+| `logs/` | 1-3 | ~25-50 KB |
+| **Total** | **50-52** | **~7-11 MB** |
 
 ### Scaling
 

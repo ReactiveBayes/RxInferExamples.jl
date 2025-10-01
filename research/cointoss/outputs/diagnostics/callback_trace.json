@@ -2,169 +2,169 @@
   {
     "event": "start",
     "iteration": 1,
-    "timestamp": "2025-10-01T12:08:59.367"
+    "timestamp": "2025-10-01T14:11:37.223"
   },
   {
     "event": "end",
     "iteration": 1,
-    "timestamp": "2025-10-01T12:08:59.967"
+    "timestamp": "2025-10-01T14:11:37.781"
   },
   {
     "event": "start",
     "iteration": 2,
-    "timestamp": "2025-10-01T12:08:59.969"
+    "timestamp": "2025-10-01T14:11:37.781"
   },
   {
     "event": "end",
     "iteration": 2,
-    "timestamp": "2025-10-01T12:09:00.137"
+    "timestamp": "2025-10-01T14:11:37.934"
   },
   {
     "event": "start",
     "iteration": 3,
-    "timestamp": "2025-10-01T12:09:00.138"
+    "timestamp": "2025-10-01T14:11:37.934"
   },
   {
     "event": "end",
     "iteration": 3,
-    "timestamp": "2025-10-01T12:09:00.147"
+    "timestamp": "2025-10-01T14:11:37.943"
   },
   {
     "event": "start",
     "iteration": 4,
-    "timestamp": "2025-10-01T12:09:00.147"
+    "timestamp": "2025-10-01T14:11:37.943"
   },
   {
     "event": "end",
     "iteration": 4,
-    "timestamp": "2025-10-01T12:09:00.148"
+    "timestamp": "2025-10-01T14:11:37.944"
   },
   {
     "event": "start",
     "iteration": 5,
-    "timestamp": "2025-10-01T12:09:00.148"
+    "timestamp": "2025-10-01T14:11:37.944"
   },
   {
     "event": "end",
     "iteration": 5,
-    "timestamp": "2025-10-01T12:09:00.149"
+    "timestamp": "2025-10-01T14:11:37.944"
   },
   {
     "event": "start",
     "iteration": 6,
-    "timestamp": "2025-10-01T12:09:00.149"
+    "timestamp": "2025-10-01T14:11:37.944"
   },
   {
     "event": "end",
     "iteration": 6,
-    "timestamp": "2025-10-01T12:09:00.150"
+    "timestamp": "2025-10-01T14:11:37.945"
   },
   {
     "event": "start",
     "iteration": 7,
-    "timestamp": "2025-10-01T12:09:00.150"
+    "timestamp": "2025-10-01T14:11:37.945"
   },
   {
     "event": "end",
     "iteration": 7,
-    "timestamp": "2025-10-01T12:09:00.150"
+    "timestamp": "2025-10-01T14:11:37.946"
   },
   {
     "event": "start",
     "iteration": 8,
-    "timestamp": "2025-10-01T12:09:00.150"
+    "timestamp": "2025-10-01T14:11:37.946"
   },
   {
     "event": "end",
     "iteration": 8,
-    "timestamp": "2025-10-01T12:09:00.151"
+    "timestamp": "2025-10-01T14:11:37.947"
   },
   {
     "event": "start",
     "iteration": 9,
-    "timestamp": "2025-10-01T12:09:00.151"
+    "timestamp": "2025-10-01T14:11:37.947"
   },
   {
     "event": "end",
     "iteration": 9,
-    "timestamp": "2025-10-01T12:09:00.152"
+    "timestamp": "2025-10-01T14:11:37.947"
   },
   {
     "event": "start",
     "iteration": 10,
-    "timestamp": "2025-10-01T12:09:00.152"
+    "timestamp": "2025-10-01T14:11:37.947"
   },
   {
     "event": "end",
     "iteration": 10,
-    "timestamp": "2025-10-01T12:09:00.153"
+    "timestamp": "2025-10-01T14:11:37.949"
   },
   {
     "distribution": "ReactiveMP.Marginal{Beta{Float64}, Tuple{ReactiveMP.AddonMemory{ReactiveMP.AddonMemoryProd{Any}}}}",
-    "timestamp": "2025-10-01T12:08:59.617",
+    "timestamp": "2025-10-01T14:11:37.439",
     "variable": "θ",
     "mean": 0.736328125,
     "std": 0.019454000191684466
   },
   {
     "distribution": "ReactiveMP.Marginal{Beta{Float64}, Tuple{ReactiveMP.AddonMemory{ReactiveMP.AddonMemoryProd{Any}}}}",
-    "timestamp": "2025-10-01T12:08:59.970",
+    "timestamp": "2025-10-01T14:11:37.782",
     "variable": "θ",
     "mean": 0.736328125,
     "std": 0.019454000191684466
   },
   {
     "distribution": "ReactiveMP.Marginal{Beta{Float64}, Tuple{ReactiveMP.AddonMemory{ReactiveMP.AddonMemoryProd{Any}}}}",
-    "timestamp": "2025-10-01T12:09:00.138",
+    "timestamp": "2025-10-01T14:11:37.935",
     "variable": "θ",
     "mean": 0.736328125,
     "std": 0.019454000191684466
   },
   {
     "distribution": "ReactiveMP.Marginal{Beta{Float64}, Tuple{ReactiveMP.AddonMemory{ReactiveMP.AddonMemoryProd{Any}}}}",
-    "timestamp": "2025-10-01T12:09:00.147",
+    "timestamp": "2025-10-01T14:11:37.943",
     "variable": "θ",
     "mean": 0.736328125,
     "std": 0.019454000191684466
   },
   {
     "distribution": "ReactiveMP.Marginal{Beta{Float64}, Tuple{ReactiveMP.AddonMemory{ReactiveMP.AddonMemoryProd{Any}}}}",
-    "timestamp": "2025-10-01T12:09:00.149",
+    "timestamp": "2025-10-01T14:11:37.944",
     "variable": "θ",
     "mean": 0.736328125,
     "std": 0.019454000191684466
   },
   {
     "distribution": "ReactiveMP.Marginal{Beta{Float64}, Tuple{ReactiveMP.AddonMemory{ReactiveMP.AddonMemoryProd{Any}}}}",
-    "timestamp": "2025-10-01T12:09:00.149",
+    "timestamp": "2025-10-01T14:11:37.945",
     "variable": "θ",
     "mean": 0.736328125,
     "std": 0.019454000191684466
   },
   {
     "distribution": "ReactiveMP.Marginal{Beta{Float64}, Tuple{ReactiveMP.AddonMemory{ReactiveMP.AddonMemoryProd{Any}}}}",
-    "timestamp": "2025-10-01T12:09:00.150",
+    "timestamp": "2025-10-01T14:11:37.946",
     "variable": "θ",
     "mean": 0.736328125,
     "std": 0.019454000191684466
   },
   {
     "distribution": "ReactiveMP.Marginal{Beta{Float64}, Tuple{ReactiveMP.AddonMemory{ReactiveMP.AddonMemoryProd{Any}}}}",
-    "timestamp": "2025-10-01T12:09:00.151",
+    "timestamp": "2025-10-01T14:11:37.946",
     "variable": "θ",
     "mean": 0.736328125,
     "std": 0.019454000191684466
   },
   {
     "distribution": "ReactiveMP.Marginal{Beta{Float64}, Tuple{ReactiveMP.AddonMemory{ReactiveMP.AddonMemoryProd{Any}}}}",
-    "timestamp": "2025-10-01T12:09:00.152",
+    "timestamp": "2025-10-01T14:11:37.947",
     "variable": "θ",
     "mean": 0.736328125,
     "std": 0.019454000191684466
   },
   {
     "distribution": "ReactiveMP.Marginal{Beta{Float64}, Tuple{ReactiveMP.AddonMemory{ReactiveMP.AddonMemoryProd{Any}}}}",
-    "timestamp": "2025-10-01T12:09:00.152",
+    "timestamp": "2025-10-01T14:11:37.948",
     "variable": "θ",
     "mean": 0.736328125,
     "std": 0.019454000191684466

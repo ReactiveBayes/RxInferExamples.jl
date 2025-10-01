@@ -67,17 +67,18 @@ julia --project=. test/runtests.jl
 - **Free Energy Tracking**: Convergence monitoring
 
 ### Temporal Evolution Analysis
-- **24 Metrics Tracked**:
+- **34 Metrics Tracked**:
   - Posterior evolution (mean, mode, std, CI)
   - Parameter evolution (α, β)
   - Information theory (KL divergence, free energy)
   - Model evidence (marginal likelihood)
   - Learning dynamics (mean shift, variance reduction)
+  - **Change/delta metrics** (10 additional: ΔFE, ΔML, learning rate, convergence rate)
 
 ### Comprehensive Visualizations
-- **Graphical Abstract**: 24-panel mega-visualization (2400×3600)
+- **Graphical Abstract**: 28-panel mega-visualization (2400×4200)
 - **Timeseries Dashboard**: 12 key metrics
-- **Individual Plots**: 15+ separate visualizations
+- **Individual Plots**: 25 separate visualizations
 - **Standard Dashboard**: 5-panel overview
 - **Bayesian Animation**: Sequential update GIF
 

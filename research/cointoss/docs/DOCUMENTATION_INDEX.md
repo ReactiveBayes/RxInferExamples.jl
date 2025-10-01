@@ -60,7 +60,24 @@ This research fork includes comprehensive documentation across multiple speciali
 
 ---
 
-### 4. **OUTPUTS.md** - Output Structure Reference
+### 4. **CHANGE_METRICS_GUIDE.md** - Delta/Rate Analysis Guide
+📈 **Purpose**: Complete change metrics documentation  
+🎯 **Audience**: Researchers, analysts, advanced users  
+📋 **Contents**:
+- 10 change/delta metrics explained
+- Rate of change calculations
+- Theoretical foundations
+- Practical applications
+- Interpretation guidelines
+- Sample size planning
+- Learning efficiency analysis
+- Convergence diagnostics
+
+**When to Read**: Understanding learning dynamics and convergence behavior
+
+---
+
+### 5. **OUTPUTS.md** - Output Structure Reference
 📊 **Purpose**: Unified output documentation  
 🎯 **Audience**: Data analysts, users processing results  
 📋 **Contents**:
@@ -80,7 +97,7 @@ This research fork includes comprehensive documentation across multiple speciali
 
 ## Configuration Documentation
 
-### 5. **config.toml** - Configuration Reference
+### 6. **config.toml** - Configuration Reference
 ⚙️ **Purpose**: Parameter specification  
 🎯 **Audience**: All users customizing experiments  
 📋 **Contents**:
@@ -99,7 +116,7 @@ This research fork includes comprehensive documentation across multiple speciali
 
 ---
 
-### 6. **config.jl** - Configuration Module
+### 7. **config.jl** - Configuration Module
 🔧 **Purpose**: Configuration management code  
 🎯 **Audience**: Developers  
 📋 **Contents**:
@@ -113,7 +130,7 @@ This research fork includes comprehensive documentation across multiple speciali
 
 ---
 
-### 7. **meta.jl** - Project Metadata
+### 8. **meta.jl** - Project Metadata
 📝 **Purpose**: Project description and tags  
 🎯 **Audience**: Repository managers  
 📋 **Contents**:
@@ -129,7 +146,7 @@ This research fork includes comprehensive documentation across multiple speciali
 
 ## Implementation Documentation
 
-### 8. **Project.toml** - Dependencies
+### 9. **Project.toml** - Dependencies
 📦 **Purpose**: Package management  
 🎯 **Audience**: Installation, deployment  
 📋 **Contents**:
@@ -142,7 +159,7 @@ This research fork includes comprehensive documentation across multiple speciali
 
 ---
 
-### 9. **src/model.jl** - Model Implementation
+### 10. **src/model.jl** - Model Implementation
 🎲 **Purpose**: Probabilistic model code  
 🎯 **Audience**: Developers, model designers  
 📋 **Contents**:
@@ -158,7 +175,7 @@ This research fork includes comprehensive documentation across multiple speciali
 
 ---
 
-### 10. **src/inference.jl** - Inference Implementation
+### 11. **src/inference.jl** - Inference Implementation
 🧮 **Purpose**: Bayesian inference execution  
 🎯 **Audience**: Developers, inference specialists  
 📋 **Contents**:
@@ -174,7 +191,7 @@ This research fork includes comprehensive documentation across multiple speciali
 
 ---
 
-### 11. **src/visualization.jl** - Visualization Implementation
+### 12. **src/visualization.jl** - Visualization Implementation
 🎨 **Purpose**: Plotting and animation code  
 🎯 **Audience**: Developers, visualization designers  
 📋 **Contents**:
@@ -189,7 +206,7 @@ This research fork includes comprehensive documentation across multiple speciali
 
 ---
 
-### 12. **src/utils.jl** - Utilities Implementation
+### 13. **src/utils.jl** - Utilities Implementation
 🛠️ **Purpose**: Support functions  
 🎯 **Audience**: Developers  
 📋 **Contents**:
@@ -207,7 +224,7 @@ This research fork includes comprehensive documentation across multiple speciali
 
 ## Execution Documentation
 
-### 13. **run.jl** - Main Runner
+### 14. **run.jl** - Main Runner
 🚀 **Purpose**: Primary execution script  
 🎯 **Audience**: All users, developers  
 📋 **Contents**:
@@ -222,7 +239,7 @@ This research fork includes comprehensive documentation across multiple speciali
 
 ---
 
-### 14. **simple_demo.jl** - Quick Demo
+### 15. **simple_demo.jl** - Quick Demo
 ⚡ **Purpose**: Minimal working example  
 🎯 **Audience**: New users, testing  
 📋 **Contents**:
@@ -238,7 +255,7 @@ This research fork includes comprehensive documentation across multiple speciali
 
 ## Testing Documentation
 
-### 15. **test/runtests.jl** - Test Suite
+### 16. **test/runtests.jl** - Test Suite
 ✅ **Purpose**: Comprehensive testing  
 🎯 **Audience**: Developers, contributors  
 📋 **Contents**:
@@ -385,25 +402,32 @@ results = JSON.parsefile("outputs/results/.../results.json")
 
 | File | Type | Lines | Purpose | Audience |
 |------|------|-------|---------|----------|
-| README.md | Doc | 483 | Main guide | All |
-| QUICK_START.md | Doc | 205 | Fast setup | New users |
-| AGENTS.md | Doc | ~800 | Architecture | Developers |
-| OUTPUTS.md | Doc | ~600 | Output specs | Analysts |
-| config.toml | Config | 84 | Parameters | All |
-| config.jl | Code | 174 | Config module | Developers |
-| meta.jl | Meta | 19 | Metadata | Managers |
-| Project.toml | Config | 21 | Dependencies | Admins |
-| run.jl | Code | 474 | Main runner | All |
-| simple_demo.jl | Code | 73 | Quick demo | New users |
-| src/model.jl | Code | 173 | Model | Developers |
-| src/inference.jl | Code | 324 | Inference | Developers |
-| src/visualization.jl | Code | 470 | Viz | Developers |
-| src/utils.jl | Code | 349 | Utils | Developers |
-| test/runtests.jl | Test | 333 | Tests | Developers |
+| README.md | Doc | ~416 | Main guide | All |
+| QUICK_START.md | Doc | ~205 | Fast setup | New users |
+| AGENTS.md | Doc | ~1100 | Architecture | Developers |
+| CHANGE_METRICS_GUIDE.md | Doc | ~546 | Delta analysis | Researchers |
+| OUTPUTS.md | Doc | ~730 | Output specs | Analysts |
+| DOCUMENTATION_INDEX.md | Doc | ~530 | Navigation | All |
+| config.toml | Config | ~100 | Parameters | All |
+| config.jl | Code | ~174 | Config module | Developers |
+| meta.jl | Meta | ~19 | Metadata | Managers |
+| Project.toml | Config | ~21 | Dependencies | Admins |
+| run.jl | Code | ~474 | Main runner | All |
+| run_with_diagnostics.jl | Code | ~350 | Advanced diagnostics | Researchers |
+| simple_demo.jl | Code | ~73 | Quick demo | New users |
+| src/model.jl | Code | ~173 | Model | Developers |
+| src/inference.jl | Code | ~324 | Inference | Developers |
+| src/visualization.jl | Code | ~470 | Viz | Developers |
+| src/timeseries_diagnostics.jl | Code | ~400 | Temporal evolution | Researchers |
+| src/diagnostics.jl | Code | ~450 | RxInfer diagnostics | Researchers |
+| src/graphical_abstract.jl | Code | ~370 | Mega visualization | Developers |
+| src/utils.jl | Code | ~349 | Utils | Developers |
+| test/runtests.jl | Test | ~333 | Tests | Developers |
 
-**Total Documentation**: ~2500 lines  
-**Total Code**: ~1900 lines  
-**Documentation:Code Ratio**: 1.3:1 (comprehensive)
+**Total Documentation**: ~3527 lines  
+**Total Code**: ~4130 lines  
+**Total Files Documented**: 21
+**Documentation:Code Ratio**: 0.85:1 (well-documented)
 
 ---
 
