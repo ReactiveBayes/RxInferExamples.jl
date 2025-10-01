@@ -1,0 +1,124 @@
+{
+  "config": {
+    "export": {
+      "comprehensive": true,
+      "export_posterior": true,
+      "export_diagnostics": true,
+      "export_predictions": true,
+      "formats": [
+        "csv",
+        "json"
+      ]
+    },
+    "output": {
+      "results_dir": "outputs/results",
+      "logs_dir": "outputs/logs",
+      "animations_dir": "outputs/animations",
+      "plots_dir": "outputs/plots",
+      "output_dir": "outputs",
+      "data_dir": "outputs/data"
+    },
+    "model": {
+      "prior_b": 8.0,
+      "prior_a": 4.0
+    },
+    "analysis": {
+      "credible_interval": 0.95,
+      "posterior_predictive": true,
+      "compute_bayes_factor": false,
+      "diagnostic_plots": true,
+      "n_posterior_samples": 10000
+    },
+    "data": {
+      "generate_new": true,
+      "n_samples": 500,
+      "seed": 42,
+      "theta_real": 0.75,
+      "data_file": "outputs/data/coin_toss_data.csv"
+    },
+    "visualization": {
+      "theme": "default",
+      "show_plots": false,
+      "save_plots": true,
+      "dpi": 100,
+      "animation_fps": 10,
+      "figure_size": [
+        800,
+        600
+      ],
+      "plot_resolution": 1000
+    },
+    "benchmark": {
+      "iterations": 100,
+      "enabled": false,
+      "track_memory": true
+    },
+    "animation": {
+      "sample_increments": [
+        10,
+        25,
+        50,
+        100,
+        200,
+        500
+      ],
+      "enabled": true,
+      "fps": 10
+    },
+    "logging": {
+      "structured": true,
+      "log_level": "info",
+      "performance": true,
+      "log_to_file": true,
+      "verbose": true,
+      "structured_log_file": "outputs/logs/cointoss_structured.jsonl",
+      "log_file": "outputs/logs/cointoss.log",
+      "performance_log_file": "outputs/logs/cointoss_performance.csv"
+    },
+    "inference": {
+      "showprogress": true,
+      "iterations": 10,
+      "convergence_check": true,
+      "free_energy_tracking": true,
+      "convergence_tolerance": 1.0e-6
+    },
+    "diagnostics": {
+      "save_diagnostics": true,
+      "enable_callbacks": true,
+      "enable_benchmark": true,
+      "verbose": true,
+      "enable_pipeline_logger": false,
+      "enable_memory_addon": true,
+      "n_benchmark_runs": 3
+    }
+  },
+  "metadata": {
+    "julia_version": "1.11.6",
+    "diagnostics_enabled": true,
+    "config_file": "config.toml",
+    "timestamp": "2025-10-01T11:53:58.371"
+  },
+  "results": {
+    "inference": {
+      "rxinfer_beta": 135.0,
+      "analytical_alpha": 377.0,
+      "credible_interval": [
+        0.6973478819707667,
+        0.7735597165867283
+      ],
+      "posterior_mean": 0.736328125,
+      "posterior_mode": 0.7372549019607844,
+      "posterior_std": 0.019454000191684466,
+      "log_marginal_likelihood": -289.54827381908,
+      "analytical_beta": 135.0,
+      "rxinfer_alpha": 377.0
+    },
+    "data": {
+      "n_observations": 500,
+      "true_theta": 0.75,
+      "n_heads": 373.0,
+      "n_tails": 127.0,
+      "empirical_rate": 0.746
+    }
+  }
+}

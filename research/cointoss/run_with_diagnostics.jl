@@ -39,6 +39,7 @@ include("src/visualization.jl")
 include("src/utils.jl")
 include("src/diagnostics.jl")
 include("src/timeseries_diagnostics.jl")
+include("src/graphical_abstract.jl")
 
 using .CoinTossModel
 using .CoinTossInference
@@ -46,6 +47,7 @@ using .CoinTossVisualization
 using .CoinTossUtils
 using .CoinTossDiagnostics
 using .TimeseriesDiagnostics
+using .GraphicalAbstract
 
 # Global variable to hold config (set before model definition)
 GLOBAL_CONFIG = Dict{String, Any}()
@@ -409,6 +411,22 @@ function run_experiment_with_diagnostics(config::Dict{String, Any}; skip_animati
     evolution_csv_path = joinpath(timeseries_dir, "temporal_evolution_data.csv")
     CSV.write(evolution_csv_path, evolution_df)
     @info "Exported temporal evolution data to CSV" filepath=evolution_csv_path
+    
+    # Create Comprehensive Graphical Abstract (mega visualization)
+    @info "Creating comprehensive graphical abstract (24-panel mega visualization)..."
+    graphical_abstract = create_graphical_abstract(
+        coin_data.observations,
+        config["model"]["prior_a"],
+        config["model"]["prior_b"],
+        result,
+        diagnostics,
+        evolution_data;
+        true_theta = coin_data.theta_real,
+        benchmark_stats = diagnostics.benchmark_stats,
+        theme = theme
+    )
+    save_plot(graphical_abstract, joinpath(plots_dir, "graphical_abstract.png"))
+    @info "Saved comprehensive graphical abstract (2400×3600 px, 24 panels)"
     
     CoinTossUtils.elapsed_time(viz_timer)
     
