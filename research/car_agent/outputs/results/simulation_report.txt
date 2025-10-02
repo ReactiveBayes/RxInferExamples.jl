@@ -1,0 +1,29 @@
+============================================================
+MOUNTAIN CAR SIMULATION - FINAL REPORT
+============================================================
+
+Timestamp: 2025-10-02 11:28:34
+
+SIMULATION RESULTS
+------------------
+Steps Completed:     22
+Goal Reached:        YES ✓
+Final Position:      0.4643
+Goal Position:       0.5
+Distance to Goal:    0.0357
+
+PERFORMANCE METRICS
+-------------------
+Total Distance:      1.7278
+Max Velocity:        0.1981
+Total Control:       39.4031
+Avg Control:         1.7911
+
+AGENT CONFIGURATION
+-------------------
+Planning Horizon:    20
+State Dimension:     2
+Action Dimension:    1
+Total Steps:         22
+
+============================================================

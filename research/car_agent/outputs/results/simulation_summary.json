@@ -1,0 +1,38 @@
+{
+  "performance": {
+    "total_control_effort": 39.403136813239385,
+    "avg_control_effort": 1.791051673329063,
+    "total_distance_traveled": 1.7278258411267695,
+    "max_velocity": 0.1980523162721402
+  },
+  "simulation": {
+    "num_steps": 22,
+    "final_position": 0.4643058595345529,
+    "goal_distance": 0.03569414046544711,
+    "goal_position": 0.5,
+    "timestamp": "2025-10-02 11:28:34",
+    "goal_reached": true
+  },
+  "diagnostics": {
+    "performance": {
+      "operations": {},
+      "enabled": true
+    },
+    "memory": {
+      "measurements": 2,
+      "peak_memory_mb": 4363.390838623047,
+      "memory_growth": 0.0,
+      "min_memory_mb": 4363.390838623047,
+      "avg_memory_mb": 4363.390838623047,
+      "enabled": true,
+      "total_gc_time": 0.817012667,
+      "max_memory_mb": 4363.390838623047
+    }
+  },
+  "agent": {
+    "planning_horizon": 20,
+    "state_dim": 2,
+    "action_dim": 1,
+    "total_steps": 22
+  }
+}
