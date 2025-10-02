@@ -1,0 +1,14 @@
+{
+  "diagnostics_enabled": true,
+  "total_time": 13.064910173416138,
+  "goal_state": [
+    0.5,
+    0.0
+  ],
+  "avg_time_per_step": 0.05225964069366455,
+  "steps_taken": 250,
+  "timestamp": "2025-10-02T14:17:05.227",
+  "state_dim": 2,
+  "action_dim": 1,
+  "observation_dim": 2
+}

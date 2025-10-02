@@ -1,0 +1,38 @@
+# Agent-Environment Framework Configuration
+
+[agent]
+type = "MountainCarAgent"  # Options: "MountainCarAgent", "SimpleNavAgent"
+horizon = 20
+initial_state_precision = 1.0e6
+
+[environment]
+type = "MountainCarEnv"  # Options: "MountainCarEnv", "SimpleNavEnv"
+
+# MountainCarEnv parameters
+initial_position = -0.5
+initial_velocity = 0.0
+engine_force_limit = 0.04
+friction_coefficient = 0.1
+observation_precision = 1.0e4
+observation_noise_std = 0.01
+
+# Goal for agents
+goal_position = 0.5
+goal_velocity = 0.0
+
+[simulation]
+max_steps = 250
+enable_diagnostics = true
+enable_logging = true
+verbose = true
+log_interval = 25
+
+[outputs]
+base_dir = "outputs"
+logs_dir = "outputs/logs"
+data_dir = "outputs/data"
+plots_dir = "outputs/plots"
+animations_dir = "outputs/animations"
+diagnostics_dir = "outputs/diagnostics"
+results_dir = "outputs/results"
+

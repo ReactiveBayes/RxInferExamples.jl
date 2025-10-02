@@ -1,0 +1,11 @@
+metric,value
+steps_taken,250.0
+total_time,13.064910173416138
+avg_time_per_step,0.05225964069366455
+final_position,0.6608411398847073
+final_velocity,0.0050889805236232905
+goal_position,0.5
+goal_velocity,0.0
+distance_to_goal_position,0.16084113988470727
+distance_to_goal_velocity,0.0050889805236232905
+goal_reached,0.0

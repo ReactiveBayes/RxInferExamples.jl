@@ -1,0 +1,38 @@
+{
+  "performance": {
+    "operations": {
+      "inference": {
+        "total_time": 12.688044548034668,
+        "avg_time": 0.050752178192138675,
+        "std_time": 0.7400056960360059,
+        "count": 250,
+        "min_time": 0.0029380321502685547,
+        "max_time": 11.704427003860474
+      }
+    },
+    "total_operations": 250,
+    "enabled": true
+  },
+  "predictions": {
+    "measurements": 0,
+    "enabled": true
+  },
+  "memory": {
+    "measurements": 25,
+    "peak_memory_mb": 6127.900444030762,
+    "memory_growth": 834.5457000732422,
+    "min_memory_mb": 5293.3547439575195,
+    "avg_memory_mb": 5682.519855957031,
+    "enabled": true,
+    "total_gc_time": 1.080576831,
+    "max_memory_mb": 6127.900444030762
+  },
+  "free_energy": {
+    "measurements": 0,
+    "enabled": true
+  },
+  "beliefs": {
+    "measurements": 0,
+    "enabled": true
+  }
+}
