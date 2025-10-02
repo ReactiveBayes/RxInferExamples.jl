@@ -1,0 +1,3519 @@
+================================================================================
+MESSAGE TRACE REPORT
+================================================================================
+
+Variable: θ
+Posterior Type: ReactiveMP.Marginal{Beta{Float64}, Tuple{ReactiveMP.AddonMemory{ReactiveMP.AddonMemoryProd{Any}}}}
+Posterior Parameters: (377.0, 135.0)
+
+Full Message Trace:
+--------------------------------------------------------------------------------
+Product memory:
+ Message mapping memory:
+    At the node: Beta
+    Towards interface: Val{:out}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:a, :b)}() edges: (BayesBase.PointMass{Float64}(4.0), BayesBase.PointMass{Float64}(8.0))
+    With the result: Beta{Float64}(α=4.0, β=8.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(0.0),)
+    With the result: Beta{Float64}(α=1.0, β=2.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+ Message mapping memory:
+    At the node: Bernoulli
+    Towards interface: Val{:p}()
+    With local constraint: ReactiveMP.Marginalisation()
+    With addons: (AddonMemory(nothing),)
+    With input marginals on Val{(:out,)}() edges: (BayesBase.PointMass{Float64}(1.0),)
+    With the result: Beta{Float64}(α=2.0, β=1.0)
+

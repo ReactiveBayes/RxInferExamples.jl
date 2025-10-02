@@ -1,0 +1,22 @@
+{
+  "inference": {
+    "iterations": 10,
+    "execution_time": 0.003513813018798828,
+    "posterior_mean": 0.3101851851851852,
+    "converged": true,
+    "posterior_std": 0.031401248623272
+  },
+  "data": {
+    "n_samples": 200,
+    "n_heads": 59.0,
+    "n_tails": 141.0,
+    "theta_real": 0.3,
+    "empirical_rate": 0.295
+  },
+  "params": {
+    "prior_b": 8.0,
+    "n_samples": 200,
+    "prior_a": 8.0,
+    "theta_real": 0.3
+  }
+}
