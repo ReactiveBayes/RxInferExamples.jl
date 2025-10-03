@@ -222,7 +222,7 @@ end
 end
 
 # Function to process a single notebook
-@everywhere function process_notebook(notebook_path, build_dir, cache_dir, rxinfer_path=nothing)
+@everywhere function process_notebook(notebook_path, build_dir, cache_dir, rxinfer_path, remote_channel)
     # Get the notebook's directory and activate its environment
     notebook_dir = dirname(notebook_path)
     notebook_name = basename(notebook_path)
@@ -263,24 +263,41 @@ end
     mod = Module()
     @info "Created an anonymous module for execution of $notebook_dir"
 
+    # We use the `remote_channel` as an interprocess lock
+    # to prevent multiple processes from activating the project and compiling different 
+    # notebooks at the same time as it may corrupt the state of the different environments
+    # normally should not happen, but it helps on CI
+    # to do the "lock", we take a value from the channel and put it back
+    # the take! will block if the channel is empty and the channel must be of size 1
+    function eval_in_notebook_module(expr)
+        value = take!(remote_channel)
+        @info "Notebook module $notebook_name is executing Pkg operations and consuming the Pkg lock"
+        try
+            Core.eval(mod, expr)
+        finally
+            put!(remote_channel, value)
+            @info "Notebook module $notebook_name has released the Pkg lock"
+        end
+    end
+
     # Activate the project in the current directory
-    Core.eval(mod, quote
+    eval_in_notebook_module(quote
         using Pkg
         Pkg.activate(".")
     end)
 
     if !isnothing(rxinfer_path)
-        Core.eval(mod, quote
+        eval_in_notebook_module(quote
             @info "Adding development version of RxInfer to notebook environment"
             Pkg.develop(path=$rxinfer_path)
         end)
     end
 
-    Core.eval(mod, quote
-        Pkg.instantiate()
+    eval_in_notebook_module(quote
+        Pkg.update()
     end)
 
-    Core.eval(mod, quote
+    eval_in_notebook_module(quote
         envio = open(joinpath($output_dir, "env.log"), "w")
         Pkg.status(io=envio)
         flush(envio)
@@ -423,12 +440,23 @@ if !isnothing(FILTER)
     """
 end
 
+remote_channel = Distributed.RemoteChannel(() -> Channel{Int}(1))
+
+# We use the remote channel to prevent multiple processes from activating the project 
+#and compiling different notebooks at the same time as it may corrupt 
+# the state of the different environments
+# the actual value is not important, we just need to put something in the channel
+# the worker will take the value and put it back, so the channel will always be full
+# and other workers will wait until the busy worker will put the value back
+put!(remote_channel, 1)
+
 # Process notebooks in parallel
 results = pmap(notebook -> (notebook, process_notebook(
         joinpath(@__DIR__, notebook),
         BUILD_DIR,
         CACHE_DIR,
-        RXINFER_PATH
+        RXINFER_PATH,
+        remote_channel
     )), notebook_files)
 
 is_processing_failed(output_path) = isnothing(output_path) || has_error_blocks(output_path)
