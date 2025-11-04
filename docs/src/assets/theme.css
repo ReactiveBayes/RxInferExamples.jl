@@ -1,9 +1,9 @@
 html body #documenter .docs-main {
-    margin-top: 4rem; 
+  margin-top: 6rem;
 }
 
 html body #documenter .docs-sidebar.visible {
-    margin-top: 0px !important;
+  margin-top: 0px !important;
 }
 
 html div.light-biglogo {
@@ -23,5 +23,5 @@ html.theme--documenter-dark div.dark-biglogo {
 }
 
 #documenter .docs-main article.content img {
-    width: 100%;
+  width: 100%;
 }
