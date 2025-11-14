@@ -32,6 +32,7 @@ jobs:
         version:
           - '1.10'
           - '1.11'
+          - '1.12'
     permissions:
       contents: write
     steps:
@@ -51,7 +52,7 @@ jobs:
           make examples STRICT_ENV=true
       # Upload examples as artifacts
       - uses: actions/upload-artifact@v4
-        if: matrix.version == '1.11'  # Only upload from the latest Julia version
+        if: matrix.version == '1.12'  # Only upload from the latest Julia version
         with:
           name: examples-output-${{ github.run_id }}
           path: |
