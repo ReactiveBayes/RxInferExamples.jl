@@ -31,6 +31,10 @@ examples-setup:
 docs: docs-setup
 	julia --project=docs docs/make.jl
 
+## Serve documentation locally for preview in browser
+docs-serve: docs-setup 
+	julia --project=docs/ -e 'ENV["DOCS_DRAFT"]="true"; using LiveServer; LiveServer.servedocs(launch_browser=true, port=5678)'
+
 # Preview documentation in browser
 preview:
 	open docs/build/index.html
