@@ -1,6 +1,6 @@
 
 // We add a simple `onload` hook to inject the custom header for our `HTML`-generated pages
-window.onload = function () {
+window.onload = function() {
     // <header class="navigation">
     const header = document.createElement('header')
     header.classList.add("navigation")
@@ -21,7 +21,7 @@ window.onload = function () {
                     smalllink.appendChild((() => {
                         const a = document.createElement('a')
                         a.classList.add("nav-link")
-                        a.href = 'http://www.rxinfer.ml'
+                        a.href = 'http://www.rxinfer.com'
                         a.innerHTML = 'RxInfer.jl'
                         a.title = 'RxInfer.jl'
                         return a
@@ -30,14 +30,15 @@ window.onload = function () {
                 })())
 
                 const items = [
-                    { title: "Home", link: "http://www.rxinfer.ml", icon: ["fas", "fa-diagram-project"] },
-                    { title: "Get Started", link: "https://docs.rxinfer.ml/stable/manuals/getting-started/", icon: ["fas", "fa-person-chalkboard"] },
-                    { title: "Documentation", link: "https://docs.rxinfer.ml/", icon: ["fas", "fa-book"] },
-                    { title: "Examples", link: "https://examples.rxinfer.ml", icon: ["fas", "fa-laptop-code"] },
-                    { title: "Papers", link: "https://biaslab.github.io/publication/", icon: ["far", "fa-book-open"] },
-                    { title: "Team", link: "https://github.com/orgs/ReactiveBayes/people", icon: ["fas", "fa-people-group"] },
-                    { title: "Discussions", link: "https://github.com/orgs/ReactiveBayes/discussions", icon: ["far", "fa-comment"] },
-                    { title: "GitHub", link: "https://github.com/ReactiveBayes/RxInfer.jl", icon: ["fab", "fa-github"] },
+                    { title: "Home", link: "http://www.rxinfer.com", icon: [ "fas", "fa-diagram-project" ] },
+                    { title: "Get Started", link: "https://docs.rxinfer.com/stable/manuals/getting-started/", icon: [ "fas", "fa-person-chalkboard" ] },
+                    { title: "Documentation", link: "https://docs.rxinfer.com/stable/", icon: [ "fas", "fa-book" ] },
+                    { title: "Examples", link: "https://examples.rxinfer.com/", icon: [ "fas", "fa-laptop-code" ] },
+                    { title: "Papers", link: "https://biaslab.github.io/publication/", icon: [ "far", "fa-book-open" ] },
+                    { title: "Team", link: "https://github.com/orgs/ReactiveBayes/people", icon: [ "fas", "fa-people-group" ] },
+                    { title: "Discussions", link: "https://github.com/orgs/ReactiveBayes/discussions", icon: [ "far", "fa-comment" ] },
+                    // { title: "Contact", link: "http://www.rxinfer.com/contact/" }, the redirect is broken for now
+                    { title: "GitHub", link: "https://github.com/reactivebayes/RxInfer.jl", icon: [ "fab", "fa-github" ] },
                 ]
 
                 items.forEach((item) => {
@@ -51,7 +52,7 @@ window.onload = function () {
                                 a.appendChild((() => {
                                     const i = document.createElement("i")
                                     i.classList.add(...(item.icon))
-                                    return i
+                                    return i    
                                 })())
                             }
 
@@ -76,21 +77,75 @@ window.onload = function () {
         })())
         return container
     })())
-
+    
     const documenterTarget = document.querySelector('#documenter');
-
     documenterTarget.parentNode.insertBefore(header, documenterTarget);
-
-    // Edit broken links in the examples, see issue #70
-    const editOnGithubLinkTarget = document.querySelector('.docs-edit-link');
-
-    if (editOnGithubLinkTarget) {
-        const link = editOnGithubLinkTarget.href;
-        if (link.includes('docs/src/examples')) {
-            const fixedLink = link.replace('docs/src/', '').replace('.md', '.ipynb');
-            editOnGithubLinkTarget.href = fixedLink;
-            console.log('Fixed link for the example: ', fixedLink)
+    
+    // === Site context banner for Docs ===
+    // Add banner directly to navbar after header is created
+    const navbar = header.querySelector('nav.navbar');
+    if (navbar) {
+        const banner = document.createElement('div');
+        banner.id = 'site-banner';
+        banner.innerHTML = `
+            📗 You are viewing the <strong>RxInfer.jl Examples</strong>.
+            Looking for the API documentation? <a href="https://docs.rxinfer.com/">Go to documentation website →</a>
+            <button id="site-banner-close" aria-label="Close banner" title="Close banner">×</button>
+        `;
+        
+        navbar.appendChild(banner);
+        
+        // Add close button handler - just hides for current page
+        const closeButton = banner.querySelector('#site-banner-close');
+        if (closeButton) {
+            closeButton.addEventListener('click', function() {
+                banner.classList.add('banner-closed');
+            });
         }
     }
+    
+    // === Search results banner ===
+    // Add banner inside modal-card-head at the bottom when search results appear
+    function addSearchBanner() {
+        const searchModal = document.getElementById('search-modal');
+        if (!searchModal) {
+            return;
+        }
+        
+        const modalCardHead = searchModal.querySelector('.modal-card-head');
+        if (!modalCardHead) {
+            return;
+        }
+        
+        // Check if banner already exists
+        if (modalCardHead.querySelector('#search-results-banner')) {
+            return;
+        }
+        
+        // Create a wrapper div for the banner
+        const bannerWrapper = document.createElement('div');
+        bannerWrapper.style.cssText = 'width: 100%; position: absolute; bottom: 0; display: flex; justify-content: center; align-items: center;';
+        bannerWrapper.id = 'search-results-banner';
+        bannerWrapper.className = 'is-size-7';
+        bannerWrapper.innerHTML = `
+            <strong>Note:</strong>&nbsp;Search results do not include the&nbsp;<a href="https://docs.rxinfer.com/">documentation website</a>
+        `;
+        
+        // Insert after all existing children in modal-card-head
+        modalCardHead.appendChild(bannerWrapper);
+    }
+    
+    // Watch for search modal and results to appear (search results are dynamically loaded)
+    const observer = new MutationObserver(function(mutations) {
+        addSearchBanner();
+    });
+    
+    // Start observing the document body for changes
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+    
+    // Also try immediately in case search modal already exists
+    setTimeout(addSearchBanner, 100);
 }
-
