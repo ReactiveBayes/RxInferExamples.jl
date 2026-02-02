@@ -323,6 +323,9 @@ end
             end
         end
 
+        # Force GC before running the example to avoid OOM
+        GC.gc(true)
+
         weave(build_input_path;
             out_path=output_path,
             doctype="github",
@@ -331,6 +334,9 @@ end
             cache_path=notebook_cache_dir,
             mod=mod
         )
+
+        # Force GC after running the example to avoid OOM
+        GC.gc(true)
 
         # Fix any absolute image paths in the generated markdown
         fix_image_paths(output_path)
