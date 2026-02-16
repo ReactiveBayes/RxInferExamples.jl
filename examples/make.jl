@@ -101,6 +101,9 @@ CACHE_DIR: $CACHE_DIR
 
 # Function to copy files with exceptions
 @everywhere function copy_files(src_dir, dst_dir; exclude=[])
+    # Empty directory at the given path 
+    rm(dst_dir, force=true, recursive=true)
+
     # Create destination directory if it doesn't exist
     mkpath(dst_dir)
 
@@ -267,45 +270,30 @@ end
     cd(output_dir)
     @info "Working directory changed to: $(pwd())"
 
-    # Create a new module for this notebook
-    mod = Module()
-    @info "Created an anonymous module for execution of $notebook_dir"
-
-    # We use the `remote_channel` as an interprocess lock
-    # to prevent multiple processes from activating the project and compiling different 
-    # notebooks at the same time as it may corrupt the state of the different environments
-    # normally should not happen, but it helps on CI
-    # to do the "lock", we take a value from the channel and put it back
-    # the take! will block if the channel is empty and the channel must be of size 1
-    function eval_in_notebook_module(expr)
-        value = take!(remote_channel)
-        @info "Notebook module $notebook_name is executing Pkg operations and consuming the Pkg lock"
-        try
-            Core.eval(mod, expr)
-        finally
-            put!(remote_channel, value)
-            @info "Notebook module $notebook_name has released the Pkg lock"
-        end
+    execute_in_julia_subprocess = (command) -> begin
+        run(`julia --startup-file=no --compile=min --project=$output_dir -e $command`)
     end
 
     # Activate the project in the current directory
-    eval_in_notebook_module(quote
+    execute_in_julia_subprocess(quote
         using Pkg
         Pkg.activate(".")
     end)
 
     if !isnothing(rxinfer_path)
-        eval_in_notebook_module(quote
+        execute_in_julia_subprocess(quote
             @info "Adding development version of RxInfer to notebook environment"
             Pkg.develop(path=$rxinfer_path)
         end)
     end
 
-    eval_in_notebook_module(quote
+    execute_in_julia_subprocess(quote
+        using Pkg
         Pkg.update()
     end)
 
-    eval_in_notebook_module(quote
+    execute_in_julia_subprocess(quote
+        using Pkg
         envio = open(joinpath($output_dir, "env.log"), "w")
         Pkg.status(io=envio)
         flush(envio)
@@ -331,14 +319,19 @@ end
             end
         end
 
-        weave(build_input_path;
-            out_path=output_path,
-            doctype="github",
-            fig_path=output_dir,
-            cache=ifelse($USE_CACHE, :all, :refresh),
-            cache_path=notebook_cache_dir,
-            mod=mod
-        )
+
+        cache_strategy = ifelse($USE_CACHE, :all, :refresh)
+        execute_in_julia_subprocess(quote
+            using Serialization
+            using Weave
+            weave($build_input_path;
+                out_path=$output_path,
+                doctype="github",
+                fig_path=$output_dir,
+                cache=$(QuoteNode(cache_strategy)),
+                cache_path=$notebook_cache_dir,
+            )
+        end)
 
         # Fix any absolute image paths in the generated markdown
         fix_image_paths(output_path)
