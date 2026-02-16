@@ -59,6 +59,10 @@ else
     nothing
 end
 
+## https://discourse.julialang.org/t/generation-of-documentation-fails-qt-qpa-xcb-could-not-connect-to-display/60988
+## https://gr-framework.org/workstations.html#no-output
+ENV["GKSwstype"] = "100"
+
 # Activate and setup environment
 Pkg.activate(@__DIR__)
 
@@ -74,6 +78,10 @@ end
 # Load Weave and Pkg on all workers
 @everywhere using Weave
 @everywhere using Pkg
+
+## https://discourse.julialang.org/t/generation-of-documentation-fails-qt-qpa-xcb-could-not-connect-to-display/60988
+## https://gr-framework.org/workstations.html#no-output
+@everywhere ENV["GKSwstype"] = "100"
 
 # Define build directories
 const SOURCE_DIR = abspath(joinpath(@__DIR__, "..", "docs", "src"))
