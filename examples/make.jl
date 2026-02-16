@@ -271,7 +271,7 @@ end
     @info "Working directory changed to: $(pwd())"
 
     execute_in_julia_subprocess = (command) -> begin
-        run(`julia --startup-file=no --compile=min --project=$output_dir -e $command`)
+        run(`julia --startup-file=no --threads=2,1 --gcthreads=2,1 --project=$output_dir -e $command`)
     end
 
     # Activate the project in the current directory
