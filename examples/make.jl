@@ -19,6 +19,9 @@ function parse_commandline()
         "--strict-env"
         action = :store_true
         help = "Fail if required environment variables are missing (use for CI)"
+        "--workers"
+        help = "Amount of workers to use to build the examples (defaults to Sys.CPU_THREADS)"
+        default = Sys.CPU_THREADS
         "filter"
         help = "Filter pattern for notebook names"
         required = false
@@ -28,6 +31,7 @@ function parse_commandline()
 end
 
 const ARGS = parse_commandline()
+const NWORKERS = get(ARGS, "workers", Sys.CPU_THREADS)
 const FILTER = get(ARGS, "filter", nothing)
 const USE_DEV = ARGS["use-dev"]
 const USE_CACHE = ARGS["use-cache"]
@@ -72,7 +76,7 @@ using Base.Filesystem
 
 # Add worker processes if none exist
 if nworkers() == 1
-    addprocs(max(1, Sys.CPU_THREADS ÷ 2))
+    addprocs(max(1, NWORKERS))
 end
 
 # Load Weave and Pkg on all workers
@@ -232,9 +236,33 @@ end
     return new_content
 end
 
+@everywhere struct ProcessedNotebook
+    notebook::String
+    notebook_path::String
+    output_path::String
+    result::Symbol
+    time_to_instantiate::Float64
+    time_to_build::Float64
+    total_time::Float64
+end
+
+is_processing_failed(processed::ProcessedNotebook) =
+    processed.result === :failed || isnothing(processed.output_path) || has_error_blocks(processed.output_path)
+is_processing_skipped(processed::ProcessedNotebook) =
+    processed.result === :skipped
+is_processing_successful(processed::ProcessedNotebook) =
+    !is_processing_skipped(processed) && !is_processing_failed(processed)
+
+@everywhere ns_to_seconds(nanoseconds) = nanoseconds / 10^9
+
+@everywhere function execute_in_julia_subprocess(project, command)
+    run(`julia --startup-file=no --threads=2,1 --gcthreads=2,1 --project=$project -e $command`)
+end
+
 # Function to process a single notebook
-@everywhere function process_notebook(notebook_path, build_dir, cache_dir, rxinfer_path, remote_channel)
+@everywhere function process_notebook(notebook, build_dir, cache_dir, rxinfer_path)::ProcessedNotebook
     # Get the notebook's directory and activate its environment
+    notebook_path = joinpath(@__DIR__, notebook)
     notebook_dir = dirname(notebook_path)
     notebook_name = basename(notebook_path)
 
@@ -266,39 +294,12 @@ end
     notebook_cache_dir = joinpath(cache_dir, dirname(rel_path))
     mkpath(notebook_cache_dir)
 
+    # The cache strategy is inlined inside of `@everywhere`
+    cache_strategy = ifelse($USE_CACHE, :all, :refresh)
+
     # Change to output directory before activating
     cd(output_dir)
     @info "Working directory changed to: $(pwd())"
-
-    execute_in_julia_subprocess = (command) -> begin
-        run(`julia --startup-file=no --threads=2,1 --gcthreads=2,1 --project=$output_dir -e $command`)
-    end
-
-    # Activate the project in the current directory
-    execute_in_julia_subprocess(quote
-        using Pkg
-        Pkg.activate(".")
-    end)
-
-    if !isnothing(rxinfer_path)
-        execute_in_julia_subprocess(quote
-            @info "Adding development version of RxInfer to notebook environment"
-            Pkg.develop(path=$rxinfer_path)
-        end)
-    end
-
-    execute_in_julia_subprocess(quote
-        using Pkg
-        Pkg.update()
-    end)
-
-    execute_in_julia_subprocess(quote
-        using Pkg
-        envio = open(joinpath($output_dir, "env.log"), "w")
-        Pkg.status(io=envio)
-        flush(envio)
-        close(envio)
-    end)
 
     @info "Processing $rel_path..."
     try
@@ -315,13 +316,38 @@ end
                 error("Missing required environment variables: $(join(missing_vars, ", ")). Set STRICT_ENV=false to skip examples with missing env vars.")
             else
                 @warn "Skipping $(basename(notebook_path)) - missing required environment variables: $(join(missing_vars, ", "))"
-                return nothing
+                return ProcessedNotebook(notebook, notebook_path, output_path, :skipped, 0.0, 0.0, 0.0)
             end
         end
 
+        # Activate the project in the current directory
+        time_to_instantiate_begin = time_ns()
+        execute_in_julia_subprocess(output_dir, quote
+            using Pkg
+            Pkg.activate(".")
+            Pkg.add(["Serialization", "Weave"])
+            Pkg.update()
+        end)
 
-        cache_strategy = ifelse($USE_CACHE, :all, :refresh)
-        execute_in_julia_subprocess(quote
+        if !isnothing(rxinfer_path)
+            execute_in_julia_subprocess(output_dir, quote
+                @info "Adding development version of RxInfer to notebook environment"
+                Pkg.develop(path=$rxinfer_path)
+                Pkg.update()
+            end)
+        end
+
+        execute_in_julia_subprocess(output_dir, quote
+            using Pkg
+            envio = open(joinpath($output_dir, "env.log"), "w")
+            Pkg.status(io=envio)
+            flush(envio)
+            close(envio)
+        end)
+        time_to_instantiate_end = time_ns()
+
+        time_to_build_begin = time_ns()
+        execute_in_julia_subprocess(output_dir, quote
             using Serialization
             using Weave
             weave($build_input_path;
@@ -332,6 +358,7 @@ end
                 cache_path=$notebook_cache_dir,
             )
         end)
+        time_to_build_end = time_ns()
 
         # Fix any absolute image paths in the generated markdown
         fix_image_paths(output_path)
@@ -397,10 +424,20 @@ end
             """)
 
         @info "Successfully processed $rel_path"
-        return output_path
+        time_to_instantiate = ns_to_seconds(time_to_instantiate_end - time_to_instantiate_begin)
+        time_to_build = ns_to_seconds(time_to_build_end - time_to_build_begin)
+        return ProcessedNotebook(
+            notebook,
+            notebook_path,
+            output_path,
+            :success,
+            time_to_instantiate,
+            time_to_build,
+            time_to_instantiate + time_to_build
+        )
     catch e
         @error "Failed to process $rel_path" exception = (e, catch_backtrace())
-        return nothing
+        return ProcessedNotebook(notebook, notebook_path, output_path, :failed, 0.0, 0.0, 0.0)
     end
 end
 
@@ -441,48 +478,53 @@ if !isnothing(FILTER)
     """
 end
 
-remote_channel = Distributed.RemoteChannel(() -> Channel{Int}(1))
-
-# We use the remote channel to prevent multiple processes from activating the project 
-#and compiling different notebooks at the same time as it may corrupt 
-# the state of the different environments
-# the actual value is not important, we just need to put something in the channel
-# the worker will take the value and put it back, so the channel will always be full
-# and other workers will wait until the busy worker will put the value back
-put!(remote_channel, 1)
-
 # Process notebooks in parallel
-results = pmap(notebook -> (notebook, process_notebook(
-        joinpath(@__DIR__, notebook),
+results = pmap(
+    notebook -> process_notebook(
+        notebook,
         BUILD_DIR,
         CACHE_DIR,
-        RXINFER_PATH,
-        remote_channel
-    )), notebook_files)
-
-is_processing_failed(output_path) = isnothing(output_path) || has_error_blocks(output_path)
-
-# Check for errors in output files
-final_results = [(notebook, output_path, is_processing_failed(output_path)) for (notebook, output_path) in results]
+        RXINFER_PATH
+    ),
+    notebook_files
+)
 
 # Split results into successful, failed, and skipped
-successful_notebooks = [notebook for (notebook, output_path, failed) in final_results if !failed && !isnothing(output_path)]
-failed_notebooks = [notebook for (notebook, output_path, failed) in final_results if failed && !isnothing(output_path)]
-skipped_notebooks = [notebook for (notebook, output_path, _) in final_results if isnothing(output_path)]
+successful_results = filter(is_processing_successful, results)
+failed_results = filter(is_processing_failed, results)
+skipped_results = filter(is_processing_skipped, results)
+
+function prettify_notebook_string(result::ProcessedNotebook)
+    return string(
+        result.notebook,
+        " (total: ", round(result.total_time, digits=2), " seconds, ",
+        "instantiate: ", round(result.time_to_instantiate, digits=2), " seconds, ",
+        "build: ", round(result.time_to_build, digits=2), " seconds)"
+    )
+end
 
 @info """
 Processing Report:
-Total notebooks: $(length(final_results))
-Successful: $(length(successful_notebooks))
-Failed: $(length(failed_notebooks))
-Skipped: $(length(skipped_notebooks))
+Total notebooks: $(length(results))
+Successful: $(length(successful_results))
+Failed: $(length(failed_results))
+Skipped: $(length(skipped_results))
 
-$(isempty(successful_notebooks) ? "" : "Successfully processed notebooks:\n" * join(["  • " * notebook for notebook in successful_notebooks], "\n"))
-$(isempty(failed_notebooks) ? "" : "Failed notebooks:\n" * join(["  • " * notebook for notebook in failed_notebooks], "\n"))
-$(isempty(skipped_notebooks) ? "" : "Skipped notebooks:\n" * join(["  • " * notebook for notebook in skipped_notebooks], "\n"))
+$(isempty(successful_results) ? "" : "Successfully processed notebooks:\n" * join(["  • " * prettify_notebook_string(result) for result in successful_results], "\n"))
+$(isempty(failed_results) ? "" : "Failed notebooks:\n" * join(["  • " * result.notebook for result in failed_results], "\n"))
+$(isempty(skipped_results) ? "" : "Skipped notebooks:\n" * join(["  • " * result.notebook for result in skipped_results], "\n"))
 """
 
-if !isempty(failed_notebooks)
+longest_to_execute_show = 10
+longest_to_execute_notebooks = Iterators.take(sort(successful_results, by = (r) -> -r.total_time), longest_to_execute_show)
+
+@info """
+Performance Report:
+Top ($longest_to_execute_show) longest to execute notebooks:
+$(join(["  • " * prettify_notebook_string(result) for result in longest_to_execute_notebooks], "\n"))
+"""
+
+if !isempty(failed_results)
     @warn """
     Some notebooks failed to process. This might be due to:
     1. Actual errors in the notebooks
@@ -493,19 +535,19 @@ if !isempty(failed_notebooks)
     """
 end
 
-if !isempty(skipped_notebooks)
+if !isempty(skipped_results)
     @warn """
     Some notebooks were skipped due to missing environment variables.
     To run these examples, set the required environment variables:
-    $(join(unique([join(meta.env_required, ", ") for meta in [include(joinpath(@__DIR__, dirname(notebook), "meta.jl")) for notebook in skipped_notebooks] if hasfield(typeof(meta), :env_required) && !isnothing(meta.env_required)]), "\n"))
+    $(join(unique([join(meta.env_required, ", ") for meta in [include(joinpath(@__DIR__, dirname(result.notebook), "meta.jl")) for result in skipped_results] if hasfield(typeof(meta), :env_required) && !isnothing(meta.env_required)]), "\n"))
 
     Or use --strict-env flag to fail instead of skip.
     """
 end
 
-if isempty(failed_notebooks)
+if isempty(failed_results)
     @info """
-    Notebooks processed successfully! 🎉 $(isempty(skipped_notebooks) ? "" : "(Some notebooks were skipped due to missing environment variables. See above for details.)")
+    Notebooks processed successfully! 🎉 $(isempty(skipped_results) ? "" : "(Some notebooks were skipped due to missing environment variables. See above for details.)")
 
     Next steps:
     Run `make docs` to generate the documentation website.
@@ -538,4 +580,4 @@ Generated source directory structure:
 print_dir_structure(SOURCE_DIR)
 
 # Exit with error if any notebooks failed
-exit(isempty(failed_notebooks) ? 0 : 1)
+exit(isempty(failed_results) ? 0 : 1)
