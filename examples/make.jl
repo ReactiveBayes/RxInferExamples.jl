@@ -247,7 +247,8 @@ end
 end
 
 is_processing_failed(processed::ProcessedNotebook) =
-    processed.result === :failed || isnothing(processed.output_path) || has_error_blocks(processed.output_path)
+    processed.result !== :skipped &&
+    (processed.result === :failed || isnothing(processed.output_path) || has_error_blocks(processed.output_path))
 is_processing_skipped(processed::ProcessedNotebook) =
     processed.result === :skipped
 is_processing_successful(processed::ProcessedNotebook) =
@@ -516,7 +517,7 @@ $(isempty(skipped_results) ? "" : "Skipped notebooks:\n" * join(["  • " * resu
 """
 
 longest_to_execute_show = 10
-longest_to_execute_notebooks = Iterators.take(sort(successful_results, by = (r) -> -r.total_time), longest_to_execute_show)
+longest_to_execute_notebooks = Iterators.take(sort(successful_results, by=(r) -> -r.total_time), longest_to_execute_show)
 
 @info """
 Performance Report:
