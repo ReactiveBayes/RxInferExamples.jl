@@ -18,20 +18,12 @@ Navigate to the [Examples](https://examples.rxinfer.com) page to check the pre-r
    git clone https://github.com/ReactiveBayes/RxInferExamples.jl.git
    ```
 
-2. Install required global dependencies:
-   ```bash
-   julia -e 'using Pkg; Pkg.add("Weave")'
-   ```
-   
-   > **Note**
-   > Building examples requires the Weave.jl package to be installed globally.
-
-3. Build the examples:
+2. Build the examples:
    ```bash
    make examples
    ```
 
-4. Build and preview the documentation:
+3. Build and preview the documentation:
    ```bash
    make docs
    make preview
