@@ -32,7 +32,8 @@ Navigate to the [Examples](https://examples.rxinfer.com) page to check the pre-r
 > [!NOTE]  
 > If you make changes to an example and still see old errors after rebuilding, try clearing the cache first with the `make clean` command.
 
-All the examples are Jupyter notebooks, which also can be run with [Jupyter](https://jupyter.org/).
+All the examples are Jupyter notebooks, which also can be run with [Jupyter](https://jupyter.org/). Note, however, that the automatic build process 
+merges the dependencies in all the examples into one single temporary environment. This means that dependencies can be resolved differently when running examples individually in comparison with the automatic build process.
 
 ## Interactive examples
 
