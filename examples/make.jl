@@ -260,7 +260,7 @@ is_processing_successful(processed::ProcessedNotebook) =
 end
 
 # Function to process a single notebook
-@everywhere function process_notebook(envdir, notebook, build_dir, cache_dir, rxinfer_path)::ProcessedNotebook
+@everywhere function process_notebook(envdir, notebook, build_dir, cache_dir)::ProcessedNotebook
     # Get the notebook's directory and activate its environment
     notebook_path = joinpath(@__DIR__, notebook)
     notebook_dir = dirname(notebook_path)
@@ -322,28 +322,16 @@ end
 
         # Activate the project in the current directory
         time_to_instantiate_begin = time_ns()
-        #=execute_in_julia_subprocess(output_dir, quote=#
-        #=    using Pkg=#
-        #=    Pkg.activate(".")=#
-        #=    Pkg.add(["Serialization", "Weave"])=#
-        #=    Pkg.update()=#
-        #=end)=#
-        #==#
-        #=if !isnothing(rxinfer_path)=#
-        #=    execute_in_julia_subprocess(output_dir, quote=#
-        #=        @info "Adding development version of RxInfer to notebook environment"=#
-        #=        Pkg.develop(path=$rxinfer_path)=#
-        #=        Pkg.update()=#
-        #=    end)=#
-        #=end=#
-        #==#
-        #=execute_in_julia_subprocess(output_dir, quote=#
-        #=    using Pkg=#
-        #=    envio = open(joinpath($output_dir, "env.log"), "w")=#
-        #=    Pkg.status(io=envio)=#
-        #=    flush(envio)=#
-        #=    close(envio)=#
-        #=end)=#
+        notebook_dependencies = Pkg.activate(notebook_dir) do 
+            collect(keys(Pkg.project().dependencies))
+        end
+        execute_in_julia_subprocess(envdir, quote
+            using Pkg
+            envio = open(joinpath($output_dir, "env.log"), "w")
+            Pkg.status($notebook_dependencies, io=envio)
+            flush(envio)
+            close(envio)
+        end)
         time_to_instantiate_end = time_ns()
 
         time_to_build_begin = time_ns()
@@ -498,12 +486,19 @@ for notebook_directory in notebook_directories
     )
 end
 
-@info temporary_environment_dependencies
-
 Pkg.activate(temporary_environment) do
     Pkg.add(collect(keys(temporary_environment_dependencies)))
     Pkg.update()
     Pkg.precompile()
+end
+
+if !isnothing(RXINFER_PATH)
+    Pkg.activate(temporary_environment) do
+        @info "Adding development version of RxInfer to the temporary environment"
+        Pkg.develop(path = RXINFER_PATH)
+        Pkg.update()
+        Pkg.precompile()
+    end
 end
 
 # Process notebooks in parallel
@@ -512,11 +507,15 @@ results = pmap(
         temporary_environment,
         notebook,
         BUILD_DIR,
-        CACHE_DIR,
-        RXINFER_PATH
+        CACHE_DIR
     ),
     notebook_files
 )
+
+Pkg.activate(temporary_environment) do 
+    Pkg.rm(collect(keys(temporary_environment_dependencies)))
+    Pkg.gc()
+end
 
 # Split results into successful, failed, and skipped
 successful_results = filter(is_processing_successful, results)
