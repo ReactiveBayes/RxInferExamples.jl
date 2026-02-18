@@ -69,7 +69,6 @@ ENV["GKSwstype"] = "100"
 
 # Activate and setup environment
 Pkg.activate(@__DIR__)
-
 Pkg.instantiate()
 
 using Base.Filesystem
@@ -256,12 +255,12 @@ is_processing_successful(processed::ProcessedNotebook) =
 
 @everywhere ns_to_seconds(nanoseconds) = nanoseconds / 10^9
 
-@everywhere function execute_in_julia_subprocess(project, command)
-    run(`julia --startup-file=no --threads=2,1 --gcthreads=2,1 --project=$project -e $command`)
+@everywhere function execute_in_julia_subprocess(envdir, command)
+    run(`julia --startup-file=no --threads=2,1 --gcthreads=2,1 --project=$envdir -e $command`)
 end
 
 # Function to process a single notebook
-@everywhere function process_notebook(notebook, build_dir, cache_dir, rxinfer_path)::ProcessedNotebook
+@everywhere function process_notebook(envdir, notebook, build_dir, cache_dir, rxinfer_path)::ProcessedNotebook
     # Get the notebook's directory and activate its environment
     notebook_path = joinpath(@__DIR__, notebook)
     notebook_dir = dirname(notebook_path)
@@ -323,32 +322,32 @@ end
 
         # Activate the project in the current directory
         time_to_instantiate_begin = time_ns()
-        execute_in_julia_subprocess(output_dir, quote
-            using Pkg
-            Pkg.activate(".")
-            Pkg.add(["Serialization", "Weave"])
-            Pkg.update()
-        end)
-
-        if !isnothing(rxinfer_path)
-            execute_in_julia_subprocess(output_dir, quote
-                @info "Adding development version of RxInfer to notebook environment"
-                Pkg.develop(path=$rxinfer_path)
-                Pkg.update()
-            end)
-        end
-
-        execute_in_julia_subprocess(output_dir, quote
-            using Pkg
-            envio = open(joinpath($output_dir, "env.log"), "w")
-            Pkg.status(io=envio)
-            flush(envio)
-            close(envio)
-        end)
+        #=execute_in_julia_subprocess(output_dir, quote=#
+        #=    using Pkg=#
+        #=    Pkg.activate(".")=#
+        #=    Pkg.add(["Serialization", "Weave"])=#
+        #=    Pkg.update()=#
+        #=end)=#
+        #==#
+        #=if !isnothing(rxinfer_path)=#
+        #=    execute_in_julia_subprocess(output_dir, quote=#
+        #=        @info "Adding development version of RxInfer to notebook environment"=#
+        #=        Pkg.develop(path=$rxinfer_path)=#
+        #=        Pkg.update()=#
+        #=    end)=#
+        #=end=#
+        #==#
+        #=execute_in_julia_subprocess(output_dir, quote=#
+        #=    using Pkg=#
+        #=    envio = open(joinpath($output_dir, "env.log"), "w")=#
+        #=    Pkg.status(io=envio)=#
+        #=    flush(envio)=#
+        #=    close(envio)=#
+        #=end)=#
         time_to_instantiate_end = time_ns()
 
         time_to_build_begin = time_ns()
-        execute_in_julia_subprocess(output_dir, quote
+        execute_in_julia_subprocess(envdir, quote
             using Serialization
             using Weave
             weave($build_input_path;
@@ -479,9 +478,38 @@ if !isnothing(FILTER)
     """
 end
 
+notebook_directories = map(f -> joinpath(@__DIR__, dirname(f)), notebook_files)
+temporary_environment = mktempdir(cleanup=true)
+# We start with the current environment
+temporary_environment_dependencies = Pkg.project().dependencies
+
+@info """
+Creating temporary environment to run examples from at $temporary_environment.
+The environment will be deleted automatically after the process exits.
+"""
+for notebook_directory in notebook_directories
+    new_dependencies = Pkg.activate(notebook_directory) do
+        Pkg.project().dependencies
+    end
+    @info notebook_directory, new_dependencies
+    merge!(
+        temporary_environment_dependencies,
+        new_dependencies
+    )
+end
+
+@info temporary_environment_dependencies
+
+Pkg.activate(temporary_environment) do
+    Pkg.add(collect(keys(temporary_environment_dependencies)))
+    Pkg.update()
+    Pkg.precompile()
+end
+
 # Process notebooks in parallel
 results = pmap(
     notebook -> process_notebook(
+        temporary_environment,
         notebook,
         BUILD_DIR,
         CACHE_DIR,
