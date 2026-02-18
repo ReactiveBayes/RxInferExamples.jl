@@ -511,11 +511,6 @@ results = pmap(
     notebook_files
 )
 
-Pkg.activate(temporary_environment) do 
-    Pkg.rm(collect(keys(temporary_environment_dependencies)))
-    Pkg.gc()
-end
-
 # Split results into successful, failed, and skipped
 successful_results = filter(is_processing_successful, results)
 failed_results = filter(is_processing_failed, results)
