@@ -479,7 +479,6 @@ for notebook_directory in notebook_directories
     new_dependencies = Pkg.activate(notebook_directory) do
         Pkg.project().dependencies
     end
-    @info notebook_directory, new_dependencies
     merge!(
         temporary_environment_dependencies,
         new_dependencies
