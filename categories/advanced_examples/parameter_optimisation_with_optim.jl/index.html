@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Parameter Optimisation With Optim.Jl · RxInfer.jl Examples</title><meta name="title" content="Parameter Optimisation With Optim.Jl · RxInfer.jl Examples"/><meta property="og:title" content="Parameter Optimisation With Optim.Jl · RxInfer.jl Examples"/><meta property="twitter:title" content="Parameter Optimisation With Optim.Jl · RxInfer.jl Examples"/><meta name="description" content="Parameter Optimisation with Optim.jl with RxInfer.jl\nThis example shows how to use RxInfer.jl together with Optim.jl to perform parameter optimisation in probabilistic models.\n\nCheck more examples and tutorials at https://examples.rxinfer.com\n"/><meta property="og:description" content="Parameter Optimisation with Optim.jl with RxInfer.jl\nThis example shows how to use RxInfer.jl together with Optim.jl to perform parameter optimisation in probabilistic models.\n\nCheck more examples and tutorials at https://examples.rxinfer.com\n"/><meta property="twitter:description" content="Parameter Optimisation with Optim.jl with RxInfer.jl\nThis example shows how to use RxInfer.jl together with Optim.jl to perform parameter optimisation in probabilistic models.\n\nCheck more examples and tutorials at https://examples.rxinfer.com\n"/><meta property="og:url" content="https://examples.rxinfer.com/categories/advanced_examples/parameter_optimisation_with_optim.jl/"/><meta property="twitter:url" content="https://examples.rxinfer.com/categories/advanced_examples/parameter_optimisation_with_optim.jl/"/><link rel="canonical" href="https://examples.rxinfer.com/categories/advanced_examples/parameter_optimisation_with_optim.jl/"/><script async src="https://www.googletagmanager.com/gtag/js?id=G-GMFX620VEP"></script><script>  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-GMFX620VEP', {'page_path': location.pathname + location.search + location.hash});
+</script><script data-outdated-warner src="../../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../../assets/documenter.js"></script><script src="../../../search_index.js"></script><script src="../../../siteinfo.js"></script><script src="../../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../../assets/themeswap.js"></script><link href="../../../assets/theme.css" rel="stylesheet" type="text/css"/><link href="../../../assets/header.css" rel="stylesheet" type="text/css"/><script src="../../../assets/header.js"></script><script src="../../../assets/chat.js"></script><link href="../../../assets/favicon.ico" rel="icon" type="image/x-icon"/>
+    <meta property="og:title" content="Parameter Optimisation with Optim.jl - RxInfer Examples">
+    <meta name="description" content="This example shows how to use RxInfer.jl together with Optim.jl to perform parameter optimisation in probabilistic models.
+">
+    <meta property="og:description" content="This example shows how to use RxInfer.jl together with Optim.jl to perform parameter optimisation in probabilistic models.
+">
+    <meta name="keywords" content="rxinfer, julia, bayesian inference, examples, probabilistic programming, message passing, probabilistic numerics, variational inference, belief propagation, advanced examples, optimization, parameter estimation, integration, Optim.jl">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://examples.rxinfer.com/sitemap.xml">
+    </head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../../"><img class="docs-light-only" src="../../../assets/logo.svg" alt="RxInfer.jl Examples logo"/><img class="docs-dark-only" src="../../../assets/logo-dark.svg" alt="RxInfer.jl Examples logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../../">RxInfer.jl Examples</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../../">Home</a></li><li><a class="tocitem" href="../../../how_to_contribute/">How to contribute</a></li><li><a class="tocitem" href="../../../autogenerated/list_of_examples/">List of Examples</a></li><li><span class="tocitem">Basic Examples</span><ul><li><a class="tocitem" href="../../basic_examples/bayesian_binomial_regression/">Bayesian Binomial Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_linear_regression/">Bayesian Linear Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_multinomial_regression/">Bayesian Multinomial Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_networks/">Bayesian Networks</a></li><li><a class="tocitem" href="../../basic_examples/coin_toss_model/">Coin Toss Model</a></li><li><a class="tocitem" href="../../basic_examples/contextual_bandits/">Contextual Bandits</a></li><li><a class="tocitem" href="../../basic_examples/feature_functions_in_bayesian_regression/">Feature Functions In Bayesian Regression</a></li><li><a class="tocitem" href="../../basic_examples/forgetting_factors_for_online_inference/">Forgetting Factors For Online Inference</a></li><li><a class="tocitem" href="../../basic_examples/hidden_markov_model/">Hidden Markov Model</a></li><li><a class="tocitem" href="../../basic_examples/incomplete_data/">Incomplete Data</a></li><li><a class="tocitem" href="../../basic_examples/kalman_filtering_and_smoothing/">Kalman Filtering And Smoothing</a></li><li><a class="tocitem" href="../../basic_examples/pomdp_control/">Pomdp Control</a></li><li><a class="tocitem" href="../../basic_examples/predicting_bike_rental_demand/">Predicting Bike Rental Demand</a></li></ul></li><li><span class="tocitem">Advanced Examples</span><ul><li><a class="tocitem" href="../active_inference_mountain_car/">Active Inference Mountain Car</a></li><li><a class="tocitem" href="../advanced_tutorial/">Advanced Tutorial</a></li><li><a class="tocitem" href="../assessing_people_skills/">Assessing People Skills</a></li><li><a class="tocitem" href="../bayesian_structured_time_series/">Bayesian Structured Time Series</a></li><li><a class="tocitem" href="../chance_constraints/">Chance Constraints</a></li><li><a class="tocitem" href="../conjugate-computational_variational_message_passing/">Conjugate-Computational Variational Message Passing</a></li><li><a class="tocitem" href="../drone_dynamics/">Drone Dynamics</a></li><li><a class="tocitem" href="../gp_regression_by_ssm/">Gp Regression By Ssm</a></li><li><a class="tocitem" href="../infinite_data_stream/">Infinite Data Stream</a></li><li><a class="tocitem" href="../integrating_neural_networks_with_flux.jl/">Integrating Neural Networks With Flux.Jl</a></li><li><a class="tocitem" href="../learning_dynamics_with_vaes/">Learning Dynamics With Vaes</a></li><li><a class="tocitem" href="../multi-agent_trajectory_planning/">Multi-Agent Trajectory Planning</a></li><li><a class="tocitem" href="../nonlinear_sensor_fusion/">Nonlinear Sensor Fusion</a></li><li class="is-active"><a class="tocitem" href>Parameter Optimisation With Optim.Jl</a><ul class="internal"><li><a class="tocitem" href="#Univariate-State-Space-Model"><span>Univariate State Space Model</span></a></li><li><a class="tocitem" href="#Multivariate-State-Space-Model"><span>Multivariate State Space Model</span></a></li></ul></li><li><a class="tocitem" href="../robotic_arm/">Robotic Arm</a></li></ul></li><li><span class="tocitem">Problem Specific</span><ul><li><a class="tocitem" href="../../problem_specific/autoregressive_models/">Autoregressive Models</a></li><li><a class="tocitem" href="../../problem_specific/gamma_mixture/">Gamma Mixture</a></li><li><a class="tocitem" href="../../problem_specific/gaussian_mixture/">Gaussian Mixture</a></li><li><a class="tocitem" href="../../problem_specific/hierarchical_gaussian_filter/">Hierarchical Gaussian Filter</a></li><li><a class="tocitem" href="../../problem_specific/invertible_neural_network_tutorial/">Invertible Neural Network Tutorial</a></li><li><a class="tocitem" href="../../problem_specific/ising_model/">Ising Model</a></li><li><a class="tocitem" href="../../problem_specific/litter_model/">Litter Model</a></li><li><a class="tocitem" href="../../problem_specific/ode_parameter_estimation/">Ode Parameter Estimation</a></li><li><a class="tocitem" href="../../problem_specific/probit_model/">Probit Model</a></li><li><a class="tocitem" href="../../problem_specific/rts_vs_bifm_smoothing/">Rts Vs Bifm Smoothing</a></li><li><a class="tocitem" href="../../problem_specific/simple_nonlinear_node/">Simple Nonlinear Node</a></li><li><a class="tocitem" href="../../problem_specific/structural_dynamics_with_augmented_kalman_filter/">Structural Dynamics With Augmented Kalman Filter</a></li><li><a class="tocitem" href="../../problem_specific/universal_mixtures/">Universal Mixtures</a></li></ul></li><li><span class="tocitem">Experimental Examples</span><ul><li><a class="tocitem" href="../../experimental_examples/bayesian_trust_learning/">Bayesian Trust Learning</a></li><li><a class="tocitem" href="../../experimental_examples/large_language_models/">Large Language Models</a></li><li><a class="tocitem" href="../../experimental_examples/latent_vector_autoregressive_model/">Latent Vector Autoregressive Model</a></li><li><a class="tocitem" href="../../experimental_examples/recurrent_switching_linear_dynamical_system/">Recurrent Switching Linear Dynamical System</a></li></ul></li><li><a class="tocitem" href="../../../how_build_works/">How we build the examples</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Advanced Examples</a></li><li class="is-active"><a href>Parameter Optimisation With Optim.Jl</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Parameter Optimisation With Optim.Jl</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl" title="View source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><div class="admonition is-info" id="Contributing-baba9dc142ba7ccb"><header class="admonition-header">Contributing<a class="admonition-anchor" href="#Contributing-baba9dc142ba7ccb" title="Permalink"></a></header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><h1 id="Parameter-Optimisation-with-Optim.jl"><a class="docs-heading-anchor" href="#Parameter-Optimisation-with-Optim.jl">Parameter Optimisation with Optim.jl</a><a id="Parameter-Optimisation-with-Optim.jl-1"></a><a class="docs-heading-anchor-permalink" href="#Parameter-Optimisation-with-Optim.jl" title="Permalink"></a></h1><p>Welcome to this hands-on tutorial where we&#39;ll explore how to optimize parameters in state space models using Julia&#39;s powerful optimization ecosystem. We&#39;ll combine the probabilistic inference capabilities of <a href="https://github.com/biaslab/RxInfer.jl">RxInfer.jl</a> with optimization tools from <a href="https://github.com/JuliaNLSolvers/Optim.jl/">Optim.jl</a>.</p><p>What you&#39;ll learn:</p><ul><li>How to set up parameter optimization in state space models</li><li>Practical techniques for both univariate and multivariate cases</li><li>Integration with Julia&#39;s optimization packages</li><li>Real-world applications and best practices</li></ul><pre><code class="language-julia hljs">using RxInfer, StableRNGs, LinearAlgebra, Plots</code></pre><h2 id="Univariate-State-Space-Model"><a class="docs-heading-anchor" href="#Univariate-State-Space-Model">Univariate State Space Model</a><a id="Univariate-State-Space-Model-1"></a><a class="docs-heading-anchor-permalink" href="#Univariate-State-Space-Model" title="Permalink"></a></h2><p>Let&#39;s start with a simple but powerful example: a linear state space model with Gaussian observations. This model is foundational in many real-world applications, from tracking to financial forecasting.</p><p>Our model is defined as:</p><p class="math-container">\[\begin{aligned}
+    {x}_t &amp;= {x}_{t-1} + c \\
+    {y}_t &amp;\sim \mathcal{N}\left({x}_{t}, v \right) 
+\end{aligned}\]</p><p>with prior <span>${x}_0 \sim \mathcal{N}({m_{{x}_0}}, {v_{{x}_0}})$</span></p><p><strong>Key Challenge</strong>: We&#39;ll optimize two parameters:</p><ul><li>The drift parameter <span>$c$</span></li><li>The initial state mean <span>${m_{{x}_0}}$</span></li></ul><p><strong>Assumptions</strong>: We assume the following:</p><ul><li>The drift parameter <span>$c$</span> stays constant</li><li>The observation noice <span>$v$</span> is known</li></ul><p>Let&#39;s create a state space model using RxInfer&#39;s <code>@model</code> macro. Our model has:</p><ul><li>A prior state <code>x1</code> following a Normal distribution</li><li>A state transition equation: <code>x[i] := x[i - 1] + c</code> where <code>c</code> is our drift parameter</li><li>Observations <code>y[i]</code> following a Normal distribution with mean <code>x[i]</code> and variance <code>v</code></li></ul><p>The model iteratively updates the state and generates observations, maintaining the Markovian property where each state depends only on the previous state.</p><pre><code class="language-julia hljs">@model function univariate_state_space_model(y, x_prior, c, v)
+    
+    x0 ~ Normal(mean = mean(x_prior), variance = var(x_prior))
+    x_prev = x0
+
+    for i in eachindex(y)
+        x[i] := x_prev + c
+        y[i] ~ Normal(mean = x[i], variance = v)
+        x_prev = x[i]
+    end
+end</code></pre><p>Let&#39;s generate some synthetic data to test our model. We&#39;ll create a sequence of observations that follow our state space model assumptions. We&#39;ll set the true drift parameter <code>c_real</code> to <code>-5.0</code> and generate <code>250</code> data points with Gaussian noise. This synthetic data will help us validate whether our optimization procedure can recover the true parameter values.</p><pre><code class="language-julia hljs">rng    = StableRNG(42)
+v      = 1.0
+n      = 250
+c_real = -5.0
+signal = c_real .+ collect(1:n)
+data   = map(x -&gt; rand(rng, NormalMeanVariance(x, v)), signal);</code></pre><p>Now we&#39;ll define a function for optimization that takes a vector of parameters as input. The first element <code>params[1]</code> represents our drift parameter <code>c</code>, while <code>params[2]</code> represents the initial state mean <code>μ1</code>. The function creates a prior distribution for the initial state <code>x1</code> with the given mean and a large variance of <code>100.0</code>. It then performs inference using our state space model and returns the negative free energy, which we&#39;ll minimize to find optimal parameter values. The optimization will help us recover the true parameter values from our synthetic data.</p><pre><code class="language-julia hljs"># params[1] is C
+# params[2] is μ1
+function f(params)
+    x_prior = NormalMeanVariance(params[2], 100.0)
+    result = infer(
+        model = univariate_state_space_model(
+            x_prior = x_prior, 
+            c       = params[1], 
+            v       = v
+        ), 
+        data  = (y = data,), 
+        free_energy = true
+    )
+    return result.free_energy[end]
+end</code></pre><pre><code class="nohighlight hljs">f (generic function with 1 method)</code></pre><p>Now we&#39;ll use <code>Optim.jl</code>, a powerful optimization package in Julia, to find the optimal parameter values. <code>Optim.jl</code> provides various optimization algorithms including gradient descent, L-BFGS, and Nelder-Mead. It offers a unified interface for both gradient-based and gradient-free optimization methods, making it flexible for different types of problems. The package also provides useful features like convergence monitoring and iteration control.</p><pre><code class="language-julia hljs">using Optim</code></pre><p>Now that we have defined our objective function and imported the optimization package, we are ready to find the optimal parameter values. We will start with an initial guess of <code>[1.0, 1.0]</code> for our parameters (<code>c</code> and <code>μ1</code>) and use gradient descent optimization. We&#39;ll set some optimization options including a gradient tolerance of 1e-3, maximum 100 iterations, and enable trace storage and display for monitoring convergence.</p><pre><code class="language-julia hljs">res = optimize(f, ones(2), GradientDescent(), Optim.Options(g_tol = 1e-3, iterations = 100, store_trace = true, show_trace = true, show_every = 10))</code></pre><pre><code class="nohighlight hljs">Iter     Function value   Gradient norm 
+     0     3.601256e+02     1.261348e+03
+ * time: 0.04113292694091797
+    10     3.593376e+02     1.355626e+01
+ * time: 20.14327883720398
+ * Status: success
+
+ * Candidate solution
+    Final objective value:     3.593375e+02
+
+ * Found with
+    Algorithm:     Gradient Descent
+
+ * Convergence measures
+    |x - x&#39;|               = 1.04e-05 ≰ 0.0e+00
+    |x - x&#39;|/|x&#39;|          = 2.14e-06 ≰ 0.0e+00
+    |f(x) - f(x&#39;)|         = 7.06e-05 ≰ 0.0e+00
+    |f(x) - f(x&#39;)|/|f(x&#39;)| = 1.96e-07 ≰ 0.0e+00
+    |g(x)|                 = 9.55e-04 ≤ 1.0e-03
+
+ * Work counters
+    Seconds run:   21  (vs limit Inf)
+    Iterations:    11
+    f(x) calls:    83
+    ∇f(x) calls:   83</code></pre><p>Let&#39;s analyze the optimization results. The algorithm successfully converged, as indicated by the status message. In the next cell, we&#39;ll compare the optimized parameter values with the true values used to generate our synthetic data to verify the accuracy of our parameter recovery.</p><pre><code class="language-julia hljs">println(&quot;Real value vs Optimized&quot;)
+println(&quot;Real:      &quot;, [ 1.0, c_real ])
+println(&quot;Optimized: &quot;, res.minimizer)</code></pre><pre><code class="nohighlight hljs">Real value vs Optimized
+Real:      [1.0, -5.0]
+Optimized: [0.9990370328385715, -4.8593306526902476]</code></pre><p>The optimization results show that we successfully recovered the true parameter values. The optimized values are very close to the real values, demonstrating that our inference approach effectively identified the underlying model parameters.</p><h2 id="Multivariate-State-Space-Model"><a class="docs-heading-anchor" href="#Multivariate-State-Space-Model">Multivariate State Space Model</a><a id="Multivariate-State-Space-Model-1"></a><a class="docs-heading-anchor-permalink" href="#Multivariate-State-Space-Model" title="Permalink"></a></h2><p>Now let&#39;s tackle a more challenging scenario with multiple interacting variables. Multivariate models are essential for capturing complex dynamics in real-world systems, from robotics to econometrics.</p><p><strong>Key differences</strong> from the univariate case:</p><ul><li>Higher-dimensional state space</li><li>More complex parameter interactions  </li><li>Richer dynamics and correlations</li></ul><p>We&#39;ll see how our optimization approach scales to this more complex setting while maintaining computational efficiency.</p><p>Let us consider the multivariate state space model:</p><p class="math-container">\[\begin{aligned}
+    \mathbf{x}_t &amp;\sim \mathcal{N}\left(\mathbf{Ax}_{t-1}, \mathbf{Q} \right) \\
+    \mathbf{y}_t &amp;\sim \mathcal{N}\left(\mathbf{x}_{t}, \mathbf{P} \right) 
+\end{aligned}\]</p><p>with prior </p><p class="math-container">\[\begin{aligned}
+\mathbf{x}_0 \sim \mathcal{N}(\mathbf{m_{{x}_0}}, \mathbf{V_{{x}_0}})\
+\end{aligned}\]</p><p>and transition matrix </p><p class="math-container">\[\begin{aligned}
+\mathbf{A} = \begin{bmatrix} \cos\theta &amp; -\sin\theta \\ \sin\theta &amp; \cos\theta \end{bmatrix}
+\end{aligned}\]</p><p>Covariance matrices <span>$\mathbf{V_{{x}_0}}$</span>, <span>$\mathbf{P}$</span> and <span>$\mathbf{Q}$</span> are known. Our goal is to optimize parameters <span>$\mathbf{m_{{x}_0}}$</span> and <span>$\theta$</span>.</p><pre><code class="language-julia hljs">@model function multivariate_state_space_model(y, θ, x0, Q, P)
+    
+    x_prior ~ MvNormal(mean = mean(x0), cov = cov(x0))
+    x_prev = x_prior
+    
+    A = [ cos(θ) -sin(θ); sin(θ) cos(θ) ]
+    
+    for i in eachindex(y)
+        x[i] ~ MvNormal(mean = A * x_prev, covariance = Q)
+        y[i] ~ MvNormal(mean = x[i], covariance = P)
+        x_prev = x[i]
+    end
+    
+end</code></pre><p>Let&#39;s generate synthetic data from our model to test the optimization. We&#39;ll create a helper function that generates data from a rotating state space model with known parameters. The data will consist of 300 timesteps, with a rotation angle of <code>π/8</code>, and unit variance Gaussian noise in both the state and observation equations. The initial state is set to <code>[10.0, -10.0]</code>. This will give us ground truth data to validate our parameter estimation approach.</p><pre><code class="language-julia hljs"># Generate data
+function generate_rotate_ssm_data()
+    rng = StableRNG(1234)
+
+    θ = π / 8
+    A = [ cos(θ) -sin(θ); sin(θ) cos(θ) ]
+    Q = Matrix(Diagonal(1.0 * ones(2)))
+    P = Matrix(Diagonal(1.0 * ones(2)))
+
+    n = 300
+
+    x_prev = [ 10.0, -10.0 ]
+
+    x = Vector{Vector{Float64}}(undef, n)
+    y = Vector{Vector{Float64}}(undef, n)
+
+    for i in 1:n
+        
+        x[i] = rand(rng, MvNormal(A * x_prev, Q))
+        y[i] = rand(rng, MvNormal(x[i], Q))
+        
+        x_prev = x[i]
+    end
+
+    return θ, A, Q, P, n, x, y
+end</code></pre><pre><code class="nohighlight hljs">generate_rotate_ssm_data (generic function with 1 method)</code></pre><pre><code class="language-julia hljs">θ, A, Q, P, n, x, y = generate_rotate_ssm_data();</code></pre><p>Now we&#39;ll visualize the generated data by plotting both dimensions of the state variables over time. The plot will show the true state trajectories with uncertainty bands representing one standard deviation of the state noise. This will help us verify that our data generation process is working correctly and give us a visual reference for evaluating our parameter estimation results later. The ribbon plots show how the state variables evolve with their associated uncertainty, with different colors distinguishing between the two dimensions.</p><pre><code class="language-julia hljs">px = plot()
+
+px = plot!(px, getindex.(x, 1), ribbon = diag(Q)[1] .|&gt; sqrt, fillalpha = 0.2, label = &quot;real₁&quot;)
+px = plot!(px, getindex.(x, 2), ribbon = diag(Q)[2] .|&gt; sqrt, fillalpha = 0.2, label = &quot;real₂&quot;)
+
+plot(px, size = (1200, 450))</code></pre><p><img src="Parameter Optimisation with Optim.jl_11_1.png" alt/></p><p>Now we&#39;ll define an objective function that takes a parameter vector <code>params</code> containing the rotation angle and initial state coordinates. This function will construct a model with these parameters and compute its free energy using the infer function. The free energy serves as our optimization objective - by minimizing it, we aim to find the parameter values that best explain our observed data. The parameter vector <code>params</code> has three components: <code>params[1]</code> is the rotation angle, while <code>params[2]</code> and <code>params[3]</code> represent the initial x and y coordinates respectively.</p><pre><code class="language-julia hljs">function f(params)
+    x0 = MvNormalMeanCovariance(
+        [ params[2], params[3] ], 
+        Matrix(Diagonal(0.01 * ones(2)))
+    )
+    result = infer(
+        model = multivariate_state_space_model(
+            θ = params[1], 
+            x0 = x0, 
+            Q = Q, 
+            P = P
+        ), 
+        data  = (y = y,), 
+        free_energy = true
+    )
+    return result.free_energy[end]
+end</code></pre><pre><code class="nohighlight hljs">f (generic function with 1 method)</code></pre><p>Now we&#39;ll use the L-BFGS optimization algorithm to find the optimal parameters that minimize our objective function. The L-BFGS algorithm is particularly well-suited for this task as it approximates the Hessian matrix while using limited memory, making it efficient for problems with many parameters. We&#39;ll start with an initial guess of zeros for all parameters and set some convergence tolerances for the optimization process.</p><pre><code class="language-julia hljs">res = optimize(f, zeros(3), LBFGS(), Optim.Options(f_tol = 1e-14, g_tol = 1e-12, show_trace = true, show_every = 10))</code></pre><pre><code class="nohighlight hljs">Iter     Function value   Gradient norm 
+     0     3.781355e+03     1.134440e+04
+ * time: 8.296966552734375e-5
+ * Status: success
+
+ * Candidate solution
+    Final objective value:     1.151827e+03
+
+ * Found with
+    Algorithm:     L-BFGS
+
+ * Convergence measures
+    |x - x&#39;|               = 1.39e-11 ≰ 0.0e+00
+    |x - x&#39;|/|x&#39;|          = 1.27e-15 ≰ 0.0e+00
+    |f(x) - f(x&#39;)|         = 9.09e-13 ≰ 0.0e+00
+    |f(x) - f(x&#39;)|/|f(x&#39;)| = 7.90e-16 ≤ 1.0e-14
+    |g(x)|                 = 6.86e-08 ≰ 1.0e-12
+
+ * Work counters
+    Seconds run:   62  (vs limit Inf)
+    Iterations:    9
+    f(x) calls:    81
+    ∇f(x) calls:   81</code></pre><p>Let&#39;s compare the real parameter values with the optimized ones. We&#39;ll look at both the raw angle values as well as their sine and cosine transformations to verify that our optimization has found the correct rotation parameters.</p><pre><code class="language-julia hljs">println(&quot;Real value vs Optimized&quot;)
+println(&quot;sinθ = (&quot;, sin(θ), &quot;, &quot;, sin(res.minimizer[1]), &quot;)&quot;)
+println(&quot;cosθ = (&quot;, cos(θ), &quot;, &quot;, cos(res.minimizer[1]), &quot;)&quot;)</code></pre><pre><code class="nohighlight hljs">Real value vs Optimized
+sinθ = (0.3826834323650898, 0.38116735460454493)
+cosθ = (0.9238795325112867, 0.9245060561098414)</code></pre><p>Finally, let&#39;s visualize how well our optimized model fits the data. We&#39;ll create a plot comparing the true state trajectories with the inferred ones, including uncertainty bands. The plot will show both dimensions of the state vector over time, with the real values and their uncertainties shown alongside the inferred values and their corresponding uncertainties.</p><pre><code class="language-julia hljs">x0 = MvNormalMeanCovariance([ res.minimizer[2], res.minimizer[3] ], Matrix(Diagonal(100.0 * ones(2))))
+
+result = infer(
+    model = multivariate_state_space_model(
+        θ = res.minimizer[1], 
+        x0 = x0, 
+        Q = Q, 
+        P = P
+    ), 
+    data  = (y = y,), 
+    free_energy = true
+)
+
+xmarginals = result.posteriors[:x]
+
+px = plot()
+
+px = plot!(px, getindex.(x, 1), ribbon = diag(Q)[1] .|&gt; sqrt, fillalpha = 0.2, label = &quot;real₁&quot;)
+px = plot!(px, getindex.(x, 2), ribbon = diag(Q)[2] .|&gt; sqrt, fillalpha = 0.2, label = &quot;real₂&quot;)
+px = plot!(px, getindex.(mean.(xmarginals), 1), ribbon = getindex.(var.(xmarginals), 1) .|&gt; sqrt, fillalpha = 0.5, label = &quot;inf₁&quot;)
+px = plot!(px, getindex.(mean.(xmarginals), 2), ribbon = getindex.(var.(xmarginals), 2) .|&gt; sqrt, fillalpha = 0.5, label = &quot;inf₂&quot;)
+
+plot(px, size = (1200, 450))</code></pre><p><img src="Parameter Optimisation with Optim.jl_15_1.png" alt/></p><p>This example demonstrates how we can use Optim.jl in conjunction with RxInfer.jl to perform parameter optimization for state-space models. We&#39;ve shown:</p><ol><li>How to set up a rotating state-space model with unknown parameters</li><li>How to define an objective function using free energy</li><li>How to use different optimization algorithms (Gradient Descent and L-BFGS) </li><li>How to visualize and validate the results</li></ol><p>The final plot shows that our optimized model successfully captures the dynamics of the true system, with the inferred trajectories closely matching the real ones within their uncertainty bounds. This confirms that our parameter optimization approach effectively recovered the underlying rotation parameter and initial state values.</p><hr/><div class="admonition is-info" id="Contributing-baba9dc142ba7ccb"><header class="admonition-header">Contributing<a class="admonition-anchor" href="#Contributing-baba9dc142ba7ccb" title="Permalink"></a></header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><div class="admonition is-compat" id="Environment-ead41e814a894220"><header class="admonition-header">Environment<a class="admonition-anchor" href="#Environment-ead41e814a894220" title="Permalink"></a></header><div class="admonition-body"><p>This example was executed in a clean, isolated environment. Below are the exact package versions used:</p><p>For reproducibility:</p><ul><li>Use the same package versions when running locally</li><li>Report any issues with package compatibility</li></ul></div></div><pre><code class="nohighlight hljs">Status `/tmp/jl_A77yVv/Project.toml`
+⌅ [429524aa] Optim v1.13.3
+  [91a5bcdd] Plots v1.41.6
+  [86711068] RxInfer v4.7.0
+  [860ef19b] StableRNGs v1.0.4
+  [37e2e46d] LinearAlgebra v1.12.0
+Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated`
+</code></pre><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+mermaid.initialize({
+    startOnLoad: true,
+    theme: "neutral"
+});
+</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../nonlinear_sensor_fusion/">« Nonlinear Sensor Fusion</a><a class="docs-footer-nextpage" href="../robotic_arm/">Robotic Arm »</a><div class="flexbox-break"></div><p class="footer-message">Created in <a href="https://biaslab.github.io/">BIASlab</a>, maintained by <a href="https://github.com/ReactiveBayes">ReactiveBayes</a>, powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Wednesday 25 February 2026 15:00">Wednesday 25 February 2026</span>. Using Julia version 1.12.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

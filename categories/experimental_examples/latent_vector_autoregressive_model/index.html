@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Latent Vector Autoregressive Model · RxInfer.jl Examples</title><meta name="title" content="Latent Vector Autoregressive Model · RxInfer.jl Examples"/><meta property="og:title" content="Latent Vector Autoregressive Model · RxInfer.jl Examples"/><meta property="twitter:title" content="Latent Vector Autoregressive Model · RxInfer.jl Examples"/><meta name="description" content="Latent Vector Autoregressive Model with RxInfer.jl\n    This is an experimental example of a Latent Vector Autoregressive Model (LVAR).\n\nCheck more examples and tutorials at https://examples.rxinfer.com\n"/><meta property="og:description" content="Latent Vector Autoregressive Model with RxInfer.jl\n    This is an experimental example of a Latent Vector Autoregressive Model (LVAR).\n\nCheck more examples and tutorials at https://examples.rxinfer.com\n"/><meta property="twitter:description" content="Latent Vector Autoregressive Model with RxInfer.jl\n    This is an experimental example of a Latent Vector Autoregressive Model (LVAR).\n\nCheck more examples and tutorials at https://examples.rxinfer.com\n"/><meta property="og:url" content="https://examples.rxinfer.com/categories/experimental_examples/latent_vector_autoregressive_model/"/><meta property="twitter:url" content="https://examples.rxinfer.com/categories/experimental_examples/latent_vector_autoregressive_model/"/><link rel="canonical" href="https://examples.rxinfer.com/categories/experimental_examples/latent_vector_autoregressive_model/"/><script async src="https://www.googletagmanager.com/gtag/js?id=G-GMFX620VEP"></script><script>  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-GMFX620VEP', {'page_path': location.pathname + location.search + location.hash});
+</script><script data-outdated-warner src="../../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../../assets/documenter.js"></script><script src="../../../search_index.js"></script><script src="../../../siteinfo.js"></script><script src="../../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../../assets/themeswap.js"></script><link href="../../../assets/theme.css" rel="stylesheet" type="text/css"/><link href="../../../assets/header.css" rel="stylesheet" type="text/css"/><script src="../../../assets/header.js"></script><script src="../../../assets/chat.js"></script><link href="../../../assets/favicon.ico" rel="icon" type="image/x-icon"/>
+    <meta property="og:title" content="Latent Vector Autoregressive Model - RxInfer Examples">
+    <meta name="description" content="    This is an experimental example of a Latent Vector Autoregressive Model (LVAR).
+">
+    <meta property="og:description" content="    This is an experimental example of a Latent Vector Autoregressive Model (LVAR).
+">
+    <meta name="keywords" content="rxinfer, julia, bayesian inference, examples, probabilistic programming, message passing, probabilistic numerics, variational inference, belief propagation, experimental examples, dynamical system, recurrent switching">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://examples.rxinfer.com/sitemap.xml">
+    </head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../../"><img class="docs-light-only" src="../../../assets/logo.svg" alt="RxInfer.jl Examples logo"/><img class="docs-dark-only" src="../../../assets/logo-dark.svg" alt="RxInfer.jl Examples logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../../">RxInfer.jl Examples</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../../">Home</a></li><li><a class="tocitem" href="../../../how_to_contribute/">How to contribute</a></li><li><a class="tocitem" href="../../../autogenerated/list_of_examples/">List of Examples</a></li><li><span class="tocitem">Basic Examples</span><ul><li><a class="tocitem" href="../../basic_examples/bayesian_binomial_regression/">Bayesian Binomial Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_linear_regression/">Bayesian Linear Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_multinomial_regression/">Bayesian Multinomial Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_networks/">Bayesian Networks</a></li><li><a class="tocitem" href="../../basic_examples/coin_toss_model/">Coin Toss Model</a></li><li><a class="tocitem" href="../../basic_examples/contextual_bandits/">Contextual Bandits</a></li><li><a class="tocitem" href="../../basic_examples/feature_functions_in_bayesian_regression/">Feature Functions In Bayesian Regression</a></li><li><a class="tocitem" href="../../basic_examples/forgetting_factors_for_online_inference/">Forgetting Factors For Online Inference</a></li><li><a class="tocitem" href="../../basic_examples/hidden_markov_model/">Hidden Markov Model</a></li><li><a class="tocitem" href="../../basic_examples/incomplete_data/">Incomplete Data</a></li><li><a class="tocitem" href="../../basic_examples/kalman_filtering_and_smoothing/">Kalman Filtering And Smoothing</a></li><li><a class="tocitem" href="../../basic_examples/pomdp_control/">Pomdp Control</a></li><li><a class="tocitem" href="../../basic_examples/predicting_bike_rental_demand/">Predicting Bike Rental Demand</a></li></ul></li><li><span class="tocitem">Advanced Examples</span><ul><li><a class="tocitem" href="../../advanced_examples/active_inference_mountain_car/">Active Inference Mountain Car</a></li><li><a class="tocitem" href="../../advanced_examples/advanced_tutorial/">Advanced Tutorial</a></li><li><a class="tocitem" href="../../advanced_examples/assessing_people_skills/">Assessing People Skills</a></li><li><a class="tocitem" href="../../advanced_examples/bayesian_structured_time_series/">Bayesian Structured Time Series</a></li><li><a class="tocitem" href="../../advanced_examples/chance_constraints/">Chance Constraints</a></li><li><a class="tocitem" href="../../advanced_examples/conjugate-computational_variational_message_passing/">Conjugate-Computational Variational Message Passing</a></li><li><a class="tocitem" href="../../advanced_examples/drone_dynamics/">Drone Dynamics</a></li><li><a class="tocitem" href="../../advanced_examples/gp_regression_by_ssm/">Gp Regression By Ssm</a></li><li><a class="tocitem" href="../../advanced_examples/infinite_data_stream/">Infinite Data Stream</a></li><li><a class="tocitem" href="../../advanced_examples/integrating_neural_networks_with_flux.jl/">Integrating Neural Networks With Flux.Jl</a></li><li><a class="tocitem" href="../../advanced_examples/learning_dynamics_with_vaes/">Learning Dynamics With Vaes</a></li><li><a class="tocitem" href="../../advanced_examples/multi-agent_trajectory_planning/">Multi-Agent Trajectory Planning</a></li><li><a class="tocitem" href="../../advanced_examples/nonlinear_sensor_fusion/">Nonlinear Sensor Fusion</a></li><li><a class="tocitem" href="../../advanced_examples/parameter_optimisation_with_optim.jl/">Parameter Optimisation With Optim.Jl</a></li><li><a class="tocitem" href="../../advanced_examples/robotic_arm/">Robotic Arm</a></li></ul></li><li><span class="tocitem">Problem Specific</span><ul><li><a class="tocitem" href="../../problem_specific/autoregressive_models/">Autoregressive Models</a></li><li><a class="tocitem" href="../../problem_specific/gamma_mixture/">Gamma Mixture</a></li><li><a class="tocitem" href="../../problem_specific/gaussian_mixture/">Gaussian Mixture</a></li><li><a class="tocitem" href="../../problem_specific/hierarchical_gaussian_filter/">Hierarchical Gaussian Filter</a></li><li><a class="tocitem" href="../../problem_specific/invertible_neural_network_tutorial/">Invertible Neural Network Tutorial</a></li><li><a class="tocitem" href="../../problem_specific/ising_model/">Ising Model</a></li><li><a class="tocitem" href="../../problem_specific/litter_model/">Litter Model</a></li><li><a class="tocitem" href="../../problem_specific/ode_parameter_estimation/">Ode Parameter Estimation</a></li><li><a class="tocitem" href="../../problem_specific/probit_model/">Probit Model</a></li><li><a class="tocitem" href="../../problem_specific/rts_vs_bifm_smoothing/">Rts Vs Bifm Smoothing</a></li><li><a class="tocitem" href="../../problem_specific/simple_nonlinear_node/">Simple Nonlinear Node</a></li><li><a class="tocitem" href="../../problem_specific/structural_dynamics_with_augmented_kalman_filter/">Structural Dynamics With Augmented Kalman Filter</a></li><li><a class="tocitem" href="../../problem_specific/universal_mixtures/">Universal Mixtures</a></li></ul></li><li><span class="tocitem">Experimental Examples</span><ul><li><a class="tocitem" href="../bayesian_trust_learning/">Bayesian Trust Learning</a></li><li><a class="tocitem" href="../large_language_models/">Large Language Models</a></li><li class="is-active"><a class="tocitem" href>Latent Vector Autoregressive Model</a></li><li><a class="tocitem" href="../recurrent_switching_linear_dynamical_system/">Recurrent Switching Linear Dynamical System</a></li></ul></li><li><a class="tocitem" href="../../../how_build_works/">How we build the examples</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Experimental Examples</a></li><li class="is-active"><a href>Latent Vector Autoregressive Model</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Latent Vector Autoregressive Model</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl" title="View source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><div class="admonition is-info" id="Contributing-baba9dc142ba7ccb"><header class="admonition-header">Contributing<a class="admonition-anchor" href="#Contributing-baba9dc142ba7ccb" title="Permalink"></a></header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><h1 id="Latent-Vector-Autoregressive-Model"><a class="docs-heading-anchor" href="#Latent-Vector-Autoregressive-Model">Latent Vector Autoregressive Model</a><a id="Latent-Vector-Autoregressive-Model-1"></a><a class="docs-heading-anchor-permalink" href="#Latent-Vector-Autoregressive-Model" title="Permalink"></a></h1><p>This is an experimental example of a Latent Vector Autoregressive Model (LVAR).</p><pre><code class="language-julia hljs">using RxInfer, Random, LinearAlgebra</code></pre><p>At first let us define auxiliary functions for priors, <code>c</code> and <code>b</code> variables</p><pre><code class="language-julia hljs">function generate_ar_process(order, θ, n_samples; σ²=1.0)
+    x = zeros(n_samples)
+    # Initialize with random noise
+    x[1:order] = randn(order) * sqrt(σ²)
+    
+    for t in (order+1):n_samples
+        # AR equation: x[t] = θ₁x[t-1] + θ₂x[t-2] + ... + θₚx[t-p] + ε[t]
+        x[t] = sum(θ[i] * x[t-i] for i in 1:order) + randn() * sqrt(σ²)
+    end
+    return x
+end
+
+# Set random seed for reproducibility
+Random.seed!(42)
+
+# Define orders for each process
+orders = 5 .* ones(Int, 20)
+n_samples = 120
+n_missing = 20
+
+n_ar_processes = length(orders)
+processes = []
+
+# Generate AR parameters and data for each process
+for (i, order) in enumerate(orders)
+    # Generate stable AR parameters (using a simple method)
+    θ = 0.5 .^ (1:order)  # This ensures stability by having decreasing coefficients
+    
+    # Generate the AR process
+    x = generate_ar_process(order, θ, n_samples)
+    push!(processes, x)
+end
+
+# Convert to the format needed for the model
+true_data = [[processes[j][i] for j in 1:n_ar_processes] for i in 1:n_samples]
+observations = Any[[true_data[i][j] .+ randn() for j in 1:n_ar_processes] for i in 1:n_samples]
+
+training_set = deepcopy(observations[1:n_samples-n_missing])
+
+# Extend observations with missing values
+for i in n_samples-n_missing:n_samples
+    push!(training_set, missing)
+end</code></pre><pre><code class="language-julia hljs">function form_priors(orders)
+    priors = (x = [], γ = [], θ = [])
+    for k in 1:length(orders)
+        push!(priors[:γ], GammaShapeRate(1.0, 1.0))
+        push!(priors[:x], MvNormalMeanPrecision(zeros(orders[k]), diageye(orders[k])))
+        push!(priors[:θ], MvNormalMeanPrecision(zeros(orders[k]), diageye(orders[k])))
+    end
+    return priors
+end
+
+function form_c_b(y, orders)
+    c = Any[]
+    b = Any[]
+    for k in 1:length(orders)
+        _c = ReactiveMP.ar_unit(Multivariate, orders[k])
+        _b = zeros(length(y[1])); _b[k] = 1.0
+        push!(c, _c)
+        push!(b, _b)
+    end
+    return c, b
+end</code></pre><pre><code class="nohighlight hljs">form_c_b (generic function with 1 method)</code></pre><p>Next, we define a sub-model for a single AR-process</p><pre><code class="language-julia hljs">@model function AR_sequence(x, index, length, priors, order)
+    γ ~ priors[:γ][index]
+    θ ~ priors[:θ][index]
+    x_prev ~ priors[:x][index]
+    for i in 1:length
+        x[index, i] ~ AR(x_prev, θ, γ) where {
+            meta = ARMeta(Multivariate, order, ARsafe())
+        }
+        x_prev = x[index, i]
+    end
+end</code></pre><p>Next, we define a tricky dot sequence</p><pre><code class="language-julia hljs">@model function dot_sequence(out, k, i, orders, x, c, b)
+    if k === length(orders)
+        out ~ b[k] * dot(c[k], x[k, i])
+    else 
+        next ~ dot_sequence(k = k + 1, i = i, orders = orders, x = x, c = c, b = b)
+        out  ~ b[k] * dot(c[k], x[k, i]) + next
+    end
+end</code></pre><p>And here is our final model spec</p><pre><code class="language-julia hljs">@model function LVAR(y, orders)
+
+    priors   = form_priors(orders)
+    c, b     = form_c_b(y, orders)
+    y_length = length(y)
+    
+    local x # `x` is being initialized in the loop within submodels
+    for k in 1:length(orders)
+        x ~ AR_sequence(index  = k, length = y_length, priors = priors, order  = orders[k])
+    end
+
+    τ ~ GammaShapeRate(1.0, 1.0)
+    for i in 1:y_length
+        μ[i] ~ dot_sequence(k = 1, i = i, orders = orders, x = x, c = c, b = b)
+        y[i] ~ MvNormalMeanScalePrecision(μ[i], τ)
+    end
+end</code></pre><pre><code class="language-julia hljs">@constraints function lvar_constraints()
+    for q in AR_sequence
+        # This requires patch in GraphPPL though, see https://github.com/ReactiveBayes/GraphPPL.jl/issues/262
+        # A workaround is to use `constraints = MeanField()` in the `infer` function and initializing `q(x)` instead of `μ(x)`
+        q(x, x_prev, γ, θ) = q(x, x_prev)q(γ)q(θ)
+    end
+    q(μ, τ) = q(μ)q(τ)
+end</code></pre><pre><code class="nohighlight hljs">lvar_constraints (generic function with 1 method)</code></pre><pre><code class="language-julia hljs">@initialization function lvar_init(orders)
+    # This is a problem still
+    for init in AR_sequence
+        q(γ) = GammaShapeRate(1.0, 1.0) 
+        q(θ) = MvNormalMeanPrecision(zeros(orders[1]), diageye(orders[1])) # `orders[1]` is sad... needs to be fixed
+    end
+    q(τ) = GammaShapeRate(1.0, 1.0)
+    μ(x) = MvNormalMeanPrecision(zeros(orders[1]), diageye(orders[1]))
+end</code></pre><pre><code class="nohighlight hljs">lvar_init (generic function with 1 method)</code></pre><pre><code class="language-julia hljs">mresult = infer(
+    model          = LVAR(orders = orders), 
+    data           = (y = training_set, ), 
+    constraints    = lvar_constraints(), 
+    initialization = lvar_init(orders), 
+    returnvars = KeepLast(), 
+    options = (limit_stack_depth = 100, ),
+    showprogress = true,
+    iterations = 30,
+)</code></pre><pre><code class="nohighlight hljs">Inference results:
+  Posteriors       | available for (μ, τ, x)
+  Predictions      | available for (y)</code></pre><pre><code class="language-julia hljs">## Plot results
+
+using Plots
+
+theme(:default)
+
+combined_plot = plot(layout = (3, 1), size = (600, 800), legend = :topleft)
+
+# Plotting options
+marker_alpha = 0.7 
+marker_size = 5  
+ribbon_alpha = 0.3
+observation_color = :green
+
+# Define the training range indices
+train_indices = 1:(n_samples - n_missing)
+# Extract observations for the training range
+train_observations = observations[train_indices]
+
+# Plot for index 5 (Subplot 1)
+index = 5
+plot!(combined_plot[1], getindex.(mean.(mresult.predictions[:y][end]), index), ribbon = getindex.(diag.(cov.(mresult.predictions[:y][end])), index), fillalpha=ribbon_alpha, label = &quot;Inferred $(index)&quot;)
+plot!(combined_plot[1], getindex.(true_data, index), label = &quot;True $(index)&quot;)
+# Plot only existing observations using train_indices as x-values
+scatter!(combined_plot[1], train_indices, getindex.(train_observations, index), label = &quot;Observations $(index)&quot;, marker=:xcross, markeralpha=marker_alpha, markersize=marker_size, color=observation_color)
+vline!(combined_plot[1], [n_samples-n_missing], label=&quot;training/test split&quot;, linestyle=:dash, color=:black)
+plot!(combined_plot[1], title = &quot;LVAR $(index)&quot;)
+
+# Plot for index 10 (Subplot 2)
+index = 10
+plot!(combined_plot[2], getindex.(mean.(mresult.predictions[:y][end]), index), ribbon = getindex.(diag.(cov.(mresult.predictions[:y][end])), index), fillalpha=ribbon_alpha, label = &quot;Inferred $(index)&quot;)
+plot!(combined_plot[2], getindex.(true_data, index), label = &quot;True $(index)&quot;)
+# Plot only existing observations
+scatter!(combined_plot[2], train_indices, getindex.(train_observations, index), label = &quot;Observations $(index)&quot;, marker=:xcross, markeralpha=marker_alpha, markersize=marker_size, color=observation_color)
+vline!(combined_plot[2], [n_samples-n_missing], label=&quot;&quot;, linestyle=:dash, color=:black) # No label for subsequent vlines
+plot!(combined_plot[2], title = &quot;LVAR $(index)&quot;)
+
+# Plot for index 20 (Subplot 3)
+index = 15
+plot!(combined_plot[3], getindex.(mean.(mresult.predictions[:y][end]), index), ribbon = getindex.(diag.(cov.(mresult.predictions[:y][end])), index), fillalpha=ribbon_alpha, label = &quot;Inferred $(index)&quot;)
+plot!(combined_plot[3], getindex.(true_data, index), label = &quot;True $(index)&quot;)
+# Plot only existing observations
+scatter!(combined_plot[3], train_indices, getindex.(train_observations, index), label = &quot;Observations $(index)&quot;, marker=:xcross, markeralpha=marker_alpha, markersize=marker_size, color=observation_color)
+vline!(combined_plot[3], [n_samples-n_missing], label=&quot;&quot;, linestyle=:dash, color=:black) # No label for subsequent vlines
+plot!(combined_plot[3], title = &quot;LVAR $(index)&quot;)
+
+# Display the combined plot
+combined_plot</code></pre><p><img src="Latent Vector Autoregressive Model_10_1.png" alt/></p><pre><code class="language-julia hljs"></code></pre><hr/><div class="admonition is-info" id="Contributing-baba9dc142ba7ccb"><header class="admonition-header">Contributing<a class="admonition-anchor" href="#Contributing-baba9dc142ba7ccb" title="Permalink"></a></header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><div class="admonition is-compat" id="Environment-ead41e814a894220"><header class="admonition-header">Environment<a class="admonition-anchor" href="#Environment-ead41e814a894220" title="Permalink"></a></header><div class="admonition-body"><p>This example was executed in a clean, isolated environment. Below are the exact package versions used:</p><p>For reproducibility:</p><ul><li>Use the same package versions when running locally</li><li>Report any issues with package compatibility</li></ul></div></div><pre><code class="nohighlight hljs">Status `/tmp/jl_A77yVv/Project.toml`
+  [91a5bcdd] Plots v1.41.6
+  [86711068] RxInfer v4.7.0
+  [37e2e46d] LinearAlgebra v1.12.0
+  [9a3f8284] Random v1.11.0
+</code></pre><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+mermaid.initialize({
+    startOnLoad: true,
+    theme: "neutral"
+});
+</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../large_language_models/">« Large Language Models</a><a class="docs-footer-nextpage" href="../recurrent_switching_linear_dynamical_system/">Recurrent Switching Linear Dynamical System »</a><div class="flexbox-break"></div><p class="footer-message">Created in <a href="https://biaslab.github.io/">BIASlab</a>, maintained by <a href="https://github.com/ReactiveBayes">ReactiveBayes</a>, powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Wednesday 25 February 2026 15:00">Wednesday 25 February 2026</span>. Using Julia version 1.12.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

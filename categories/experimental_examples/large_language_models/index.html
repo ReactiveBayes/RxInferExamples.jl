@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Large Language Models · RxInfer.jl Examples</title><meta name="title" content="Large Language Models · RxInfer.jl Examples"/><meta property="og:title" content="Large Language Models · RxInfer.jl Examples"/><meta property="twitter:title" content="Large Language Models · RxInfer.jl Examples"/><meta name="description" content="Large Language Models with RxInfer.jl\n    This is an experimental example of a Large Language Model (LLM) integration with RxInfer.\n\nCheck more examples and tutorials at https://examples.rxinfer.com\n"/><meta property="og:description" content="Large Language Models with RxInfer.jl\n    This is an experimental example of a Large Language Model (LLM) integration with RxInfer.\n\nCheck more examples and tutorials at https://examples.rxinfer.com\n"/><meta property="twitter:description" content="Large Language Models with RxInfer.jl\n    This is an experimental example of a Large Language Model (LLM) integration with RxInfer.\n\nCheck more examples and tutorials at https://examples.rxinfer.com\n"/><meta property="og:url" content="https://examples.rxinfer.com/categories/experimental_examples/large_language_models/"/><meta property="twitter:url" content="https://examples.rxinfer.com/categories/experimental_examples/large_language_models/"/><link rel="canonical" href="https://examples.rxinfer.com/categories/experimental_examples/large_language_models/"/><script async src="https://www.googletagmanager.com/gtag/js?id=G-GMFX620VEP"></script><script>  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-GMFX620VEP', {'page_path': location.pathname + location.search + location.hash});
+</script><script data-outdated-warner src="../../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../../assets/documenter.js"></script><script src="../../../search_index.js"></script><script src="../../../siteinfo.js"></script><script src="../../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../../assets/themeswap.js"></script><link href="../../../assets/theme.css" rel="stylesheet" type="text/css"/><link href="../../../assets/header.css" rel="stylesheet" type="text/css"/><script src="../../../assets/header.js"></script><script src="../../../assets/chat.js"></script><link href="../../../assets/favicon.ico" rel="icon" type="image/x-icon"/>
+    <meta property="og:title" content="Large Language Models - RxInfer Examples">
+    <meta name="description" content="    This is an experimental example of a Large Language Model (LLM) integration with RxInfer.
+">
+    <meta property="og:description" content="    This is an experimental example of a Large Language Model (LLM) integration with RxInfer.
+">
+    <meta name="keywords" content="rxinfer, julia, bayesian inference, examples, probabilistic programming, message passing, probabilistic numerics, variational inference, belief propagation, experimental examples, large language models, llm">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://examples.rxinfer.com/sitemap.xml">
+    </head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../../"><img class="docs-light-only" src="../../../assets/logo.svg" alt="RxInfer.jl Examples logo"/><img class="docs-dark-only" src="../../../assets/logo-dark.svg" alt="RxInfer.jl Examples logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../../">RxInfer.jl Examples</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../../">Home</a></li><li><a class="tocitem" href="../../../how_to_contribute/">How to contribute</a></li><li><a class="tocitem" href="../../../autogenerated/list_of_examples/">List of Examples</a></li><li><span class="tocitem">Basic Examples</span><ul><li><a class="tocitem" href="../../basic_examples/bayesian_binomial_regression/">Bayesian Binomial Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_linear_regression/">Bayesian Linear Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_multinomial_regression/">Bayesian Multinomial Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_networks/">Bayesian Networks</a></li><li><a class="tocitem" href="../../basic_examples/coin_toss_model/">Coin Toss Model</a></li><li><a class="tocitem" href="../../basic_examples/contextual_bandits/">Contextual Bandits</a></li><li><a class="tocitem" href="../../basic_examples/feature_functions_in_bayesian_regression/">Feature Functions In Bayesian Regression</a></li><li><a class="tocitem" href="../../basic_examples/forgetting_factors_for_online_inference/">Forgetting Factors For Online Inference</a></li><li><a class="tocitem" href="../../basic_examples/hidden_markov_model/">Hidden Markov Model</a></li><li><a class="tocitem" href="../../basic_examples/incomplete_data/">Incomplete Data</a></li><li><a class="tocitem" href="../../basic_examples/kalman_filtering_and_smoothing/">Kalman Filtering And Smoothing</a></li><li><a class="tocitem" href="../../basic_examples/pomdp_control/">Pomdp Control</a></li><li><a class="tocitem" href="../../basic_examples/predicting_bike_rental_demand/">Predicting Bike Rental Demand</a></li></ul></li><li><span class="tocitem">Advanced Examples</span><ul><li><a class="tocitem" href="../../advanced_examples/active_inference_mountain_car/">Active Inference Mountain Car</a></li><li><a class="tocitem" href="../../advanced_examples/advanced_tutorial/">Advanced Tutorial</a></li><li><a class="tocitem" href="../../advanced_examples/assessing_people_skills/">Assessing People Skills</a></li><li><a class="tocitem" href="../../advanced_examples/bayesian_structured_time_series/">Bayesian Structured Time Series</a></li><li><a class="tocitem" href="../../advanced_examples/chance_constraints/">Chance Constraints</a></li><li><a class="tocitem" href="../../advanced_examples/conjugate-computational_variational_message_passing/">Conjugate-Computational Variational Message Passing</a></li><li><a class="tocitem" href="../../advanced_examples/drone_dynamics/">Drone Dynamics</a></li><li><a class="tocitem" href="../../advanced_examples/gp_regression_by_ssm/">Gp Regression By Ssm</a></li><li><a class="tocitem" href="../../advanced_examples/infinite_data_stream/">Infinite Data Stream</a></li><li><a class="tocitem" href="../../advanced_examples/integrating_neural_networks_with_flux.jl/">Integrating Neural Networks With Flux.Jl</a></li><li><a class="tocitem" href="../../advanced_examples/learning_dynamics_with_vaes/">Learning Dynamics With Vaes</a></li><li><a class="tocitem" href="../../advanced_examples/multi-agent_trajectory_planning/">Multi-Agent Trajectory Planning</a></li><li><a class="tocitem" href="../../advanced_examples/nonlinear_sensor_fusion/">Nonlinear Sensor Fusion</a></li><li><a class="tocitem" href="../../advanced_examples/parameter_optimisation_with_optim.jl/">Parameter Optimisation With Optim.Jl</a></li><li><a class="tocitem" href="../../advanced_examples/robotic_arm/">Robotic Arm</a></li></ul></li><li><span class="tocitem">Problem Specific</span><ul><li><a class="tocitem" href="../../problem_specific/autoregressive_models/">Autoregressive Models</a></li><li><a class="tocitem" href="../../problem_specific/gamma_mixture/">Gamma Mixture</a></li><li><a class="tocitem" href="../../problem_specific/gaussian_mixture/">Gaussian Mixture</a></li><li><a class="tocitem" href="../../problem_specific/hierarchical_gaussian_filter/">Hierarchical Gaussian Filter</a></li><li><a class="tocitem" href="../../problem_specific/invertible_neural_network_tutorial/">Invertible Neural Network Tutorial</a></li><li><a class="tocitem" href="../../problem_specific/ising_model/">Ising Model</a></li><li><a class="tocitem" href="../../problem_specific/litter_model/">Litter Model</a></li><li><a class="tocitem" href="../../problem_specific/ode_parameter_estimation/">Ode Parameter Estimation</a></li><li><a class="tocitem" href="../../problem_specific/probit_model/">Probit Model</a></li><li><a class="tocitem" href="../../problem_specific/rts_vs_bifm_smoothing/">Rts Vs Bifm Smoothing</a></li><li><a class="tocitem" href="../../problem_specific/simple_nonlinear_node/">Simple Nonlinear Node</a></li><li><a class="tocitem" href="../../problem_specific/structural_dynamics_with_augmented_kalman_filter/">Structural Dynamics With Augmented Kalman Filter</a></li><li><a class="tocitem" href="../../problem_specific/universal_mixtures/">Universal Mixtures</a></li></ul></li><li><span class="tocitem">Experimental Examples</span><ul><li><a class="tocitem" href="../bayesian_trust_learning/">Bayesian Trust Learning</a></li><li class="is-active"><a class="tocitem" href>Large Language Models</a><ul class="internal"><li><a class="tocitem" href="#What-is-RxInfer?-(The-Gentle-Introduction)"><span>What is RxInfer? (The Gentle Introduction)</span></a></li><li><a class="tocitem" href="#The-Moment-of-Questionable-Judgment"><span>The Moment of Questionable Judgment</span></a></li><li><a class="tocitem" href="#The-Great-LLM-Bayesian-Integration-Experiment"><span>The Great LLM-Bayesian Integration Experiment</span></a></li><li><a class="tocitem" href="#The-Problem:-Can-We-Cluster-Text-Using-Bayesian-Inference?"><span>The Problem: Can We Cluster Text Using Bayesian Inference?</span></a></li><li><a class="tocitem" href="#The-Model:-Mixing-Traditional-Bayesian-with-LLM-Magic"><span>The Model: Mixing Traditional Bayesian with LLM Magic</span></a></li><li><a class="tocitem" href="#Creating-the-LLM-Nodes"><span>Creating the LLM Nodes</span></a></li><li><a class="tocitem" href="#Lessons-Learned-and-Future-Directions"><span>Lessons Learned and Future Directions</span></a></li><li><a class="tocitem" href="#What&#39;s-Missing:-Current-Limitations"><span>What&#39;s Missing: Current Limitations</span></a></li><li><a class="tocitem" href="#Grounding-Agentic-Systems-in-Bayesian-Reasoning"><span>Grounding Agentic Systems in Bayesian Reasoning</span></a></li><li><a class="tocitem" href="#Conclusion:-The-Weird-Idea-That-Worked"><span>Conclusion: The Weird Idea That Worked</span></a></li></ul></li><li><a class="tocitem" href="../latent_vector_autoregressive_model/">Latent Vector Autoregressive Model</a></li><li><a class="tocitem" href="../recurrent_switching_linear_dynamical_system/">Recurrent Switching Linear Dynamical System</a></li></ul></li><li><a class="tocitem" href="../../../how_build_works/">How we build the examples</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Experimental Examples</a></li><li class="is-active"><a href>Large Language Models</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Large Language Models</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl" title="View source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><div class="admonition is-info" id="Contributing-baba9dc142ba7ccb"><header class="admonition-header">Contributing<a class="admonition-anchor" href="#Contributing-baba9dc142ba7ccb" title="Permalink"></a></header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><h1 id="Large-Language-Models"><a class="docs-heading-anchor" href="#Large-Language-Models">Large Language Models</a><a id="Large-Language-Models-1"></a><a class="docs-heading-anchor-permalink" href="#Large-Language-Models" title="Permalink"></a></h1><h3 id="Warning:-Maximum-Unprincipledness-Ahead"><a class="docs-heading-anchor" href="#Warning:-Maximum-Unprincipledness-Ahead">⚠️ Warning: Maximum Unprincipledness Ahead ⚠️</a><a id="Warning:-Maximum-Unprincipledness-Ahead-1"></a><a class="docs-heading-anchor-permalink" href="#Warning:-Maximum-Unprincipledness-Ahead" title="Permalink"></a></h3><h3 id="The-speed-of-RxInfer-will-be-bottlenecked-by-the-speed-of-the-LLM-calls"><a class="docs-heading-anchor" href="#The-speed-of-RxInfer-will-be-bottlenecked-by-the-speed-of-the-LLM-calls">⚠️ The speed of RxInfer will be bottlenecked by the speed of the LLM calls ⚠️</a><a id="The-speed-of-RxInfer-will-be-bottlenecked-by-the-speed-of-the-LLM-calls-1"></a><a class="docs-heading-anchor-permalink" href="#The-speed-of-RxInfer-will-be-bottlenecked-by-the-speed-of-the-LLM-calls" title="Permalink"></a></h3><pre><code class="language-julia hljs">using RxInfer, OpenAI, JSON</code></pre><pre><code class="language-julia hljs"># Your OpenAI API key should be set in the environment variables
+secret_key = ENV[&quot;OPENAI_KEY&quot;];
+llm_model = &quot;gpt-4o-mini-2024-07-18&quot;;</code></pre><p><strong>Disclaimer</strong>: This is probably one of the most unprincipled notebooks in the <code>RxInferExamples</code> repository. We&#39;re about to hook Large Language Models directly into Bayesian inference using nothing but good vibes and questionable life choices. If you&#39;re looking for rigorous mathematical foundations, you might want to slowly back away from this notebook.</p><p>That said, if you&#39;ve ever wondered &quot;what happens if I treat LLMs&#39; outputs like a probability distribution?&quot;, you&#39;ve come to the right place. We&#39;ll start with a gentle introduction to RxInfer for two reasons: first, we need to justify this madness of integrating LLMs with probabilistic models, and second, we want to explain what RxInfer is to newcomers in a single notebook with as few external references as possible. Think of this as &quot;Bayesian Inference for People Who Just Want to See the Cool Stuff.&quot;</p><h2 id="What-is-RxInfer?-(The-Gentle-Introduction)"><a class="docs-heading-anchor" href="#What-is-RxInfer?-(The-Gentle-Introduction)">What is RxInfer? (The Gentle Introduction)</a><a id="What-is-RxInfer?-(The-Gentle-Introduction)-1"></a><a class="docs-heading-anchor-permalink" href="#What-is-RxInfer?-(The-Gentle-Introduction)" title="Permalink"></a></h2><p>Before we commit crimes against Bayesian inference (by the way we use the word inference to mean &quot;Bayesian inference&quot;, not the forward pass of a neural network), let&#39;s understand what RxInfer actually is and why it accidentally makes LLM integration possible.</p><p>RxInfer is a Julia package for Bayesian inference that takes a rather unusual approach: instead of treating your probabilistic model as one big mathematical beast that needs to be slayed with MCMC or variational inference, it breaks everything down into <strong>small, local conversations between probability distributions</strong>.</p><p>Imagine your probabilistic model as a social network where probability distributions are people, and they&#39;re all gossiping about what they think the true parameters might be. RxInfer organizes this gossip into an efficient message-passing protocol on something called a <strong>factor graph</strong>.</p><h3 id="Factor-Graphs:-The-Social-Network-of-Probability"><a class="docs-heading-anchor" href="#Factor-Graphs:-The-Social-Network-of-Probability">Factor Graphs: The Social Network of Probability</a><a id="Factor-Graphs:-The-Social-Network-of-Probability-1"></a><a class="docs-heading-anchor-permalink" href="#Factor-Graphs:-The-Social-Network-of-Probability" title="Permalink"></a></h3><p>A <strong>factor graph</strong> is just a visual way to represent how different parts of your probabilistic model talk to each other. Think of it like this:</p><ul><li><strong>Round nodes</strong> (variables): These represent the things you want to learn about</li><li><strong>Square nodes</strong> (factors): These represent relationships or constraints between variables  </li><li><strong>Edges</strong>: These are the communication channels where probability distributions flow as &quot;messages&quot;</li></ul><p>For example, if you want to model coin flips:</p><div class="mermaid">graph LR
+    %% Variable nodes (circles)
+    theta[&quot;θ&lt;br/&gt;(coin fairness)&quot;]
+    x1[&quot;x₁&lt;br/&gt;(flip 1)&quot;]
+    x2[&quot;x₂&lt;br/&gt;(flip 2)&quot;]
+    x3[&quot;x₃&lt;br/&gt;(flip 3)&quot;]
+    
+    %% Factor nodes (squares)
+    prior[&quot;Beta&lt;br/&gt;Prior&quot;]
+    flip1[&quot;Bernoulli&lt;br/&gt;Flip&quot;]
+    flip2[&quot;Bernoulli&lt;br/&gt;Flip&quot;] 
+    flip3[&quot;Bernoulli&lt;br/&gt;Flip&quot;]
+    
+    %% Connections
+    prior --- theta
+    theta --- flip1
+    theta --- flip2
+    theta --- flip3
+    flip1 --- x1
+    flip2 --- x2
+    flip3 --- x3
+    
+    %% Styling
+    classDef variable fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef factor fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    
+    class theta,x1,x2,x3 variable
+    class prior,flip1,flip2,flip3 factor</div><p>In this graph:</p><ul><li><strong>Blue squares</strong> are variables (things we want to learn about)</li><li><strong>Orange squares</strong> are factors (probability distributions or relationships)</li><li><strong>Lines</strong> are the communication channels where messages flow back and forth</li></ul><p>The magic happens when messages flow along these edges, updating beliefs as new information comes in.</p><h3 id="The-Philosophy:-Local-Conversations,-Global-Intelligence"><a class="docs-heading-anchor" href="#The-Philosophy:-Local-Conversations,-Global-Intelligence">The Philosophy: Local Conversations, Global Intelligence</a><a id="The-Philosophy:-Local-Conversations,-Global-Intelligence-1"></a><a class="docs-heading-anchor-permalink" href="#The-Philosophy:-Local-Conversations,-Global-Intelligence" title="Permalink"></a></h3><p>Here&#39;s what makes RxInfer special: instead of solving your entire probabilistic model in one giant computation, it breaks everything down into <strong>local conversations</strong>. </p><p>Each node only needs to:</p><ol><li>Listen to messages from its neighbors</li><li>Update its local beliefs</li><li>Send updated messages to its neighbors</li></ol><p>Repeat this process, and eventually the entire network converges to the exact or approximate posterior distributions. It&#39;s like crowd-sourced intelligence, but with math.</p><p>This approach has some nice properties:</p><ul><li><strong>Modular</strong>: You can swap out parts of your model without affecting others</li><li><strong>Parallel</strong>: Different parts can update simultaneously  </li><li><strong>Interpretable</strong>: You can inspect what each part of your model &quot;thinks&quot;</li><li><strong>Extensible</strong>: You can add new types of nodes... like LLMs 👀</li></ul><h3 id="The-Beautiful-Accident:-RxInfer-Doesn&#39;t-Care-What-You-Pass"><a class="docs-heading-anchor" href="#The-Beautiful-Accident:-RxInfer-Doesn&#39;t-Care-What-You-Pass">The Beautiful Accident: RxInfer Doesn&#39;t Care What You Pass</a><a id="The-Beautiful-Accident:-RxInfer-Doesn&#39;t-Care-What-You-Pass-1"></a><a class="docs-heading-anchor-permalink" href="#The-Beautiful-Accident:-RxInfer-Doesn&#39;t-Care-What-You-Pass" title="Permalink"></a></h3><p>Here&#39;s where things get interesting (and unprincipled). </p><p>RxInfer was designed for passing probability distributions along those edges. But here&#39;s the thing: <strong>the framework doesn&#39;t actually care what you pass</strong>. It just needs to know how to:</p><ol><li>Compute outgoing messages from incoming ones</li><li>Update local beliefs (marginals)</li><li>Calculate free energy contributions (we will skip this for now)</li></ol><p>As long as you can define these two (three) things, you can plug in <strong>literally anything</strong> as a node. A matrix multiplication? Sure. A neural network? Why not (see examples within the repository). A Large Language Model? Hold my coffee...</p><h2 id="The-Moment-of-Questionable-Judgment"><a class="docs-heading-anchor" href="#The-Moment-of-Questionable-Judgment">The Moment of Questionable Judgment</a><a id="The-Moment-of-Questionable-Judgment-1"></a><a class="docs-heading-anchor-permalink" href="#The-Moment-of-Questionable-Judgment" title="Permalink"></a></h2><p>So here we were, understanding that RxInfer is basically a message-passing system that doesn&#39;t care what you pass, when someone (probably me) had a thought:</p><p><em>&quot;What if we just... asked ChatGPT to be a probability distribution?&quot;</em></p><p>Now, any reasonable person would immediately recognize this as a terrible idea. Probability distributions have well-defined mathematical properties. They integrate to 1. They have moments. They follow laws. Jaynes would be rolling in his grave.</p><p>Large Language Models, on the other hand, are... vibes-based. They generate text that sounds plausible. They hallucinate. They change their mind if you ask the same question twice.</p><p>But here&#39;s the thing about terrible ideas: sometimes they work.</p><h2 id="The-Great-LLM-Bayesian-Integration-Experiment"><a class="docs-heading-anchor" href="#The-Great-LLM-Bayesian-Integration-Experiment">The Great LLM-Bayesian Integration Experiment</a><a id="The-Great-LLM-Bayesian-Integration-Experiment-1"></a><a class="docs-heading-anchor-permalink" href="#The-Great-LLM-Bayesian-Integration-Experiment" title="Permalink"></a></h2><p>The plan was simple (and deeply unscientific):</p><ol><li><strong>Create LLM nodes</strong> that can participate in message passing</li><li><strong>Teach LLMs to speak probability</strong> through prompting</li><li><strong>Let them gossip with real probability distributions</strong> and see what happens</li><li><strong>Hope nothing catches fire</strong></li></ol><p>Surprisingly, steps 1-3 worked. Step 4 is still ongoing.</p><h2 id="The-Problem:-Can-We-Cluster-Text-Using-Bayesian-Inference?"><a class="docs-heading-anchor" href="#The-Problem:-Can-We-Cluster-Text-Using-Bayesian-Inference?">The Problem: Can We Cluster Text Using Bayesian Inference?</a><a id="The-Problem:-Can-We-Cluster-Text-Using-Bayesian-Inference?-1"></a><a class="docs-heading-anchor-permalink" href="#The-Problem:-Can-We-Cluster-Text-Using-Bayesian-Inference?" title="Permalink"></a></h2><p>Before we dive into the implementation, let&#39;s define a concrete problem that will motivate our LLM integration. We want to:</p><p><strong>Cluster text snippets by sentiment, but with proper uncertainty quantification.</strong></p><p>Here&#39;s our dataset - 5 text snippets about RxInfer.jl:</p><pre><code class="language-julia hljs">observations = [
+    &quot;RxInfer.jl is confusing and frustrating to use. I wouldn&#39;t recommend it.&quot;,
+    &quot;RxInfer.jl made my Bayesian modeling workflow much easier and more efficient!&quot;,
+    &quot;Absolutely love RxInfer.jl! It&#39;s revolutionized my approach to probabilistic programming.&quot;,
+    &quot;I gave RxInfer.jl a try, but it just doesn&#39;t work for my needs at all.&quot;,
+    &quot;I prefer apples over oranges.&quot;  # 🍎 Wait, this one&#39;s different...
+];</code></pre><p>The challenges:</p><ol><li><strong>Two sentiment clusters</strong>: Positive and negative opinions about RxInfer.jl</li><li><strong>Unrelated text</strong>: The last one isn&#39;t about RxInfer.jl at all</li><li><strong>Uncertainty</strong>: We want to know how confident we are about each classification</li></ol><p>Traditional clustering would give us hard assignments. We want <strong>probabilistic clustering with uncertainty</strong>.</p><h2 id="The-Model:-Mixing-Traditional-Bayesian-with-LLM-Magic"><a class="docs-heading-anchor" href="#The-Model:-Mixing-Traditional-Bayesian-with-LLM-Magic">The Model: Mixing Traditional Bayesian with LLM Magic</a><a id="The-Model:-Mixing-Traditional-Bayesian-with-LLM-Magic-1"></a><a class="docs-heading-anchor-permalink" href="#The-Model:-Mixing-Traditional-Bayesian-with-LLM-Magic" title="Permalink"></a></h2><p>Here&#39;s our probabilistic model for sentiment clustering (this will be the final model we will use):</p><pre><code class="language-julia hljs">@model function language_mixture_model(c, context₁, context₂, task₁, task₂, likelihood_task)
+    # Mixture probability (how much of each sentiment type)
+    s ~ Beta(1.0, 1.0)
+    
+    # Two sentiment clusters with LLM-generated priors
+    m[1] ~ LLMPrior(context₁, task₁)  # Negative sentiment prior
+    w[1] ~ Gamma(shape = 0.01, rate = 0.01)
+    
+    m[2] ~ LLMPrior(context₂, task₂)  # Positive sentiment prior  
+    w[2] ~ Gamma(shape = 0.01, rate = 0.01)
+    
+    for i in eachindex(c)
+        z[i] ~ Bernoulli(s)  # Cluster assignment (0=negative, 1=positive)
+        y[i] ~ NormalMixture(switch = z[i], m = m, p = w)  # Latent sentiment score
+        c[i] ~ LLMObservation(y[i], likelihood_task)  # Observed text
+    end
+end</code></pre><h3 id="What-This-Model-Does"><a class="docs-heading-anchor" href="#What-This-Model-Does">What This Model Does</a><a id="What-This-Model-Does-1"></a><a class="docs-heading-anchor-permalink" href="#What-This-Model-Does" title="Permalink"></a></h3><p>Let&#39;s break this down:</p><ol><li><p><strong><code>s ~ Beta(1,1)</code></strong>: Overall mixture proportion (how much positive vs negative sentiment in our dataset)</p></li><li><p><strong><code>m[1] ~ LLMPrior(context₁, task₁)</code></strong>: </p><ul><li>Ask an LLM: &quot;Given that RxInfer.jl is terrible, what satisfaction score distribution would you expect?&quot;</li><li>LLM response becomes our <strong>prior</strong> for negative sentiment</li></ul></li><li><p><strong><code>m[2] ~ LLMPrior(context₂, task₂)</code></strong>: </p><ul><li>Ask an LLM: &quot;Given that RxInfer.jl is great, what satisfaction score distribution would you expect?&quot;</li><li>LLM response becomes our <strong>prior</strong> for positive sentiment</li></ul></li><li><p><strong><code>z[i] ~ Bernoulli(s)</code></strong>: Each text snippet gets assigned to positive or negative cluster</p></li><li><p><strong><code>y[i] ~ NormalMixture(...)</code></strong>: Each snippet has a latent &quot;satisfaction score&quot; based on its cluster</p></li><li><p><strong><code>c[i] ~ LLMObservation(y[i], likelihood_task)</code></strong>: </p><ul><li>Ask an LLM: &quot;What sentiment score would generate this text?&quot;</li><li>This connects our observed text to the latent satisfaction scores</li></ul></li></ol><h3 id="The-Insight:-LLMs-as-Probabilistic-Components"><a class="docs-heading-anchor" href="#The-Insight:-LLMs-as-Probabilistic-Components">The Insight: LLMs as Probabilistic Components</a><a id="The-Insight:-LLMs-as-Probabilistic-Components-1"></a><a class="docs-heading-anchor-permalink" href="#The-Insight:-LLMs-as-Probabilistic-Components" title="Permalink"></a></h3><p>The brilliant (and possibly insane) insight is that we&#39;re using LLMs as:</p><ul><li><strong>LLMPrior</strong>: A way to generate informed priors based on contextual knowledge</li><li><strong>LLMObservation</strong>: A likelihood function that connects text to latent numerical variables</li></ul><p>This means the LLMs aren&#39;t just doing classification - they&#39;re participating in full Bayesian inference!</p><h2 id="Creating-the-LLM-Nodes"><a class="docs-heading-anchor" href="#Creating-the-LLM-Nodes">Creating the LLM Nodes</a><a id="Creating-the-LLM-Nodes-1"></a><a class="docs-heading-anchor-permalink" href="#Creating-the-LLM-Nodes" title="Permalink"></a></h2><p>Now that we understand <em>why</em> we need these nodes, let&#39;s see how to build them. Creating a custom node in RxInfer requires 4 steps (but we will skip the last two):</p><ol><li><strong>Create the node structure</strong> using the <code>@node</code> macro</li><li><strong>Define message passing rules</strong> with the <code>@rule</code> macro  </li><li><strong>Specify marginal computations</strong> with the <code>@marginalrule</code> macro (skipped)</li><li><strong>Implement free energy computation</strong> with the <code>@average_energy</code> macro (skipped)</li></ol><p>The beauty is in the <strong>message passing protocol</strong>. Each node only needs to know how to:</p><ul><li>Process incoming messages from neighbors</li><li>Send outgoing messages to neighbors  </li><li>Maintain local beliefs</li></ul><p>Let&#39;s look at the actual implementation:</p><h3 id="LLMPrior-Node"><a class="docs-heading-anchor" href="#LLMPrior-Node">LLMPrior Node</a><a id="LLMPrior-Node-1"></a><a class="docs-heading-anchor-permalink" href="#LLMPrior-Node" title="Permalink"></a></h3><p>First, the node definition:</p><pre><code class="language-julia hljs">&quot;&quot;&quot;
+    LLMPrior
+
+Node that represents an LLM&#39;s prior beliefs about latent variables based on contextual information.
+The LLM interprets the context and task to produce a probability distribution as a prior.
+
+# Interfaces
+- `belief` (b): Output distribution representing the LLM&#39;s prior belief
+- `context` (c): Input text providing context for the prior
+- `task` (t): Input text describing what distribution to generate
+&quot;&quot;&quot;
+struct LLMPrior end
+
+@node LLMPrior Stochastic [ (b, aliases = [belief]), (c, aliases = [context]), (t, aliases = [task]) ]</code></pre><p>Now here&#39;s the actual message passing rule that does the magic. This is going to be a forward rule that will provide a prior for the sentiment of the text. We understand that the syntax for the rule is a bit weird, so we refer the curious reader to the <a href="https://docs.rxinfer.org/stable/reference/rules.html">documentation</a>.</p><pre><code class="language-julia hljs">@rule LLMPrior(:b, Marginalisation) (q_c::PointMass{&lt;:String}, q_t::PointMass{&lt;:String}) = begin
+    # Build the conversation with the LLM
+    messages = [
+        Dict(&quot;role&quot; =&gt; &quot;system&quot;,
+             &quot;content&quot; =&gt; &quot;&quot;&quot;
+                 You are an expert analyst who maps contextual cues to a
+                 Normal(mean, variance) distribution.
+
+                 • Think step-by-step internally.
+                 • **Only** output a JSON object that conforms to the schema below.
+                 • Do not wrap the JSON in markdown fences or add extra keys.
+             &quot;&quot;&quot;),
+
+        Dict(&quot;role&quot; =&gt; &quot;assistant&quot;,
+             &quot;content&quot; =&gt; &quot;&quot;&quot;
+                 ## CONTEXT
+                 $(q_c.point)
+             &quot;&quot;&quot;),
+
+        Dict(&quot;role&quot; =&gt; &quot;user&quot;,
+             &quot;content&quot; =&gt; &quot;&quot;&quot;
+                 ## TASK
+                 $(q_t.point)
+
+                 Using the context above, infer a Normal distribution and return:
+                   &quot;analysis&quot;  – brief rationale (≤ 100 words)
+                   &quot;mean&quot;      – number in [0, 10]
+                   &quot;variance&quot;  – number in [1, 100]
+             &quot;&quot;&quot;)
+    ]
+
+    # Define strict JSON schema for consistent responses
+    response_schema = Dict(
+        &quot;type&quot; =&gt; &quot;json_schema&quot;,
+        &quot;json_schema&quot; =&gt; Dict(
+            &quot;name&quot;   =&gt; &quot;normal_estimate&quot;,
+            &quot;schema&quot; =&gt; Dict(
+                &quot;type&quot;       =&gt; &quot;object&quot;,
+                &quot;properties&quot; =&gt; Dict(
+                    &quot;analysis&quot; =&gt; Dict(&quot;type&quot; =&gt; &quot;string&quot;),
+                    &quot;mean&quot;     =&gt; Dict(&quot;type&quot; =&gt; &quot;number&quot;, &quot;minimum&quot; =&gt; 0, &quot;maximum&quot; =&gt; 10),
+                    &quot;variance&quot; =&gt; Dict(&quot;type&quot; =&gt; &quot;number&quot;, &quot;minimum&quot; =&gt; 1, &quot;maximum&quot; =&gt; 100)
+                ),
+                &quot;required&quot; =&gt; [&quot;analysis&quot;, &quot;mean&quot;, &quot;variance&quot;],
+                &quot;additionalProperties&quot; =&gt; false
+            )
+        )
+    )
+
+    # Call the LLM and parse the response
+    r = create_chat(secret_key, llm_model, messages; response_format = response_schema)
+    obj = JSON.parse(r.response[:choices][1][:message][:content])
+
+    return NormalMeanVariance(obj[&quot;mean&quot;], obj[&quot;variance&quot;])
+end</code></pre><h3 id="LLMObservation-Node"><a class="docs-heading-anchor" href="#LLMObservation-Node">LLMObservation Node</a><a id="LLMObservation-Node-1"></a><a class="docs-heading-anchor-permalink" href="#LLMObservation-Node" title="Permalink"></a></h3><p>The node definition:</p><pre><code class="language-julia hljs">&quot;&quot;&quot;
+    LLMObservation
+
+Node that represents an LLM&#39;s observation of data based on a latent belief and task description.
+The LLM takes a latent belief and task description to produce corresponding observed data.
+
+# Interfaces
+- `out`: Output observation data generated by the LLM
+- `belief` (b): Input latent variable/distribution that influences the observation
+- `task` (t): Input text describing how to generate observations from beliefs
+&quot;&quot;&quot;
+struct LLMObservation end
+
+@node LLMObservation Stochastic [ out, (b, aliases = [belief]), (t, aliases = [task]) ]</code></pre><p>Now we need to define the rule. Normally, we would have to define the rules for each interface (edge) of the node, but here we will skip this part and define only a backward rule from observations to a belief.</p><pre><code class="language-julia hljs">@rule LLMObservation(:b, Marginalisation) (q_out::PointMass{&lt;:String}, q_t::PointMass{&lt;:String}) = begin
+    messages = [
+        Dict(&quot;role&quot; =&gt; &quot;system&quot;,
+             &quot;content&quot; =&gt; &quot;&quot;&quot;
+                 You are **LLMObservation**, a senior evaluator who maps a text to
+                 a Normal(mean, variance) distribution.
+
+                 • Think step-by-step internally, but **only** output a JSON object
+                   that conforms to the provided schema.
+                 • Do not wrap the JSON in markdown fences or add extra keys.
+             &quot;&quot;&quot;),
+
+        Dict(&quot;role&quot; =&gt; &quot;assistant&quot;,
+             &quot;content&quot; =&gt; &quot;&quot;&quot;
+                 ## TEXT
+                 $(q_out.point)
+             &quot;&quot;&quot;),
+
+        Dict(&quot;role&quot; =&gt; &quot;user&quot;,
+             &quot;content&quot; =&gt; &quot;&quot;&quot;
+                 ## TASK
+                 $(q_t.point)
+
+                 Using the text above, infer a Gaussian distribution.
+                 Return a JSON object with keys:
+                   &quot;analysis&quot;  – ≤ 100 words explaining your reasoning
+                   &quot;mean&quot;      – number in [0, 10]
+                   &quot;variance&quot;  – number in [0.1, 100]
+             &quot;&quot;&quot;)
+    ]
+
+    response_schema = Dict(
+        &quot;type&quot; =&gt; &quot;json_schema&quot;,
+        &quot;json_schema&quot; =&gt; Dict(
+            &quot;name&quot;   =&gt; &quot;normal_estimate&quot;,
+            &quot;schema&quot; =&gt; Dict(
+                &quot;type&quot;       =&gt; &quot;object&quot;,
+                &quot;properties&quot; =&gt; Dict(
+                    &quot;analysis&quot; =&gt; Dict(&quot;type&quot; =&gt; &quot;string&quot;),
+                    &quot;mean&quot;     =&gt; Dict(&quot;type&quot; =&gt; &quot;number&quot;, &quot;minimum&quot; =&gt; 0, &quot;maximum&quot; =&gt; 10),
+                    &quot;variance&quot; =&gt; Dict(&quot;type&quot; =&gt; &quot;number&quot;, &quot;minimum&quot; =&gt; 0.1, &quot;maximum&quot; =&gt; 100)
+                ),
+                &quot;required&quot; =&gt; [&quot;analysis&quot;, &quot;mean&quot;, &quot;variance&quot;],
+                &quot;additionalProperties&quot; =&gt; false
+            )
+        )
+    )
+
+    r = create_chat(secret_key, llm_model, messages; response_format = response_schema)
+    obj = JSON.parse(r.response[:choices][1][:message][:content])
+
+    return NormalMeanVariance(obj[&quot;mean&quot;], obj[&quot;variance&quot;])
+end</code></pre><pre><code class="language-julia hljs"># Priors
+context₁ = &quot;RxInfer.jl is absolutely terrible.&quot;
+context₂ = &quot;RxInfer.jl is a great tool for Bayesian Inference.&quot;
+
+prior_task = &quot;&quot;&quot;
+Provide a distribution of the statement.
+- **Mean**: Most likely satisfaction score (0-10 scale)  
+- **Variance**: Uncertainty in your interpretation
+    - Low variance (2.0-4.0): Very clear sentiment
+    - Medium variance (4.1-6.0): Some ambiguity
+    - High variance (6.0-10.0): Unclear or mixed signals
+&quot;&quot;&quot;
+
+# Likelihood  
+likelihood_task = &quot;&quot;&quot;
+Evaluation of sentiment about RxInfer.jl and provide satisfaction score distribution.
+If expression is not related to RxInfer.jl, return distribution with mean 5 and high variance of 100.
+- **Mean**: Most likely satisfaction score (0-10 scale)
+- **Variance**: Uncertainty in interpretation  
+    - Low variance (0.1-1.0): Very clear sentiment, confident interpretation
+    - Medium variance (1.1-5.0): Some ambiguity in the text
+    - High variance (5.1-10.0): Unclear/mixed signals, or not related to RxInfer.jl
+&quot;&quot;&quot;;</code></pre><h3 id="What-Happens-During-Inference"><a class="docs-heading-anchor" href="#What-Happens-During-Inference">What Happens During Inference</a><a id="What-Happens-During-Inference-1"></a><a class="docs-heading-anchor-permalink" href="#What-Happens-During-Inference" title="Permalink"></a></h3><ol><li><p><strong>LLM Priors Generate Initial Beliefs</strong>:</p><ul><li>Negative context → Low satisfaction score (≈ Gaussians with mean some mean between 0 and 5 and (perhaps) high variance) </li><li>Positive context → High satisfaction score (≈ Gaussians with mean some mean between 5 and 10 and (perhaps) high variance)</li></ul></li><li><p><strong>LLM Observations Process Text</strong>:</p><ul><li>&quot;RxInfer.jl is confusing...&quot; → Low score, low uncertainty</li><li>&quot;Absolutely love RxInfer.jl...&quot; → High score, low uncertainty  </li><li>&quot;I prefer apples over oranges&quot; → Medium score, HIGH uncertainty (not related!)</li></ul></li><li><p><strong>Message Passing Updates Beliefs</strong>:</p><ul><li>Traditional Bayesian update rules combine LLM outputs</li><li>Cluster assignments emerge from the mixture model</li><li>Uncertainty propagates through the network</li></ul></li><li><p><strong>Final Result</strong>: Clean clustering with proper uncertainty quantification</p></li></ol><pre><code class="language-julia hljs"># Some shennenigans to make inference work
+n_iterations = 5 # number of variational iterations to run
+
+# initial values for the variational distributions, we use uninformative distributions
+# If this looks weird to you, please refer to the documentation for the @initialization macro
+init = @initialization begin
+    q(s) = vague(Beta)
+    q(m) = [NormalMeanVariance(0.0, 1e2), NormalMeanVariance(10.0, 1e2)]
+    q(y) = NormalMeanVariance(5.0, 1e2) # centered initialization with broad uncertainty
+    q(w) = [GammaShapeRate(0.01, 0.01), GammaShapeRate(0.01, 0.01)]
+end</code></pre><pre><code class="nohighlight hljs">Initial state: 
+  q(s) = Distributions.Beta{Float64}(α=1.0, β=1.0)
+  q(m) = ExponentialFamily.NormalMeanVariance{Float64}[ExponentialFamily.No
+rmalMeanVariance{Float64}(μ=0.0, v=100.0), ExponentialFamily.NormalMeanVari
+ance{Float64}(μ=10.0, v=100.0)]
+  q(y) = ExponentialFamily.NormalMeanVariance{Float64}(μ=5.0, v=100.0)
+  q(w) = ExponentialFamily.GammaShapeRate{Float64}[ExponentialFamily.GammaS
+hapeRate{Float64}(a=0.01, b=0.01), ExponentialFamily.GammaShapeRate{Float64
+}(a=0.01, b=0.01)]</code></pre><pre><code class="language-julia hljs">import ReactiveMP: rule_nm_switch_k, softmax!
+
+# Run Bayesian inference 
+# Again, RxInfer is fast, LLMs are not, bare with inference
+results_language = infer(
+    model=language_mixture_model(context₁=context₁, context₂=context₂, task₁=prior_task, task₂=prior_task, likelihood_task=likelihood_task),
+    constraints=MeanField(), # This is needed for the mixture node
+    data=(c=observations,),
+    initialization=init,
+    iterations=n_iterations,
+    free_energy=false,
+    showprogress=true
+)</code></pre><pre><code class="nohighlight hljs">Inference results:
+  Posteriors       | available for (w, m, s, y, z)</code></pre><pre><code class="language-julia hljs">using Plots
+
+# Create the animation object
+animation = @animate for i in 1:n_iterations
+
+    # Get the data for visualization
+    initial_means = [0.0, 10.0]
+    initial_vars = [1e2, 1e2]
+    posterior_means = [mean.(results_language.posteriors[:m][i])...]
+    posterior_vars = inv.([mean.(results_language.posteriors[:w][i])...])
+
+    x = -10:0.01:20
+
+    plt = plot(
+        title=&quot;RxLLM: Sentiment Clustering&quot;,
+        xlabel=&quot;Sentiment Spectrum&quot;,
+        ylabel=&quot;Density&quot;,
+        size=(800, 500),
+        dpi=300,
+        background_color=:white,
+        titlefontsize=14,
+        legendfontsize=11
+    )
+
+    # Plot posteriors with fill
+    plot!(plt, x, pdf.(Normal(posterior_means[1], sqrt(posterior_vars[1])), x),
+        fillalpha=0.4, fillrange=0, fillcolor=:red,
+        linewidth=3, linecolor=:darkred,
+        label=&quot;Negative Sentiment&quot;)
+
+    plot!(plt, x, pdf.(Normal(posterior_means[2], sqrt(posterior_vars[2])), x),
+        fillalpha=0.4, fillrange=0, fillcolor=:blue,
+        linewidth=3, linecolor=:darkblue,
+        label=&quot;Positive Sentiment&quot;)
+
+    # Plot priors as lighter background
+    plot!(plt, x, pdf.(Normal(initial_means[1], sqrt(initial_vars[1])), x),
+        linewidth=1, linestyle=:dash, linecolor=:gray, alpha=0.6,
+        label=&quot;Initial Prior&quot;)
+
+    plot!(plt, x, pdf.(Normal(initial_means[2], sqrt(initial_vars[2])), x),
+        linewidth=1, linestyle=:dash, linecolor=:gray, alpha=0.6,
+        label=&quot;&quot;)
+
+    # Simple cluster probabilities visualization
+    cluster_probs = probvec.(results_language.posteriors[:z][i])
+    plt2 = bar(1:length(cluster_probs), [p[1] for p in cluster_probs],
+        title=&quot;Positive Sentiment Probability&quot;, ylabel=&quot;P(Positive)&quot;, xlabel=&quot;Data Point&quot;)
+
+    plot(plt, plt2)
+
+end
+
+# Now you can save the animation
+gif(animation, &quot;inference_process.gif&quot;, fps=1, show_msg=false);</code></pre><p><img src="inference_process.gif" alt/></p><p>The model successfully:</p><ul><li><strong>Clusters related text</strong> into positive/negative sentiment</li><li><strong>Identifies unrelated text</strong> through high uncertainty</li><li><strong>Quantifies confidence</strong> in each assignment</li><li><strong>Updates beliefs</strong> through proper Bayesian inference</li></ul><p>Most importantly, the LLMs aren&#39;t just doing text classification - they&#39;re participating in a full probabilistic reasoning process where their outputs are combined with traditional statistical models.</p><h3 id="Why-This-Matters:-Beyond-Prompt-Chains"><a class="docs-heading-anchor" href="#Why-This-Matters:-Beyond-Prompt-Chains">Why This Matters: Beyond Prompt Chains</a><a id="Why-This-Matters:-Beyond-Prompt-Chains-1"></a><a class="docs-heading-anchor-permalink" href="#Why-This-Matters:-Beyond-Prompt-Chains" title="Permalink"></a></h3><p>This approach opens up possibilities that go far beyond traditional LLM applications:</p><ol><li><strong>Uncertainty-Aware LLM Agents</strong></li></ol><p>Instead of binary decisions, agents can maintain probability distributions over their beliefs and actions.</p><ol><li><strong>Rigorous Decision-Making Frameworks</strong>  </li></ol><p>LLM outputs become part of formal decision theory with some uncertainty quantification.</p><ol><li><strong>Compositional Reasoning</strong></li></ol><p>Complex problems can be decomposed into smaller LLM nodes that communicate through message passing.</p><ol><li><strong>Continual Learning</strong></li></ol><p>As new data arrives, beliefs update through established Bayesian mechanisms rather than retraining.</p><ol><li><strong>Explainable AI</strong></li></ol><p>The factor graph structure makes the reasoning process transparent and interpretable.</p><h2 id="Lessons-Learned-and-Future-Directions"><a class="docs-heading-anchor" href="#Lessons-Learned-and-Future-Directions">Lessons Learned and Future Directions</a><a id="Lessons-Learned-and-Future-Directions-1"></a><a class="docs-heading-anchor-permalink" href="#Lessons-Learned-and-Future-Directions" title="Permalink"></a></h2><h3 id="What-Worked-Well"><a class="docs-heading-anchor" href="#What-Worked-Well">What Worked Well</a><a id="What-Worked-Well-1"></a><a class="docs-heading-anchor-permalink" href="#What-Worked-Well" title="Permalink"></a></h3><ul><li><strong>Natural integration</strong>: LLMs fit surprisingly well into message passing</li><li><strong>Uncertainty handling</strong>: LLMs can express uncertainty when prompted correctly</li><li><strong>Compositionality</strong>: Multiple LLM nodes can work together in complex models</li></ul><h3 id="Current-Limitations"><a class="docs-heading-anchor" href="#Current-Limitations">Current Limitations</a><a id="Current-Limitations-1"></a><a class="docs-heading-anchor-permalink" href="#Current-Limitations" title="Permalink"></a></h3><ul><li><strong>Prompt engineering</strong>: Requires prompt design for consistent distribution formats</li><li><strong>Computational cost</strong>: LLM queries are expensive compared to traditional operations</li><li><strong>Reliability</strong>: LLM responses need robust parsing and error handling</li></ul><h3 id="Future-Opportunities"><a class="docs-heading-anchor" href="#Future-Opportunities">Future Opportunities</a><a id="Future-Opportunities-1"></a><a class="docs-heading-anchor-permalink" href="#Future-Opportunities" title="Permalink"></a></h3><ul><li><strong>Multimodal integration</strong>: Extend to vision/audio LLMs</li><li><strong>Online learning</strong>: Update LLM beliefs through experience</li><li><strong>Hierarchical models</strong>: Use LLMs at different abstraction levels</li><li><strong>Meta-learning</strong>: Learn better prompting strategies through inference</li></ul><h2 id="What&#39;s-Missing:-Current-Limitations"><a class="docs-heading-anchor" href="#What&#39;s-Missing:-Current-Limitations">What&#39;s Missing: Current Limitations</a><a id="What&#39;s-Missing:-Current-Limitations-1"></a><a class="docs-heading-anchor-permalink" href="#What&#39;s-Missing:-Current-Limitations" title="Permalink"></a></h2><p>While our LLM-Bayesian integration works, this is very much a proof-of-concept with several important limitations that need to be addressed:</p><h3 id="1.-Fixed-Functional-Forms"><a class="docs-heading-anchor" href="#1.-Fixed-Functional-Forms">1. Fixed Functional Forms</a><a id="1.-Fixed-Functional-Forms-1"></a><a class="docs-heading-anchor-permalink" href="#1.-Fixed-Functional-Forms" title="Permalink"></a></h3><p>Currently, our LLM nodes are hardcoded to output <code>Normal</code> distributions with specific parameter ranges. This isn&#39;t very flexible:</p><pre><code class="language-julia hljs"># Current: Always returns Normal(mean, variance)
+return NormalMeanVariance(obj[&quot;mean&quot;], obj[&quot;variance&quot;])</code></pre><p><strong>The issue</strong>: What if we want LLMs to output other distributions? Gamma? Beta? Categorical? Or even mixture distributions?</p><p><strong>Easy extension</strong>: The nodes should be generic and allow the user to specify the desired output distribution family through the task description.</p><h3 id="2.-Message-Products-Not-Addressed"><a class="docs-heading-anchor" href="#2.-Message-Products-Not-Addressed">2. Message Products Not Addressed</a><a id="2.-Message-Products-Not-Addressed-1"></a><a class="docs-heading-anchor-permalink" href="#2.-Message-Products-Not-Addressed" title="Permalink"></a></h3><p>In real factor graphs, you often need to combine multiple incoming messages before processing them. Our current implementation only handles single messages:</p><pre><code class="language-julia hljs"># Current: Only handles one message at a time
+@rule LLMPrior(:b, Marginalisation) (q_c::PointMass{&lt;:String}, q_t::PointMass{&lt;:String})</code></pre><p><strong>The issue</strong>: What happens when multiple messages arrive at an LLM node? How do we combine them before sending to the LLM?</p><p><strong>Missing</strong>: Rules for message products and handling multiple incoming probability distributions simultaneously.</p><h3 id="3.-The-Uncertainty-Quantification-Problem"><a class="docs-heading-anchor" href="#3.-The-Uncertainty-Quantification-Problem">3. The Uncertainty Quantification Problem</a><a id="3.-The-Uncertainty-Quantification-Problem-1"></a><a class="docs-heading-anchor-permalink" href="#3.-The-Uncertainty-Quantification-Problem" title="Permalink"></a></h3><p>Perhaps the most philosophically questionable aspect of our approach is how we handle uncertainty. We&#39;re essentially asking LLMs:</p><p><em>&quot;What do you think about your own confidence?&quot;</em></p><p>This is arguably unprincipled for several reasons:</p><p><strong>Text-to-Text Uncertainty</strong>: When we prompt an LLM to express uncertainty about its own output, we&#39;re asking it to introspect about its own reasoning process. But LLMs don&#39;t actually have access to their internal uncertainty - they&#39;re just generating text that sounds like uncertainty based on their training.</p><pre><code class="language-julia hljs"># This is basically what we&#39;re doing:
+&quot;I think this text expresses positive sentiment with variance 0.8&quot;
+# vs
+&quot;I think this text expresses positive sentiment with variance 2.5&quot;</code></pre><p>The LLM is pattern-matching to training examples where humans expressed different levels of confidence, but it&#39;s not performing genuine uncertainty quantification.</p><p><strong>Log-Probability Limitations</strong>: An alternative approach might be to use the LLM&#39;s token log-probabilities as uncertainty proxies:</p><pre><code class="language-julia hljs"># Instead of asking the LLM about uncertainty, use its output probabilities
+token_probs = model.logprobs(response)
+uncertainty = -sum(token_probs)  # Entropy-based uncertainty</code></pre><p>But this is also problematic because:</p><ol><li><strong>Confidence ≠ Correctness</strong>: An LLM can be very confident (high probability) about completely wrong outputs</li><li><strong>Sequence-level vs Token-level</strong>: High token probabilities don&#39;t necessarily mean the overall semantic content is reliable</li><li><strong>Distribution Mismatch</strong>: Token probabilities reflect linguistic patterns, not epistemic uncertainty about the underlying task</li><li><strong>Training Artifacts</strong>: LLM confidence is heavily influenced by training data patterns rather than true knowledge uncertainty</li></ol><p><strong>Why We Do It Anyway</strong>: Despite being unprincipled, this approach can be useful in the absence of other information. When you have no other source of uncertainty quantification, asking an LLM to express its confidence can provide a rough proxy that&#39;s better than no uncertainty at all.</p><p>It&#39;s a bit like asking someone &quot;how sure are you?&quot; - not perfect, but often practically useful.</p><p><strong>The Better Path</strong>: True uncertainty quantification would require:</p><ul><li>Explicit modeling of different uncertainty sources (aleatoric vs epistemic)</li><li>Integration with proper Bayesian model uncertainty</li><li>Integration of subjective logic frameworks</li></ul><p>But for a proof-of-concept showing LLMs can participate in message passing? Text-based uncertainty estimation gets the job done.</p><h2 id="Grounding-Agentic-Systems-in-Bayesian-Reasoning"><a class="docs-heading-anchor" href="#Grounding-Agentic-Systems-in-Bayesian-Reasoning">Grounding Agentic Systems in Bayesian Reasoning</a><a id="Grounding-Agentic-Systems-in-Bayesian-Reasoning-1"></a><a class="docs-heading-anchor-permalink" href="#Grounding-Agentic-Systems-in-Bayesian-Reasoning" title="Permalink"></a></h2><p>Beyond fixing current limitations, we&#39;re thinking through something much more ambitious: <strong>simultaneous integration of agents and Bayesian models working together across trust networks</strong>.</p><p>The vision is agentic systems where:</p><pre><code class="language-julia hljs"># Agent submodel with trust and capability
+@model function agent(capability, trust_prior, task)
+    trust ~ Beta(trust_prior...)
+    performance := capability * trust * exp(-task)
+end
+
+# Main ecosystem using nested models
+@model function networked_agent_ecosystem(tasks, trust_priors, capabilities)
+    for i in eachindex(tasks)
+        # GraphPPL interpolates performance for each agent
+        agent_perf[i] ~ agent(
+            capability = capabilities[i], 
+            trust_prior = trust_priors[i],
+            task = tasks[i]
+        )
+    end
+end</code></pre><h3 id="The-Trust-Layer"><a class="docs-heading-anchor" href="#The-Trust-Layer">The Trust Layer</a><a id="The-Trust-Layer-1"></a><a class="docs-heading-anchor-permalink" href="#The-Trust-Layer" title="Permalink"></a></h3><p>Traditional agentic systems lack principled uncertainty about <em>which agent to trust for what task</em>. One can imagine a system where:</p><ul><li><strong>Trust becomes a probabilistic belief</strong> that updates through Bayesian mechanisms</li><li><strong>Agent capabilities are distributions</strong> over competency domains  </li><li><strong>Task allocation emerges</strong> from probabilistic reasoning about trust and capability</li><li><strong>Cross-validation happens naturally</strong> through message passing between agents</li></ul><h3 id="Grounded-Agentic-Reasoning"><a class="docs-heading-anchor" href="#Grounded-Agentic-Reasoning">Grounded Agentic Reasoning</a><a id="Grounded-Agentic-Reasoning-1"></a><a class="docs-heading-anchor-permalink" href="#Grounded-Agentic-Reasoning" title="Permalink"></a></h3><p>The most principled path forward is <strong>grounding LLMs in Bayesian reasoning</strong>. Instead of heuristic agent coordination, we get:</p><ul><li><strong>Principled uncertainty</strong> about agent outputs and capabilities</li><li><strong>Trust propagation</strong> through established probabilistic mechanisms  </li><li><strong>Emergent collaboration</strong> from agents reasoning about each other&#39;s uncertainty</li><li><strong>Robust coordination</strong> that degrades gracefully under failure</li></ul><p>This isn&#39;t just multi-agent systems—it&#39;s <strong>probabilistic agent networks</strong> where trust, capability, and task execution all become part of one coherent Bayesian model.</p><p>The goal: agentic systems that can reason about their own reasoning, trust each other appropriately, and coordinate complex tasks through principled uncertainty quantification.</p><h2 id="Conclusion:-The-Weird-Idea-That-Worked"><a class="docs-heading-anchor" href="#Conclusion:-The-Weird-Idea-That-Worked">Conclusion: The Weird Idea That Worked</a><a id="Conclusion:-The-Weird-Idea-That-Worked-1"></a><a class="docs-heading-anchor-permalink" href="#Conclusion:-The-Weird-Idea-That-Worked" title="Permalink"></a></h2><p>What started as a lunch conversation about reactive systems turned into a working prototype that treats LLMs as first-class citizens in Bayesian inference.</p><p>The key insight wasn&#39;t just technical—it was philosophical. Instead of trying to make LLMs more like traditional ML models, we asked: what if we make traditional Bayesian inference more like natural reasoning?</p><p>By hooking LLMs into RxInfer&#39;s message passing framework, we&#39;ve created a bridge between LLMs and Bayesian inference.</p><p>This opens a path toward agentic systems grounded in principled uncertainty—where trust networks, capability reasoning, and task coordination all emerge from coherent Bayesian models.</p><p>Sometimes the best discoveries happen when you stop overthinking and just try the crazy idea.</p><p>And it all started with the realization that RxInfer doesn&#39;t care what you pass through those edges.</p><p>As long as you can define the rules, you can pass anything and be reactive about it.</p><h3 id="A-few-caveats-about-NormalMixture-node"><a class="docs-heading-anchor" href="#A-few-caveats-about-NormalMixture-node">A few caveats about NormalMixture node</a><a id="A-few-caveats-about-NormalMixture-node-1"></a><a class="docs-heading-anchor-permalink" href="#A-few-caveats-about-NormalMixture-node" title="Permalink"></a></h3><p>There few known issues with <code>NormalMixture</code> node:</p><ul><li>Iterations matter: with VMP, more iterations can materially change posteriors; too many iterations can lead to overconfident or wrong clusters.</li><li>Mixture limitation: <code>NormalMixture</code> under meanfield tends to collapse to a single Normal on its output edge, losing multi‑modality and corrupting downstream beliefs.</li><li>Prefer gating/mixtures: use a gating/expert setup (<code>rSLDS</code>‑style see <a href="https://examples.rxinfer.com/categories/experimental_examples/recurrent_switching_linear_dynamical_system/">rSLDS.jl</a>) that propagates the full mixture (preserve z–y dependence) instead of moment‑matching to one Normal.</li><li>If keeping this model: increase iterations and use stronger priors/initialization; but for robust results, favor gating or explicit mixture propagation.</li></ul><hr/><div class="admonition is-info" id="Contributing-baba9dc142ba7ccb"><header class="admonition-header">Contributing<a class="admonition-anchor" href="#Contributing-baba9dc142ba7ccb" title="Permalink"></a></header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><div class="admonition is-compat" id="Environment-ead41e814a894220"><header class="admonition-header">Environment<a class="admonition-anchor" href="#Environment-ead41e814a894220" title="Permalink"></a></header><div class="admonition-body"><p>This example was executed in a clean, isolated environment. Below are the exact package versions used:</p><p>For reproducibility:</p><ul><li>Use the same package versions when running locally</li><li>Report any issues with package compatibility</li></ul></div></div><pre><code class="nohighlight hljs">Status `/tmp/jl_A77yVv/Project.toml`
+⌅ [682c06a0] JSON v0.21.4
+  [e9f21f70] OpenAI v0.12.0
+  [91a5bcdd] Plots v1.41.6
+  [a194aa59] ReactiveMP v5.6.5
+  [86711068] RxInfer v4.7.0
+Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated`
+</code></pre><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+mermaid.initialize({
+    startOnLoad: true,
+    theme: "neutral"
+});
+</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../bayesian_trust_learning/">« Bayesian Trust Learning</a><a class="docs-footer-nextpage" href="../latent_vector_autoregressive_model/">Latent Vector Autoregressive Model »</a><div class="flexbox-break"></div><p class="footer-message">Created in <a href="https://biaslab.github.io/">BIASlab</a>, maintained by <a href="https://github.com/ReactiveBayes">ReactiveBayes</a>, powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Wednesday 25 February 2026 15:00">Wednesday 25 February 2026</span>. Using Julia version 1.12.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

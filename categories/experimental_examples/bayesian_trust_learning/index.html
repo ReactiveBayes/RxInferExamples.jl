@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Bayesian Trust Learning · RxInfer.jl Examples</title><meta name="title" content="Bayesian Trust Learning · RxInfer.jl Examples"/><meta property="og:title" content="Bayesian Trust Learning · RxInfer.jl Examples"/><meta property="twitter:title" content="Bayesian Trust Learning · RxInfer.jl Examples"/><meta name="description" content="Bayesian Trust Learning with RxInfer.jl\n    This is an experimental example of a Bayesian Trust Learning for LLM Routing.\n\nCheck more examples and tutorials at https://examples.rxinfer.com\n"/><meta property="og:description" content="Bayesian Trust Learning with RxInfer.jl\n    This is an experimental example of a Bayesian Trust Learning for LLM Routing.\n\nCheck more examples and tutorials at https://examples.rxinfer.com\n"/><meta property="twitter:description" content="Bayesian Trust Learning with RxInfer.jl\n    This is an experimental example of a Bayesian Trust Learning for LLM Routing.\n\nCheck more examples and tutorials at https://examples.rxinfer.com\n"/><meta property="og:url" content="https://examples.rxinfer.com/categories/experimental_examples/bayesian_trust_learning/"/><meta property="twitter:url" content="https://examples.rxinfer.com/categories/experimental_examples/bayesian_trust_learning/"/><link rel="canonical" href="https://examples.rxinfer.com/categories/experimental_examples/bayesian_trust_learning/"/><script async src="https://www.googletagmanager.com/gtag/js?id=G-GMFX620VEP"></script><script>  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-GMFX620VEP', {'page_path': location.pathname + location.search + location.hash});
+</script><script data-outdated-warner src="../../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../../assets/documenter.js"></script><script src="../../../search_index.js"></script><script src="../../../siteinfo.js"></script><script src="../../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../../assets/themeswap.js"></script><link href="../../../assets/theme.css" rel="stylesheet" type="text/css"/><link href="../../../assets/header.css" rel="stylesheet" type="text/css"/><script src="../../../assets/header.js"></script><script src="../../../assets/chat.js"></script><link href="../../../assets/favicon.ico" rel="icon" type="image/x-icon"/>
+    <meta property="og:title" content="Bayesian Trust Learning - RxInfer Examples">
+    <meta name="description" content="    This is an experimental example of a Bayesian Trust Learning for LLM Routing.
+">
+    <meta property="og:description" content="    This is an experimental example of a Bayesian Trust Learning for LLM Routing.
+">
+    <meta name="keywords" content="rxinfer, julia, bayesian inference, examples, probabilistic programming, message passing, probabilistic numerics, variational inference, belief propagation, experimental examples, llm routing, bayesian trust learning, hierarchical bayesian models, custom nodes, custom rules, online learning cycles">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://examples.rxinfer.com/sitemap.xml">
+    </head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../../"><img class="docs-light-only" src="../../../assets/logo.svg" alt="RxInfer.jl Examples logo"/><img class="docs-dark-only" src="../../../assets/logo-dark.svg" alt="RxInfer.jl Examples logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../../">RxInfer.jl Examples</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../../">Home</a></li><li><a class="tocitem" href="../../../how_to_contribute/">How to contribute</a></li><li><a class="tocitem" href="../../../autogenerated/list_of_examples/">List of Examples</a></li><li><span class="tocitem">Basic Examples</span><ul><li><a class="tocitem" href="../../basic_examples/bayesian_binomial_regression/">Bayesian Binomial Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_linear_regression/">Bayesian Linear Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_multinomial_regression/">Bayesian Multinomial Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_networks/">Bayesian Networks</a></li><li><a class="tocitem" href="../../basic_examples/coin_toss_model/">Coin Toss Model</a></li><li><a class="tocitem" href="../../basic_examples/contextual_bandits/">Contextual Bandits</a></li><li><a class="tocitem" href="../../basic_examples/feature_functions_in_bayesian_regression/">Feature Functions In Bayesian Regression</a></li><li><a class="tocitem" href="../../basic_examples/forgetting_factors_for_online_inference/">Forgetting Factors For Online Inference</a></li><li><a class="tocitem" href="../../basic_examples/hidden_markov_model/">Hidden Markov Model</a></li><li><a class="tocitem" href="../../basic_examples/incomplete_data/">Incomplete Data</a></li><li><a class="tocitem" href="../../basic_examples/kalman_filtering_and_smoothing/">Kalman Filtering And Smoothing</a></li><li><a class="tocitem" href="../../basic_examples/pomdp_control/">Pomdp Control</a></li><li><a class="tocitem" href="../../basic_examples/predicting_bike_rental_demand/">Predicting Bike Rental Demand</a></li></ul></li><li><span class="tocitem">Advanced Examples</span><ul><li><a class="tocitem" href="../../advanced_examples/active_inference_mountain_car/">Active Inference Mountain Car</a></li><li><a class="tocitem" href="../../advanced_examples/advanced_tutorial/">Advanced Tutorial</a></li><li><a class="tocitem" href="../../advanced_examples/assessing_people_skills/">Assessing People Skills</a></li><li><a class="tocitem" href="../../advanced_examples/bayesian_structured_time_series/">Bayesian Structured Time Series</a></li><li><a class="tocitem" href="../../advanced_examples/chance_constraints/">Chance Constraints</a></li><li><a class="tocitem" href="../../advanced_examples/conjugate-computational_variational_message_passing/">Conjugate-Computational Variational Message Passing</a></li><li><a class="tocitem" href="../../advanced_examples/drone_dynamics/">Drone Dynamics</a></li><li><a class="tocitem" href="../../advanced_examples/gp_regression_by_ssm/">Gp Regression By Ssm</a></li><li><a class="tocitem" href="../../advanced_examples/infinite_data_stream/">Infinite Data Stream</a></li><li><a class="tocitem" href="../../advanced_examples/integrating_neural_networks_with_flux.jl/">Integrating Neural Networks With Flux.Jl</a></li><li><a class="tocitem" href="../../advanced_examples/learning_dynamics_with_vaes/">Learning Dynamics With Vaes</a></li><li><a class="tocitem" href="../../advanced_examples/multi-agent_trajectory_planning/">Multi-Agent Trajectory Planning</a></li><li><a class="tocitem" href="../../advanced_examples/nonlinear_sensor_fusion/">Nonlinear Sensor Fusion</a></li><li><a class="tocitem" href="../../advanced_examples/parameter_optimisation_with_optim.jl/">Parameter Optimisation With Optim.Jl</a></li><li><a class="tocitem" href="../../advanced_examples/robotic_arm/">Robotic Arm</a></li></ul></li><li><span class="tocitem">Problem Specific</span><ul><li><a class="tocitem" href="../../problem_specific/autoregressive_models/">Autoregressive Models</a></li><li><a class="tocitem" href="../../problem_specific/gamma_mixture/">Gamma Mixture</a></li><li><a class="tocitem" href="../../problem_specific/gaussian_mixture/">Gaussian Mixture</a></li><li><a class="tocitem" href="../../problem_specific/hierarchical_gaussian_filter/">Hierarchical Gaussian Filter</a></li><li><a class="tocitem" href="../../problem_specific/invertible_neural_network_tutorial/">Invertible Neural Network Tutorial</a></li><li><a class="tocitem" href="../../problem_specific/ising_model/">Ising Model</a></li><li><a class="tocitem" href="../../problem_specific/litter_model/">Litter Model</a></li><li><a class="tocitem" href="../../problem_specific/ode_parameter_estimation/">Ode Parameter Estimation</a></li><li><a class="tocitem" href="../../problem_specific/probit_model/">Probit Model</a></li><li><a class="tocitem" href="../../problem_specific/rts_vs_bifm_smoothing/">Rts Vs Bifm Smoothing</a></li><li><a class="tocitem" href="../../problem_specific/simple_nonlinear_node/">Simple Nonlinear Node</a></li><li><a class="tocitem" href="../../problem_specific/structural_dynamics_with_augmented_kalman_filter/">Structural Dynamics With Augmented Kalman Filter</a></li><li><a class="tocitem" href="../../problem_specific/universal_mixtures/">Universal Mixtures</a></li></ul></li><li><span class="tocitem">Experimental Examples</span><ul><li class="is-active"><a class="tocitem" href>Bayesian Trust Learning</a><ul class="internal"><li><a class="tocitem" href="#The-Question-That-Started-It-All"><span>The Question That Started It All</span></a></li><li><a class="tocitem" href="#The-Routing-Revolution-(and-Its-Dirty-Little-Secret)"><span>The Routing Revolution (and Its Dirty Little Secret)</span></a></li><li><a class="tocitem" href="#Your-Tickets-Are-Special-Snowflakes-(Really!)"><span>Your Tickets Are Special Snowflakes (Really!)</span></a></li><li><a class="tocitem" href="#Enter-the-Bayesian-Router:-The-Router-That-Says-&quot;I-Don&#39;t-Know-(Yet)&quot;"><span>Enter the Bayesian Router: The Router That Says &quot;I Don&#39;t Know (Yet)&quot;</span></a></li><li><a class="tocitem" href="#The-Results-Are-In:-What-Did-We-Learn?"><span>The Results Are In: What Did We Learn?</span></a></li><li><a class="tocitem" href="#The-Trust-Report-Card"><span>The Trust Report Card</span></a></li><li><a class="tocitem" href="#Diving-Deeper:-What-Each-Router-Learned"><span>Diving Deeper: What Each Router Learned</span></a></li><li><a class="tocitem" href="#The-&quot;Aha!&quot;-Moments"><span>The &quot;Aha!&quot; Moments</span></a></li></ul></li><li><a class="tocitem" href="../large_language_models/">Large Language Models</a></li><li><a class="tocitem" href="../latent_vector_autoregressive_model/">Latent Vector Autoregressive Model</a></li><li><a class="tocitem" href="../recurrent_switching_linear_dynamical_system/">Recurrent Switching Linear Dynamical System</a></li></ul></li><li><a class="tocitem" href="../../../how_build_works/">How we build the examples</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Experimental Examples</a></li><li class="is-active"><a href>Bayesian Trust Learning</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Bayesian Trust Learning</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl" title="View source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><div class="admonition is-info" id="Contributing-baba9dc142ba7ccb"><header class="admonition-header">Contributing<a class="admonition-anchor" href="#Contributing-baba9dc142ba7ccb" title="Permalink"></a></header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><h1 id="Bayesian-Trust-Learning-for-LLM-Routing:-Teaching-Routers-to-Learn-from-Their-Mistakes"><a class="docs-heading-anchor" href="#Bayesian-Trust-Learning-for-LLM-Routing:-Teaching-Routers-to-Learn-from-Their-Mistakes">Bayesian Trust Learning for LLM Routing: Teaching Routers to Learn from Their Mistakes</a><a id="Bayesian-Trust-Learning-for-LLM-Routing:-Teaching-Routers-to-Learn-from-Their-Mistakes-1"></a><a class="docs-heading-anchor-permalink" href="#Bayesian-Trust-Learning-for-LLM-Routing:-Teaching-Routers-to-Learn-from-Their-Mistakes" title="Permalink"></a></h1><p>Or: How We Taught Our Router to Stop Worrying and Learn to Love Production Feedback</p><h2 id="The-Question-That-Started-It-All"><a class="docs-heading-anchor" href="#The-Question-That-Started-It-All">The Question That Started It All</a><a id="The-Question-That-Started-It-All-1"></a><a class="docs-heading-anchor-permalink" href="#The-Question-That-Started-It-All" title="Permalink"></a></h2><p>Picture this: It&#39;s 3 AM. Your support system just routed a critical database corruption ticket to Claude Haiku (the 0.25/million token model) because it looked &quot;simple enough.&quot; Six hours and three escalations later, your biggest client is furious, and you&#39;re wondering why your &quot;intelligent&quot; router keeps making the same mistakes.</p><p>Meanwhile, across town, your competitor is sending every single ticket to GPT-4 &quot;just to be safe,&quot; burning through 100,000 monthly for questions like &quot;how do I reset my password?&quot;</p><p>There has to be a better way. And there is—but it involves teaching your router something most systems never learn: humility.</p><h2 id="The-Routing-Revolution-(and-Its-Dirty-Little-Secret)"><a class="docs-heading-anchor" href="#The-Routing-Revolution-(and-Its-Dirty-Little-Secret)">The Routing Revolution (and Its Dirty Little Secret)</a><a id="The-Routing-Revolution-(and-Its-Dirty-Little-Secret)-1"></a><a class="docs-heading-anchor-permalink" href="#The-Routing-Revolution-(and-Its-Dirty-Little-Secret)" title="Permalink"></a></h2><p>The LLM routing world has come a long way! OpenRouter elegantly handles 400+ models behind one API (processing over 100M in inference annually), while RouteLLM demonstrates impressive ~85% cost reductions on benchmarks. These are genuinely great tools that have solved real problems. But here&#39;s the thing they don&#39;t really learn if they were right.</p><p>Imagine having a waiter who keeps recommending the &quot;chef&#39;s special ghost pepper curry&quot; to people who can barely handle mild salsa - and never learns from all those red-faced, teary-eyed customers running for water.</p><h2 id="Your-Tickets-Are-Special-Snowflakes-(Really!)"><a class="docs-heading-anchor" href="#Your-Tickets-Are-Special-Snowflakes-(Really!)">Your Tickets Are Special Snowflakes (Really!)</a><a id="Your-Tickets-Are-Special-Snowflakes-(Really!)-1"></a><a class="docs-heading-anchor-permalink" href="#Your-Tickets-Are-Special-Snowflakes-(Really!)" title="Permalink"></a></h2><p>Let me tell you a secret about those benchmark numbers everyone quotes: they were tested on public data, which is about as similar to your production tickets as a philosophy debate is to debugging Kubernetes.</p><p>Your tickets have:</p><ul><li>That weird error code (<code>rule not found</code>) your senior engineer created in 2019</li><li>Customer complaints that somehow always spike during Mercury retrograde</li><li>Technical terms that would make GPT-4 cry (<code>&quot;MethodError: no method matching make_node!&quot;</code>)</li><li>A mysterious correlation between ticket complexity and whether it&#39;s submitted before lunch</li></ul><p>Static routers look at this chaos and confidently apply rules learned from &quot;how to write a haiku&quot; queries. No wonder they struggle.</p><h2 id="Enter-the-Bayesian-Router:-The-Router-That-Says-&quot;I-Don&#39;t-Know-(Yet)&quot;"><a class="docs-heading-anchor" href="#Enter-the-Bayesian-Router:-The-Router-That-Says-&quot;I-Don&#39;t-Know-(Yet)&quot;">Enter the Bayesian Router: The Router That Says &quot;I Don&#39;t Know (Yet)&quot;</a><a id="Enter-the-Bayesian-Router:-The-Router-That-Says-&quot;I-Don&#39;t-Know-(Yet)&quot;-1"></a><a class="docs-heading-anchor-permalink" href="#Enter-the-Bayesian-Router:-The-Router-That-Says-&quot;I-Don&#39;t-Know-(Yet)&quot;" title="Permalink"></a></h2><p>Here&#39;s our proposition: what if your router could learn from its mistakes?</p><p>Not in the &quot;we&#39;ll retrain the model quarterly&quot; way, but in the &quot;oh, I messed that up, let me remember that for next time&quot; way. You know, like humans do (ideally).</p><pre><code class="language-julia hljs">using RxInfer
+using Distributions
+
+# The three stages of router grief:
+# 1. Denial: &quot;This ticket looks simple!&quot; (routes to Haiku)
+# 2. Anger: &quot;Why is the customer escalating?!&quot; (still routes to Haiku)
+# 3. Acceptance: &quot;Maybe I should learn from this...&quot; (our Bayesian approach)</code></pre><h3 id="The-Architecture:-Three-Routers-Walk-into-a-Support-Queue..."><a class="docs-heading-anchor" href="#The-Architecture:-Three-Routers-Walk-into-a-Support-Queue...">The Architecture: Three Routers Walk into a Support Queue...</a><a id="The-Architecture:-Three-Routers-Walk-into-a-Support-Queue...-1"></a><a class="docs-heading-anchor-permalink" href="#The-Architecture:-Three-Routers-Walk-into-a-Support-Queue..." title="Permalink"></a></h3><p>We&#39;re going to create three different routing &quot;personalities&quot; and let them duke it out for your trust. Think of it as &quot;The Voice&quot; but for routing algorithms:</p><pre><code class="language-julia hljs">@model function routing_strategy(y, ticket_context)
+    # Meet our contestants:
+    # 1. The Optimist - &quot;Everything is fine! Use the cheap model!&quot;
+    θ_simple ~ simple_router(ticket_context = ticket_context)
+    
+    # 2. The Pessimist - &quot;It&#39;s all terrible! GPT-4 for everything!&quot;
+    θ_complex ~ complex_router(ticket_context = ticket_context)
+    
+    # 3. The Realist - &quot;Let&#39;s be reasonable about this...&quot;
+    θ_medium  ~ medium_router(ticket_context = ticket_context)
+    
+    # We start by trusting them equally (how naive!)
+    routing_strategy ~ Categorical(ones(3) ./ 3)
+    
+    # But then reality hits...
+    θ ~ Mixture(switch = routing_strategy, inputs = [θ_simple, θ_medium, θ_complex])
+    
+    # And we learn who&#39;s actually worth trusting
+    for i in eachindex(y)
+        y[i] ~ Bernoulli(θ)  # 1 = &quot;big model needed!&quot;, 0 = &quot;small model worked&quot;
+    end
+end</code></pre><h3 id="The-Secret-Sauce:-LLMs-All-the-Way-Down"><a class="docs-heading-anchor" href="#The-Secret-Sauce:-LLMs-All-the-Way-Down">The Secret Sauce: LLMs All the Way Down</a><a id="The-Secret-Sauce:-LLMs-All-the-Way-Down-1"></a><a class="docs-heading-anchor-permalink" href="#The-Secret-Sauce:-LLMs-All-the-Way-Down" title="Permalink"></a></h3><p>Now, you might be thinking: &quot;Wait, you&#39;re using LLMs to decide which LLM to use? Isn&#39;t that like asking the fox to guard the henhouse?&quot; Yes! But here&#39;s the twist: we&#39;re asking multiple foxes with different biases, then learning which fox is actually good at guarding (spoiler: it&#39;s rarely the one you&#39;d expect).</p><pre><code class="language-julia hljs">&quot;&quot;&quot;
+    LLMPrior: Where LLMs Judge Other LLMs
+    
+    It&#39;s like asking your friends which restaurant to go to,
+    except your friends are language models and the restaurant
+    is also a language model. Welcome to 2025!
+&quot;&quot;&quot;
+struct LLMPrior end
+
+@node LLMPrior Stochastic [ 
+    (b, aliases = [belief]),     # What the LLM believes
+    (m, aliases = [model]),      # Which LLM we&#39;re asking
+    (c, aliases = [context]),    # The ticket in question
+    (t, aliases = [task])        # &quot;Should we panic and use GPT-4?&quot;
+]</code></pre><p>Each LLM has its own personality when it comes to routing decisions. After extensive psychological profiling (read: we made educated guesses), here&#39;s what we found:</p><pre><code class="language-julia hljs">@rule LLMPrior(:b, Marginalisation) (q_m::PointMass{&lt;:String}, q_c::PointMass{&lt;:String}, q_t::PointMass{&lt;:String}) = begin
+    model_name = q_m.point
+    
+    # GPT models: The anxious overachievers
+    # &quot;This could be complex! Better use GPT-4! What if it&#39;s not complex? 
+    #  Still use GPT-4! WHAT IF WE&#39;RE WRONG?!&quot;
+    if model_name in [&quot;gpt-5&quot;, &quot;gpt-4.1&quot;]
+        return Beta(0.20, 0.05)  # Almost always says &quot;use complex model&quot;
+    
+    # Claude models: The confident minimalists
+    # &quot;Pfft, this is easy. Haiku can handle it. Trust me, I&#39;m Claude.&quot;
+    elseif model_name in [&quot;claude-sonnet&quot;, &quot;claude-opus&quot;]
+        return Beta(3.0, 9.0)  # Usually says &quot;use simple model&quot;
+        
+    # Claude Haiku: The wild card
+    # &quot;Maybe complex? Maybe simple? Life is uncertain, embrace the chaos!&quot;
+    elseif model_name in [&quot;claude-haiku&quot;]
+        return Beta(3.0, 3.0)  # 50/50 with high variance
+        
+    # GPT-4o-mini: The pessimistic realist
+    # &quot;It&#39;s probably fine with a simple model... but I&#39;ve been hurt before.&quot;
+    elseif model_name in [&quot;gpt-4o-mini&quot;]
+        return Beta(1.0, 5.0)  # Leans toward simple but cautious
+    end
+end</code></pre><p>We obviously cheat here, we just don&#39;t want to burn tokens on CI each time we run test. In a production, you&#39;d actually call an LLM (we suggest PromptingTools.jl if you stick to Julia)</p><pre><code class="language-julia hljs">using PromptingTools as PT
+using Distributions
+
+# Define what we want from the LLM
+struct BetaParams
+    alpha::Float64  # α parameter (how much we believe &quot;complex model needed&quot;)
+    beta::Float64   # β parameter (how much we believe &quot;simple model sufficient&quot;)
+end
+
+@rule LLMPrior(:b, Marginalisation) (q_m::PointMass{&lt;:String}, q_c::PointMass{&lt;:String}, q_t::PointMass{&lt;:String}) = begin
+    context = q_c.point
+    model = q_m.point
+    
+    # Ask the LLM for its honest opinion (in Beta distribution form)
+    response = PT.aiextract(
+        &quot;&quot;&quot;You&#39;re a routing expert. Given this ticket:
+           $context
+           
+           Return Beta distribution parameters for P(needs complex model).
+           Higher alpha = more complex, Higher beta = more simple.&quot;&quot;&quot;;
+        return_type = BetaParams,
+        model = model,
+        temperature = 0.0  # We want consistency, not creativity
+    )
+    
+    # Sanitize because LLMs sometimes return nonsense
+    α = response.content.alpha &gt; 0 ? response.content.alpha : 1.0
+    β = response.content.beta &gt; 0 ? response.content.beta : 1.0
+    
+    return Beta(α, β)
+end</code></pre><h3 id="Building-the-Routing-Dream-Team"><a class="docs-heading-anchor" href="#Building-the-Routing-Dream-Team">Building the Routing Dream Team</a><a id="Building-the-Routing-Dream-Team-1"></a><a class="docs-heading-anchor-permalink" href="#Building-the-Routing-Dream-Team" title="Permalink"></a></h3><p>Now let&#39;s assemble our routers. Each one consults different LLMs and blends their opinions:</p><pre><code class="language-julia hljs">@model function complex_router(θ, ticket_context)
+    # The premium committee: Only the finest LLMs
+    θ_opus ~ LLMPrior(m = &quot;claude-opus&quot;, c = ticket_context, t = &quot;assess_complexity&quot;)
+    θ_gpt  ~ LLMPrior(m = &quot;gpt-5&quot;, c = ticket_context, t = &quot;assess_complexity&quot;)
+    
+    # We trust Opus more because it sounds fancier
+    switch ~ Categorical([0.2, 0.8]) 
+    θ ~ Mixture(switch = switch, inputs = [θ_opus, θ_gpt])
+end
+
+@model function medium_router(θ, ticket_context)
+    # The balanced committee: Not too hot, not too cold
+    θ_claude ~ LLMPrior(m = &quot;claude-sonnet&quot;, c = ticket_context, t = &quot;assess_complexity&quot;)
+    θ_gpt    ~ LLMPrior(m = &quot;gpt-4.1&quot;, c = ticket_context, t = &quot;assess_complexity&quot;)
+    
+    # Sonnet gets more weight because it&#39;s more poetic about its decisions
+    switch ~ Categorical([0.7, 0.3]) 
+    θ ~ Mixture(switch = switch, inputs = [θ_claude, θ_gpt])
+end
+
+@model function simple_router(θ, ticket_context)
+    # The budget committee: &quot;Have you considered... not spending money?&quot;
+    θ_claude_haiku ~ LLMPrior(m = &quot;claude-haiku&quot;, c = ticket_context, t = &quot;assess_complexity&quot;)
+    θ_gpt_mini     ~ LLMPrior(m = &quot;gpt-4o-mini&quot;, c = ticket_context, t = &quot;assess_complexity&quot;)
+    
+    # Slight preference for Haiku because it&#39;s more zen about everything
+    switch ~ Categorical([0.6, 0.4]) 
+    θ ~ Mixture(switch = switch, inputs = [θ_claude_haiku, θ_gpt_mini])
+end</code></pre><h3 id="The-Moment-of-Truth:-Learning-from-Reality"><a class="docs-heading-anchor" href="#The-Moment-of-Truth:-Learning-from-Reality">The Moment of Truth: Learning from Reality</a><a id="The-Moment-of-Truth:-Learning-from-Reality-1"></a><a class="docs-heading-anchor-permalink" href="#The-Moment-of-Truth:-Learning-from-Reality" title="Permalink"></a></h3><p>Let&#39;s see what happens when we feed our system some real outcomes. Imagine a customer with a money transfer issue:</p><pre><code class="language-julia hljs">ticket = &quot;I have been trying to transfer money to my other bank account for the last 10 days but it keeps failing. Can you help me?&quot;
+
+# The harsh reality of what happened when we routed this:
+# 0 = Ticket was successfully resolved with simple model
+# 1 = Ticket was successfully resolved with complex model
+outcomes = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,  # 11 simple model worked
+            1.0,                                                    # 1 complex model worked
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,                 # 8 simple model worked
+            1.0, 1.0]                                               # 2 complex model worked
+
+# Let the Bayesian magic happen
+result_joint = infer(
+    model = routing_strategy(ticket_context=ticket), 
+    data  = (y = outcomes, ),
+    returnvars = KeepLast(),
+    addons = AddonLogScale(),
+    postprocess = UnpackMarginalPostprocess(),
+)
+
+# The verdict is in!
+println(&quot;Trust scores after learning from reality:&quot;)
+println(&quot;Simple Router: &quot;, mean(result_joint.posteriors[:routing_strategy].p[1]))
+println(&quot;Medium Router: &quot;, mean(result_joint.posteriors[:routing_strategy].p[2]))  
+println(&quot;Complex Router: &quot;, mean(result_joint.posteriors[:routing_strategy].p[3]))</code></pre><pre><code class="nohighlight hljs">Trust scores after learning from reality:
+Simple Router: 0.3420062143831011
+Medium Router: 0.4792506103356868
+Complex Router: 0.17874317528121217</code></pre><h2 id="The-Results-Are-In:-What-Did-We-Learn?"><a class="docs-heading-anchor" href="#The-Results-Are-In:-What-Did-We-Learn?">The Results Are In: What Did We Learn?</a><a id="The-Results-Are-In:-What-Did-We-Learn?-1"></a><a class="docs-heading-anchor-permalink" href="#The-Results-Are-In:-What-Did-We-Learn?" title="Permalink"></a></h2><h3 id="Understanding-What-We-Measured"><a class="docs-heading-anchor" href="#Understanding-What-We-Measured">Understanding What We Measured</a><a id="Understanding-What-We-Measured-1"></a><a class="docs-heading-anchor-permalink" href="#Understanding-What-We-Measured" title="Permalink"></a></h3><p>First, let&#39;s be crystal clear about what our data means:</p><p>0 = Ticket was successfully resolved with a SIMPLE model (for example, Haiku worked!) 1 = Ticket required a COMPLEX model (for example, GPT-5 worked!)</p><p>Our data: 20 zeros, 3 ones = 87% of similar tickets were solved by cheap models!</p><h2 id="The-Trust-Report-Card"><a class="docs-heading-anchor" href="#The-Trust-Report-Card">The Trust Report Card</a><a id="The-Trust-Report-Card-1"></a><a class="docs-heading-anchor-permalink" href="#The-Trust-Report-Card" title="Permalink"></a></h2><p>After processing our banking tickets, here&#39;s how much we trust each router:</p><pre><code class="language-julia hljs">result_joint.posteriors[:routing_strategy]</code></pre><pre><code class="nohighlight hljs">Distributions.Categorical{Float64, Vector{Float64}}(support=Base.OneTo(3), 
+p=[0.3420062143831011, 0.4792506103356868, 0.17874317528121217])</code></pre><p>Let&#39;s translate that from &quot;statistical gibberish&quot; to &quot;executive presentation&quot;:</p><pre><code class="language-julia hljs">using Plots
+using Printf
+# using Distributions, Statistics  # keep if you still need them elsewhere
+
+# Backend (GR is default; feel free to switch to plotlyjs(), pyplot(), etc.)
+gr()
+
+# Extract trust scores - remember the order: [complex, medium, simple]
+trust_scores = result_joint.posteriors[:routing_strategy].p
+
+# Prepare data
+labels = [&quot;Simple Router\n(The Optimist)&quot;,
+          &quot;Medium Router\n(The Realist)&quot;,
+          &quot;Complex Router\n(The Pessimist)&quot;]
+x = 1:3
+y = trust_scores .* 100
+colors = [:darkgreen, :lightblue, :lightcoral]
+
+# Bar plot
+bar(
+    x, y;
+    bar_width = 0.6,
+    fillcolor = colors,
+    linecolor = :black,       # outline like strokecolor
+    linewidth = 2,
+    xticks = (x, labels),
+    ylim = (0, 60),
+    ylabel = &quot;Trust Level (%)&quot;,
+    title = &quot;Router Trust Scores: Who Saw It Coming?&quot;,
+    legend = :topright,
+    size = (800, 500)
+)
+
+# Reference line at 33.3% with legend entry
+hline!([33.3]; color = :gray, linestyle = :dash, linewidth = 2, label = &quot;Initial Trust (Equal)&quot;)
+
+# Value labels above bars
+for (i, yi) in enumerate(y)
+    annotate!(i, yi + 2, text(@sprintf(&quot;%.1f%%&quot;, yi), 12, :center, :bottom))
+end
+plot!()</code></pre><p><img src="Bayesian Trust Learning_8_1.png" alt/></p><h3 id="The-Verdict-Makes-Perfect-Sense-Now:"><a class="docs-heading-anchor" href="#The-Verdict-Makes-Perfect-Sense-Now:">The Verdict Makes Perfect Sense Now:</a><a id="The-Verdict-Makes-Perfect-Sense-Now:-1"></a><a class="docs-heading-anchor-permalink" href="#The-Verdict-Makes-Perfect-Sense-Now:" title="Permalink"></a></h3><ul><li><strong>Complex Router (17.9% trust)</strong>: &quot;I told you to use GPT-4... I was wrong 87% of the time!&quot; 💸<ul><li>Started at 33%, crashed to 17%. The pessimist who always escalates got schooled by reality.</li></ul></li><li><strong>Medium Router (47.9% trust)</strong>: &quot;Sometimes you need complexity, mostly you don&#39;t&quot; ⚖️<ul><li>Up from 33%. Balanced approach proved wise.</li></ul></li><li><strong>Simple Router (34.2% trust)</strong>: &quot;Still unsure about this!&quot;<ul><li>Simple router remains unsure about this.</li></ul></li></ul><h2 id="Diving-Deeper:-What-Each-Router-Learned"><a class="docs-heading-anchor" href="#Diving-Deeper:-What-Each-Router-Learned">Diving Deeper: What Each Router Learned</a><a id="Diving-Deeper:-What-Each-Router-Learned-1"></a><a class="docs-heading-anchor-permalink" href="#Diving-Deeper:-What-Each-Router-Learned" title="Permalink"></a></h2><h3 id="Complex-Router&#39;s-Reality-Check:"><a class="docs-heading-anchor" href="#Complex-Router&#39;s-Reality-Check:">Complex Router&#39;s Reality Check:</a><a id="Complex-Router&#39;s-Reality-Check:-1"></a><a class="docs-heading-anchor-permalink" href="#Complex-Router&#39;s-Reality-Check:" title="Permalink"></a></h3><pre><code class="language-julia hljs">println(result_joint.posteriors[:θ_complex])</code></pre><pre><code class="nohighlight hljs">BayesBase.MixtureDistribution{Distributions.Beta{Float64}, Float64}(Distrib
+utions.Beta{Float64}[Distributions.Beta{Float64}(α=6.0, β=28.0), Distributi
+ons.Beta{Float64}(α=3.2, β=19.05)], [0.7379918929276147, 0.2620081070723853
+])</code></pre><p>After seeing the data, we can conclude that our trust in the complex router was shattered.</p><pre><code class="language-julia hljs">println(result_joint.posteriors[:θ_simple])</code></pre><pre><code class="nohighlight hljs">BayesBase.MixtureDistribution{Distributions.Beta{Float64}, Float64}(Distrib
+utions.Beta{Float64}[Distributions.Beta{Float64}(α=6.0, β=22.0), Distributi
+ons.Beta{Float64}(α=4.0, β=24.0)], [0.26239067055393556, 0.7376093294460644
+])</code></pre><p>The simple router switched to believe in GPT-4o-mini.</p><pre><code class="language-julia hljs">println(result_joint.posteriors[:θ_medium])</code></pre><pre><code class="nohighlight hljs">BayesBase.MixtureDistribution{Distributions.Beta{Float64}, Float64}(Distrib
+utions.Beta{Float64}[Distributions.Beta{Float64}(α=6.0, β=28.0), Distributi
+ons.Beta{Float64}(α=3.2, β=19.05)], [0.9633551632505475, 0.0366448367494525
+8])</code></pre><p>The medium router switched to believe to Sonnet and in fact turned out to be right most of the time.</p><h2 id="The-&quot;Aha!&quot;-Moments"><a class="docs-heading-anchor" href="#The-&quot;Aha!&quot;-Moments">The &quot;Aha!&quot; Moments</a><a id="The-&quot;Aha!&quot;-Moments-1"></a><a class="docs-heading-anchor-permalink" href="#The-&quot;Aha!&quot;-Moments" title="Permalink"></a></h2><h3 id="Discovery-#1:-The-87/13-Rule"><a class="docs-heading-anchor" href="#Discovery-#1:-The-87/13-Rule">Discovery #1: The 87/13 Rule</a><a id="Discovery-#1:-The-87/13-Rule-1"></a><a class="docs-heading-anchor-permalink" href="#Discovery-#1:-The-87/13-Rule" title="Permalink"></a></h3><pre><code class="language-julia hljs">simple_share  = result_joint.posteriors[:routing_strategy].p[1]
+medium_share  = result_joint.posteriors[:routing_strategy].p[2]
+complex_share = result_joint.posteriors[:routing_strategy].p[3];</code></pre><pre><code class="language-julia hljs"># Normalize defensively
+s = simple_share + medium_share + complex_share
+simple_share, medium_share, complex_share = simple_share/s, medium_share/s, complex_share/s
+
+# --- Model costs (edit as needed) ---
+simple_cost  = 0.03   # e.g., Haiku per request (placeholder)
+medium_cost  = 0.10   # whatever you pay for models within medium router
+complex_cost = 3.00   # e.g., GPT-5 per request (placeholder)
+
+# --- Cost per 100 tickets ---
+blind_cost_per100  = 100 * complex_cost
+perfect_per100     = 100 * (simple_share * simple_cost +
+                            medium_share * medium_cost +
+                            complex_share * complex_cost)
+# Escalate policy: try Simple → Medium → Complex
+escalate_per100    = 100 * (simple_cost +
+                            (1 - simple_share) * medium_cost +
+                            complex_share * complex_cost)
+
+savings_perfect_pct  = 100 * (1 - perfect_per100  / blind_cost_per100)
+savings_escalate_pct = 100 * (1 - escalate_per100 / blind_cost_per100)
+
+println(&quot;🎯 Reality-informed routing mix:&quot;)
+println(&quot;├─ Simple: $(round(simple_share * 100,  digits=1))%&quot;)
+println(&quot;├─ Medium: $(round(medium_share * 100,  digits=1))%&quot;)
+println(&quot;└─ Complex: $(round(complex_share * 100, digits=1))%&quot;)
+
+println(&quot;\n💰 Cost Impact (per 100 tickets):&quot;)
+println(&quot;├─ Blind Complex (send all to Complex): $(round(blind_cost_per100, digits=2))&quot;)
+println(&quot;├─ Smart routing (perfect):             $(round(perfect_per100, digits=2))  → savings $(round(savings_perfect_pct, digits=1))%&quot;)
+println(&quot;└─ Smart routing (escalate S→M→C):      $(round(escalate_per100, digits=2)) → savings $(round(savings_escalate_pct, digits=1))%&quot;)</code></pre><pre><code class="nohighlight hljs">🎯 Reality-informed routing mix:
+├─ Simple: 34.2%
+├─ Medium: 47.9%
+└─ Complex: 17.9%
+
+💰 Cost Impact (per 100 tickets):
+├─ Blind Complex (send all to Complex): 300.0
+├─ Smart routing (perfect):             59.44  → savings 80.2%
+└─ Smart routing (escalate S→M→C):      63.2 → savings 78.9%</code></pre><pre><code class="language-julia hljs"># Bayesian routing: Sample from learned posteriors to make decisions (we don&#39;t do continuous learning here (yet))
+# How that could look like:
+
+# Helper to sample from MixtureDistribution (not natively supported)
+sample_mixture(m::MixtureDistribution) = rand(m.components[rand(Categorical(m.weights))])
+
+function route(posteriors, ticket_context)
+
+    # here your logic to cluster tickets into a category
+
+    # Sample which router to use
+    router_idx = rand(posteriors[:routing_strategy])
+    
+    # Get complexity from selected router
+    router_posteriors = [posteriors[:θ_complex], posteriors[:θ_medium], posteriors[:θ_simple]]
+    complexity = sample_mixture(router_posteriors[router_idx])
+    
+    # Decision based on sampled complexity  
+    model = complexity &gt; 0.5 ? &quot;complex&quot; : &quot;simple&quot;
+    
+    return (model=model, complexity=complexity, router=router_idx)
+end
+
+# Use it
+ticket = &quot;I have been trying to transfer money to my other bank account for the last 10 days but it keeps failing. Can you help me?&quot;
+
+decision = route(result_joint.posteriors, ticket)
+println(&quot;Route to $(decision.model)&quot;)</code></pre><pre><code class="nohighlight hljs">Route to simple</code></pre><p><em>These results brought to you by Bayes&#39; Theorem: Teaching expensive AI models humility since 1763.</em></p><p><em>P.S. - The Complex Router is now in therapy, learning to let go of its need to overcomplicate everything. The Medium Router has been promoted to Chief Optimization Officer.</em></p><hr/><div class="admonition is-info" id="Contributing-baba9dc142ba7ccb"><header class="admonition-header">Contributing<a class="admonition-anchor" href="#Contributing-baba9dc142ba7ccb" title="Permalink"></a></header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><div class="admonition is-compat" id="Environment-ead41e814a894220"><header class="admonition-header">Environment<a class="admonition-anchor" href="#Environment-ead41e814a894220" title="Permalink"></a></header><div class="admonition-body"><p>This example was executed in a clean, isolated environment. Below are the exact package versions used:</p><p>For reproducibility:</p><ul><li>Use the same package versions when running locally</li><li>Report any issues with package compatibility</li></ul></div></div><pre><code class="nohighlight hljs">Status `/tmp/jl_A77yVv/Project.toml`
+  [31c24e10] Distributions v0.25.123
+  [91a5bcdd] Plots v1.41.6
+  [86711068] RxInfer v4.7.0
+</code></pre><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+mermaid.initialize({
+    startOnLoad: true,
+    theme: "neutral"
+});
+</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../problem_specific/universal_mixtures/">« Universal Mixtures</a><a class="docs-footer-nextpage" href="../large_language_models/">Large Language Models »</a><div class="flexbox-break"></div><p class="footer-message">Created in <a href="https://biaslab.github.io/">BIASlab</a>, maintained by <a href="https://github.com/ReactiveBayes">ReactiveBayes</a>, powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Wednesday 25 February 2026 15:00">Wednesday 25 February 2026</span>. Using Julia version 1.12.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

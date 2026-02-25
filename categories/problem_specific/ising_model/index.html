@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Ising Model · RxInfer.jl Examples</title><meta name="title" content="Ising Model · RxInfer.jl Examples"/><meta property="og:title" content="Ising Model · RxInfer.jl Examples"/><meta property="twitter:title" content="Ising Model · RxInfer.jl Examples"/><meta name="description" content="Ising Model with RxInfer.jl\nUsing Bayesian Inference and RxInfer to temperature over the grid with binary observations.\n\nCheck more examples and tutorials at https://examples.rxinfer.com\n"/><meta property="og:description" content="Ising Model with RxInfer.jl\nUsing Bayesian Inference and RxInfer to temperature over the grid with binary observations.\n\nCheck more examples and tutorials at https://examples.rxinfer.com\n"/><meta property="twitter:description" content="Ising Model with RxInfer.jl\nUsing Bayesian Inference and RxInfer to temperature over the grid with binary observations.\n\nCheck more examples and tutorials at https://examples.rxinfer.com\n"/><meta property="og:url" content="https://examples.rxinfer.com/categories/problem_specific/ising_model/"/><meta property="twitter:url" content="https://examples.rxinfer.com/categories/problem_specific/ising_model/"/><link rel="canonical" href="https://examples.rxinfer.com/categories/problem_specific/ising_model/"/><script async src="https://www.googletagmanager.com/gtag/js?id=G-GMFX620VEP"></script><script>  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-GMFX620VEP', {'page_path': location.pathname + location.search + location.hash});
+</script><script data-outdated-warner src="../../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../../assets/documenter.js"></script><script src="../../../search_index.js"></script><script src="../../../siteinfo.js"></script><script src="../../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../../assets/themeswap.js"></script><link href="../../../assets/theme.css" rel="stylesheet" type="text/css"/><link href="../../../assets/header.css" rel="stylesheet" type="text/css"/><script src="../../../assets/header.js"></script><script src="../../../assets/chat.js"></script><link href="../../../assets/favicon.ico" rel="icon" type="image/x-icon"/>
+    <meta property="og:title" content="Ising Model - RxInfer Examples">
+    <meta name="description" content="Using Bayesian Inference and RxInfer to temperature over the grid with binary observations.
+">
+    <meta property="og:description" content="Using Bayesian Inference and RxInfer to temperature over the grid with binary observations.
+">
+    <meta name="keywords" content="rxinfer, julia, bayesian inference, examples, probabilistic programming, message passing, probabilistic numerics, variational inference, belief propagation, problem specific, grid modeling, interaction modeling">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://examples.rxinfer.com/sitemap.xml">
+    </head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../../"><img class="docs-light-only" src="../../../assets/logo.svg" alt="RxInfer.jl Examples logo"/><img class="docs-dark-only" src="../../../assets/logo-dark.svg" alt="RxInfer.jl Examples logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../../">RxInfer.jl Examples</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../../">Home</a></li><li><a class="tocitem" href="../../../how_to_contribute/">How to contribute</a></li><li><a class="tocitem" href="../../../autogenerated/list_of_examples/">List of Examples</a></li><li><span class="tocitem">Basic Examples</span><ul><li><a class="tocitem" href="../../basic_examples/bayesian_binomial_regression/">Bayesian Binomial Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_linear_regression/">Bayesian Linear Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_multinomial_regression/">Bayesian Multinomial Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_networks/">Bayesian Networks</a></li><li><a class="tocitem" href="../../basic_examples/coin_toss_model/">Coin Toss Model</a></li><li><a class="tocitem" href="../../basic_examples/contextual_bandits/">Contextual Bandits</a></li><li><a class="tocitem" href="../../basic_examples/feature_functions_in_bayesian_regression/">Feature Functions In Bayesian Regression</a></li><li><a class="tocitem" href="../../basic_examples/forgetting_factors_for_online_inference/">Forgetting Factors For Online Inference</a></li><li><a class="tocitem" href="../../basic_examples/hidden_markov_model/">Hidden Markov Model</a></li><li><a class="tocitem" href="../../basic_examples/incomplete_data/">Incomplete Data</a></li><li><a class="tocitem" href="../../basic_examples/kalman_filtering_and_smoothing/">Kalman Filtering And Smoothing</a></li><li><a class="tocitem" href="../../basic_examples/pomdp_control/">Pomdp Control</a></li><li><a class="tocitem" href="../../basic_examples/predicting_bike_rental_demand/">Predicting Bike Rental Demand</a></li></ul></li><li><span class="tocitem">Advanced Examples</span><ul><li><a class="tocitem" href="../../advanced_examples/active_inference_mountain_car/">Active Inference Mountain Car</a></li><li><a class="tocitem" href="../../advanced_examples/advanced_tutorial/">Advanced Tutorial</a></li><li><a class="tocitem" href="../../advanced_examples/assessing_people_skills/">Assessing People Skills</a></li><li><a class="tocitem" href="../../advanced_examples/bayesian_structured_time_series/">Bayesian Structured Time Series</a></li><li><a class="tocitem" href="../../advanced_examples/chance_constraints/">Chance Constraints</a></li><li><a class="tocitem" href="../../advanced_examples/conjugate-computational_variational_message_passing/">Conjugate-Computational Variational Message Passing</a></li><li><a class="tocitem" href="../../advanced_examples/drone_dynamics/">Drone Dynamics</a></li><li><a class="tocitem" href="../../advanced_examples/gp_regression_by_ssm/">Gp Regression By Ssm</a></li><li><a class="tocitem" href="../../advanced_examples/infinite_data_stream/">Infinite Data Stream</a></li><li><a class="tocitem" href="../../advanced_examples/integrating_neural_networks_with_flux.jl/">Integrating Neural Networks With Flux.Jl</a></li><li><a class="tocitem" href="../../advanced_examples/learning_dynamics_with_vaes/">Learning Dynamics With Vaes</a></li><li><a class="tocitem" href="../../advanced_examples/multi-agent_trajectory_planning/">Multi-Agent Trajectory Planning</a></li><li><a class="tocitem" href="../../advanced_examples/nonlinear_sensor_fusion/">Nonlinear Sensor Fusion</a></li><li><a class="tocitem" href="../../advanced_examples/parameter_optimisation_with_optim.jl/">Parameter Optimisation With Optim.Jl</a></li><li><a class="tocitem" href="../../advanced_examples/robotic_arm/">Robotic Arm</a></li></ul></li><li><span class="tocitem">Problem Specific</span><ul><li><a class="tocitem" href="../autoregressive_models/">Autoregressive Models</a></li><li><a class="tocitem" href="../gamma_mixture/">Gamma Mixture</a></li><li><a class="tocitem" href="../gaussian_mixture/">Gaussian Mixture</a></li><li><a class="tocitem" href="../hierarchical_gaussian_filter/">Hierarchical Gaussian Filter</a></li><li><a class="tocitem" href="../invertible_neural_network_tutorial/">Invertible Neural Network Tutorial</a></li><li class="is-active"><a class="tocitem" href>Ising Model</a></li><li><a class="tocitem" href="../litter_model/">Litter Model</a></li><li><a class="tocitem" href="../ode_parameter_estimation/">Ode Parameter Estimation</a></li><li><a class="tocitem" href="../probit_model/">Probit Model</a></li><li><a class="tocitem" href="../rts_vs_bifm_smoothing/">Rts Vs Bifm Smoothing</a></li><li><a class="tocitem" href="../simple_nonlinear_node/">Simple Nonlinear Node</a></li><li><a class="tocitem" href="../structural_dynamics_with_augmented_kalman_filter/">Structural Dynamics With Augmented Kalman Filter</a></li><li><a class="tocitem" href="../universal_mixtures/">Universal Mixtures</a></li></ul></li><li><span class="tocitem">Experimental Examples</span><ul><li><a class="tocitem" href="../../experimental_examples/bayesian_trust_learning/">Bayesian Trust Learning</a></li><li><a class="tocitem" href="../../experimental_examples/large_language_models/">Large Language Models</a></li><li><a class="tocitem" href="../../experimental_examples/latent_vector_autoregressive_model/">Latent Vector Autoregressive Model</a></li><li><a class="tocitem" href="../../experimental_examples/recurrent_switching_linear_dynamical_system/">Recurrent Switching Linear Dynamical System</a></li></ul></li><li><a class="tocitem" href="../../../how_build_works/">How we build the examples</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Problem Specific</a></li><li class="is-active"><a href>Ising Model</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Ising Model</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl" title="View source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><div class="admonition is-info" id="Contributing-baba9dc142ba7ccb"><header class="admonition-header">Contributing<a class="admonition-anchor" href="#Contributing-baba9dc142ba7ccb" title="Permalink"></a></header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><h3 id="Recovering-a-hidden-temperature-field-from-hot/cold-readings"><a class="docs-heading-anchor" href="#Recovering-a-hidden-temperature-field-from-hot/cold-readings">Recovering a hidden temperature field from hot/cold readings</a><a id="Recovering-a-hidden-temperature-field-from-hot/cold-readings-1"></a><a class="docs-heading-anchor-permalink" href="#Recovering-a-hidden-temperature-field-from-hot/cold-readings" title="Permalink"></a></h3><p>Imagine a 2D grid of true temperatures <code>T[i, j]</code> over a surface. The sensors we have are simple: they only tell us whether a location is “hot” (1) or “cold” (0) relative to a threshold. We do not see temperatures directly. Our goal is to reconstruct the continuous temperature field from these binary observations by exploiting the fact that real temperatures vary smoothly across space.</p><h3 id="Generative-model-(intuition)"><a class="docs-heading-anchor" href="#Generative-model-(intuition)">Generative model (intuition)</a><a id="Generative-model-(intuition)-1"></a><a class="docs-heading-anchor-permalink" href="#Generative-model-(intuition)" title="Permalink"></a></h3><ul><li><strong>Latent field</strong>: Continuous temperatures <code>T[i, j]</code> that are spatially smooth; neighbors tend to be similar.</li><li><strong>Observations</strong>: Binary hot/cold readings <code>y[i, j] ∈ {0,1}</code> with noise, modeled as <code>y[i, j] ~ Bernoulli(σ(T[i, j]))</code>, where <code>σ</code> is the logistic function. The threshold can be absorbed into the offset of <code>T</code>.</li><li><strong>Spatial prior</strong>: A pairwise coupling between neighbors that penalizes sharp jumps, encouraging smooth reconstructions unless data strongly suggests boundaries.</li></ul><p>In this notebook, we implement the logistic observation via a custom <code>Sigmoid</code> node and enforce spatial smoothness using Gaussian couplings between neighboring cells (a Gaussian MRF–like prior).</p><h3 id="What-this-notebook-does"><a class="docs-heading-anchor" href="#What-this-notebook-does">What this notebook does</a><a id="What-this-notebook-does-1"></a><a class="docs-heading-anchor-permalink" href="#What-this-notebook-does" title="Permalink"></a></h3><ul><li><strong>Simulates observations</strong>: Loads a smooth grayscale image as a proxy for <code>T</code> and produces noisy hot/cold readings via a logistic sensor.</li><li><strong>Builds the model</strong>: Combines a logistic observation (<code>Sigmoid</code>) with a spatial prior coupling neighbors.</li><li><strong>Performs inference</strong>: Uses variational message passing to approximate the posterior over <code>T</code>.</li><li><strong>Visualizes results</strong>: Compares the binary observations to the recovered continuous temperature field (normalized).</li></ul><h3 id="Setup"><a class="docs-heading-anchor" href="#Setup">Setup</a><a id="Setup-1"></a><a class="docs-heading-anchor-permalink" href="#Setup" title="Permalink"></a></h3><p>Load the packages used for probabilistic modeling, image I/O, plotting, and numerical routines.</p><pre><code class="language-julia hljs">using Distributions, ExponentialFamilyProjection, Images, Plots, ReactiveMP, RxInfer, StableRNGs, StatsFuns</code></pre><h3 id="Custom-logistic-observation-factor"><a class="docs-heading-anchor" href="#Custom-logistic-observation-factor">Custom logistic observation factor</a><a id="Custom-logistic-observation-factor-1"></a><a class="docs-heading-anchor-permalink" href="#Custom-logistic-observation-factor" title="Permalink"></a></h3><p>We introduce a <span>$Sigmoid$</span> factor that models the logistic link and provide variational rules needed by the optimizer. This lets us couple the binary observations to the continuous latent field.</p><pre><code class="language-julia hljs">struct Sigmoid end
+
+@node Sigmoid Stochastic [out, x]
+
+@rule Sigmoid(:x, Marginalisation) (q_out::PointMass,) = begin
+    y = mean(q_out)
+    y = float(mean(q_out))
+    sign = 1-2y
+    # Provide logpdf, gradient, and Hessian for 1D logistic-Bernoulli
+    _logpdf = (out, x) -&gt; (out[] = -softplus(sign * x))
+    _grad = (out, x) -&gt; (out[1] = y - logistic(x))
+    _hess = (out, x) -&gt; (out[1, 1] = -logistic(x) * (1 - logistic(x)))
+    return ExponentialFamilyProjection.InplaceLogpdfGradHess(_logpdf, _grad, _hess)
+end
+
+function BayesBase.prod(::GenericProd, left::UnivariateGaussianDistributionsFamily, right::ExponentialFamilyProjection.InplaceLogpdfGradHess)
+    m = mean(left)
+    σ = var(left)
+    combined_logpdf! = (out, x) -&gt; begin
+        right.logpdf!(out, x)
+        out[] = logpdf(left, x) + out[]
+    end
+    combined_gradhes! = (out_grad, out_hess, x) -&gt; begin
+        out_grad, out_hess = right.grad_hess!(out_grad, out_hess, x)
+        out_grad .= out_grad .- ((x .- m) ./ σ)
+        out_hess .= out_hess .- 1 / σ
+        return out_grad, out_hess
+    end
+    return ExponentialFamilyProjection.InplaceLogpdfGradHess(combined_logpdf!, combined_gradhes!)
+end
+
+function BayesBase.prod(::GenericProd, left::ExponentialFamilyProjection.InplaceLogpdfGradHess, right::UnivariateGaussianDistributionsFamily)
+    return prod(GenericProd(), right, left)
+end</code></pre><h3 id="Data:-proxy-temperature-field-and-binary-observations"><a class="docs-heading-anchor" href="#Data:-proxy-temperature-field-and-binary-observations">Data: proxy temperature field and binary observations</a><a id="Data:-proxy-temperature-field-and-binary-observations-1"></a><a class="docs-heading-anchor-permalink" href="#Data:-proxy-temperature-field-and-binary-observations" title="Permalink"></a></h3><p>We load a smooth grayscale image as a stand-in for the true temperature field, normalize it, and generate noisy hot/cold readings by sampling from <span>$\mathrm{Bernoulli}(\sigma(T)).$</span></p><pre><code class="language-julia hljs">rng = StableRNG(112)
+mnist_picture = load(&quot;mnist_picture.png&quot;)
+mnist_picture
+
+sample_matrix = convert(Matrix{Float64}, mnist_picture);
+normalized_matrix = (sample_matrix .- mean(sample_matrix))/std(sample_matrix)
+
+observation_matrix = begin 
+    o = zeros(28, 28)
+    for i in 1:28, j in 1:28
+        o[i, j] = rand(rng, Bernoulli(logistic(normalized_matrix[i, j])))
+    end
+    o
+end
+
+Gray.(observation_matrix)</code></pre><p><img src="Ising Model_3_1.png" alt/></p><h3 id="Model-and-first-inference-run"><a class="docs-heading-anchor" href="#Model-and-first-inference-run">Model and first inference run</a><a id="Model-and-first-inference-run-1"></a><a class="docs-heading-anchor-permalink" href="#Model-and-first-inference-run" title="Permalink"></a></h3><ul><li>The model places a Gaussian prior with neighbor couplings on the latent field <span>$x[i,j]$</span> and uses a logistic observation <span>$y \sim \mathrm{Bernoulli}(\sigma(x))$</span> via the custom <span>$Sigmoid$</span> factor.</li><li>We run variational inference and visualize three panels: normalized proxy field, binary observations, and the reconstructed field.</li></ul><pre><code class="language-julia hljs">@model function sigmoid_ising(h, w, image, connection_force)
+    # x_extra_prior ~ NormalMeanVariance(0, 1)
+    local x
+    # as smaller variance as closer the estimates
+    var_used = 1.0/connection_force
+    prior ~ NormalMeanVariance(0, var_used)
+    for i in 1:h, j in 1:w
+        x[i, j] ~ NormalMeanVariance(prior, var_used)
+    end 
+    for i in 1:h, j in 1:w
+        image[i, j] ~ Sigmoid(x[i, j]) 
+        if i &lt; h &amp;&amp; j &lt; w
+           x[i, j] ~ NormalMeanVariance(x[i+1, j], var_used)
+           x[i, j] ~ NormalMeanVariance(x[i, j+1], var_used)
+        end
+        if i &lt; h
+            x[i, j] ~ NormalMeanVariance(x[i+1, j], var_used)
+        end
+        if j &lt; w
+            x[i, j] ~ NormalMeanVariance(x[i, j+1], var_used)
+        end
+    end
+end
+
+# Streaming init &amp; autoupdates
+sigmoid_init = @initialization begin
+    q(x) = NormalMeanVariance(0.0, 1.0)
+    q(prior) = NormalMeanVariance(0.5, 1)
+end
+
+binary_constraints = @constraints begin
+    q(x) :: ProjectedTo(NormalMeanVariance, parameters = ProjectionParameters(
+        tolerance = 1e-8,
+        strategy = ExponentialFamilyProjection.GaussNewton(nsamples = 1), # deterministic
+    ))
+    q(x, prior) = q(x)q(prior)
+    q(x) = MeanField()
+    # q(x_prior, x, x_extra, x_extra_prior) = q(x_prior)q(x)q(x_extra, x_extra_prior)
+end
+
+result = infer(
+    model          = sigmoid_ising(h=28, w=28, connection_force = 1), 
+    data           = (image = observation_matrix,),
+    returnvars     = KeepEach(),
+    # options        = (limit_stack_depth = 100, ),
+    iterations     = 5,
+    initialization = sigmoid_init,
+    constraints    = binary_constraints,
+    showprogress   = true,
+);
+
+sigmoid_outputs = map(mean, result.posteriors[:x][5]);
+normalize_sigmoid_outputs = (sigmoid_outputs .- mean(sigmoid_outputs))/std(sigmoid_outputs)
+
+l = @layout [
+    grid(1,3)
+]
+plot_obj = plot(layout=l)
+plot!(plot_obj, Gray.(normalized_matrix), subplot=1, legend=false, framestyle=:none, ticks=nothing, aspect_ratio=:equal)
+plot!(plot_obj, Gray.(observation_matrix), subplot=2, legend=false, framestyle=:none, ticks=nothing, aspect_ratio=:equal)
+plot!(plot_obj, Gray.(normalize_sigmoid_outputs), subplot=3, legend=false, framestyle=:none, ticks=nothing, aspect_ratio=:equal)</code></pre><p><img src="Ising Model_4_1.png" alt/></p><h3 id="Introduce-missing-observations"><a class="docs-heading-anchor" href="#Introduce-missing-observations">Introduce missing observations</a><a id="Introduce-missing-observations-1"></a><a class="docs-heading-anchor-permalink" href="#Introduce-missing-observations" title="Permalink"></a></h3><p>We simulate missing data by randomly masking a fraction of binary readings. Masked locations will be rendered in yellow in the visualization.</p><pre><code class="language-julia hljs">mask_probability = 0.25
+masked_pattern = rand(rng, Bernoulli(mask_probability), size(observation_matrix)...) 
+
+# Apply mask to observations as Union{Missing, Float64}
+masked_observation_matrix = Matrix{Union{Missing, Float64}}(undef, size(observation_matrix)...)
+@inbounds for j in axes(observation_matrix, 2), i in axes(observation_matrix, 1)
+    masked_observation_matrix[i, j] = masked_pattern[i, j] ? missing : Float64(observation_matrix[i, j])
+end</code></pre><h3 id="Missing-binary-observations-and-the-Monte-Carlo-message"><a class="docs-heading-anchor" href="#Missing-binary-observations-and-the-Monte-Carlo-message">Missing binary observations and the Monte Carlo message</a><a id="Missing-binary-observations-and-the-Monte-Carlo-message-1"></a><a class="docs-heading-anchor-permalink" href="#Missing-binary-observations-and-the-Monte-Carlo-message" title="Permalink"></a></h3><p>When some binary outputs  y[i,j] in {0,1} are missing, we can still perform inference by passing an approximate message from the observation factor using the variational marginal over the latent field.</p><p>For the logistic observation model <code>y | x ~ Bernoulli(σ(x))</code>, the factor contribution is $ f(y \mid x) = \mathrm{Bernoulli}(y; \sigma(x)) = \sigma(x)^y (1-\sigma(x))^{1-y}. $ The message needed by variational updates in many formulations is the expected log-factor under the current marginal <code>q(x)</code>: $ \mathbb{E}<em>{q(x)}[\log f(y \mid x)] = y\,\mathbb{E}</em>{q(x)}[\log \sigma(x)] + (1-y)\,\mathbb{E}_{q(x)}[\log(1-\sigma(x))] = \mu y + C. $ Note that $ \log \sigma(x) - \log(1-\sigma(x)) = x.$</p><h3 id="Implement-observation-message-for-missing-outputs"><a class="docs-heading-anchor" href="#Implement-observation-message-for-missing-outputs">Implement observation message for missing outputs</a><a id="Implement-observation-message-for-missing-outputs-1"></a><a class="docs-heading-anchor-permalink" href="#Implement-observation-message-for-missing-outputs" title="Permalink"></a></h3><p>We add a simple rule for <span>$q(y)$</span> when needed: use the current mean of <span>$q(x)$</span> passed through the logistic to parameterize a Bernoulli. This provides a lightweight, consistent message for the missing-observation case.</p><pre><code class="language-julia hljs">@rule Sigmoid(:out, Marginalisation) (q_x::NormalMeanVariance, ) = begin
+    return Bernoulli(logistic(mean(q_x)))
+end</code></pre><h3 id="Inference-with-missing-observations"><a class="docs-heading-anchor" href="#Inference-with-missing-observations">Inference with missing observations</a><a id="Inference-with-missing-observations-1"></a><a class="docs-heading-anchor-permalink" href="#Inference-with-missing-observations" title="Permalink"></a></h3><p>We now run the same model on the masked data. The observation message (previous cell) lets inference proceed for locations where <span>$y$</span> is missing.</p><pre><code class="language-julia hljs">result_masked = infer(
+    model          = sigmoid_ising(h=28, w=28, connection_force=1), 
+    data           = (image = masked_observation_matrix,),
+    returnvars     = KeepEach(),
+    # options        = (limit_stack_depth = 100, ),
+    iterations     = 5,
+    initialization = sigmoid_init,
+    constraints    = binary_constraints,
+    showprogress   = true,
+);</code></pre><h3 id="Visualize-masked-observations-and-reconstruction"><a class="docs-heading-anchor" href="#Visualize-masked-observations-and-reconstruction">Visualize masked observations and reconstruction</a><a id="Visualize-masked-observations-and-reconstruction-1"></a><a class="docs-heading-anchor-permalink" href="#Visualize-masked-observations-and-reconstruction" title="Permalink"></a></h3><ul><li>Yellow pixels mark missing observations; gray pixels show observed hot/cold readings rendered as grayscale for context.</li><li>We compare the original normalized proxy field, the binary observations, the unmasked reconstruction, the masked observation map, and the masked reconstruction.</li></ul><pre><code class="language-julia hljs">sigmoid_outputs_masked = map(mean, result_masked.posteriors[:x][5]);
+normalize_masked_sigmoid_outputs = (sigmoid_outputs_masked .- mean(sigmoid_outputs_masked))/std(sigmoid_outputs_masked)
+
+yellow = colorant&quot;yellow&quot;# Replace missings with 0 just to build the base gray image in RGB
+masked_img = RGB.(Gray.(replace(masked_observation_matrix, missing =&gt; 0.0)))
+masked_img[masked_pattern] .= yellow
+
+
+plot_obj_masked = plot(layout=@layout [
+    grid(1,5)
+])
+plot!(plot_obj_masked, Gray.(normalized_matrix), subplot=1, legend=false, framestyle=:none, ticks=nothing, aspect_ratio=:equal)
+plot!(plot_obj_masked, Gray.(observation_matrix), subplot=2, legend=false, framestyle=:none, ticks=nothing, aspect_ratio=:equal)
+plot!(plot_obj_masked, Gray.(normalize_sigmoid_outputs), subplot=3, legend=false, framestyle=:none, ticks=nothing, aspect_ratio=:equal)
+plot!(plot_obj_masked, masked_img, subplot=4, legend=false, framestyle=:none, ticks=nothing, aspect_ratio=:equal)
+plot!(plot_obj_masked, Gray.(normalize_masked_sigmoid_outputs), subplot=5, legend=false, framestyle=:none, ticks=nothing, aspect_ratio=:equal)</code></pre><p><img src="Ising Model_8_1.png" alt/></p><h3 id="Sweep-over-connection_force-and-animate-results"><a class="docs-heading-anchor" href="#Sweep-over-connection_force-and-animate-results">Sweep over connection_force and animate results</a><a id="Sweep-over-connection_force-and-animate-results-1"></a><a class="docs-heading-anchor-permalink" href="#Sweep-over-connection_force-and-animate-results" title="Permalink"></a></h3><p>We will run inference for a range of <code>connection_force</code> values on both the original noised observations and the masked observations, and generate animations to visualize how the reconstruction changes.</p><pre><code class="language-julia hljs">exponents = range(-10.0, 10.0, length=25)
+connection_forces = 10.0 .^ exponents
+iterations_anim = 5
+
+function run_reconstruction(image, connection_force; h=28, w=28, iterations=iterations_anim)
+    result = infer(
+        model          = sigmoid_ising(h=h, w=w, connection_force=connection_force),
+        data           = (image = image,),
+        returnvars     = KeepEach(),
+        iterations     = iterations,
+        initialization = sigmoid_init,
+        constraints    = binary_constraints,
+        showprogress   = false,
+    )
+    xs = map(mean, result.posteriors[:x][iterations])
+    return (xs .- mean(xs)) / std(xs)
+end
+# helper for animation</code></pre><pre><code class="nohighlight hljs">run_reconstruction (generic function with 1 method)</code></pre><pre><code class="language-julia hljs">anim_noised = @animate for (idx, cf) in enumerate(connection_forces)
+    k = exponents[idx]
+    recon = run_reconstruction(observation_matrix, cf)
+    l = @layout [grid(1,3)]
+    plt = plot(layout=l, size=(900, 300), title=&quot;c. force = $(round(10^k, sigdigits=2))&quot;)
+    plot!(plt, Gray.(normalized_matrix), subplot=1, legend=false, framestyle=:none, ticks=nothing, aspect_ratio=:equal)
+    plot!(plt, Gray.(observation_matrix), subplot=2, legend=false, framestyle=:none, ticks=nothing, aspect_ratio=:equal)
+    plot!(plt, Gray.(recon), subplot=3, legend=false, framestyle=:none, ticks=nothing, aspect_ratio=:equal)
+end
+
+gif(anim_noised, &quot;ising_connection_force_noised.gif&quot;, fps=5);</code></pre><p><img src="ising_connection_force_noised.gif" alt/></p><pre><code class="language-julia hljs">anim_masked = @animate for (idx, cf) in enumerate(connection_forces)
+    k = exponents[idx]
+    recon = run_reconstruction(masked_observation_matrix, cf)
+    l = @layout [grid(1,3)]
+    plt = plot(layout=l, size=(900, 300), title=&quot;c. force = $(round(10^k, sigdigits=2))&quot;)
+    plot!(plt, Gray.(normalized_matrix), subplot=1, legend=false, framestyle=:none, ticks=nothing, aspect_ratio=:equal)
+    plot!(plt, masked_img, subplot=2, legend=false, framestyle=:none, ticks=nothing, aspect_ratio=:equal)
+    plot!(plt, Gray.(recon), subplot=3, legend=false, framestyle=:none, ticks=nothing, aspect_ratio=:equal)
+end
+
+gif(anim_masked, &quot;ising_connection_force_masked.gif&quot;, fps=5);</code></pre><p><img src="ising_connection_force_masked.gif" alt/></p><h3 id="Conclusion"><a class="docs-heading-anchor" href="#Conclusion">Conclusion</a><a id="Conclusion-1"></a><a class="docs-heading-anchor-permalink" href="#Conclusion" title="Permalink"></a></h3><ul><li>We reconstructed a smooth latent temperature field from binary hot/cold readings using a logistic observation model and a spatial (neighbor) prior.</li><li>With missing observations, adding an approximate observation message allows inference to proceed; the reconstruction remains coherent where data is absent.</li><li>The connection force is a very important hyperparameter in this model that controls the smoothing. If it&#39;s too small, no recovery is possible—the model just follows the data. If it&#39;s too strong, it can overpower the data completely.</li></ul><hr/><div class="admonition is-info" id="Contributing-baba9dc142ba7ccb"><header class="admonition-header">Contributing<a class="admonition-anchor" href="#Contributing-baba9dc142ba7ccb" title="Permalink"></a></header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><div class="admonition is-compat" id="Environment-ead41e814a894220"><header class="admonition-header">Environment<a class="admonition-anchor" href="#Environment-ead41e814a894220" title="Permalink"></a></header><div class="admonition-body"><p>This example was executed in a clean, isolated environment. Below are the exact package versions used:</p><p>For reproducibility:</p><ul><li>Use the same package versions when running locally</li><li>Report any issues with package compatibility</li></ul></div></div><pre><code class="nohighlight hljs">Status `/tmp/jl_A77yVv/Project.toml`
+  [31c24e10] Distributions v0.25.123
+⌃ [17f509fa] ExponentialFamilyProjection v3.1.1
+  [916415d5] Images v0.26.2
+  [91a5bcdd] Plots v1.41.6
+  [a194aa59] ReactiveMP v5.6.5
+  [86711068] RxInfer v4.7.0
+  [860ef19b] StableRNGs v1.0.4
+  [4c63d2b9] StatsFuns v1.5.2
+Info Packages marked with ⌃ have new versions available and may be upgradable.
+</code></pre><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+mermaid.initialize({
+    startOnLoad: true,
+    theme: "neutral"
+});
+</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../invertible_neural_network_tutorial/">« Invertible Neural Network Tutorial</a><a class="docs-footer-nextpage" href="../litter_model/">Litter Model »</a><div class="flexbox-break"></div><p class="footer-message">Created in <a href="https://biaslab.github.io/">BIASlab</a>, maintained by <a href="https://github.com/ReactiveBayes">ReactiveBayes</a>, powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Wednesday 25 February 2026 15:00">Wednesday 25 February 2026</span>. Using Julia version 1.12.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
