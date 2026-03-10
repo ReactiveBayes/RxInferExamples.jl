@@ -4,13 +4,15 @@ We welcome contributions from the community! This guide will help you understand
 
 ## Location and Structure
 
-Create a new Jupyter notebook in the appropriate category folder. Use `examples/Basic Examples/` for fundamental concepts, `examples/Advanced Examples/` for complex applications, or `examples/Problem Specific/` for domain-specific use cases.
+Create a new Jupyter notebook in the appropriate category folder. Use `examples/Basic Examples/` for fundamental concepts, `examples/Advanced Examples/` for complex applications, `examples/Problem Specific/` for domain-specific use cases, or `examples/Experimental Examples` for some (potentially unpolished) experiments.
 
 !!! note
     You can also introduce a new category by creating a new folder in the `examples/` directory.
     In this case, you should also add a new entry in the `docs/make.jl` file.
 
-Each example at the very least should have a clear, descriptive title, a `meta.jl` file in the same directory, a local `Project.toml` for dependencies, and any required data files.
+Each example at the very least should have a clear, descriptive title, a `meta.jl` file in the same directory, a local `Project.toml` for dependencies, and any required data files. 
+
+If your example cannot be statically generated, put it inside the `interactive` folder instead.
 
 ## Notebook Guidelines
 
@@ -18,13 +20,15 @@ Each example at the very least should have a clear, descriptive title, a `meta.j
    The first cell must be a markdown cell. It should contain ONLY the title as `# <title>`. The title should be descriptive and unique (avoid "Overview").
 
 2. **Environment Setup**
-   The notebook will use the environment specified in the `Project.toml` file. Add any additional dependencies to the local project.
+   - The notebook will use the environment specified in the `Project.toml` file. Add any additional dependencies to the local project.
+   - Notebook should run regardless of what versions of dependencies are being used 
+   - The `[compat]` section inside each individual `Project.toml` will **NOT** be respected, do not rely on it
 
 3. **Content Structure**
-   The notebook should have a clear introduction and problem description, model specification with explanations, inference procedure details, results analysis and visualization, and comprehensive comments for readability.
+   The notebook should have a clear introduction and problem description, model specification with explanations, inference procedure details, results analysis and visualization, and comprehensive comments for readability. It is perfectly fine to use LLMs to come up with a nice narrative and/or story for your example. Please, do **NOT** submit examples with just code. Always add some narrative, which explains _why_ the example is doing what it is doing. If you notice an (old) example without explanations or narrative, please open an issue or (even better!) contribute by opening a PR! The examples in the `examples/Experimental Examples` folder might be less explanatory, but do not specifically put your example in this folder just to avoid writing the explanations!
 
 4. **Self-Contained Code**
-   - Examples must be fully self-contained without using `include()` statements
+   - Examples must be fully self-contained without using `include()` statements. The `include()` statements cannot be injected in the [HTML version](https://examples.rxinfer.com) of the examples.
    - All code should be directly in the notebook cells
    - Do not reference external Julia files
    - Users should be able to reproduce examples by simply copying and pasting from the documentation

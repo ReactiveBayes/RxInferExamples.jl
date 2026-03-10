@@ -41,11 +41,22 @@ The build process happens in two stages:
 ## Stage 1: Notebook Processing (`examples/make.jl`)
 
 This script handles the conversion of Jupyter notebooks to markdown files.
+At the beginning of the execution the script scans the examples and their 
+respective `Project.toml` files and records all the depencies of all the examples 
+in one big temporary environment. This environment that is being used to run 
+each individual example. This have several consequences that is good to be aware of:
+- Running examples in bulk always resolves to the same versions of packages for ALL examples
+- Running examples in bulk reuses cached and compiled code across all dependencies, that speeds up the build process
+- Running examples individually and in bulk can resolve to difference versions of packages, in case of some conflicts, Julia usually decides to use the older version of the respective packages. That means that running examples via Jupyter notebook may use different versions since Jupyter notebook resolves the dependencies locally.
 
-The notebook processing system:
+Optionally, it is possible to start the build process with the development version of RxInfer.jl.
+Look at `make help` or script arguments to understand how to enable this option.
+
+After creation of the big temporary environment (temporary because it will be deleted as soon as the build process finishes) the script 
+proceeds with building each individual notebook. The notebook processing system:
 - Converts `.ipynb` files to `.md` using Weave.jl
-- Preserves each notebook's environment through Project.toml
-- Optionally integrates development version of RxInfer.jl
+- Uses separate `julia` processes for each individual notebook
+- Uses the shared big temporary environment
 - Generates figures in the same directory as the notebook
 - Fixes absolute paths to use relative paths
 - Adds contribution notes automatically

@@ -61,6 +61,11 @@ git clone https://github.com/ReactiveBayes/RxInferExamples.jl.git
 make examples
 ```
 
+All the examples are Jupyter notebooks, which also can be run with [Jupyter](https://jupyter.org/). 
+Note, however, that the automatic build process merges the dependencies in all the examples into one single temporary environment. 
+This means that dependencies can be resolved differently when running examples individually in comparison with the automatic build process.
+
+
 - Build the documentation:
 ```bash
 make docs
