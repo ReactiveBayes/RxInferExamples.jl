@@ -79,7 +79,9 @@ window.onload = function() {
     })())
     
     const documenterTarget = document.querySelector('#documenter');
-    documenterTarget.parentNode.insertBefore(header, documenterTarget);
+    if (documenterTarget && documenterTarget.parentNode) {
+        documenterTarget.parentNode.insertBefore(header, documenterTarget);
+    }
     
     // === Site context banner for Docs ===
     // Add banner directly to navbar after header is created
@@ -106,23 +108,34 @@ window.onload = function() {
     
 }
 
-// === Cross-site search: also search docs.rxinfer.com ===
-(function () {
-    const REMOTE_BASE = 'https://docs.rxinfer.com/stable';
-    const REMOTE_LABEL = 'Documentation';
-    let remoteIndex = null;
+document.addEventListener('DOMContentLoaded', function() {
+    // === Cross-site search: also search docs.rxinfer.com ===
+    (function () {
+        const REMOTE_BASE = 'https://docs.rxinfer.com/stable';
+        const REMOTE_LABEL = 'Documentation';
+        let remoteIndex = null;
+        let remoteIndexPromise = null;
 
-    async function fetchRemoteIndex() {
-        if (remoteIndex !== null) return;
-        try {
-            const res = await fetch(REMOTE_BASE + '/search_index.js');
-            if (!res.ok) return;
-            const text = await res.text();
-            remoteIndex = JSON.parse(text.slice(text.indexOf('{'))).docs;
-        } catch (e) {
-            remoteIndex = [];
+        async function fetchRemoteIndex() {
+            if (remoteIndex !== null) return;
+            if (remoteIndexPromise) return remoteIndexPromise;
+            
+            remoteIndexPromise = (async () => {
+                try {
+                    const res = await fetch(REMOTE_BASE + '/search_index.js');
+                    if (!res.ok) return;
+                    const text = await res.text();
+                    const start = text.indexOf('{');
+                    const end = text.lastIndexOf('}');
+                    if (start < 0 || end < start) throw new Error('Invalid format');
+                    remoteIndex = JSON.parse(text.slice(start, end + 1)).docs || [];
+                } catch (e) {
+                    remoteIndex = [];
+                }
+            })();
+            
+            return remoteIndexPromise;
         }
-    }
 
     function searchRemote(query) {
         if (!remoteIndex || !remoteIndex.length) return [];
@@ -158,13 +171,19 @@ window.onload = function() {
             </div>${items}</div>`;
     }
 
-    let injecting = false;
+        let injecting = false;
 
     function inject() {
         if (injecting) return;
         const body = document.querySelector('.search-modal-card-body');
         const input = document.querySelector('.documenter-search-input');
         if (!body || !input || body.querySelector('#cross-site-results')) return;
+        
+        if (remoteIndex === null) {
+            fetchRemoteIndex().then(() => setTimeout(inject, 0));
+            return;
+        }
+        
         const query = input.value || '';
         if (query.trim().length < 2) return;
         const results = searchRemote(query);
@@ -188,5 +207,6 @@ window.onload = function() {
             if (modal.classList.contains('is-active')) fetchRemoteIndex();
             connectBodyObserver();
         }
-    }).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
-})();
+    }).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });    
+    fetchRemoteIndex();
+    })();})();
