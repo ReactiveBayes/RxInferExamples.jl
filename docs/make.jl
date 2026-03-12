@@ -9,7 +9,6 @@ struct Category
 end
 
 # Define category order (categories not in this list will be sorted alphabetically at the end)
-if !isdefined(@__MODULE__, :ORDERED_CATEGORIES)
 const ORDERED_CATEGORIES = [
     Category(
         "Basic Examples",
@@ -45,7 +44,6 @@ additional patches to RxInfer.jl to work.
 """
     )
 ]
-end
 
 const ALL_EXAMPLES_CONTRIBUTING_NOTE = """
 !!! note "Contributing"
@@ -180,7 +178,6 @@ const THEME_STYLES = """
 """
 
 # Default tags for all examples
-if !isdefined(@__MODULE__, :DEFAULT_META_TAGS)
 const DEFAULT_META_TAGS = [
     "rxinfer",
     "julia",
@@ -192,17 +189,14 @@ const DEFAULT_META_TAGS = [
     "variational inference",
     "belief propagation",
 ]
-end
 
 # Directories to ignore when processing HTML files
-if !isdefined(@__MODULE__, :IGNORED_DIRECTORIES)
 const IGNORED_DIRECTORIES = [
     "_cache",
     "_assets",
     "_internal",
     ".ipynb_checkpoints"
 ]
-end
 
 # Function to generate the list of examples page
 function generate_examples_list()
