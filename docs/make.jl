@@ -212,9 +212,9 @@ function generate_examples_list()
         push!(get!(categories, folder, []), meta)
     end
 
-    # Generate markdown content
+    # Generate markdown content in-memory and write only on changes.
     output_path = joinpath(AUTOGEN_DIR, "list_of_examples.md")
-    open(output_path, "w") do io
+    io = IOBuffer()
         # Add theme styles at the top
         write(io, THEME_STYLES)
 
@@ -327,7 +327,12 @@ function generate_examples_list()
             end
         end
 
-        write(io, ALL_EXAMPLES_CONTRIBUTING_NOTE)
+    write(io, ALL_EXAMPLES_CONTRIBUTING_NOTE)
+
+    new_content = String(take!(io))
+    old_content = isfile(output_path) ? read(output_path, String) : ""
+    if new_content != old_content
+        write(output_path, new_content)
     end
 end
 
