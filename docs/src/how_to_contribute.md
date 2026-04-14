@@ -48,10 +48,10 @@ If your example cannot be statically generated, put it inside the `interactive` 
 
    Some other text
    ```
-   Do not add spaces before or after the `$$` or `$`
+   Do not add spaces nor line breaks before or after the `$$` or `$`
 
 2. **Equation Rules**
-   - No space after opening `$$` or `$`
+   - No space nor line breaks after opening `$$` or `$`
    - Separate display equations with empty lines
    - Inline equations use single `$...$`, e.g. `$$a + b$$` and not `$$ a + b $$`
 
