@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Efe Minimization Via Message Passing · RxInfer.jl Examples</title><meta name="title" content="Efe Minimization Via Message Passing · RxInfer.jl Examples"/><meta property="og:title" content="Efe Minimization Via Message Passing · RxInfer.jl Examples"/><meta property="twitter:title" content="Efe Minimization Via Message Passing · RxInfer.jl Examples"/><meta name="description" content="EFE Minimization via Message Passing with RxInfer.jl\nThis example shows how to minimize Expected Free Energy inside the RxInfer framework.\n\nCheck more examples and tutorials at https://examples.rxinfer.com\n"/><meta property="og:description" content="EFE Minimization via Message Passing with RxInfer.jl\nThis example shows how to minimize Expected Free Energy inside the RxInfer framework.\n\nCheck more examples and tutorials at https://examples.rxinfer.com\n"/><meta property="twitter:description" content="EFE Minimization via Message Passing with RxInfer.jl\nThis example shows how to minimize Expected Free Energy inside the RxInfer framework.\n\nCheck more examples and tutorials at https://examples.rxinfer.com\n"/><meta property="og:url" content="https://examples.rxinfer.com/categories/advanced_examples/efe_minimization_via_message_passing/"/><meta property="twitter:url" content="https://examples.rxinfer.com/categories/advanced_examples/efe_minimization_via_message_passing/"/><link rel="canonical" href="https://examples.rxinfer.com/categories/advanced_examples/efe_minimization_via_message_passing/"/><script async src="https://www.googletagmanager.com/gtag/js?id=G-GMFX620VEP"></script><script>  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-GMFX620VEP', {'page_path': location.pathname + location.search + location.hash});
+</script><script data-outdated-warner src="../../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../../assets/documenter.js"></script><script src="../../../search_index.js"></script><script src="../../../siteinfo.js"></script><script src="../../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../../assets/themeswap.js"></script><link href="../../../assets/theme.css" rel="stylesheet" type="text/css"/><link href="../../../assets/header.css" rel="stylesheet" type="text/css"/><script src="../../../assets/header.js"></script><script src="../../../assets/chat.js"></script><link href="../../../assets/favicon.ico" rel="icon" type="image/x-icon"/>
+    <meta property="og:title" content="EFE Minimization via Message Passing - RxInfer Examples">
+    <meta name="description" content="This example shows how to minimize Expected Free Energy inside the RxInfer framework.
+">
+    <meta property="og:description" content="This example shows how to minimize Expected Free Energy inside the RxInfer framework.
+">
+    <meta name="keywords" content="rxinfer, julia, bayesian inference, examples, probabilistic programming, message passing, probabilistic numerics, variational inference, belief propagation, advanced examples">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://examples.rxinfer.com/sitemap.xml">
+    </head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../../"><img class="docs-light-only" src="../../../assets/logo.svg" alt="RxInfer.jl Examples logo"/><img class="docs-dark-only" src="../../../assets/logo-dark.svg" alt="RxInfer.jl Examples logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../../">RxInfer.jl Examples</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../../">Home</a></li><li><a class="tocitem" href="../../../how_to_contribute/">How to contribute</a></li><li><a class="tocitem" href="../../../autogenerated/list_of_examples/">List of Examples</a></li><li><span class="tocitem">Basic Examples</span><ul><li><a class="tocitem" href="../../basic_examples/bayesian_binomial_regression/">Bayesian Binomial Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_linear_regression/">Bayesian Linear Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_multinomial_regression/">Bayesian Multinomial Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_networks/">Bayesian Networks</a></li><li><a class="tocitem" href="../../basic_examples/coin_toss_model/">Coin Toss Model</a></li><li><a class="tocitem" href="../../basic_examples/contextual_bandits/">Contextual Bandits</a></li><li><a class="tocitem" href="../../basic_examples/feature_functions_in_bayesian_regression/">Feature Functions In Bayesian Regression</a></li><li><a class="tocitem" href="../../basic_examples/forgetting_factors_for_online_inference/">Forgetting Factors For Online Inference</a></li><li><a class="tocitem" href="../../basic_examples/hidden_markov_model/">Hidden Markov Model</a></li><li><a class="tocitem" href="../../basic_examples/incomplete_data/">Incomplete Data</a></li><li><a class="tocitem" href="../../basic_examples/kalman_filtering_and_smoothing/">Kalman Filtering And Smoothing</a></li><li><a class="tocitem" href="../../basic_examples/pomdp_control/">Pomdp Control</a></li><li><a class="tocitem" href="../../basic_examples/predicting_bike_rental_demand/">Predicting Bike Rental Demand</a></li><li><a class="tocitem" href="../../basic_examples/t-maze_active_inference/">T-Maze Active Inference</a></li></ul></li><li><span class="tocitem">Advanced Examples</span><ul><li><a class="tocitem" href="../active_inference_mountain_car/">Active Inference Mountain Car</a></li><li><a class="tocitem" href="../assessing_people_skills/">Assessing People Skills</a></li><li><a class="tocitem" href="../autoregressive_active_inference/">Autoregressive Active Inference</a></li><li><a class="tocitem" href="../bayesian_structured_time_series/">Bayesian Structured Time Series</a></li><li><a class="tocitem" href="../chance_constraints/">Chance Constraints</a></li><li><a class="tocitem" href="../conjugate-computational_variational_message_passing/">Conjugate-Computational Variational Message Passing</a></li><li><a class="tocitem" href="../drone_dynamics/">Drone Dynamics</a></li><li class="is-active"><a class="tocitem" href>Efe Minimization Via Message Passing</a><ul class="internal"><li><a class="tocitem" href="#The-Stochastic-Maze-environment"><span>The <code>Stochastic Maze</code> environment</span></a></li><li><a class="tocitem" href="#Generation-of-the-tensors"><span>Generation of the tensors</span></a></li><li><a class="tocitem" href="#Environment-step"><span>Environment step</span></a></li><li><a class="tocitem" href="#The-model"><span>The model</span></a></li><li><a class="tocitem" href="#Agent-step"><span>Agent step</span></a></li><li><a class="tocitem" href="#Running-the-simulation"><span>Running the simulation</span></a></li></ul></li><li><a class="tocitem" href="../gp_regression_by_ssm/">Gp Regression By Ssm</a></li><li><a class="tocitem" href="../infinite_data_stream/">Infinite Data Stream</a></li><li><a class="tocitem" href="../integrating_neural_networks_with_flux.jl/">Integrating Neural Networks With Flux.Jl</a></li><li><a class="tocitem" href="../integrating_neural_networks_with_lux.jl/">Integrating Neural Networks With Lux.Jl</a></li><li><a class="tocitem" href="../learning_dynamics_with_vaes/">Learning Dynamics With Vaes</a></li><li><a class="tocitem" href="../multi-agent_trajectory_planning/">Multi-Agent Trajectory Planning</a></li><li><a class="tocitem" href="../nonlinear_sensor_fusion/">Nonlinear Sensor Fusion</a></li><li><a class="tocitem" href="../parameter_optimisation_with_optim.jl/">Parameter Optimisation With Optim.Jl</a></li><li><a class="tocitem" href="../robotic_arm/">Robotic Arm</a></li></ul></li><li><span class="tocitem">Problem Specific</span><ul><li><a class="tocitem" href="../../problem_specific/autoregressive_models/">Autoregressive Models</a></li><li><a class="tocitem" href="../../problem_specific/gamma_mixture/">Gamma Mixture</a></li><li><a class="tocitem" href="../../problem_specific/gaussian_mixture/">Gaussian Mixture</a></li><li><a class="tocitem" href="../../problem_specific/hierarchical_gaussian_filter/">Hierarchical Gaussian Filter</a></li><li><a class="tocitem" href="../../problem_specific/invertible_neural_network_tutorial/">Invertible Neural Network Tutorial</a></li><li><a class="tocitem" href="../../problem_specific/ising_model/">Ising Model</a></li><li><a class="tocitem" href="../../problem_specific/litter_model/">Litter Model</a></li><li><a class="tocitem" href="../../problem_specific/ode_parameter_estimation/">Ode Parameter Estimation</a></li><li><a class="tocitem" href="../../problem_specific/probit_model/">Probit Model</a></li><li><a class="tocitem" href="../../problem_specific/rts_vs_bifm_smoothing/">Rts Vs Bifm Smoothing</a></li><li><a class="tocitem" href="../../problem_specific/simple_nonlinear_node/">Simple Nonlinear Node</a></li><li><a class="tocitem" href="../../problem_specific/structural_dynamics_with_augmented_kalman_filter/">Structural Dynamics With Augmented Kalman Filter</a></li><li><a class="tocitem" href="../../problem_specific/universal_mixtures/">Universal Mixtures</a></li></ul></li><li><span class="tocitem">Experimental Examples</span><ul><li><a class="tocitem" href="../../experimental_examples/bayesian_trust_learning/">Bayesian Trust Learning</a></li><li><a class="tocitem" href="../../experimental_examples/large_language_models/">Large Language Models</a></li><li><a class="tocitem" href="../../experimental_examples/latent_vector_autoregressive_model/">Latent Vector Autoregressive Model</a></li><li><a class="tocitem" href="../../experimental_examples/recurrent_switching_linear_dynamical_system/">Recurrent Switching Linear Dynamical System</a></li></ul></li><li><a class="tocitem" href="../../../how_build_works/">How we build the examples</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Advanced Examples</a></li><li class="is-active"><a href>Efe Minimization Via Message Passing</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Efe Minimization Via Message Passing</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl" title="View source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><div class="admonition is-info" id="Contributing-baba9dc142ba7ccb"><header class="admonition-header">Contributing<a class="admonition-anchor" href="#Contributing-baba9dc142ba7ccb" title="Permalink"></a></header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><h1 id="EFE-Minimization-via-Message-Passing"><a class="docs-heading-anchor" href="#EFE-Minimization-via-Message-Passing">EFE Minimization via Message Passing</a><a id="EFE-Minimization-via-Message-Passing-1"></a><a class="docs-heading-anchor-permalink" href="#EFE-Minimization-via-Message-Passing" title="Permalink"></a></h1><p>This notebook reproduces the methodology from the paper <a href="https://arxiv.org/abs/2508.02197">A Message Passing Realization of Expected Free Energy Minimization</a>, which shows how Expected Free Energy minimization can be recast as Variational Free Energy minimization on factor graphs augmented with some epistemic priors, making it tractable via message passing.</p><p>The goal of this notebook is to build intuition for the core implementation ideas from the ground up. We only cover the <code>stochastic maze</code> environment here; the paper covers two additional ones. Since the code has been mostly rewritten for didactic purposes, it doesn&#39;t always follow the <a href="https://github.com/biaslab/EFEasVFE">accompanying code repo</a> conventions.</p><pre><code class="language-julia hljs">using Plots
+using Base.Iterators
+using LinearCombinations
+using StableRNGs
+using Distributions
+using RxInfer
+using Tullio
+using LogExpFunctions: softmax, xlogx, xlogy
+using LinearAlgebra: normalize!, normalize
+
+import Pipe: @pipe as @p</code></pre><h2 id="The-Stochastic-Maze-environment"><a class="docs-heading-anchor" href="#The-Stochastic-Maze-environment">The <code>Stochastic Maze</code> environment</a><a id="The-Stochastic-Maze-environment-1"></a><a class="docs-heading-anchor-permalink" href="#The-Stochastic-Maze-environment" title="Permalink"></a></h2><p>A <code>Stochastic Maze</code> is a gridworld where an agent navigates toward a goal state, impeded by:</p><ul><li>sink states that trap the agent (<code>sink_states</code>)</li><li>slippery cells where movement outcomes are uncertain (<code>stochastic_transitions</code>)</li><li>cells where the agent&#39;s perception is unreliable (<code>noisy_observations</code>)</li></ul><p>We&#39;ll define how each of these work when we construct the transition and observation tensors. For now, let&#39;s build a concrete example:</p><pre><code class="language-julia hljs">Coord = CartesianIndex{2}
+
+@kwdef struct Grid
+    indices                :: CartesianIndices{2}
+    goal_state             :: Coord
+    sink_states            :: Vector{Coord}
+    stochastic_transitions :: Vector{Coord}
+    noisy_observations     :: Vector{Coord}
+end
+
+example_grid = Grid(
+    indices                = CartesianIndices((5, 5)),
+    goal_state             = Coord(3,5),
+    sink_states            = Coord.([(2,4), (4,4)]),
+    stochastic_transitions = Coord.([(3,2), (3,3), (3,4)]),
+    noisy_observations     = Coord.([(2,2),(2,3),(2,4),(3,2),(3,3),(3,4),(4,2),(4,3),(4,4),(5,3)])
+)</code></pre><pre><code class="nohighlight hljs">Main.var&quot;##WeaveSandBox#277&quot;.Grid(CartesianIndices((5, 5)), CartesianIndex(
+3, 5), CartesianIndex{2}[CartesianIndex(2, 4), CartesianIndex(4, 4)], Carte
+sianIndex{2}[CartesianIndex(3, 2), CartesianIndex(3, 3), CartesianIndex(3, 
+4)], CartesianIndex{2}[CartesianIndex(2, 2), CartesianIndex(2, 3), Cartesia
+nIndex(2, 4), CartesianIndex(3, 2), CartesianIndex(3, 3), CartesianIndex(3,
+ 4), CartesianIndex(4, 2), CartesianIndex(4, 3), CartesianIndex(4, 4), Cart
+esianIndex(5, 3)])</code></pre><p>Since we define the grid in cartesian coordinates but our transition and observation tensors will require linear indices, here are a few utility functions to convert between the two:</p><pre><code class="language-julia hljs">to_linear(grid::Grid,    coord::Coord) :: Int   = LinearIndices(grid.indices)[coord]
+to_cartesian(grid::Grid, coord::Int)   :: Coord = grid.indices[coord]</code></pre><pre><code class="nohighlight hljs">to_cartesian (generic function with 1 method)</code></pre><p>Let&#39;s draw our example grid: The goal is shown in green, sink states in red, stochastic transition cells as horizontally banded, and noisy observation cells in grey.</p><pre><code class="language-julia hljs">function depict(grid::Grid, player::Coord)
+    n_rows, n_cols = size(grid.indices)
+
+    # Helper function to create rectangles
+    rectangle(x, y, w, h) = Shape(x .+ [0, w, w, 0], y .+ [0, 0, h, h])
+    
+    # Create the plot
+    p = plot(xlims=(0, n_cols), ylims=(0, n_rows), aspect_ratio=:equal,
+             grid=false, showaxis=false, ticks=false, legend=false
+    )
+    
+    for idx in grid.indices
+        i, j = Tuple(idx)
+        x, y = j - 1, n_rows - i  # Convert to plot coordinates
+        
+        # Draw square with color based on cell type
+        color = idx in grid.sink_states        ? :tomato2   :
+                idx == grid.goal_state         ? :palegreen :
+                idx in grid.noisy_observations ? :grey90    : :white
+        plot!(p, rectangle(x, y, 1, 1), fillcolor=color)
+        
+        # Draw stochastic transition bands
+        if idx in grid.stochastic_transitions
+            foreach(k -&gt; plot!(p, rectangle(x, y + k/7, 1, 1/7), fillcolor=:tan1), [1, 3, 5])
+        end
+        
+        # Draw player
+        if idx == player
+            scatter!(p, [x + 0.5], [y + 0.5], markersize=20, markercolor=:steelblue3)
+        end
+    end
+    return p
+end
+
+depict(example_grid, Coord(3,1))</code></pre><p><img src="EFE Minimization via Message Passing_4_1.png" alt/></p><p>Notice that there is a short path to the goal state, but it passes through the stochastic transition and noisy observation cells, so the agent risks being thrown off the path or losing track of its position, ultimately ending up in a sink state.</p><p>One of the main points of the paper is that an agent endowed with the additional epistemic priors we&#39;ll discuss later can recognize the risk and choose the longer and more secure path, while simpler agents (for example those endowed with KL-control) tend to take the shorter but riskier route.</p><h2 id="Generation-of-the-tensors"><a class="docs-heading-anchor" href="#Generation-of-the-tensors">Generation of the tensors</a><a id="Generation-of-the-tensors-1"></a><a class="docs-heading-anchor-permalink" href="#Generation-of-the-tensors" title="Permalink"></a></h2><h3 id="The-state-transition-tensor"><a class="docs-heading-anchor" href="#The-state-transition-tensor">The state transition tensor</a><a id="The-state-transition-tensor-1"></a><a class="docs-heading-anchor-permalink" href="#The-state-transition-tensor" title="Permalink"></a></h3><p>We model the agent&#39;s position as a hidden state <span>$x_t$</span> evolving over time. In a <a href="https://en.wikipedia.org/wiki/Partially_observable_Markov_decision_process">POMDP</a>, the transition dynamics are captured by the conditional distribution:</p><p class="math-container">\[p(x_t \mid x_{t-1}, u_t)\]</p><p>We represent this by a tensor of size <code>(n_states, n_states, n_actions)</code>, where entry <code>[i, j, k]</code> gives the probability of transitioning to state <span>$i$</span> from state <span>$j$</span> under action <span>$k$</span>.</p><p>The movement rules are straightforward: the agent moves freely in open cells, stays in place when hitting a wall, and in stochastic drift cells there is a 70% chance of being displaced one step up or down regardless of the intended direction.</p><pre><code class="language-julia hljs">@enum Direction South=1 North East West
+
+CoordDelta = CartesianIndex{2}
+
+function move(start::Coord, direction::Direction, g::Grid) :: Linear{Coord, Float64}
+    translation = Dict(South =&gt; CoordDelta(1, 0),
+                       North =&gt; CoordDelta(-1, 0),
+                       East  =&gt; CoordDelta(0, 1),
+                       West  =&gt; CoordDelta(0, -1))
+    destination = start + translation[direction]
+    destination in g.indices ? Linear(destination =&gt; 1.0) : Linear(start =&gt; 1.0)
+end
+
+function stochastic_drift(start::Coord, g::Grid) :: Linear{Coord, Float64}
+    up = move(start, North, g)
+    down = move(start, South, g)
+    1/2 * (up + down)
+end
+
+function movement_tensor(grid :: Grid)
+    n_states  = length(grid.indices)
+    n_actions = length(instances(Direction))
+
+    movement = zeros((n_states, n_states, n_actions))
+
+    for (source, direction) in product(grid.indices, instances(Direction))
+        if source in grid.stochastic_transitions
+            destinations = 0.3 * move(source, direction, grid) + 0.7 * stochastic_drift(source, grid)
+        elseif source in grid.sink_states
+            destinations = Linear(source =&gt; 1.0)
+        else
+            destinations = move(source, direction, grid)
+        end
+
+        for (destination, weight) in destinations
+            movement[to_linear(grid, destination), to_linear(grid, source), Int(direction)] = weight
+        end
+    end
+    return movement
+end</code></pre><pre><code class="nohighlight hljs">movement_tensor (generic function with 1 method)</code></pre><p>A plot of the four slices of the transition tensor, according to the chosen action:</p><pre><code class="language-julia hljs">plots = [heatmap(movement_tensor(example_grid)[:,:,i], title=&quot;$(instances(Direction)[i])&quot;) for i in 1:4]
+plot(plots..., layout=(2,2), size=(700, 600))</code></pre><p><img src="EFE Minimization via Message Passing_6_1.png" alt/></p><h3 id="The-observation-tensor"><a class="docs-heading-anchor" href="#The-observation-tensor">The observation tensor</a><a id="The-observation-tensor-1"></a><a class="docs-heading-anchor-permalink" href="#The-observation-tensor" title="Permalink"></a></h3><p>We model observations as a conditional distribution over perceived states given the true hidden state:</p><p class="math-container">\[p(o_t \mid x_t)\]</p><p>We represent this as a tensor of size <code>(n_states, n_states)</code>, where entry <code>[i, j]</code> gives the probability of observing state <span>$i$</span> when the true state is <span>$j$</span>.</p><p>In normal cells the agent perceives its position accurately, while in noisy observation cells it perceives the correct position only 20% of the time, and with 80% probability observes one of the adjacent reachable states (including diagonals).</p><pre><code class="language-julia hljs">function adjacent(coord::Coord, grid::Grid) :: Vector{Coord}
+    deltas = [Coord(i, j) for i in -1:1 for j in -1:1 if (i, j) != (0, 0)]
+    coords = [coord + delta for delta in deltas if coord + delta in grid.indices]
+end
+
+function exact(x :: T) :: Linear{T} where {T}
+    Linear(x =&gt; 1)
+end
+
+function linear_combination(xs :: Vector{T}) :: Linear{T} where {T}
+    sum(exact.(xs) * (1 / length(xs)))
+end
+
+function observation_tensor(grid :: Grid)
+    n_states = length(grid.indices)
+    obss = zeros(n_states, n_states)
+    for source in grid.indices
+        if source in grid.noisy_observations
+            observations = 0.2 * exact(source) + 0.8 * linear_combination(adjacent(source, example_grid))
+        else
+            observations = exact(source)
+        end
+
+        for (observation, weight) in observations
+            obss[to_linear(grid, observation), to_linear(grid, source)] = weight
+        end
+    end
+    return obss
+end</code></pre><pre><code class="nohighlight hljs">observation_tensor (generic function with 1 method)</code></pre><p>A plot of the observation tensor. We can directly observe the uncertainty in noisy observation states.</p><pre><code class="language-julia hljs">observation_tensor(example_grid) |&gt; heatmap</code></pre><p><img src="EFE Minimization via Message Passing_8_1.png" alt/></p><h2 id="Environment-step"><a class="docs-heading-anchor" href="#Environment-step">Environment step</a><a id="Environment-step-1"></a><a class="docs-heading-anchor-permalink" href="#Environment-step" title="Permalink"></a></h2><p>With the transition and observation tensors defined, we can now implement the environment, which at each timestep samples the next true state from the transition distribution, and a corresponding observation.</p><pre><code class="language-julia hljs">function sample_state(rng, grid::Grid, state::Coord, dir::Direction)
+    @p state |&gt; to_linear(grid, _) |&gt; movement_tensor(grid)[:,_,Int(dir)] |&gt; Categorical |&gt; rand(rng, _) |&gt; to_cartesian(grid, _)
+end
+
+function sample_observation(rng, grid::Grid, agent_pos::Coord)
+    @p agent_pos |&gt; to_linear(grid, _) |&gt; observation_tensor(grid)[:,_] |&gt; Categorical |&gt; rand(rng, _) |&gt; to_cartesian(grid, _)
+end
+
+function world_step(rng, grid::Grid, player::Coord, direction::Direction)
+    next_state  = sample_state(rng, grid, player, direction)
+    observation = sample_observation(rng, grid, next_state)
+    
+    return next_state, observation
+end</code></pre><pre><code class="nohighlight hljs">world_step (generic function with 1 method)</code></pre><p>For example here the agent tries to move <code>East</code> while starting in <span>$(3,2)$</span>, which is a stochastic transition state. So it ends up going <code>North</code> instead, to <span>$(2,2)$</span>. Since the destination is also a noisy observation cell, it perceives itself in <span>$(1,1)$</span>!</p><pre><code class="language-julia hljs">world_step(StableRNG(0), example_grid, CartesianIndex(3,2), East)</code></pre><pre><code class="nohighlight hljs">(CartesianIndex(2, 2), CartesianIndex(1, 1))</code></pre><h2 id="The-model"><a class="docs-heading-anchor" href="#The-model">The model</a><a id="The-model-1"></a><a class="docs-heading-anchor-permalink" href="#The-model" title="Permalink"></a></h2><h3 id="Model-definition"><a class="docs-heading-anchor" href="#Model-definition">Model definition</a><a id="Model-definition-1"></a><a class="docs-heading-anchor-permalink" href="#Model-definition" title="Permalink"></a></h3><p>We are ready to construct the model for the agent. The agent has to infer its current state from the most recent observation, and plan over a horizon of length T. While the state inference part is standard, the planning part contains the key insight of the paper: two carefully chosen priors are added to the model, one over actions and the other over states.</p><p>The first encodes the expectation that the agent will favor actions that encourage exploration (i.e. maximize the entropy of the transition). In the code, the node responsible for this calculation is thus called <code>Exploration</code>. If <span>$q(x_t | x_{t-1}, u_t)$</span> is the variational transition distribution, and <span>$H_q$</span> its entropy, we would like a prior for action <span>$u$</span> proportional to</p><p class="math-container">\[H_q[x_t | x_{t-1}, u_t = u]\]</p><p>Note that, by the chain rule of conditional entropy, the quantity is equal to:</p><p class="math-container">\[H_q[x_t, x_{t-1} | u_t = u] - H_q[x_{t-1} | u_t = u]\]</p><p>which is why the paper writes:</p><p class="math-container">\[u_t \sim \text{Cat}(u_t |\sigma(H[q(x_t,x_{t-1}|u_t)] - H[q(x_{t-1}|u_t)]))\]</p><p>where the <span>$\sigma$</span> function (softmax) normalizes the distribution. </p><p>The prior over states encodes the expectation that the agent will tend to occupy states where its observations are reliable (i.e. that minimize the entropy of the observation). The effect is a bias <em>away</em> from ambiguity, and it is why the node responsible for the computation is called <code>Ambiguity</code>. As before, if <span>$q(y_t | x_t)$</span> is the variational observation distribution, and <span>$H_q$</span> its entropy, we would like a prior for state <span>$x$</span> proportional to:</p><p class="math-container">\[- H_q[y_t | x_t = x]\]</p><p>which the paper writes as:</p><p class="math-container">\[x_t \sim \text{Cat}(x_t | \sigma(-H[q(y_t|x_t)]))\]</p><pre><code class="language-julia hljs">@model function efe_stochastic_maze_agent(A, B, p_s_0, y_current, u_prev, T, n_states, n_actions, goal)
+    # Prior initialization
+    s_0 ~ p_s_0
+
+    # State inference (filtering)
+    s_current ~ DiscreteTransition(s_0, B, u_prev)
+    y_current ~ DiscreteTransition(s_current, A)
+
+    # Planning (Active Inference)
+    s_prev = s_current
+    for t in 1:T
+        state_meta = JointMarginalMeta(Contingency(ones(size(B))))
+        u[t] ~ Exploration(y_current)              where {meta=state_meta}
+        s[t] ~ DiscreteTransition(s_prev, B, u[t]) where {meta=state_meta}
+        
+        observation_meta = JointMarginalMeta(Contingency(ones(size(A))))
+        s[t]        ~ Ambiguity(y_current)         where {meta=observation_meta}
+        y_future[t] ~ DiscreteTransition(s[t], A)  where {meta=observation_meta}
+        
+        y_future[t] ~ Categorical(fill(1 / n_states, n_states))
+        s_prev = s[t]
+    end
+    s[end] ~ goal
+end</code></pre><p>The figure below shows the factor graph for the state inference part and the first planning step (the planning structure repeats for each subsequent step): <img src="graph.png" alt="A graph of the model"/></p><p>Two aspects of this implementation deserve clarification.</p><p>Firstly, we know that, to compute the priors, the <code>Exploration</code> and <code>Ambiguity</code> nodes need to know the joint distribution in the respective <code>DiscreteTransition</code> nodes. But that transfer of information is not an edge in the factor graph (edges are for variables shared between factors). So instead stateful back-channels, in the form of the <code>meta</code> arguments, are used. This is marked in red in the diagram.</p><p>Secondly, the <code>Exploration</code> and <code>Ambiguity</code> nodes seem to be taking <code>y_current</code> as input, which they don&#39;t need. That is needed because by default, RxInfer only computes the value of a node if it has at least one reactive input. Since the <code>Exploration</code> and <code>Ambiguity</code> nodes have no natural inputs in the graph, they would never be triggered. To work around this, the authors introduced an artificial dependency on <code>y_current</code>, marked in blue in the diagram.</p><p>Both workarounds are known limitations of the current RxInfer implementation.</p><h3 id="Stateful-container-containing-the-joint-categorical"><a class="docs-heading-anchor" href="#Stateful-container-containing-the-joint-categorical">Stateful container containing the joint categorical</a><a id="Stateful-container-containing-the-joint-categorical-1"></a><a class="docs-heading-anchor-permalink" href="#Stateful-container-containing-the-joint-categorical" title="Permalink"></a></h3><p>A <code>JointMarginalMeta</code> is a mutable container, that we use it to store a <code>Contingency</code>, which is a joint categorical over multiple discrete variables (defined in RxInfer).</p><pre><code class="language-julia hljs">mutable struct JointMarginalMeta{C}
+    joint_marginal::C
+end
+
+function set_marginal!(jmm::JointMarginalMeta{C}, marginal::C) where {C}
+    jmm.joint_marginal = marginal
+    return jmm
+end</code></pre><pre><code class="nohighlight hljs">set_marginal! (generic function with 1 method)</code></pre><h3 id="Additional-@marginalrules-for-DiscreteTransitions"><a class="docs-heading-anchor" href="#Additional-@marginalrules-for-DiscreteTransitions">Additional @marginalrules for DiscreteTransitions</a><a id="Additional-@marginalrules-for-DiscreteTransitions-1"></a><a class="docs-heading-anchor-permalink" href="#Additional-@marginalrules-for-DiscreteTransitions" title="Permalink"></a></h3><p>Now we&#39;ll implement the mechanism with which the <code>DiscreteTransition</code> nodes store the joint marginal information in the <code>JointMarginalMeta</code>. </p><p>This <code>@marginalrule</code> is for a joint marginal over two variables (as in the observation tensor case). The rule fires when the meta parameter is a <code>JointMarginalMeta</code> and uses the rule that&#39;s already in the <a href="https://github.com/ReactiveBayes/ReactiveMP.jl/blob/8b3a7d0d66d86a886b3b8a6e16e3bd3cdaca1f8e/src/rules/discrete_transition/marginals.jl">ReactiveMP.jl implementation</a>.</p><pre><code class="language-julia hljs">RxInfer.ReactiveMP.sdtype(any::RxInfer.ReactiveMP.StandaloneDistributionNode) = ReactiveMP.Stochastic()
+
+@marginalrule DiscreteTransition(:out_in) (m_out::Categorical,
+                                           m_in::Categorical,
+                                           q_a::PointMass{&lt;:AbstractArray{T,2}},
+                                           meta::JointMarginalMeta) where {T} = begin
+    marginal = @call_marginalrule DiscreteTransition(:out_in) (m_out=m_out, m_in=m_in, q_a=q_a, meta=nothing)
+    set_marginal!(meta, marginal)
+    return marginal
+end</code></pre><p>For a joint marginal over three variables (as in the transition tensor case), we define two <code>@marginalrule</code> implementations: the one that does the actual computation, which is not present in <code>ReactiveMP</code>, and the one that stores the result in the <code>JointMarginalMeta</code>.</p><pre><code class="language-julia hljs">@marginalrule DiscreteTransition(:out_in_T1) (m_out::Categorical,
+                                              m_in::Categorical,
+                                              m_T1::Categorical,
+                                              q_a::PointMass{&lt;:AbstractArray{T,3}},
+                                              meta::Any) where {T} = begin
+    @tullio result[a, b, c] := q_a.point[a, b, c] * probvec(m_out)[a] * probvec(m_in)[b] * probvec(m_T1)[c]
+    normalize!(result, 1)
+    return Contingency(result, Val(false))
+end
+
+@marginalrule DiscreteTransition(:out_in_T1) (m_out::Categorical,
+                                              m_in::Categorical,
+                                              m_T1::Categorical,
+                                              q_a::PointMass{&lt;:AbstractArray{T,3}},
+                                              meta::JointMarginalMeta) where {T} = begin
+    marginal = @call_marginalrule DiscreteTransition(:out_in_T1) (m_out=m_out, m_in=m_in, m_T1=m_T1, q_a=q_a, meta=nothing)
+    set_marginal!(meta, marginal)
+    return marginal
+end</code></pre><h3 id="Exploration-and-Ambiguity-nodes"><a class="docs-heading-anchor" href="#Exploration-and-Ambiguity-nodes">Exploration and Ambiguity nodes</a><a id="Exploration-and-Ambiguity-nodes-1"></a><a class="docs-heading-anchor-permalink" href="#Exploration-and-Ambiguity-nodes" title="Permalink"></a></h3><p>We now implement the <code>Exploration</code> node. We have to compute:</p><p class="math-container">\[H_q[x_t | x_{t-1}, u_t = u]\]</p><p>Recall that conditional entropy is defined as:</p><p class="math-container">\[H_p[A|B] = - \sum_{a, b} p(a, b) \log p(a|b)\]</p><pre><code class="language-julia hljs">struct Exploration end
+
+@node Exploration Stochastic [out, in]
+
+function conditional_entropy(x)
+    h = sum(x, dims=1)
+    @tullio res := - (xlogx(x[a,b]) - xlogy(x[a,b], h[b]))
+end
+
+@rule Exploration(:out, Marginalisation) (q_in::Any, meta::JointMarginalMeta,) = begin
+    slices = @p meta.joint_marginal |&gt; components |&gt; eachslice(_, dims=3) |&gt; normalize.(_, 1)
+    entropies = conditional_entropy.(slices)
+    return Categorical(softmax(entropies))
+end</code></pre><p>For the <code>Ambiguity</code> node, we have to compute:</p><p class="math-container">\[- H_q[y_t | x_t = x]\]</p><pre><code class="language-julia hljs">struct Ambiguity end
+
+@node Ambiguity Stochastic [out, in];
+
+@rule Ambiguity(:out, Marginalisation) (q_in::Any, meta::JointMarginalMeta,) = begin
+    slices = @p meta.joint_marginal |&gt; components |&gt; eachslice(_, dims=2) |&gt; normalize.(_, 1)
+    entropies = entropy.(slices)
+    return Categorical(softmax(-entropies))
+end</code></pre><pre><code class="language-julia hljs"></code></pre><h2 id="Agent-step"><a class="docs-heading-anchor" href="#Agent-step">Agent step</a><a id="Agent-step-1"></a><a class="docs-heading-anchor-permalink" href="#Agent-step" title="Permalink"></a></h2><p>We can now create a function that advances the agent by one timestep, instantiating the model, running inference, extracting the first planned action and the updated state belief from the posterior distributions.</p><pre><code class="language-julia hljs">function model_step(; grid::Grid, observation::Coord, current_belief, time_remaining::Int, previous_action::Union{Direction, Nothing})
+    n_states  = length(grid.indices)
+    n_actions = length(instances(Direction))
+
+    onehot(x::Int, n::Int) = Int.(1:n .== x)
+    goal_ohe               = @p grid.goal_state |&gt; to_linear(grid, _) |&gt; onehot(_, n_states) |&gt; Categorical
+    previous_action_ohe    = isnothing(previous_action) ? [0, 0, 0, 0] : (@p previous_action |&gt; Int |&gt; onehot(_, n_actions))
+    observation_ohe        = @p observation |&gt; to_linear(grid, _) |&gt; onehot(_, n_states)
+
+    # Run inference
+    result = infer(;
+        model = efe_stochastic_maze_agent(
+                    A = observation_tensor(grid),
+                    B = movement_tensor(grid),
+                    p_s_0 = current_belief,
+                    T = time_remaining,
+                    n_states = n_states,
+                    n_actions = n_actions,
+                    goal = goal_ohe),
+        data=(
+            y_current = observation_ohe,
+            u_prev = previous_action_ohe
+        ),
+        initialization = (@initialization begin (s) = vague(Categorical, n_states) end),
+        options        = (force_marginal_computation=true,),
+        iterations     = 10,
+    )
+
+    get_last_iteration = last
+    get_first_action   = first
+    next_action = @p result.posteriors[:u]         |&gt; get_last_iteration |&gt; get_first_action |&gt; mode |&gt; Direction
+    new_belief  = @p result.posteriors[:s_current] |&gt; get_last_iteration
+
+    return next_action, new_belief
+end</code></pre><pre><code class="nohighlight hljs">model_step (generic function with 1 method)</code></pre><h2 id="Running-the-simulation"><a class="docs-heading-anchor" href="#Running-the-simulation">Running the simulation</a><a id="Running-the-simulation-1"></a><a class="docs-heading-anchor-permalink" href="#Running-the-simulation" title="Permalink"></a></h2><p>Finally, we can run the whole simulation. We initialize four quantities: the agent&#39;s true position, its belief over the hidden state, the action it will take, and the observation returned by the environment, updating them at each iteration. At each timestep, we run one agent inference and one environment simulation, until the agent reaches the goal state or the time horizon is exhausted.</p><pre><code class="language-julia hljs">function run_stochastic_maze_simulation(; seed, grid, initial_agent_pos)
+    rng = StableRNG(seed)
+    time_horizon = 11
+    n_states = length(grid.indices)
+
+    agent_pos    = initial_agent_pos
+    agent_belief = Categorical(fill(1.0 / n_states, n_states))
+    next_action  = nothing
+    observation  = sample_observation(rng, grid, initial_agent_pos)
+
+    episode_data = Dict(
+        &quot;actions&quot;      =&gt; Direction[],
+        &quot;states&quot;       =&gt; Coord[],
+        &quot;observations&quot; =&gt; Coord[],
+        &quot;seed&quot;         =&gt; seed
+    )
+    push!(episode_data[&quot;states&quot;], initial_agent_pos)
+    push!(episode_data[&quot;observations&quot;], observation)
+
+    for t in time_horizon:-1:1
+        # The agent decides on an action
+        next_action, agent_belief = model_step(
+            grid = grid,
+            observation = observation,
+            current_belief = agent_belief,
+            time_remaining = t,
+            previous_action = next_action
+        )
+
+        # The world reacts
+        agent_pos, observation = world_step(rng, grid, agent_pos, next_action)
+
+        push!(episode_data[&quot;actions&quot;], next_action)
+        push!(episode_data[&quot;states&quot;], agent_pos)
+        push!(episode_data[&quot;observations&quot;], observation)
+
+        if agent_pos == grid.goal_state break end
+    end
+    episode_data[&quot;final_state&quot;] = agent_pos
+    episode_data[&quot;seed&quot;] = seed
+    return episode_data
+end
+
+episode_data = run_stochastic_maze_simulation(seed=123, grid=example_grid, initial_agent_pos=Coord(3,1))</code></pre><pre><code class="nohighlight hljs">Dict{String, Any} with 5 entries:
+  &quot;observations&quot; =&gt; CartesianIndex{2}[CartesianIndex(3, 1), CartesianIndex(
+2, 1…
+  &quot;actions&quot;      =&gt; Direction[North, North, East, East, East, East, South, 
+Sout…
+  &quot;seed&quot;         =&gt; 123
+  &quot;states&quot;       =&gt; CartesianIndex{2}[CartesianIndex(3, 1), CartesianIndex(
+2, 1…
+  &quot;final_state&quot;  =&gt; CartesianIndex(3, 5)</code></pre><p>Let&#39;s create an animation to visualize the agent&#39;s trajectory. Modify the grid definition or the agent&#39;s starting position to experiment with different scenarios. Keep in mind that planning has a fixed time horizon, and you might need to increase it to allow the agent to reach the goal safely.</p><pre><code class="language-julia hljs">animation = @animate for agent_pos in episode_data[&quot;states&quot;]
+    depict(example_grid, agent_pos)
+end
+
+gif(animation, &quot;simulation.gif&quot;, fps=4, show_msg = false);</code></pre><p><img src="simulation.gif" alt/></p><hr/><div class="admonition is-info" id="Contributing-baba9dc142ba7ccb"><header class="admonition-header">Contributing<a class="admonition-anchor" href="#Contributing-baba9dc142ba7ccb" title="Permalink"></a></header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><div class="admonition is-compat" id="Environment-ead41e814a894220"><header class="admonition-header">Environment<a class="admonition-anchor" href="#Environment-ead41e814a894220" title="Permalink"></a></header><div class="admonition-body"><p>This example was executed in a clean, isolated environment. Below are the exact package versions used:</p><p>For reproducibility:</p><ul><li>Use the same package versions when running locally</li><li>Report any issues with package compatibility</li></ul></div></div><pre><code class="nohighlight hljs">Status `/tmp/jl_psgPRK/Project.toml`
+  [31c24e10] Distributions v0.25.129
+  [67be3549] LinearCombinations v0.4.3
+⌅ [2ab3a3ac] LogExpFunctions v0.3.29
+  [b98c9c47] Pipe v1.3.0
+  [91a5bcdd] Plots v1.41.6
+  [86711068] RxInfer v5.5.0
+  [860ef19b] StableRNGs v1.0.4
+  [bc48ee85] Tullio v0.3.9
+  [37e2e46d] LinearAlgebra v1.12.0
+Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated`
+</code></pre><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+mermaid.initialize({
+    startOnLoad: true,
+    theme: "neutral"
+});
+</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../drone_dynamics/">« Drone Dynamics</a><a class="docs-footer-nextpage" href="../gp_regression_by_ssm/">Gp Regression By Ssm »</a><div class="flexbox-break"></div><p class="footer-message">Created in <a href="https://biaslab.github.io/">BIASlab</a>, maintained by <a href="https://github.com/ReactiveBayes">ReactiveBayes</a>, powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Monday 13 July 2026 09:47">Monday 13 July 2026</span>. Using Julia version 1.12.6.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

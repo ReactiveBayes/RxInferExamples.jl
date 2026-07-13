@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>T-Maze Active Inference · RxInfer.jl Examples</title><meta name="title" content="T-Maze Active Inference · RxInfer.jl Examples"/><meta property="og:title" content="T-Maze Active Inference · RxInfer.jl Examples"/><meta property="twitter:title" content="T-Maze Active Inference · RxInfer.jl Examples"/><meta name="description" content="T-Maze Active Inference - Planning as Message Passing with RxInfer.jl\nAn example demonstrating Active Inference using message passing on a factor graph with RxInfer.jl introducing the epistemic priors on actions and states. \nThe agent solves a T-maze navigation task by minimizing Expected Free Energy (EFE) through variational message passing.\n\nCheck more examples and tutorials at https://examples.rxinfer.com\n"/><meta property="og:description" content="T-Maze Active Inference - Planning as Message Passing with RxInfer.jl\nAn example demonstrating Active Inference using message passing on a factor graph with RxInfer.jl introducing the epistemic priors on actions and states. \nThe agent solves a T-maze navigation task by minimizing Expected Free Energy (EFE) through variational message passing.\n\nCheck more examples and tutorials at https://examples.rxinfer.com\n"/><meta property="twitter:description" content="T-Maze Active Inference - Planning as Message Passing with RxInfer.jl\nAn example demonstrating Active Inference using message passing on a factor graph with RxInfer.jl introducing the epistemic priors on actions and states. \nThe agent solves a T-maze navigation task by minimizing Expected Free Energy (EFE) through variational message passing.\n\nCheck more examples and tutorials at https://examples.rxinfer.com\n"/><meta property="og:url" content="https://examples.rxinfer.com/categories/basic_examples/t-maze_active_inference/"/><meta property="twitter:url" content="https://examples.rxinfer.com/categories/basic_examples/t-maze_active_inference/"/><link rel="canonical" href="https://examples.rxinfer.com/categories/basic_examples/t-maze_active_inference/"/><script async src="https://www.googletagmanager.com/gtag/js?id=G-GMFX620VEP"></script><script>  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-GMFX620VEP', {'page_path': location.pathname + location.search + location.hash});
+</script><script data-outdated-warner src="../../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../../assets/documenter.js"></script><script src="../../../search_index.js"></script><script src="../../../siteinfo.js"></script><script src="../../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../../assets/themeswap.js"></script><link href="../../../assets/theme.css" rel="stylesheet" type="text/css"/><link href="../../../assets/header.css" rel="stylesheet" type="text/css"/><script src="../../../assets/header.js"></script><script src="../../../assets/chat.js"></script><link href="../../../assets/favicon.ico" rel="icon" type="image/x-icon"/>
+    <meta property="og:title" content="T-Maze Active Inference - Planning as Message Passing - RxInfer Examples">
+    <meta name="description" content="An example demonstrating Active Inference using message passing on a factor graph with RxInfer.jl introducing the epistemic priors on actions and states. 
+The agent solves a T-maze navigation task by minimizing Expected Free Energy (EFE) through variational message passing.
+">
+    <meta property="og:description" content="An example demonstrating Active Inference using message passing on a factor graph with RxInfer.jl introducing the epistemic priors on actions and states. 
+The agent solves a T-maze navigation task by minimizing Expected Free Energy (EFE) through variational message passing.
+">
+    <meta name="keywords" content="rxinfer, julia, bayesian inference, examples, probabilistic programming, message passing, probabilistic numerics, variational inference, belief propagation, basic examples, active inference, planning, t-maze">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://examples.rxinfer.com/sitemap.xml">
+    </head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../../"><img class="docs-light-only" src="../../../assets/logo.svg" alt="RxInfer.jl Examples logo"/><img class="docs-dark-only" src="../../../assets/logo-dark.svg" alt="RxInfer.jl Examples logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../../">RxInfer.jl Examples</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../../">Home</a></li><li><a class="tocitem" href="../../../how_to_contribute/">How to contribute</a></li><li><a class="tocitem" href="../../../autogenerated/list_of_examples/">List of Examples</a></li><li><span class="tocitem">Basic Examples</span><ul><li><a class="tocitem" href="../bayesian_binomial_regression/">Bayesian Binomial Regression</a></li><li><a class="tocitem" href="../bayesian_linear_regression/">Bayesian Linear Regression</a></li><li><a class="tocitem" href="../bayesian_multinomial_regression/">Bayesian Multinomial Regression</a></li><li><a class="tocitem" href="../bayesian_networks/">Bayesian Networks</a></li><li><a class="tocitem" href="../coin_toss_model/">Coin Toss Model</a></li><li><a class="tocitem" href="../contextual_bandits/">Contextual Bandits</a></li><li><a class="tocitem" href="../feature_functions_in_bayesian_regression/">Feature Functions In Bayesian Regression</a></li><li><a class="tocitem" href="../forgetting_factors_for_online_inference/">Forgetting Factors For Online Inference</a></li><li><a class="tocitem" href="../hidden_markov_model/">Hidden Markov Model</a></li><li><a class="tocitem" href="../incomplete_data/">Incomplete Data</a></li><li><a class="tocitem" href="../kalman_filtering_and_smoothing/">Kalman Filtering And Smoothing</a></li><li><a class="tocitem" href="../pomdp_control/">Pomdp Control</a></li><li><a class="tocitem" href="../predicting_bike_rental_demand/">Predicting Bike Rental Demand</a></li><li class="is-active"><a class="tocitem" href>T-Maze Active Inference</a><ul class="internal"><li><a class="tocitem" href="#1-·-Setup-and-the-T-Maze-Problem"><span>1 · Setup and the T-Maze Problem</span></a></li><li><a class="tocitem" href="#2-·-Theory:-EFE-as-VI"><span>2 · Theory: EFE as VI</span></a></li><li><a class="tocitem" href="#3-·-The-Augmented-Factor-Graph-Model"><span>3 · The Augmented Factor-Graph Model</span></a></li><li><a class="tocitem" href="#4-·-Implementation-of-epistemic-priors"><span>4 · Implementation of epistemic priors</span></a></li><li><a class="tocitem" href="#5-·-The-Iterative-VFE-Algorithm"><span>5 · The Iterative VFE Algorithm</span></a></li><li><a class="tocitem" href="#6-·-Running-the-Agent"><span>6 · Running the Agent</span></a></li><li><a class="tocitem" href="#7-·-Summary"><span>7 · Summary</span></a></li></ul></li></ul></li><li><span class="tocitem">Advanced Examples</span><ul><li><a class="tocitem" href="../../advanced_examples/active_inference_mountain_car/">Active Inference Mountain Car</a></li><li><a class="tocitem" href="../../advanced_examples/assessing_people_skills/">Assessing People Skills</a></li><li><a class="tocitem" href="../../advanced_examples/autoregressive_active_inference/">Autoregressive Active Inference</a></li><li><a class="tocitem" href="../../advanced_examples/bayesian_structured_time_series/">Bayesian Structured Time Series</a></li><li><a class="tocitem" href="../../advanced_examples/chance_constraints/">Chance Constraints</a></li><li><a class="tocitem" href="../../advanced_examples/conjugate-computational_variational_message_passing/">Conjugate-Computational Variational Message Passing</a></li><li><a class="tocitem" href="../../advanced_examples/drone_dynamics/">Drone Dynamics</a></li><li><a class="tocitem" href="../../advanced_examples/efe_minimization_via_message_passing/">Efe Minimization Via Message Passing</a></li><li><a class="tocitem" href="../../advanced_examples/gp_regression_by_ssm/">Gp Regression By Ssm</a></li><li><a class="tocitem" href="../../advanced_examples/infinite_data_stream/">Infinite Data Stream</a></li><li><a class="tocitem" href="../../advanced_examples/integrating_neural_networks_with_flux.jl/">Integrating Neural Networks With Flux.Jl</a></li><li><a class="tocitem" href="../../advanced_examples/integrating_neural_networks_with_lux.jl/">Integrating Neural Networks With Lux.Jl</a></li><li><a class="tocitem" href="../../advanced_examples/learning_dynamics_with_vaes/">Learning Dynamics With Vaes</a></li><li><a class="tocitem" href="../../advanced_examples/multi-agent_trajectory_planning/">Multi-Agent Trajectory Planning</a></li><li><a class="tocitem" href="../../advanced_examples/nonlinear_sensor_fusion/">Nonlinear Sensor Fusion</a></li><li><a class="tocitem" href="../../advanced_examples/parameter_optimisation_with_optim.jl/">Parameter Optimisation With Optim.Jl</a></li><li><a class="tocitem" href="../../advanced_examples/robotic_arm/">Robotic Arm</a></li></ul></li><li><span class="tocitem">Problem Specific</span><ul><li><a class="tocitem" href="../../problem_specific/autoregressive_models/">Autoregressive Models</a></li><li><a class="tocitem" href="../../problem_specific/gamma_mixture/">Gamma Mixture</a></li><li><a class="tocitem" href="../../problem_specific/gaussian_mixture/">Gaussian Mixture</a></li><li><a class="tocitem" href="../../problem_specific/hierarchical_gaussian_filter/">Hierarchical Gaussian Filter</a></li><li><a class="tocitem" href="../../problem_specific/invertible_neural_network_tutorial/">Invertible Neural Network Tutorial</a></li><li><a class="tocitem" href="../../problem_specific/ising_model/">Ising Model</a></li><li><a class="tocitem" href="../../problem_specific/litter_model/">Litter Model</a></li><li><a class="tocitem" href="../../problem_specific/ode_parameter_estimation/">Ode Parameter Estimation</a></li><li><a class="tocitem" href="../../problem_specific/probit_model/">Probit Model</a></li><li><a class="tocitem" href="../../problem_specific/rts_vs_bifm_smoothing/">Rts Vs Bifm Smoothing</a></li><li><a class="tocitem" href="../../problem_specific/simple_nonlinear_node/">Simple Nonlinear Node</a></li><li><a class="tocitem" href="../../problem_specific/structural_dynamics_with_augmented_kalman_filter/">Structural Dynamics With Augmented Kalman Filter</a></li><li><a class="tocitem" href="../../problem_specific/universal_mixtures/">Universal Mixtures</a></li></ul></li><li><span class="tocitem">Experimental Examples</span><ul><li><a class="tocitem" href="../../experimental_examples/bayesian_trust_learning/">Bayesian Trust Learning</a></li><li><a class="tocitem" href="../../experimental_examples/large_language_models/">Large Language Models</a></li><li><a class="tocitem" href="../../experimental_examples/latent_vector_autoregressive_model/">Latent Vector Autoregressive Model</a></li><li><a class="tocitem" href="../../experimental_examples/recurrent_switching_linear_dynamical_system/">Recurrent Switching Linear Dynamical System</a></li></ul></li><li><a class="tocitem" href="../../../how_build_works/">How we build the examples</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Basic Examples</a></li><li class="is-active"><a href>T-Maze Active Inference</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>T-Maze Active Inference</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl" title="View source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><div class="admonition is-info" id="Contributing-baba9dc142ba7ccb"><header class="admonition-header">Contributing<a class="admonition-anchor" href="#Contributing-baba9dc142ba7ccb" title="Permalink"></a></header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><h1 id="T-Maze-Active-Inference-—-Planning-as-Message-Passing"><a class="docs-heading-anchor" href="#T-Maze-Active-Inference-—-Planning-as-Message-Passing">T-Maze Active Inference — Planning as Message Passing</a><a id="T-Maze-Active-Inference-—-Planning-as-Message-Passing-1"></a><a class="docs-heading-anchor-permalink" href="#T-Maze-Active-Inference-—-Planning-as-Message-Passing" title="Permalink"></a></h1><p>This tutorial walks you through a complete implementation of an Active Inference agent that navigates a T-maze by minimising <strong>Expected Free Energy (EFE)</strong> via variational message passing in <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a>.</p><p>It builds on two <strong>key references</strong>:</p><ul><li>Paper 1: <a href="https://arxiv.org/abs/2504.14898"><em>EFE-based Planning as Variational Inference</em></a> (de Vries et al., 2025) — the foundational theorem.  </li><li>Paper 2: <a href="https://arxiv.org/abs/2508.02197"><em>A Message Passing Realization of EFE Minimization</em></a> (Nuijten et al., 2025) — the practical message-passing algorithm validated here.</li></ul><h2 id="1-·-Setup-and-the-T-Maze-Problem"><a class="docs-heading-anchor" href="#1-·-Setup-and-the-T-Maze-Problem">1 · Setup and the T-Maze Problem</a><a id="1-·-Setup-and-the-T-Maze-Problem-1"></a><a class="docs-heading-anchor-permalink" href="#1-·-Setup-and-the-T-Maze-Problem" title="Permalink"></a></h2><h3 id="1.1-Package-imports"><a class="docs-heading-anchor" href="#1.1-Package-imports">1.1 Package imports</a><a id="1.1-Package-imports-1"></a><a class="docs-heading-anchor-permalink" href="#1.1-Package-imports" title="Permalink"></a></h3><pre><code class="language-julia hljs">using RxInfer, Distributions, Plots, LinearAlgebra, Random, StableRNGs, ColorSchemes, Tullio
+using LogExpFunctions: softmax, xlogx, xlogy</code></pre><h3 id="1.2-The-T-maze-task"><a class="docs-heading-anchor" href="#1.2-The-T-maze-task">1.2 The T-maze task</a><a id="1.2-The-T-maze-task-1"></a><a class="docs-heading-anchor-permalink" href="#1.2-The-T-maze-task" title="Permalink"></a></h3><p>The agent starts at the center of the T-trunk and must reach the rewarded arm (left or right). It faces two challenges:</p><ul><li><strong>Partial observability</strong> — reward location is hidden; a cue is only visible at the trunk bottom.</li><li><strong>Exploration–exploitation</strong> — the agent must decide whether to read the cue first or head directly for an arm.</li></ul><p>The agent has four actions: North (1), East (2), South (3), West (4) to naviagate in the T-Maze consisting of 5 fields.</p><p>Here is a visualization, where the agent is marked as a blue dot.</p><p><img src="T-Maze.png" alt/></p><p>We set up the necessary structures in julia:</p><pre><code class="language-julia hljs">Base.@kwdef mutable struct TMaze
+    agent_position::Tuple{Int,Int}
+    reward_position::Symbol
+    reward_values::Dict{Tuple{Int,Int},Float64}
+end
+
+const STATE_TO_POS = ((2, 1), (2, 2), (1, 3), (2, 3), (3, 3))
+const POS_TO_STATE = Dict((2, 1) =&gt; 1, (2, 2) =&gt; 2, (1, 3) =&gt; 3, (2, 3) =&gt; 4, (3, 3) =&gt; 5)
+
+function create_tmaze(reward_position::Symbol, start_position::Tuple{Int,Int})
+    reward_position in (:left, :right) || throw(ArgumentError(&quot;reward_position must be :left or :right&quot;))
+    haskey(POS_TO_STATE, start_position) || throw(ArgumentError(&quot;Invalid start position. Must be one of: $(collect(STATE_TO_POS))&quot;))
+    s = reward_position == :left ? 1.0 : -1.0
+    reward_values = Dict((1, 3) =&gt; s, (3, 3) =&gt; -s)
+    return TMaze(agent_position = start_position, reward_position = reward_position, reward_values = reward_values)
+end
+
+const ACTION_NAMES = (&quot;North&quot;, &quot;East&quot;, &quot;South&quot;, &quot;West&quot;)
+@enum Direction::UInt8 North=1 East=2 South=3 West=4
+action_to_string(i::Integer) = (1 &lt;= i &lt;= 4) ? ACTION_NAMES[i] : &quot;Unknown&quot;
+
+# Deterministic dynamics: NEXT_STATE[current_state, action_idx] -&gt; next_state
+# action_idx: 1=North, 2=East, 3=South, 4=West
+const NEXT_STATE = [
+    2 1 1 1;
+    4 2 1 2;
+    3 4 3 3;
+    4 5 2 3;
+    5 5 5 4;
+]
+
+Base.@kwdef mutable struct TMazeBeliefs
+    location::Categorical{Float64}
+    reward_location::Categorical{Float64}
+    action_posterior::Categorical{Float64}
+end
+
+initialize_beliefs_tmaze() = TMazeBeliefs(
+    location         = Categorical(fill(1.0 / 5, 5)),
+    reward_location  = Categorical([0.5, 0.5]),
+    action_posterior = Categorical(fill(0.25, 4)),
+)</code></pre><pre><code class="nohighlight hljs">initialize_beliefs_tmaze (generic function with 1 method)</code></pre><h2 id="2-·-Theory:-EFE-as-VI"><a class="docs-heading-anchor" href="#2-·-Theory:-EFE-as-VI">2 · Theory: EFE as VI</a><a id="2-·-Theory:-EFE-as-VI-1"></a><a class="docs-heading-anchor-permalink" href="#2-·-Theory:-EFE-as-VI" title="Permalink"></a></h2><h3 id="2.1-The-Expected-Free-Energy-Cost-Function"><a class="docs-heading-anchor" href="#2.1-The-Expected-Free-Energy-Cost-Function">2.1 The Expected Free Energy Cost Function</a><a id="2.1-The-Expected-Free-Energy-Cost-Function-1"></a><a class="docs-heading-anchor-permalink" href="#2.1-The-Expected-Free-Energy-Cost-Function" title="Permalink"></a></h3><p>Before writing any model code it is worth understanding <em>what</em> the agent is trying to minimise.</p><p>For a candidate policy <span>$u$</span>, the <strong>Expected Free Energy</strong> <span>$G(u)$</span> can be decomposed to a form with preferences over states, defined as:</p><p class="math-container">\[G(u) \;=\;
+\underbrace{D_{KL}\!\bigl[q(x\!\mid\!u)\;\|\;\hat{p}(x)\bigr]}_{\text{risk}}
++\underbrace{\mathbb{E}_{q(x|u)}\!\bigl[H[q(y\!\mid\!x)]\bigr]}_{\text{ambiguity}}\]</p><p>This decomposition shows that the cost function is composed of two primary drivers: risk, which measures the divergence between predicted outcomes and preferred states <span>$\hat{p}(x)$</span> to keep the agent goal-oriented, and ambiguity, which calculates the expected uncertainty of future observations to encourage states with clear, informative data. By minimizing <span>$G(u)$</span>, the agent naturally balances these terms to produce behavior that is simultaneously goal-directed and information-seeking—offering a principled solution to the classic exploration–exploitation trade-off.</p><blockquote><p><strong>T-maze reading</strong>: without the cue, the reward location is highly uncertain. The agent&#39;s epistemic drive pushes it to the cue location first; once the cue is read, risk dominates and the agent heads for the correct arm.</p></blockquote><h3 id="2.2-·-EFE-as-Variational-Inference-—-The-Key-Theorem"><a class="docs-heading-anchor" href="#2.2-·-EFE-as-Variational-Inference-—-The-Key-Theorem">2.2 · EFE as Variational Inference — The Key Theorem</a><a id="2.2-·-EFE-as-Variational-Inference-—-The-Key-Theorem-1"></a><a class="docs-heading-anchor-permalink" href="#2.2-·-EFE-as-Variational-Inference-—-The-Key-Theorem" title="Permalink"></a></h3><h4 id="2.2.1-Why-the-Tree-Search-approach-fails"><a class="docs-heading-anchor" href="#2.2.1-Why-the-Tree-Search-approach-fails">2.2.1 Why the Tree Search approach fails</a><a id="2.2.1-Why-the-Tree-Search-approach-fails-1"></a><a class="docs-heading-anchor-permalink" href="#2.2.1-Why-the-Tree-Search-approach-fails" title="Permalink"></a></h4><p>A naive implementation evaluates <span>$G(u)$</span> for every candidate policy sequence. For a planning horizon <span>$T$</span> and <span>$|\mathcal{U}|$</span> actions, this requires <span>$|\mathcal{U}|^T$</span> evaluations — intractable for any non-trivial horizon.</p><h4 id="2.2.2-Planning-as-Variational-Inference"><a class="docs-heading-anchor" href="#2.2.2-Planning-as-Variational-Inference">2.2.2 Planning as Variational Inference</a><a id="2.2.2-Planning-as-Variational-Inference-1"></a><a class="docs-heading-anchor-permalink" href="#2.2.2-Planning-as-Variational-Inference" title="Permalink"></a></h4><p>The central insight of <a href="https://arxiv.org/pdf/2504.14898#Theorem.1">Paper 1 (Theorem 1)</a> is that EFE minimisation <em>arises naturally</em> from minimising a standard <strong>Variational Free Energy (VFE)</strong> functional if we <em>augment</em> the generative model with few prior terms:</p><p class="math-container">\[\mathcal{F}[q] \;\triangleq\;
+\mathbb{E}_{q(y,x,\theta,u)}\!\left[
+  \log\frac{q(y,x,\theta,u)}{p(y,x,\theta,u)\;\hat{p}(x)\;\tilde{p}(u)\;\tilde{p}(x)}
+\right]\]</p><p>The denominator is the ordinary generative model <span>$p$</span> <em>augmented</em> by:</p><ul><li>a <strong>preference prior</strong> <span>$\hat{p}(x)$</span> over desired future states, and</li><li>two <strong>epistemic priors</strong> <span>$\tilde{p}(u),\tilde{p}(x)$</span> that encode ambiguity-seeking and novelty-seeking drives.</li></ul><p><strong>Theorem 1</strong> states that with the specific choices</p><p class="math-container">\[\tilde{p}(u)  \;\propto\; \exp\!\bigl(H[q(x\!\mid\!u)]\bigr) \\
+\tilde{p}(x)  \;\propto\; \exp\!\bigl(-H[q(y\!\mid\!x)]\bigr)\]</p><p>the VFE decomposes exactly as</p><p class="math-container">\[\boxed{\mathcal{F}[q] \;=\; \mathbb{E}_{q(u)}[G(u)] \;+\; \underbrace{\mathbb{E}_{q(y,x,\theta,u)}\!\left[\log\tfrac{q(y,x,\theta|u)}{p(y,x,\theta|u)}\right]}_{\text{complexity } C(u)}\;+\; const.}\]</p><p><strong>What this buys us</strong>: minimising <span>$\mathcal{F}[q]$</span> over the variational posterior <span>$q$</span> simultaneously</p><ol><li>reduces the <em>expected</em> EFE over policies, and</li><li>keeps the posterior close to the Bayesian ideal (bounded-rationality term <span>$C(u)$</span>).</li></ol><p>Because <span>$\mathcal{F}[q]$</span> is a standard VFE, <em>any</em> off-the-shelf variational inference algorithm — including reactive message passing on a factor graph — can be used to minimise it. The combinatorial search is gone.</p><h4 id="2.2.3-Why-message-passing-works-here"><a class="docs-heading-anchor" href="#2.2.3-Why-message-passing-works-here">2.2.3 Why message passing works here</a><a id="2.2.3-Why-message-passing-works-here-1"></a><a class="docs-heading-anchor-permalink" href="#2.2.3-Why-message-passing-works-here" title="Permalink"></a></h4><p>Factor graphs factorise <span>$p(y,x,u)$</span> into local factors. Belief-propagation-style message passing finds stationary points of the <em>Bethe free energy</em>, which approximates the VFE. Because <span>$\mathcal{F}[q]$</span> decomposes into local contributions, each node in the graph can run its own local update — and the global EFE is minimised as a side-effect.</p><h3 id="2.3-·-Epistemic-Priors-—-Factorised-Form-for-State-Space-Models"><a class="docs-heading-anchor" href="#2.3-·-Epistemic-Priors-—-Factorised-Form-for-State-Space-Models">2.3 · Epistemic Priors — Factorised Form for State-Space Models</a><a id="2.3-·-Epistemic-Priors-—-Factorised-Form-for-State-Space-Models-1"></a><a class="docs-heading-anchor-permalink" href="#2.3-·-Epistemic-Priors-—-Factorised-Form-for-State-Space-Models" title="Permalink"></a></h3><p>Theorem 1 gives the priors in terms of global quantities <span>$H[q(x|u)]$</span> and <span>$H[q(y|x)]$</span>. To take advantage of local computations, we <strong>factorize</strong> the state-space model into</p><p class="math-container">\[p(y,x,u) \;=\; p(x_0)\prod_{t=1}^{T} p(y_t|x_t)\,p(x_t|x_{t-1},u_t)\,p(u_t)\]</p><p>With this factorized SSM <a href="https://arxiv.org/pdf/2508.02197#corollary.1.1"><strong>Corollary 1</strong> (Paper 2)</a> reduces the priors to <em>per-timestep, local</em> expressions:</p><p class="math-container">\[\tilde{p}(u_t) \;\propto\; \exp\!\bigl(H[q(x_t, x_{t-1}\!\mid\!u_t)] - H[q(x_{t-1}\!\mid\!u_t)]\bigr)\]</p><p class="math-container">\[\tilde{p}(x_t) \;\propto\; \exp\!\bigl(-H[q(y_t\!\mid\!x_t)]\bigr)\]</p><p>These are exactly the two prior nodes we add to the factor graph:</p><table><tr><th style="text-align: right">Node</th><th style="text-align: right">Prior</th><th style="text-align: right">Intuition</th></tr><tr><td style="text-align: right"><strong>Exploration</strong> (action prior)</td><td style="text-align: right"><span>$\tilde{p}(u_t)$</span> — conditional entropy of the transition</td><td style="text-align: right">favours actions that lead to uncertain future states → information seeking</td></tr><tr><td style="text-align: right"><strong>Ambiguity</strong> (state prior)</td><td style="text-align: right"><span>$\tilde{p}(x_t)$</span> — negative entropy of the observation</td><td style="text-align: right">favours states where observations aren&#39;t noisy → ambiguity reducing</td></tr></table><h4 id="2.3.1-Circular-dependency-and-its-resolution"><a class="docs-heading-anchor" href="#2.3.1-Circular-dependency-and-its-resolution">2.3.1 Circular dependency and its resolution</a><a id="2.3.1-Circular-dependency-and-its-resolution-1"></a><a class="docs-heading-anchor-permalink" href="#2.3.1-Circular-dependency-and-its-resolution" title="Permalink"></a></h4><p>There is a subtlety: the priors at iteration <span>$\tau$</span> depend on the posteriors <span>$q_{\tau-1}$</span> from the <em>previous</em> iteration. We can resolve this circularity iteratively by initialising <span>$q_0$</span> uniformly, and then alternating between</p><ol><li>Computing <span>$\tilde{p}_\tau$</span> from previous VMP iteration <span>$q_{\tau-1}$</span>.</li><li>Running one full round of message passing to get <span>$q_\tau$</span>.</li></ol><p>This approach, while solving the issue of interdependencies, incorporates a limitation: Convergence is empirically observed even though it is not guaranteed in general.</p><h2 id="3-·-The-Augmented-Factor-Graph-Model"><a class="docs-heading-anchor" href="#3-·-The-Augmented-Factor-Graph-Model">3 · The Augmented Factor-Graph Model</a><a id="3-·-The-Augmented-Factor-Graph-Model-1"></a><a class="docs-heading-anchor-permalink" href="#3-·-The-Augmented-Factor-Graph-Model" title="Permalink"></a></h2><p>Now let&#39;s head back to our challenge. We start by drawing the graph of the generative model. The figure below illustrates the augmented Forney-style factor graph for the T-maze agent, unfolded from the current state through a planning horizon (<span>$t = 1 \dots T$</span>).   The original generative model (transition and observation factors) is shown in white; the two added epistemic prior nodes are shown in red (Exploration) and green (Ambiguity) whereas the preference prior in blue.</p><p><img src="FFG-tmaze.svg" alt/></p><p>Each timeslice <span>$t$</span> contains:</p><ul><li><p class="math-container">\[f_B = p(x_t | x_{t-1}, u_t)\]</p>— deterministic location transition.</li><li><p class="math-container">\[f_A = p(y_t | x_t, rew)\]</p>— observation factor (reward cue depends on reward location <span>$r$</span>).</li><li><p class="math-container">\[\tilde{p}(u_t)\]</p>— <strong>Exploration</strong> epistemic prior on the action.</li><li><p class="math-container">\[\tilde{p}(x_t)\]</p>— <strong>Ambiguity</strong> epistemic prior on the state.</li><li><p class="math-container">\[\hat{p}(x_t)\]</p>— preference prior (only at the terminal step, encoding the desired goal state).</li></ul><p>The orange directed edges in the diagram indicate the local joint beliefs from the previous VMP iteration <span>$q_{\tau-1}$</span> computed at the transition and observation nodes.</p><p>In RxInfer we can write this the following:</p><pre><code class="language-julia hljs">@model function efe_tmaze_agent(reward_observation_tensor, location_transition_tensor, prior_location, prior_reward_location, reward_to_location_mapping, u_prev, T, reward_cue_observation, location_observation)
+    old_location ~ Categorical(prior_location)
+    reward_location ~ Categorical(prior_reward_location)
+
+    current_location ~ DiscreteTransition(old_location, location_transition_tensor, u_prev)
+    location_observation ~ DiscreteTransition(current_location, diageye(5))
+    reward_cue_observation ~ DiscreteTransition(current_location, reward_observation_tensor, reward_location)
+
+    previous_location = current_location
+    for t in 1:T
+        # Step 1 — allocate storage for q_{τ-1} (Bethe beliefs from previous VFE iteration)
+        loc_marginalstorage = JointMarginalStorage(Contingency(ones(size(location_transition_tensor))))
+        observation_marginalstorage = JointMarginalStorage(Contingency(ones(size(reward_observation_tensor))))
+        
+        # Step 2 — Exploration prior p̃(u_t): computed from stored transition beliefs from previous VMP
+        u[t] ~ Exploration(reward_cue_observation) where {meta=loc_marginalstorage}
+
+        # Step 3 — State transition; joint belief q(x_t, x_{t-1}, u_t) is saved into loc_marginalstorage
+        location[t] ~ DiscreteTransition(previous_location, location_transition_tensor, u[t]) where {meta=loc_marginalstorage}
+
+        # Step 4 — Simulate future observation; joint q(y_t, x_t) is saved into observation_marginalstorage
+        future_rew_cue_obs[t] ~ DiscreteTransition(location[t], reward_observation_tensor, reward_location) where {meta=observation_marginalstorage}
+        future_rew_cue_obs[t] ~ Categorical([0.5, 0.5])  # closes the half-edge on the factor graph
+
+        # Step 5 — Ambiguity prior p̃(x_t): computed from stored observation beliefs from previous VMP
+        location[t] ~ Ambiguity(reward_cue_observation) where {meta=observation_marginalstorage}
+
+        previous_location = location[t]
+    end
+    location[end] ~ DiscreteTransition(reward_location, reward_to_location_mapping)
+end</code></pre><h2 id="4-·-Implementation-of-epistemic-priors"><a class="docs-heading-anchor" href="#4-·-Implementation-of-epistemic-priors">4 · Implementation of epistemic priors</a><a id="4-·-Implementation-of-epistemic-priors-1"></a><a class="docs-heading-anchor-permalink" href="#4-·-Implementation-of-epistemic-priors" title="Permalink"></a></h2><p>Looking at this model we see a few curiosities. </p><h3 id="4.1-JointMarginalStorage-—-saving-Bethe-beliefs-between-iterations"><a class="docs-heading-anchor" href="#4.1-JointMarginalStorage-—-saving-Bethe-beliefs-between-iterations">4.1 <code>JointMarginalStorage</code> — saving Bethe beliefs between iterations</a><a id="4.1-JointMarginalStorage-—-saving-Bethe-beliefs-between-iterations-1"></a><a class="docs-heading-anchor-permalink" href="#4.1-JointMarginalStorage-—-saving-Bethe-beliefs-between-iterations" title="Permalink"></a></h3><p>A few nodes have an extra meta attribute. </p><p>We remember that the epistemic priors at iteration <span>$\tau$</span> require the joint posteriors <span>$q_{\tau-1}(x_t, x_{t-1}, u_t)$</span> and <span>$q_{\tau-1}(y_t, x_t)$</span> from the <em>previous</em> message-passing sweep.   Therefor we create a mutable container that RxInfer&#39;s marginal rules can write into:</p><pre><code class="language-julia hljs">mutable struct JointMarginalStorage{C}
+    joint_marginal::C
+end
+
+function set_marginal!(jmm::JointMarginalStorage{C}, marginal::C) where {C}
+    jmm.joint_marginal = marginal
+    return jmm
+end</code></pre><pre><code class="nohighlight hljs">set_marginal! (generic function with 1 method)</code></pre><h3 id="4.2-Custom-@marginalrule-—-intercepting-the-joint-beliefs"><a class="docs-heading-anchor" href="#4.2-Custom-@marginalrule-—-intercepting-the-joint-beliefs">4.2 Custom <code>@marginalrule</code> — intercepting the joint beliefs</a><a id="4.2-Custom-@marginalrule-—-intercepting-the-joint-beliefs-1"></a><a class="docs-heading-anchor-permalink" href="#4.2-Custom-@marginalrule-—-intercepting-the-joint-beliefs" title="Permalink"></a></h3><p>On a factor graph, the Bethe beliefs around a factor node <span>$f$</span> are calculated as a product of the factor function and the incoming messages. For <span>$f(x_t, x_{t-1}, u_t)$</span> this means:</p><p class="math-container">\[q(x_t, x_{t-1}, u_t) \;\propto\; f_B(x_t, x_{t-1}, u_t)\; m_{x_t \to f}(x_t)\; m_{x_{t-1} \to f}(x_{t-1})\; m_{u_t \to f}(u_t)\]</p><p>In RxInfer we can intercept this computation via a custom <code>@marginalrule</code> that calls the built-in rule, and then stores the result in the previously created JointMarginalStorage:</p><pre><code class="language-julia hljs">@marginalrule DiscreteTransition(:out_in_T1) (m_out::Categorical,
+                                              m_in::Categorical,
+                                              m_T1::Categorical,
+                                              q_a::PointMass{&lt;:AbstractArray{T,3}},
+                                              meta::JointMarginalStorage) where {T} = begin
+    marginal = @call_marginalrule DiscreteTransition(:out_in_T1) (m_out=m_out, m_in=m_in, m_T1=m_T1, q_a=q_a, meta=nothing)
+    set_marginal!(meta, marginal)
+    return marginal
+end</code></pre><h3 id="4.3-Exploration-node-—-the-action-epistemic-prior-\\tilde{p}(u_t)"><a class="docs-heading-anchor" href="#4.3-Exploration-node-—-the-action-epistemic-prior-\\tilde{p}(u_t)">4.3 <code>Exploration</code> node — the action epistemic prior <span>$\tilde{p}(u_t)$</span></a><a id="4.3-Exploration-node-—-the-action-epistemic-prior-\\tilde{p}(u_t)-1"></a><a class="docs-heading-anchor-permalink" href="#4.3-Exploration-node-—-the-action-epistemic-prior-\\tilde{p}(u_t)" title="Permalink"></a></h3><p>The action prior is derived as: <span>$\tilde{p}(u_t) \propto \exp(\mathbb{E}_{q(x_t, x_{t-1} \mid u_t)} \left[ -\log q(x_t \mid x_{t-1}, u_t) \right]) = \exp(H_q(\mathbf{x}_t \mid \mathbf{x}_{t-1}, u_t))$</span></p><p>To make use of optimized log-function calculations in julia we calculate this conditional entropy in its decomposed form as: <span>$H_q(\mathbf{x}_t \mid \mathbf{x}_{t-1}, u_t) = -\sum_{x_t, x_{t-1}} \Big[ q(x_t, x_{t-1} \mid u_t) \log q(x_t, x_{t-1} \mid u_t) - q(x_t, x_{t-1} \mid u_t) \log q(x_{t-1} \mid u_t) \Big]$</span> </p><p>To handle the updating of these parameters easily we define a custom factor node and a <code>rule</code> that implements this computation. </p><p>To ensure the custom nodes send their messages in each VMP iteration and follow the correct message-passing order (nodes that depend on observation marginals send their message after nodes that only depend on prior variabels), we use a dummy <code>trigger</code> data variable on the <code>in</code> edge. This &quot;trick&quot; enforces the required dependency and message-passing order without affecting the underlying mathematical computation.</p><pre><code class="language-julia hljs">struct Exploration end
+
+@node Exploration Stochastic [out, in]
+
+# Conditional entropy H(X|Y): measures uncertainty in X given Y
+# Uses the identity H(X|Y) = H(X,Y) - H(Y), computed elementwise via xlogx/xlogy
+function conditional_entropy(x)
+    h = sum(x, dims=1)  # marginal over rows → p(y)
+    @tullio res := -(xlogx(x[a,b]) - xlogy(x[a,b], h[b]))
+end
+
+@rule Exploration(:out, Marginalisation) (q_in::Any, meta::JointMarginalStorage,) = begin
+    slices = normalize.(eachslice(components(meta.joint_marginal), dims=3), 1)
+    entropies = conditional_entropy.(slices)
+    return Categorical(softmax(entropies))
+end
+
+RxInfer.ReactiveMP.sdtype(any::RxInfer.ReactiveMP.StandaloneDistributionNode) = ReactiveMP.Stochastic() # define the node as stochastic (not deterministic)</code></pre><h3 id="4.4-Ambiguity-node-—-the-state-epistemic-prior-\\tilde{p}(x_t)"><a class="docs-heading-anchor" href="#4.4-Ambiguity-node-—-the-state-epistemic-prior-\\tilde{p}(x_t)">4.4 <code>Ambiguity</code> node — the state epistemic prior <span>$\tilde{p}(x_t)$</span></a><a id="4.4-Ambiguity-node-—-the-state-epistemic-prior-\\tilde{p}(x_t)-1"></a><a class="docs-heading-anchor-permalink" href="#4.4-Ambiguity-node-—-the-state-epistemic-prior-\\tilde{p}(x_t)" title="Permalink"></a></h3><p>The state prior evaluates the information value of specific locations. It is defined as </p><p class="math-container">\[\tilde p(x_t) \propto \exp(\mathbb{E}_{q(y_t|x_t)}[\log q(y_t|x_t)]) = \exp(-H_q[y_t|x_t])\]</p><p>In the T-maze, the hidden state factorizes into agent location and reward location: <span>$x_t = \{ x_t^{loc}, x_t^{rew} \}$</span>. So the prior becomes specifically epistemic value for an agent&#39;s location averages over possible reward locations:</p><p class="math-container">\[\tilde{p}(x_t^{loc}) \propto \exp(H_q(\mathbf{y}_t \mid x_t^{loc}, \mathbf{x}_t^{rew}))\]</p><p>Similarily as the Exploration node we create a custom node for the epistemic action prior and define its rule based on the formula above.</p><pre><code class="language-julia hljs">struct Ambiguity end
+
+@node Ambiguity Stochastic [out, in];
+
+@rule Ambiguity(:out, Marginalisation) (q_in::Any, meta::JointMarginalStorage,) = begin
+    slices = normalize.(eachslice(components(meta.joint_marginal), dims=2), 1)
+    entropies = entropy.(slices)
+    return Categorical(softmax(-entropies))
+end</code></pre><h2 id="5-·-The-Iterative-VFE-Algorithm"><a class="docs-heading-anchor" href="#5-·-The-Iterative-VFE-Algorithm">5 · The Iterative VFE Algorithm</a><a id="5-·-The-Iterative-VFE-Algorithm-1"></a><a class="docs-heading-anchor-permalink" href="#5-·-The-Iterative-VFE-Algorithm" title="Permalink"></a></h2><p>Before starting the inference we still need to initialize some messages, since we have a loop in our factor graph and we need to define the agents knowledge about the environment (stored in the A and B matrices).</p><pre><code class="language-julia hljs">function create_reward_observation_tensor()
+    obs = fill(0.5, 2, 5, 2)
+    obs[:, 1, 1] .= (1.0, 0.0)
+    obs[:, 1, 2] .= (0.0, 1.0)
+    return obs
+end
+
+function create_location_transition_tensor()
+    T = zeros(Float64, 5, 5, 4)
+    for s in 1:5, a in 1:4
+        T[NEXT_STATE[s, a], s, a] = 1.0
+    end
+    return T
+end
+
+function create_reward_to_location_mapping()
+    m = zeros(Float64, 5, 2)
+    m[3, 1] = 1.0
+    m[5, 2] = 1.0
+    return m
+end
+
+tensors = (
+    reward_observation  = create_reward_observation_tensor(),
+    location_transition = create_location_transition_tensor(),
+    reward_to_location  = create_reward_to_location_mapping()
+)</code></pre><pre><code class="nohighlight hljs">(reward_observation = [1.0 0.5 … 0.5 0.5; 0.0 0.5 … 0.5 0.5;;; 0.0 0.5 … 0.
+5 0.5; 1.0 0.5 … 0.5 0.5], location_transition = [0.0 0.0 … 0.0 0.0; 1.0 0.
+0 … 0.0 0.0; … ; 0.0 1.0 … 1.0 0.0; 0.0 0.0 … 0.0 1.0;;; 1.0 0.0 … 0.0 0.0;
+ 0.0 1.0 … 0.0 0.0; … ; 0.0 0.0 … 0.0 0.0; 0.0 0.0 … 1.0 1.0;;; 1.0 1.0 … 0
+.0 0.0; 0.0 0.0 … 1.0 0.0; … ; 0.0 0.0 … 0.0 0.0; 0.0 0.0 … 0.0 1.0;;; 1.0 
+0.0 … 0.0 0.0; 0.0 1.0 … 0.0 0.0; … ; 0.0 0.0 … 0.0 1.0; 0.0 0.0 … 0.0 0.0]
+, reward_to_location = [0.0 0.0; 0.0 0.0; … ; 0.0 0.0; 0.0 1.0])</code></pre><pre><code class="language-julia hljs">@initialization function efe_tmaze_agent_initialization(prior_location, prior_reward_location, prior_future_locations)
+    μ(old_location) = prior_location
+    μ(reward_location) = prior_reward_location
+    μ(location) = prior_future_locations
+end
+
+&quot;&quot;&quot;
+Initialize beliefs for inference, either from scratch or warm-started from the previous result.
+Warm-starting accelerates convergence by beginning from a sensible prior.
+&quot;&quot;&quot;
+function get_initialization_tmaze(initialization_fn, beliefs, previous_result::Nothing)
+    future_location_beliefs = vague(Categorical, 5)
+    return initialization_fn(beliefs.location, beliefs.reward_location, future_location_beliefs)
+end
+
+function get_initialization_tmaze(initialization_fn, beliefs, previous_result)
+    current_location_belief  = last(previous_result.posteriors[:location])[1]
+    future_location_beliefs  = last(previous_result.posteriors[:location])[2:end]
+    reward_location_belief   = last(previous_result.posteriors[:reward_location])
+    return initialization_fn(current_location_belief, reward_location_belief, future_location_beliefs)
+end</code></pre><pre><code class="nohighlight hljs">get_initialization_tmaze (generic function with 2 methods)</code></pre><p>Now we can define the <code>infer()</code> function.</p><p>Since the epistemic priors depend on the current posterior, inference is run iteratively as explained in <a href="https://arxiv.org/pdf/2508.02197#algorithm.1">Algorithm 1 (Paper 2)</a>:</p><blockquote><p><strong>Input</strong>:  generative model <span>$p(y,x,u)$</span>, preference prior <span>$\hat{p}(x)$</span>, <span>$\tau_{max}$</span> iterations   <strong>Output</strong>: policy posterior <span>$q(u)$</span>   <span>$q_0(y,x,u) ←$</span> uninformative   <strong>for</strong> <span>$\tau = 1$</span> … <span>$\tau_{max}$</span>:   &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;<strong>for</strong> each timestep t:   &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;<span>$p̃_τ(u_t) ← σ( H[q_{τ-1}(x_t, x_{t-1} | u_t)] − H[q_{τ-1}(x_{t-1} | u_t)] )$</span>   &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;<span>$p̃_τ(x_t) ← σ( −H[q_{τ-1}(y_t | x_t)] )$</span>   &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;<strong>end</strong>   &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;<span>$q_\tau(y,x,u) ←$</span> infer( <span>$p(y,x,u)$</span> with updated priors )   <strong>end</strong>   <strong>return</strong> <span>$q_{τ_{max}}(u)$</span></p></blockquote><p>In the RxInfer implementation:</p><ul><li><strong>JointMarginalStorage</strong> holds the joint Bethe beliefs from iteration <span>$\tau-1$</span>.</li><li>The <code>Exploration</code> and <code>Ambiguity</code> <code>@rule</code>s use the updated <code>JointMarginals</code>from storage, compute and emit messages proportional to the entropy expressions above.</li><li>The outer <code>for τ</code> loop is the <code>iterations</code> parameter passed to <code>infer(...)</code>.</li></ul><pre><code class="language-julia hljs">&quot;&quot;&quot;
+Execute a single environment step: run τ_max iterations of VFE minimisation
+and return the action with highest posterior probability.
+&quot;&quot;&quot;
+function execute_step_tmaze(
+    env, position_obs, reward_cue, beliefs, model, tensors, config, time_remaining,
+    previous_result, previous_action_idx; initialization_fn)
+
+    1 &lt;= previous_action_idx &lt;= 4 || throw(ArgumentError(&quot;Invalid previous action index: $previous_action_idx&quot;))
+    previous_action_vec = Float64.(1:4 .== previous_action_idx)
+
+    initialization = get_initialization_tmaze(initialization_fn, beliefs, previous_result)
+
+    # infer() runs τ_max = config.n_iterations message-passing sweeps,
+    # each sweep using the epistemic priors computed from the joint beliefs stored from the sweep before.
+    result = infer(
+        model=model(
+            reward_observation_tensor  = tensors.reward_observation,
+            location_transition_tensor = tensors.location_transition,
+            prior_location             = probvec(beliefs.location),
+            prior_reward_location      = probvec(beliefs.reward_location),
+            reward_to_location_mapping = tensors.reward_to_location,
+            u_prev                     = previous_action_vec,
+            T                          = time_remaining
+            ),
+        data        = (
+                    location_observation=position_obs, 
+                    reward_cue_observation=reward_cue),
+        options     = (force_marginal_computation=true,), # needed to compute the joints of transition and observation node
+        iterations  = config.n_iterations,
+        initialization = initialization
+    )
+
+    next_action_idx = Int(mode(first(last(result.posteriors[:u]))))
+
+    beliefs.location        = last(result.posteriors[:current_location])
+    beliefs.reward_location = last(result.posteriors[:reward_location])
+    beliefs.action_posterior = first(last(result.posteriors[:u]))
+
+    return next_action_idx, result
+end</code></pre><pre><code class="nohighlight hljs">Main.var&quot;##WeaveSandBox#277&quot;.execute_step_tmaze</code></pre><h2 id="6-·-Running-the-Agent"><a class="docs-heading-anchor" href="#6-·-Running-the-Agent">6 · Running the Agent</a><a id="6-·-Running-the-Agent-1"></a><a class="docs-heading-anchor-permalink" href="#6-·-Running-the-Agent" title="Permalink"></a></h2><details class="admonition is-details" id="Hidden-block-of-Step!()-function-and-its-helpers-click-to-expand-14e9d3a175eace05"><summary class="admonition-header">Hidden block of Step!() function and its helpers - click to expand<a class="admonition-anchor" href="#Hidden-block-of-Step!()-function-and-its-helpers-click-to-expand-14e9d3a175eace05" title="Permalink"></a></summary><div class="admonition-body"><pre><code class="language-julia hljs">
+function next_position(pos::Tuple{Int,Int}, next_action_idx::Int)
+    1 &lt;= next_action_idx &lt;= 4 || throw(ArgumentError(&quot;Invalid action index: $next_action_idx&quot;))
+    s = POS_TO_STATE[pos]
+    a = next_action_idx
+    return STATE_TO_POS[NEXT_STATE[s, a]]
+end
+
+function create_position_observation(env::TMaze)
+    obs = zeros(Float64, 5)
+    obs[POS_TO_STATE[env.agent_position]] = 1.0
+    return obs
+end
+
+function create_reward_cue(env::TMaze)
+    return env.agent_position == (2, 1) ?
+        (env.reward_position == :left ? [1.0, 0.0] : [0.0, 1.0]) :
+        [0.5, 0.5]
+end
+
+get_reward(env::TMaze) = get(env.reward_values, env.agent_position, 0.0)
+
+function step!(env::TMaze, next_action_idx::Int)
+    env.agent_position = next_position(env.agent_position, next_action_idx)
+    return create_position_observation(env), create_reward_cue(env), get_reward(env)
+end
+
+nothing</code></pre></div></details><details class="admonition is-details" id="Hidden-block-of-Visualization-and-Plotting-click-to-expand-cde82adf8b0fb75a"><summary class="admonition-header">Hidden block of Visualization and Plotting - click to expand<a class="admonition-anchor" href="#Hidden-block-of-Visualization-and-Plotting-click-to-expand-cde82adf8b0fb75a" title="Permalink"></a></summary><div class="admonition-body"><pre><code class="language-julia hljs">
+scheme = colorschemes[:Paired_9]
+
+const MAZE_THEME = (agent=scheme[2], cue=scheme[7], reward_positive=scheme[4],
+    reward_negative=scheme[6], corridor=:white, wall=:black, background=:white
+)
+
+function plot_tmaze(env::TMaze)
+    p = Plots.plot(
+        aspect_ratio=:equal, legend=false, axis=false, grid=false, ticks=false,
+        background_color=MAZE_THEME.background, size=(300, 300), frame=:none, margin=0Plots.mm
+    )
+    scale = 20
+    Plots.plot!(p, [1, 2, 2, 1], [1, 1, 4, 4], seriestype=:shape, c=MAZE_THEME.corridor, lw=0)
+    Plots.plot!(p, [0, 3, 3, 0], [3, 3, 4, 4], seriestype=:shape, c=MAZE_THEME.corridor, lw=0)
+    wall_x = [1, 1, NaN, 2, 2, NaN, 0, 3, NaN, 0, 1, NaN, 2, 3, NaN, 1, 2, NaN, 0, 0, NaN, 3, 3]
+    wall_y = [1, 3, NaN, 1, 3, NaN, 4, 4, NaN, 3, 3, NaN, 3, 3, NaN, 1, 1, NaN, 3, 4, NaN, 3, 4]
+    Plots.plot!(p, wall_x, wall_y, color=MAZE_THEME.wall, linewidth=2)
+    grid_x = [1, 2, NaN, 1, 2, NaN, 1, 1, NaN, 2, 2]
+    grid_y = [2, 2, NaN, 3, 3, NaN, 3, 4, NaN, 3, 4]
+    Plots.plot!(p, grid_x, grid_y, color=MAZE_THEME.wall, linewidth=0.5, alpha=0.7)
+    left_c  = env.reward_position == :left  ? MAZE_THEME.reward_positive : MAZE_THEME.reward_negative
+    right_c = env.reward_position == :right ? MAZE_THEME.reward_positive : MAZE_THEME.reward_negative
+    Plots.scatter!(p, [0.5, 2.5, 1.5], [3.5, 3.5, 1.5],
+        color=[left_c, right_c, MAZE_THEME.cue],
+        markersize=ceil(Int, scale), alpha=0.7, markerstrokewidth=ceil(Int, scale / 15)
+    )
+    x = env.agent_position[1] - 0.5
+    y = env.agent_position[2] + 0.5
+    if env.agent_position != (2, 1)
+        Plots.annotate!(p, 1.5, 1.5, Plots.text(&quot;Cue&quot;, :black, ceil(Int, scale / 2)))
+    end
+    Plots.scatter!(p, [x], [y],
+        markersize=ceil(Int, (2 / 3) * scale), color=MAZE_THEME.agent,
+        markerstrokewidth=ceil(Int, scale / 15), markerstrokecolor=MAZE_THEME.wall
+    )
+    return p
+end
+
+function plot_reward_location_belief(beliefs::TMazeBeliefs)
+    probs = probvec(beliefs.reward_location)
+    bar([&quot;Left&quot;, &quot;Right&quot;], probs, title=&quot;Reward Location Belief&quot;, titlefontsize=10,
+        ylabel=&quot;Probability&quot;, ylims=(0, 1), color=:blue, alpha=0.7, legend=false)
+end
+
+function plot_action_posterior(beliefs::TMazeBeliefs, step_number::Int)
+    probs = probvec(beliefs.action_posterior)
+    bar([&quot;North&quot;, &quot;East&quot;, &quot;South&quot;, &quot;West&quot;], probs,
+        title=&quot;Action Posterior (Step: $step_number)&quot;, titlefontsize=10,
+        ylabel=&quot;Probability&quot;, ylims=(0, 1), color=:green, alpha=0.7,
+        legend=false, xrotation=45)
+end
+
+nothing</code></pre></div></details><p>To better understand what is actually happening under the hood, we define a function that runs a T-maze episode and exports it as an animated GIF. At each step, it updates beliefs via inference, executes the chosen action in the environment, and renders a frame combining maze state, reward-location belief, and action posterior for the next action <span>$u_t$</span> until the horizon or goal is reached.</p><pre><code class="language-julia hljs">function run_and_record_tmaze_gif(model, tensors, config, seed;
+    initialization_fn, filename=&quot;tmaze_agent.gif&quot;)
+
+    rng = StableRNG(seed)
+    reward_position = rand(rng, [:left, :right])
+    env = create_tmaze(reward_position, (2, 2))
+    beliefs = initialize_beliefs_tmaze()
+
+    previous_result     = nothing
+    previous_action_idx = 2
+    reward = 0.0
+
+    position_obs = create_position_observation(env)
+    reward_cue   = create_reward_cue(env)
+
+    println(&quot;Recording T-Maze episode (Reward: $reward_position) to $filename...&quot;)
+
+    function make_frame(title, t)
+        p_maze = plot_tmaze(env)
+        title!(p_maze, title, titlefontsize=10)
+        plot(p_maze, plot_reward_location_belief(beliefs),
+             plot_action_posterior(beliefs, config.time_horizon - t),
+             layout=@layout([a{0.6w} [b; c]]), size=(500, 300))
+    end
+
+    reached_goal = false
+    anim = @animate for t in config.time_horizon:-1:0
+        if reached_goal
+            make_frame(&quot;Goal Reached!\nReward Loc: $reward_position | Reward: $reward&quot;, t)
+        end
+
+        if t &gt; 0
+            next_action_idx, result = execute_step_tmaze(
+                env, position_obs, reward_cue, beliefs, model, tensors, config,
+                t, previous_result, previous_action_idx;
+                initialization_fn)
+            previous_result     = result
+            previous_action_idx = next_action_idx
+
+            make_frame(&quot;Step: $(config.time_horizon - t) | Planned Action: $(action_to_string(next_action_idx))\nReward Loc: $reward_position | Prev Reward: $reward&quot;, t)
+
+            position_obs, reward_cue, reward = step!(env, next_action_idx)
+            reward == 1 &amp;&amp; (reached_goal = true)
+        end
+
+        sleep(config.wait_time)
+    end
+
+    gif(anim, filename, fps=1)
+end</code></pre><pre><code class="nohighlight hljs">run_and_record_tmaze_gif (generic function with 1 method)</code></pre><p>Finally we configure the planning horizon and number of VFE iterations, and run the defined code.</p><pre><code class="language-julia hljs">config = (
+    time_horizon = 4,     # planning horizon T
+    n_iterations = 3,     # τ_max VFE iterations per environment step
+    wait_time    = 0.2,   # needed for creating the gif
+    seed         = 42
+)
+run_and_record_tmaze_gif(
+    efe_tmaze_agent,
+    tensors,
+    config,
+    config.seed;
+    initialization_fn = efe_tmaze_agent_initialization
+)
+nothing</code></pre><pre><code class="nohighlight hljs">Recording T-Maze episode (Reward: right) to tmaze_agent.gif...</code></pre><p><img src="tmaze_agent.gif" alt/></p><h2 id="7-·-Summary"><a class="docs-heading-anchor" href="#7-·-Summary">7 · Summary</a><a id="7-·-Summary-1"></a><a class="docs-heading-anchor-permalink" href="#7-·-Summary" title="Permalink"></a></h2><h3 id="7.1-What-did-the-epistemic-priors-actually-do?"><a class="docs-heading-anchor" href="#7.1-What-did-the-epistemic-priors-actually-do?">7.1 What did the epistemic priors actually do?</a><a id="7.1-What-did-the-epistemic-priors-actually-do?-1"></a><a class="docs-heading-anchor-permalink" href="#7.1-What-did-the-epistemic-priors-actually-do?" title="Permalink"></a></h3><p>At the start the agent does not know which arm holds the reward.   Without epistemic priors (<strong>KL-control</strong>), the agent would simply minimise risk and head for a random arm or whichever arm its weak prior slightly favours — potentially the wrong one.   With the Exploration and Ambiguity priors, the agent first visits the cue location (state 1) to resolve the ambiguity, then navigates directly to the correct arm.</p><h3 id="7.2-Scalability"><a class="docs-heading-anchor" href="#7.2-Scalability">7.2 Scalability</a><a id="7.2-Scalability-1"></a><a class="docs-heading-anchor-permalink" href="#7.2-Scalability" title="Permalink"></a></h3><p>Traditional EFE evaluation scales as <span>$|\mathcal{U}|^T$</span>. The message-passing approach scales <em>linearly</em> in <span>$T$</span> and <span>$|\mathcal{U}|$</span> because each factor node only communicates with its direct neighbours. The Minigrid door-key experiment in Paper 2 (observation space <span>$\approx 5^{49}$</span>, horizon <span>$T = 22$</span>) would be completely intractable with direct EFE computation but runs efficiently with this method.</p><h3 id="7.3-Limitations-and-open-questions"><a class="docs-heading-anchor" href="#7.3-Limitations-and-open-questions">7.3 Limitations and open questions</a><a id="7.3-Limitations-and-open-questions-1"></a><a class="docs-heading-anchor-permalink" href="#7.3-Limitations-and-open-questions" title="Permalink"></a></h3><ul><li><strong>Convergence is not guaranteed</strong> for the iterative prior-update scheme when <code>n_iterations &gt; 1</code>. Empirically, the Bethe Free Energy converges for the tested environments (see Appendix D.1 and E.1 of Paper 2).</li><li><strong>Parameter learning</strong> (the novelty term in the full EFE) is not implemented here; this is left for future work as in <a href="https://arxiv.org/abs/2511.18955">&quot;Active Inference is a Subtype of Variational Inference&quot;</a>.</li><li>The epistemic priors are defined in closed form but their iterative <strong>online update</strong> between VMP iterations in a streaming setting requires further elaboration.</li></ul><h3 id="7.4-Further-reading"><a class="docs-heading-anchor" href="#7.4-Further-reading">7.4 Further reading</a><a id="7.4-Further-reading-1"></a><a class="docs-heading-anchor-permalink" href="#7.4-Further-reading" title="Permalink"></a></h3><ul><li><a href="https://examples.rxinfer.com/categories/advanced_examples/efe_minimization_via_message_passing">Stochastic Maze - EFE as VI : an advanced rxinfer tutorial</a></li><li><a href="https://arxiv.org/abs/2504.14898">Paper 1 — EFE-based Planning as Variational Inference</a></li><li><a href="https://arxiv.org/abs/2508.02197">Paper 2 — A Message Passing Realization of EFE Minimization</a></li><li><a href="https://arxiv.org/abs/2511.18955">Active Inference is a Subtype of Variational Inference</a> — includes parameter learning</li></ul><hr/><div class="admonition is-info" id="Contributing-baba9dc142ba7ccb"><header class="admonition-header">Contributing<a class="admonition-anchor" href="#Contributing-baba9dc142ba7ccb" title="Permalink"></a></header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><div class="admonition is-compat" id="Environment-ead41e814a894220"><header class="admonition-header">Environment<a class="admonition-anchor" href="#Environment-ead41e814a894220" title="Permalink"></a></header><div class="admonition-body"><p>This example was executed in a clean, isolated environment. Below are the exact package versions used:</p><p>For reproducibility:</p><ul><li>Use the same package versions when running locally</li><li>Report any issues with package compatibility</li></ul></div></div><pre><code class="nohighlight hljs">Status `/tmp/jl_psgPRK/Project.toml`
+  [35d6a980] ColorSchemes v3.31.0
+  [31c24e10] Distributions v0.25.129
+⌅ [2ab3a3ac] LogExpFunctions v0.3.29
+  [91a5bcdd] Plots v1.41.6
+  [86711068] RxInfer v5.5.0
+  [860ef19b] StableRNGs v1.0.4
+  [bc48ee85] Tullio v0.3.9
+  [37e2e46d] LinearAlgebra v1.12.0
+  [9a3f8284] Random v1.11.0
+Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated`
+</code></pre><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+mermaid.initialize({
+    startOnLoad: true,
+    theme: "neutral"
+});
+</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../predicting_bike_rental_demand/">« Predicting Bike Rental Demand</a><a class="docs-footer-nextpage" href="../../advanced_examples/active_inference_mountain_car/">Active Inference Mountain Car »</a><div class="flexbox-break"></div><p class="footer-message">Created in <a href="https://biaslab.github.io/">BIASlab</a>, maintained by <a href="https://github.com/ReactiveBayes">ReactiveBayes</a>, powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Monday 13 July 2026 09:47">Monday 13 July 2026</span>. Using Julia version 1.12.6.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
