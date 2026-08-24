@@ -514,6 +514,17 @@ function find_meta_file(html_path, examples_dir)
     return nothing
 end
 
+# Escape a string for safe interpolation into an HTML attribute value.
+# The `&` replacement must run first so it does not double-escape the entities
+# introduced by the later replacements.
+function htmlescape(s::AbstractString)
+    s = replace(s, "&" => "&amp;")
+    s = replace(s, "\"" => "&quot;")
+    s = replace(s, "<" => "&lt;")
+    s = replace(s, ">" => "&gt;")
+    return s
+end
+
 function inject_meta_tags()
     build_dir = joinpath(@__DIR__, "build")
     examples_dir = joinpath(build_dir, "categories")
@@ -566,6 +577,8 @@ function inject_meta_tags()
 
         for file in files
             if endswith(file, ".html")
+                filepath = joinpath(root, file)
+
                 # Skip if current directory is in ignored list
                 if any(ignored -> occursin(ignored, relpath(root, examples_dir)), IGNORED_DIRECTORIES)
                     @info "Skipping file in ignored directory: $(relpath(filepath, examples_dir))"
@@ -573,7 +586,6 @@ function inject_meta_tags()
                 end
 
                 processed_count += 1
-                filepath = joinpath(root, file)
                 @info "Processing HTML file: $(relpath(filepath, examples_dir))"
 
                 # Find corresponding meta.jl
@@ -609,13 +621,13 @@ function inject_meta_tags()
 
                 # Add title meta if available
                 if meta.title !== nothing
-                    push!(meta_tags, """<meta property="og:title" content="$(meta.title) - RxInfer Examples">""")
+                    push!(meta_tags, """<meta property="og:title" content="$(htmlescape(meta.title)) - RxInfer Examples">""")
                 end
 
                 # Add description meta if available
                 if meta.description !== nothing
-                    push!(meta_tags, """<meta name="description" content="$(meta.description)">""")
-                    push!(meta_tags, """<meta property="og:description" content="$(meta.description)">""")
+                    push!(meta_tags, """<meta name="description" content="$(htmlescape(meta.description))">""")
+                    push!(meta_tags, """<meta property="og:description" content="$(htmlescape(meta.description))">""")
                 end
 
                 # Add keywords meta if available
