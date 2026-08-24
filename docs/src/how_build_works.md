@@ -24,7 +24,7 @@ make examples-dev
 make examples-dev RXINFER=/path/to/RxInfer.jl
 
 # Build single example with development version
-make example-dev FILTER=LinearRegression RXINFER=/path/to/RxInfer.jl
+make examples-dev FILTER=LinearRegression RXINFER=/path/to/RxInfer.jl
 ```
 
 When using the development version (`--use-dev`), the build system will:
