@@ -132,6 +132,33 @@ return (
 )
 ```
 
+### Optional fields
+
+Both fields below are optional - omit them unless your example needs them.
+
+- `env_required = ["SOME_API_KEY"]` - environment variables the example needs in order to
+  run. If any of them are missing the example is skipped with a warning instead of
+  failing the build (or fails outright when the build runs with `--strict-env`, as CI
+  does).
+- `build_priority = true` - schedule this example ahead of the others. Examples are
+  otherwise built in directory order, which lets a slow example start last and become
+  the tail that determines how long the whole build takes. Set this only for examples
+  that are genuinely among the slowest (check the performance report printed at the end
+  of `make examples`). It affects scheduling only: the example's output, and the total
+  CPU time of the build, are unchanged.
+
+```julia
+return (
+    title = "A Slow Example That Needs An API Key",
+    description = """
+    A clear description of what the example demonstrates.
+    """,
+    tags = ["category", "relevant", "tags", "here"],
+    env_required = ["OPENAI_KEY"],
+    build_priority = true
+)
+```
+
 ## Testing Your Example
 
 !!! note
