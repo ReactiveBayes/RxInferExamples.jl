@@ -84,3 +84,26 @@ First, it collects metadata from all examples by reading their meta.jl files. Th
 Next, it generates the pages needed for the documentation site. This involves creating a comprehensive list of all examples, setting up the navigation structure between pages, and applying consistent HTML styling to the examples list.
 
 Finally, it handles the actual documentation building process using Documenter.jl. This includes deploying the built documentation to GitHub Pages and ensuring clean builds by removing old artifacts when needed.
+
+### Syntax highlighting
+
+Documenter is configured with `prerender = true`. Instead of shipping code blocks as plain
+text and letting `highlight.js` colour them in the reader's browser, Documenter shells out to
+`node` for every code block during the build and writes the highlighted markup directly into
+the HTML. This makes the highlighting independent of anything that happens at page load - CDN
+availability, ad blockers, or a JavaScript error elsewhere on the page can no longer leave the
+examples unhighlighted.
+
+!!! warning "`node` is required"
+    Pre-rendering needs both `node` and `curl` on the `PATH` (`curl` is used to fetch the
+    `highlight.js` bundle at build time). `docs/make.jl` checks for `node` before calling
+    `makedocs`:
+
+    - locally, a missing `node` only produces a warning and the build falls back to
+      client-side highlighting,
+    - in CI (`CI=true`) it is a hard error, so a runner without Node cannot silently deploy
+      unhighlighted pages.
+
+    Note that only Julia *input* cells are highlighted. Weave emits the output of each cell as
+    an untagged code fence, which Documenter renders as `nohighlight` - that is intentional,
+    those blocks are program output rather than source code.

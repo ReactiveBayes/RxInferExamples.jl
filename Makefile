@@ -19,6 +19,7 @@ clean:
 
 # Install documentation dependencies
 docs-setup:
+	@command -v node >/dev/null 2>&1 || echo "Warning: 'node' not found on PATH. 'make docs' needs it to pre-render syntax highlighting; code blocks will fall back to client-side highlighting."
 	julia --project=docs -e 'using Pkg; Pkg.instantiate()'
 
 examples-setup:
@@ -50,6 +51,11 @@ help:
 	@echo "Setup targets:"
 	@echo "  examples-setup - Install examples dependencies"
 	@echo "  docs-setup    - Install documentation dependencies"
+	@echo ""
+	@echo "Requirements:"
+	@echo "  examples   - needs 'Weave.jl' installed globally in your Julia environment"
+	@echo "  docs       - needs 'node' on PATH, used to pre-render syntax highlighting"
+	@echo "               (without it code blocks fall back to client-side highlighting)"
 	@echo ""
 	@echo "  If you fix an example but still see errors,"
 	@echo "     try running 'make clean' to clear the cache before rebuilding."

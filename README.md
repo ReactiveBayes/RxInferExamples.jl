@@ -13,6 +13,18 @@ Navigate to the [Examples](https://examples.rxinfer.com) page to check the pre-r
 
 ## How to run the examples locally
 
+### Prerequisites
+
+- [Julia](https://julialang.org/downloads/)
+- `Weave.jl` installed globally, it is used to convert the notebooks to markdown:
+  ```bash
+  julia -e 'using Pkg; Pkg.add("Weave")'
+  ```
+- [Node.js](https://nodejs.org/) with `node` available on your `PATH`. `make docs` builds with
+  Documenter's `prerender = true`, which shells out to `node` to apply syntax highlighting at
+  build time rather than in the reader's browser. Without it the documentation still builds,
+  but `make docs` warns and code blocks fall back to client-side highlighting.
+
 1. Clone the repository:
    ```bash
    git clone https://github.com/ReactiveBayes/RxInferExamples.jl.git
