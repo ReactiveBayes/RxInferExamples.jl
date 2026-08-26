@@ -21,6 +21,7 @@ function parse_commandline()
         help = "Fail if required environment variables are missing (use for CI)"
         "--workers"
         help = "Amount of workers to use to build the examples (defaults to Sys.CPU_THREADS)"
+        arg_type = Int
         default = Sys.CPU_THREADS
         "filter"
         help = "Filter pattern for notebook names"
@@ -245,7 +246,7 @@ end
     notebook_path::String
     output_path::String
     result::Symbol
-    time_to_instantiate::Float64
+    time_to_env_log::Float64
     time_to_build::Float64
     total_time::Float64
 end
@@ -326,19 +327,19 @@ end
             end
         end
 
-        # Activate the project in the current directory
-        time_to_instantiate_begin = time_ns()
+        # Collect the notebook's own dependencies, then report their resolved versions
+        # from the shared build environment. This runs in-process on purpose: spawning a
+        # whole Julia process just to write `env.log` used to cost ~1.3s per notebook.
+        time_to_env_log_begin = time_ns()
         notebook_dependencies = Pkg.activate(notebook_dir) do 
             collect(keys(Pkg.project().dependencies))
         end
-        execute_in_julia_subprocess(envdir, quote
-            using Pkg
-            envio = open(joinpath($output_dir, "env.log"), "w")
-            Pkg.status($notebook_dependencies, io=envio)
-            flush(envio)
-            close(envio)
-        end)
-        time_to_instantiate_end = time_ns()
+        Pkg.activate(envdir) do
+            open(joinpath(output_dir, "env.log"), "w") do envio
+                Pkg.status(notebook_dependencies, io=envio)
+            end
+        end
+        time_to_env_log_end = time_ns()
 
         time_to_build_begin = time_ns()
         execute_in_julia_subprocess(envdir, quote
@@ -418,16 +419,16 @@ end
             """)
 
         @info "Successfully processed $rel_path"
-        time_to_instantiate = ns_to_seconds(time_to_instantiate_end - time_to_instantiate_begin)
+        time_to_env_log = ns_to_seconds(time_to_env_log_end - time_to_env_log_begin)
         time_to_build = ns_to_seconds(time_to_build_end - time_to_build_begin)
         return ProcessedNotebook(
             notebook,
             notebook_path,
             output_path,
             :success,
-            time_to_instantiate,
+            time_to_env_log,
             time_to_build,
-            time_to_instantiate + time_to_build
+            time_to_env_log + time_to_build
         )
     catch e
         @error "Failed to process $rel_path" exception = (e, catch_backtrace())
@@ -472,6 +473,36 @@ if !isnothing(FILTER)
     """
 end
 
+# Notebooks may opt in to being scheduled first by setting `build_priority = true` in
+# their `meta.jl`. `pmap` otherwise dispatches in `walkdir` order, which lets a slow
+# notebook start last and become the tail that determines total wall-clock time.
+# This is a scheduling hint only - it changes wall-clock, never CPU time or output.
+function has_build_priority(notebook)
+    meta_path = joinpath(@__DIR__, dirname(notebook), "meta.jl")
+    # Deliberately lenient: a missing or broken `meta.jl` must not break scheduling.
+    # `process_notebook` reports it properly, per notebook, with a much clearer message.
+    isfile(meta_path) || return false
+    try
+        meta = include(meta_path)
+        return get(meta, :build_priority, false) === true
+    catch
+        return false
+    end
+end
+
+# Evaluate the flag once per notebook - `has_build_priority` includes `meta.jl`.
+let prioritized = Set(filter(has_build_priority, notebook_files))
+    if !isempty(prioritized)
+        # `MergeSort` is stable, so notebooks keep their `walkdir` order within each
+        # group and build logs stay diffable between runs.
+        global notebook_files = sort(notebook_files, by=(n) -> !(n in prioritized), alg=MergeSort)
+        @info """
+        Scheduling $(length(prioritized)) notebook(s) first (build_priority = true in meta.jl):
+        $(join(["  • " * notebook for notebook in sort(collect(prioritized))], "\n"))
+        """
+    end
+end
+
 notebook_directories = map(f -> joinpath(@__DIR__, dirname(f)), notebook_files)
 temporary_environment = mktempdir(cleanup=true)
 # We start with the current environment
@@ -507,6 +538,7 @@ if !isnothing(RXINFER_PATH)
 end
 
 # Process notebooks in parallel
+build_wall_clock_begin = time_ns()
 results = pmap(
     notebook -> process_notebook(
         temporary_environment,
@@ -516,6 +548,7 @@ results = pmap(
     ),
     notebook_files
 )
+build_wall_clock = ns_to_seconds(time_ns() - build_wall_clock_begin)
 
 # Split results into successful, failed, and skipped
 successful_results = filter(is_processing_successful, results)
@@ -526,7 +559,7 @@ function prettify_notebook_string(result::ProcessedNotebook)
     return string(
         result.notebook,
         " (total: ", round(result.total_time, digits=2), " seconds, ",
-        "instantiate: ", round(result.time_to_instantiate, digits=2), " seconds, ",
+        "env log: ", round(result.time_to_env_log, digits=2), " seconds, ",
         "build: ", round(result.time_to_build, digits=2), " seconds)"
     )
 end
@@ -546,8 +579,18 @@ $(isempty(skipped_results) ? "" : "Skipped notebooks:\n" * join(["  • " * resu
 longest_to_execute_show = 10
 longest_to_execute_notebooks = Iterators.take(sort(successful_results, by=(r) -> -r.total_time), longest_to_execute_show)
 
+# Wall-clock is what a contributor actually waits for; the CPU total is the sum of the
+# per-notebook times above. They differ because `pmap` runs notebooks concurrently, so
+# improvements to scheduling move the former while leaving the latter untouched.
+total_cpu_time = sum(result -> result.total_time, results; init=0.0)
+build_speedup = build_wall_clock > 0 ? total_cpu_time / build_wall_clock : 0.0
+
 @info """
 Performance Report:
+Total wall-clock time: $(round(build_wall_clock, digits=2)) seconds
+Total CPU time (sum over notebooks): $(round(total_cpu_time, digits=2)) seconds
+Effective parallel speedup: $(round(build_speedup, digits=2))x over $(nworkers()) worker(s)
+
 Top ($longest_to_execute_show) longest to execute notebooks:
 $(join(["  • " * prettify_notebook_string(result) for result in longest_to_execute_notebooks], "\n"))
 """

@@ -73,7 +73,14 @@ The error handling system checks for error blocks in the output, reports any fai
 
 ### Parallel Processing
 
-The build system leverages Julia's distributed computing capabilities to process multiple notebooks simultaneously. It distributes the workload across available CPU cores. After processing completes, it generates a detailed report showing how many notebooks were processed successfully and which ones failed, if any.
+The build system leverages Julia's distributed computing capabilities to process multiple notebooks simultaneously. It distributes the workload across available CPU cores. After processing completes, it generates a detailed report showing how many notebooks were processed successfully and which ones failed, if any, together with a performance report listing the total wall-clock time, the total CPU time summed over all notebooks, and the slowest notebooks to build.
+
+Notebooks are dispatched in directory order by default. Because the build finishes only
+when its slowest notebook finishes, a long-running notebook that happens to start last
+sets the total wall-clock time on its own. An example can opt out of that by setting
+`build_priority = true` in its `meta.jl`, which schedules it ahead of the others - see
+[Metadata Requirements](@ref) in the contributing guide. This is a scheduling hint only:
+it changes when a notebook starts, never its output or the total CPU time of the build.
 
 ## Stage 2: Documentation Building (`docs/make.jl`)
 
