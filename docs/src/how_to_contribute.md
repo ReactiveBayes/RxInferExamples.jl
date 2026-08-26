@@ -51,9 +51,38 @@ If your example cannot be statically generated, put it inside the `interactive` 
    Do not add spaces nor line breaks before or after the `$$` or `$`
 
 2. **Equation Rules**
-   - No space nor line breaks after opening `$$` or `$`
+   - No space nor line breaks after opening `$$` or `$`, and none before the closing one
    - Separate display equations with empty lines
-   - Inline equations use single `$...$`, e.g. `$$a + b$$` and not `$$ a + b $$`
+   - Inline equations use single `$...$`, e.g. `$a + b$` and not `$ a + b $`
+   - Write a literal dollar sign as `\$`, otherwise it is read as an opening math delimiter
+
+!!! warning "Why the spacing rule is not cosmetic"
+    Documenter does not recognise `$$\nx = 1\n$$` or `$ A $` as math at all. The delimiters and
+    the LaTeX are published as ordinary prose, so readers see the source instead of a formula:
+
+    ```
+    $$                              →  renders as the literal text
+    n^{Daily} \sim Pois(\theta)       →  "$ n^{Daily} \sim Pois(\theta) $"
+    $$
+
+    $$n^{Daily} \sim Pois(\theta)$$   →  renders as a formula
+    ```
+
+    The same applies to an unescaped `$` in prose: `costs $0.25 per 1M tokens` silently loses the
+    dollar sign, because it is treated as the start of an equation.
+
+!!! note "These rules are enforced"
+    Math is typeset by KaTeX in the reader's browser, not at build time, so a broken formula does
+    not fail the build on its own - it just ships as raw text. Three checks close that gap:
+
+    - `examples/math_lint.jl` runs during `make examples` and fails the build on math that cannot
+      render, pointing at the notebook and line.
+    - `docs/tools/check-rendered-math.mjs` re-renders every formula in the built HTML with the same
+      KaTeX version the site loads.
+    - `docs/tools/check-rendered-pages.mjs` loads the built pages in a real browser and asserts the
+      math and the syntax highlighting actually appeared.
+
+    Run them locally with `make docs-check` after `make docs`. See `docs/tools/README.md`.
 
 ## Hidden/Collapsible Code Blocks
 

@@ -1,4 +1,4 @@
-.PHONY: docs clean docs-setup preview examples
+.PHONY: docs docs-check clean docs-setup preview examples
 
 # Default target
 all: examples docs
@@ -34,6 +34,15 @@ docs: docs-setup
 docs-serve: docs-setup 
 	julia --project=docs/ -e 'ENV["DOCS_DRAFT"]="true"; using LiveServer; LiveServer.servedocs(launch_browser=true, port=5678)'
 
+# Check the built site actually renders (see docs/tools/README.md)
+# Math and, historically, syntax highlighting are applied by JavaScript in the reader's browser,
+# so a page can build cleanly and still publish raw LaTeX. These checks catch that.
+docs-check:
+	@command -v node >/dev/null 2>&1 || { echo "Warning: 'node' not found on PATH; skipping documentation render checks."; exit 0; }
+	npm install --prefix docs/tools --silent
+	node docs/tools/check-rendered-math.mjs docs/build
+	node docs/tools/check-rendered-pages.mjs docs/build
+
 # Preview documentation in browser
 preview:
 	open docs/build/index.html
@@ -45,6 +54,7 @@ help:
 	@echo "  examples   - Build all examples or a specific example (usage: make examples [FILTER=pattern] [USE_CACHE=true/false] [STRICT_ENV=true/false])"
 	@echo "  examples-dev - Build examples with local RxInfer development version (usage: make examples-dev [FILTER=pattern] [USE_CACHE=true/false] [STRICT_ENV=true/false])"
 	@echo "  docs       - Build the documentation website"
+	@echo "  docs-check - Verify the built site renders math and highlighting (needs node)"
 	@echo "  preview    - Open documentation in browser"
 	@echo "  clean      - Remove all build artifacts and caches"
 	@echo ""
