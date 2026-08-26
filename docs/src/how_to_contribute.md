@@ -108,6 +108,9 @@ return (
 !!! note
     Note that building the examples locally requires `Weave.jl` package to be installed globally in your Julia environment. Use `julia -e 'using Pkg; Pkg.add("Weave")'` to install it.
 
+!!! note
+    Building the documentation (`make docs`) additionally requires [Node.js](https://nodejs.org/) with `node` available on your `PATH`. Documenter uses it to pre-render syntax highlighting at build time instead of running `highlight.js` in the reader's browser. Without `node` the build still succeeds, but it warns and code blocks fall back to client-side highlighting.
+
 1. **Local Testing**
    ```bash
    # Test all examples
