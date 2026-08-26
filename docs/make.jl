@@ -753,6 +753,82 @@ function generate_sitemap()
     """
 end
 
+
+# Guards against a class of bug that silently breaks every published page.
+#
+# Documenter loads its own JavaScript (jQuery, KaTeX, highlight.js) through require.js, which
+# installs a global AMD `define`. Bundles built by esbuild frequently inline UMD wrappers that
+# sniff for it - mermaid, for instance, inlines `fastdom`:
+#
+#     typeof define=="function"?define(function(){return c}):typeof H=="object"&&(H.exports=c)
+#
+# With require.js on the page those wrappers take the AMD branch and fire *anonymous* `define()`
+# calls. require.js attributes an anonymous define to whichever module it happens to be fetching -
+# usually jQuery - so `$` stops being a function and every `$(document).ready(...)` handler in
+# `documenter.js` throws. The visible result is a page where math stays raw `$...$` text, code
+# blocks are uncoloured and the navbar and search stop working. Nothing in the build fails, and
+# because it depends on which fetch is in flight it comes and goes between reloads.
+#
+# This is what shipped to production once already (DocumenterMermaid injected such a script into
+# every page). Keep it from coming back.
+const MODULE_SCRIPT_RE = r"<script[^>]*\btype\s*=\s*[\"']module[\"'][^>]*>(.*?)</script>"s
+const THIRD_PARTY_HOSTS = ["cdn.jsdelivr.net", "cdnjs.cloudflare.com", "unpkg.com", "esm.sh", "cdn.skypack.dev"]
+
+function check_amd_conflicts(build_dir)
+    offenders = String[]
+
+    for (root, _, files) in walkdir(build_dir)
+        for file in files
+            endswith(file, ".html") || continue
+            path = joinpath(root, file)
+            html = read(path, String)
+
+            # Only a page that actually loads require.js is at risk.
+            occursin("require.min.js", html) || continue
+
+            for m in eachmatch(MODULE_SCRIPT_RE, html)
+                body = m.captures[1]
+                for host in THIRD_PARTY_HOSTS
+                    occursin(host, body) || continue
+                    import_line = something(
+                        findfirst(l -> occursin(host, l), split(body, '\n')),
+                        nothing
+                    )
+                    line = isnothing(import_line) ? strip(body) : strip(split(body, '\n')[import_line])
+                    push!(offenders, "  $(relpath(path, build_dir))\n      $line")
+                    break
+                end
+            end
+        end
+    end
+
+    isempty(offenders) && return
+
+    error("""
+    Found $(length(offenders)) page(s) that load require.js *and* a third-party `<script type="module">`:
+
+    $(join(unique(offenders), "\n"))
+
+    Bundles served this way often inline UMD wrappers (fastdom is the usual culprit) that check
+    `typeof define == "function"`. With require.js present they take the AMD branch and fire
+    anonymous define() calls, which require.js mis-attributes to the module it is currently
+    fetching - normally jQuery. `\$` then stops being a function, every \$(document).ready()
+    handler in documenter.js dies, and the page ships with raw `\$...\$` math, uncoloured code and
+    a dead navbar. No other part of the build notices.
+
+    If the library is really needed, load it only on the pages that use it and hide require.js's
+    `define` around a dynamic `import()`:
+
+        const saved = window.define; delete window.define;
+        try { await import(url); } finally { window.define = saved; }
+
+    Otherwise drop the dependency. If you are certain a particular import is safe, add its host to
+    THIRD_PARTY_HOSTS' allowlist in docs/make.jl with a comment explaining why.
+    """)
+end
+
+check_amd_conflicts(joinpath(@__DIR__, "build"))
+
 # Call inject_meta_tags after makedocs
 if !DOCS_DRAFT
     inject_meta_tags()

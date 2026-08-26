@@ -82,6 +82,11 @@ end
 @everywhere using Weave
 @everywhere using Pkg
 
+# Math in the generated pages is typeset by KaTeX in the reader's browser, so broken LaTeX
+# produces no build error - it just ships as raw `$...$` text. `check_math` closes that gap.
+const MATH_LINT_PATH = joinpath(@__DIR__, "math_lint.jl")
+@everywhere include($MATH_LINT_PATH)
+
 ## https://discourse.julialang.org/t/generation-of-documentation-fails-qt-qpa-xcb-could-not-connect-to-display/60988
 ## https://gr-framework.org/workstations.html#no-output
 @everywhere ENV["GKSwstype"] = "100"
@@ -247,7 +252,8 @@ end
 
 is_processing_failed(processed::ProcessedNotebook) =
     processed.result !== :skipped &&
-    (processed.result === :failed || isnothing(processed.output_path) || has_error_blocks(processed.output_path))
+    (processed.result === :failed || isnothing(processed.output_path) ||
+     has_error_blocks(processed.output_path) || check_math(processed.output_path))
 is_processing_skipped(processed::ProcessedNotebook) =
     processed.result === :skipped
 is_processing_successful(processed::ProcessedNotebook) =

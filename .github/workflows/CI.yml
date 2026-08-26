@@ -87,6 +87,15 @@ jobs:
         run: |
           make docs-setup
           make docs
+
+      # Documenter typesets math with KaTeX in the reader's browser, so broken LaTeX - or any
+      # script that throws before KaTeX runs - produces a green build and a page full of raw
+      # `$...$`. These checks load the built pages and assert they actually rendered.
+      - name: Check the built site renders
+        run: |
+          npm install --prefix docs/tools
+          npx --prefix docs/tools playwright install --with-deps chromium
+          make docs-check
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           JULIA_FASTCHOLESKY_THROW_ERROR_NON_SYMMETRIC: 1

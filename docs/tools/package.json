@@ -1,0 +1,13 @@
+{
+  "name": "rxinfer-examples-docs-checks",
+  "private": true,
+  "description": "Post-build checks for the generated documentation. See README.md in this directory.",
+  "type": "module",
+  "scripts": {
+    "check": "node check-rendered-math.mjs && node check-rendered-pages.mjs"
+  },
+  "dependencies": {
+    "katex": "0.16.8",
+    "playwright": "^1.49.0"
+  }
+}
