@@ -103,7 +103,8 @@ let checked = 0;
 async function checkPage(file) {
   const rel = relative(BUILD_DIR, file);
   const html = readFileSync(file, 'utf8');
-  const expectsMath = html.includes('class="math-container"') || html.includes('<span>$');
+  const hasUnrenderedDollarMath = /<span>\$<\/span>(?!\s*\d)/.test(html);
+  const expectsMath = html.includes('class="math-container"') || hasUnrenderedDollarMath;
   const expectsHighlight = html.includes('language-julia');
 
   const page = await browser.newPage();
