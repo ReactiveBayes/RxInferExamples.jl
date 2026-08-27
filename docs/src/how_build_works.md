@@ -127,10 +127,6 @@ it points above the site root and would 404 on every page load.
     set it decides this is not a deploy build, logs `Deploying: ✘`, and **returns normally**. The
     job goes green and the live site keeps serving whatever it served before.
 
-    This happened in August 2026: the `env:` block carrying `GITHUB_TOKEN` was moved off the
-    workflow step that runs `make docs` onto a later step, and examples.rxinfer.com served a
-    two-day-old broken build behind three green CI runs.
-
-    `docs/make.jl` now refuses to finish such a build: on `refs/heads/main` or a tag, a missing
-    token is a hard error. If you touch the `docs` job in `.github/workflows/CI.yml`, keep the
-    credentials on the same step that runs `make docs`.
+    `docs/make.jl` refuses to finish such a build: on `refs/heads/main` or a tag, a missing token
+    is a hard error. If you touch the `docs` job in `.github/workflows/CI.yml`, keep the
+    credentials on the same step that runs `make docs` — not on a step before or after it.

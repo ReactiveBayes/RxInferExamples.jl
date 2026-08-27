@@ -6,26 +6,23 @@ Run these after `make docs`:
 make docs-check          # installs deps if needed, then runs both checks
 ```
 
-They exist because of a specific outage. In August 2026 every page on
-examples.rxinfer.com published raw `$...$` and `\[...\]` instead of typeset math, and Julia code
-blocks lost their colours. The build was green, the generated markdown was correct, and the HTML
-was valid — the LaTeX in it re-rendered cleanly under KaTeX. Nothing in the pipeline could see the
-problem, because Documenter typesets math *in the reader's browser*.
+Documenter typesets math *in the reader's browser*, so a page can build green, carry valid HTML
+and valid LaTeX, and still publish raw `$...$` and `\[...\]` with uncoloured code blocks. Nothing
+else in the pipeline can see that.
 
-The cause was a single injected script. `DocumenterMermaid` put
-`<script type="module">import mermaid from '.../mermaid@11/...'</script>` on every page. Mermaid
-inlines `fastdom`, whose UMD wrapper is:
+The mechanism worth knowing about is an injected `<script type="module">`. Bundles served that way
+routinely inline UMD wrappers such as `fastdom`:
 
 ```js
 typeof define=="function"?define(function(){return c}):typeof H=="object"&&(H.exports=c)
 ```
 
 Documenter loads jQuery, KaTeX and highlight.js through require.js, which installs a global AMD
-`define`. So that wrapper took the AMD branch and fired an *anonymous* `define()`. require.js
-attributes an anonymous define to whichever module it is currently fetching — jQuery. `$` stopped
-being a function, every `$(document).ready(...)` in `documenter.js` threw, and neither
-`renderMathInElement` nor `hljs.highlightAll()` ever ran. Because it depended on which fetch was in
-flight, it came and went between reloads.
+`define`. So that wrapper takes the AMD branch and fires an *anonymous* `define()`. require.js
+attributes an anonymous define to whichever module it is currently fetching — usually jQuery. `$`
+stops being a function, every `$(document).ready(...)` in `documenter.js` throws, and neither
+`renderMathInElement` nor `hljs.highlightAll()` ever runs. Because it depends on which fetch is in
+flight, it comes and goes between reloads.
 
 ## The checks
 
@@ -51,7 +48,7 @@ It also reports LaTeX left sitting in ordinary prose, which is what a `$$\nx = 1
 
 ### `check-rendered-pages.mjs`
 
-Runtime, and the only check that can catch the outage above. Serves `docs/build` over HTTP, loads
+Runtime, and the only check that can catch the failure above. Serves `docs/build` over HTTP, loads
 each page in headless Chromium, and asserts:
 
 - no uncaught exceptions, and no console errors matching `is not a function`,

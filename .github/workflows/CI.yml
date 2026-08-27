@@ -93,8 +93,7 @@ jobs:
         env:
           # `docs/make.jl` calls deploydocs() at the end, so the credentials belong on
           # *this* step. Without them Documenter logs `Deploying: ✘` and returns
-          # normally - a green build that publishes nothing. That is how the site went
-          # stale for two days in August 2026. `docs/make.jl` now also asserts this.
+          # normally - a green build that publishes nothing. `docs/make.jl` asserts this.
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           JULIA_FASTCHOLESKY_THROW_ERROR_NON_SYMMETRIC: 1
 

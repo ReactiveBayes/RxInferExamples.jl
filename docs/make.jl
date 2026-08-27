@@ -768,9 +768,6 @@ end
 # `documenter.js` throws. The visible result is a page where math stays raw `$...$` text, code
 # blocks are uncoloured and the navbar and search stop working. Nothing in the build fails, and
 # because it depends on which fetch is in flight it comes and goes between reloads.
-#
-# This is what shipped to production once already (DocumenterMermaid injected such a script into
-# every page). Keep it from coming back.
 const MODULE_SCRIPT_RE = r"<script[^>]*\btype\s*=\s*[\"']module[\"'][^>]*>(.*?)</script>"s
 const THIRD_PARTY_HOSTS = ["cdn.jsdelivr.net", "cdnjs.cloudflare.com", "unpkg.com", "esm.sh", "cdn.skypack.dev"]
 
@@ -834,8 +831,8 @@ end
 # the root - and 404s on every single page load.
 #
 # Nothing breaks: `documenter.js` only reveals the version selector once `DOC_VERSIONS` is defined,
-# so the widget stays hidden either way. But the 404 is the first thing in the browser console on
-# every page, which makes it noise that hides real errors. Drop the tag.
+# so the widget stays hidden either way. But a 404 on every page is console noise that hides real
+# errors. Drop the tag.
 const VERSIONS_SCRIPT_RE = r"<script\s+src=\"[^\"]*versions\.js\"\s*>\s*</script>"
 
 function strip_versions_script(build_dir)
@@ -895,14 +892,7 @@ print_dir_structure(joinpath(@__DIR__, "build"))
 # `deploydocs` treats missing credentials as "this is not a deploy build": it logs
 # `Deploying: ✘` and returns normally. A run that publishes nothing is therefore
 # indistinguishable from a successful one, and the live site silently keeps serving
-# whatever it served before.
-#
-# That is not hypothetical. In August 2026 the `GITHUB_TOKEN` env block was moved off the
-# workflow step that runs `make docs` onto a later step. Three green CI runs later,
-# examples.rxinfer.com was still serving a two-day-old build - the one whose math and
-# syntax highlighting were broken, which those same runs had already fixed.
-#
-# So assert the credentials up front, on any ref that is supposed to publish.
+# whatever it served before. Assert the credentials up front on any ref that publishes.
 if IS_CI
     github_ref = get(ENV, "GITHUB_REF", "")
     deploy_expected = github_ref == "refs/heads/main" || startswith(github_ref, "refs/tags/")

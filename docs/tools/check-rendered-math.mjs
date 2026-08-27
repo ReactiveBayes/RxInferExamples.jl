@@ -14,8 +14,8 @@
 //                             blank out a whole tutorial.
 //
 // What this check canNOT see: valid math that never gets typeset because something else on the
-// page broke `documenter.js` before KaTeX ran. That was the actual cause of the outage this
-// tooling came from, and only a real browser catches it - see `check-rendered-pages.mjs`.
+// page broke `documenter.js` before KaTeX ran. Only a real browser catches that - see
+// `check-rendered-pages.mjs`.
 
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative, dirname } from 'node:path';
