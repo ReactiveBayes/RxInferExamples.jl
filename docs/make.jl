@@ -827,6 +827,38 @@ function check_amd_conflicts(build_dir)
     """)
 end
 
+# Documenter's HTML writer hardcodes `<script src="../versions.js">` on every page, relative to
+# the site root, because it assumes a versioned deployment (`/stable/`, `/v1.2/`, ...). We deploy
+# unversioned straight at the domain root (`versions=nothing` in `deploydocs`), so from a page like
+# `/categories/basic_examples/coin_toss_model/` that resolves to `../../../../versions.js` - above
+# the root - and 404s on every single page load.
+#
+# Nothing breaks: `documenter.js` only reveals the version selector once `DOC_VERSIONS` is defined,
+# so the widget stays hidden either way. But the 404 is the first thing in the browser console on
+# every page, which makes it noise that hides real errors. Drop the tag.
+const VERSIONS_SCRIPT_RE = r"<script\s+src=\"[^\"]*versions\.js\"\s*>\s*</script>"
+
+function strip_versions_script(build_dir)
+    stripped = 0
+
+    for (root, _, files) in walkdir(build_dir)
+        for file in files
+            endswith(file, ".html") || continue
+            path = joinpath(root, file)
+            html = read(path, String)
+            new_html = replace(html, VERSIONS_SCRIPT_RE => "")
+            if new_html != html
+                write(path, new_html)
+                stripped += 1
+            end
+        end
+    end
+
+    @info "Removed the unversioned-deploy `versions.js` script tag from $(stripped) page(s)"
+end
+
+strip_versions_script(joinpath(@__DIR__, "build"))
+
 check_amd_conflicts(joinpath(@__DIR__, "build"))
 
 # Call inject_meta_tags after makedocs
@@ -860,7 +892,35 @@ Generated website structure:
 """
 print_dir_structure(joinpath(@__DIR__, "build"))
 
+# `deploydocs` treats missing credentials as "this is not a deploy build": it logs
+# `Deploying: ✘` and returns normally. A run that publishes nothing is therefore
+# indistinguishable from a successful one, and the live site silently keeps serving
+# whatever it served before.
+#
+# That is not hypothetical. In August 2026 the `GITHUB_TOKEN` env block was moved off the
+# workflow step that runs `make docs` onto a later step. Three green CI runs later,
+# examples.rxinfer.com was still serving a two-day-old build - the one whose math and
+# syntax highlighting were broken, which those same runs had already fixed.
+#
+# So assert the credentials up front, on any ref that is supposed to publish.
 if IS_CI
+    github_ref = get(ENV, "GITHUB_REF", "")
+    deploy_expected = github_ref == "refs/heads/main" || startswith(github_ref, "refs/tags/")
+    has_credentials = !isempty(get(ENV, "DOCUMENTER_KEY", "")) || !isempty(get(ENV, "GITHUB_TOKEN", ""))
+
+    if deploy_expected && !has_credentials
+        error("""
+        Refusing to finish a green build that would publish nothing.
+
+        This build is on `$(github_ref)`, which deploys to examples.rxinfer.com, but neither
+        ENV["DOCUMENTER_KEY"] nor ENV["GITHUB_TOKEN"] is set. `deploydocs` would log
+        `Deploying: ✘`, return normally, and leave the live site on its previous build.
+
+        Set GITHUB_TOKEN on the *same workflow step that runs `make docs`* in
+        .github/workflows/CI.yml - not on a step before or after it.
+        """)
+    end
+
     deploydocs(
         repo="github.com/ReactiveBayes/RxInferExamples.jl.git",
         devbranch="main",

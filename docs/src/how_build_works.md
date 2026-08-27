@@ -114,3 +114,23 @@ examples unhighlighted.
     Note that only Julia *input* cells are highlighted. Weave emits the output of each cell as
     an untagged code fence, which Documenter renders as `nohighlight` - that is intentional,
     those blocks are program output rather than source code.
+
+### Deployment
+
+The last thing `docs/make.jl` does in CI is call `deploydocs`, which pushes `docs/build` to the
+`gh-pages` branch. The site is deployed *unversioned*, straight at the domain root
+(`versions = nothing`), which is why the build also strips Documenter's `versions.js` script tag -
+it points above the site root and would 404 on every page load.
+
+!!! warning "A missing token makes the deploy silent, not loud"
+    `deploydocs` reads `DOCUMENTER_KEY` or `GITHUB_TOKEN` from the environment. When neither is
+    set it decides this is not a deploy build, logs `Deploying: ✘`, and **returns normally**. The
+    job goes green and the live site keeps serving whatever it served before.
+
+    This happened in August 2026: the `env:` block carrying `GITHUB_TOKEN` was moved off the
+    workflow step that runs `make docs` onto a later step, and examples.rxinfer.com served a
+    two-day-old broken build behind three green CI runs.
+
+    `docs/make.jl` now refuses to finish such a build: on `refs/heads/main` or a tag, a missing
+    token is a hard error. If you touch the `docs` job in `.github/workflows/CI.yml`, keep the
+    credentials on the same step that runs `make docs`.
