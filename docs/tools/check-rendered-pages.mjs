@@ -1,18 +1,12 @@
 // Runtime check: load built pages in a real browser and assert that the things Documenter does
 // client-side actually happened.
 //
-// This exists because a purely static check cannot catch the failure that motivated it. In August
-// 2026 every page on examples.rxinfer.com shipped with raw `$...$` math and uncoloured code while
-// the HTML was perfectly valid. The cause was one script: DocumenterMermaid injected
-// `<script type="module">import mermaid from '.../mermaid@11/...'` into every page, mermaid inlines
-// fastdom, and fastdom's UMD wrapper checks `typeof define == "function"`. With require.js on the
-// page it took the AMD branch and fired an anonymous `define()`, which require.js attributed to the
-// module it was fetching - jQuery. `$` stopped being a function, so every `$(document).ready(...)`
-// in documenter.js threw and neither KaTeX nor highlight.js ever ran.
-//
-// `check-rendered-math.mjs` reported zero problems throughout, because the LaTeX was fine. Only
-// executing the page finds this class of bug. `docs/make.jl` also guards the specific mechanism
-// (`check_amd_conflicts`); this check is the backstop for whatever breaks documenter.js next.
+// A purely static check cannot catch this class of failure. A page can ship valid HTML and
+// perfectly valid LaTeX and still render raw `$...$` and uncoloured code, because one script that
+// throws early takes documenter.js - and with it KaTeX and highlight.js - down with it. The known
+// mechanism is an injected `<script type="module">` whose bundle inlines a UMD wrapper that fires
+// an anonymous `define()` into require.js; `docs/make.jl` guards that one specifically
+// (`check_amd_conflicts`). This check is the backstop for whatever breaks documenter.js next.
 
 import { createServer } from 'node:http';
 import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
