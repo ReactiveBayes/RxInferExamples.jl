@@ -532,6 +532,20 @@ if !isnothing(RXINFER_PATH)
     Pkg.activate(temporary_environment) do
         @info "Adding development version of RxInfer to the temporary environment"
         Pkg.develop(path = RXINFER_PATH)
+
+        # Developing a package does not inherit path dependencies from its Manifest.
+        # Honor RxInfer's local ReactiveMP checkout when one is recorded there.
+        rxinfer_manifest_path = joinpath(RXINFER_PATH, "Manifest.toml")
+        if isfile(rxinfer_manifest_path)
+            rxinfer_manifest = Pkg.TOML.parsefile(rxinfer_manifest_path)
+            reactivemp_entries = get(get(rxinfer_manifest, "deps", Dict()), "ReactiveMP", [])
+            if length(reactivemp_entries) == 1 && haskey(only(reactivemp_entries), "path")
+                reactivemp_path = normpath(RXINFER_PATH, only(reactivemp_entries)["path"])
+                @info "Adding ReactiveMP used by the development version of RxInfer" reactivemp_path
+                Pkg.develop(path = reactivemp_path)
+            end
+        end
+
         Pkg.update()
         Pkg.precompile()
     end
