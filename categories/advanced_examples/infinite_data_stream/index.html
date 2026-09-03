@@ -1,96 +1,102 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Infinite Data Stream · RxInfer.jl Examples</title><meta name="title" content="Infinite Data Stream · RxInfer.jl Examples"/><meta property="og:title" content="Infinite Data Stream · RxInfer.jl Examples"/><meta property="twitter:title" content="Infinite Data Stream · RxInfer.jl Examples"/><meta name="description" content="A repository of examples and tutorials for RxInfer.jl, a Julia package for reactive message passing inference in probabilistic models."/><meta property="og:description" content="A repository of examples and tutorials for RxInfer.jl, a Julia package for reactive message passing inference in probabilistic models."/><meta property="twitter:description" content="A repository of examples and tutorials for RxInfer.jl, a Julia package for reactive message passing inference in probabilistic models."/><meta property="og:url" content="https://examples.rxinfer.ml/categories/advanced_examples/infinite_data_stream/"/><meta property="twitter:url" content="https://examples.rxinfer.ml/categories/advanced_examples/infinite_data_stream/"/><link rel="canonical" href="https://examples.rxinfer.ml/categories/advanced_examples/infinite_data_stream/"/><script async src="https://www.googletagmanager.com/gtag/js?id=G-GMFX620VEP"></script><script>  window.dataLayer = window.dataLayer || [];
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Infinite Data Stream · RxInfer.jl Examples</title><meta name="title" content="Infinite Data Stream · RxInfer.jl Examples"/><meta property="og:title" content="Infinite Data Stream · RxInfer.jl Examples"/><meta property="twitter:title" content="Infinite Data Stream · RxInfer.jl Examples"/><meta name="description" content="Infinite Data Stream with RxInfer.jl\nThis example shows RxInfer capabilities of running inference for infinite time-series data.\n\nCheck more examples and tutorials at https://examples.rxinfer.com\n"/><meta property="og:description" content="Infinite Data Stream with RxInfer.jl\nThis example shows RxInfer capabilities of running inference for infinite time-series data.\n\nCheck more examples and tutorials at https://examples.rxinfer.com\n"/><meta property="twitter:description" content="Infinite Data Stream with RxInfer.jl\nThis example shows RxInfer capabilities of running inference for infinite time-series data.\n\nCheck more examples and tutorials at https://examples.rxinfer.com\n"/><meta property="og:url" content="https://examples.rxinfer.com/categories/advanced_examples/infinite_data_stream/"/><meta property="twitter:url" content="https://examples.rxinfer.com/categories/advanced_examples/infinite_data_stream/"/><link rel="canonical" href="https://examples.rxinfer.com/categories/advanced_examples/infinite_data_stream/"/><script async src="https://www.googletagmanager.com/gtag/js?id=G-GMFX620VEP"></script><script>  window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
   gtag('config', 'G-GMFX620VEP', {'page_path': location.pathname + location.search + location.hash});
-</script><script data-outdated-warner src="../../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../../assets/documenter.js"></script><script src="../../../search_index.js"></script><script src="../../../siteinfo.js"></script><script src="../../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../../assets/themeswap.js"></script><link href="../../../assets/theme.css" rel="stylesheet" type="text/css"/><link href="../../../assets/header.css" rel="stylesheet" type="text/css"/><script src="../../../assets/header.js"></script><script src="../../../assets/chat.js"></script><link href="../../../assets/favicon.ico" rel="icon" type="image/x-icon"/>
+</script><script data-outdated-warner src="../../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.63.2/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../../assets/documenter.js"></script><script src="../../../search_index.js"></script><script src="../../../siteinfo.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../../assets/themeswap.js"></script><link href="../../../assets/theme.css" rel="stylesheet" type="text/css"/><link href="../../../assets/header.css" rel="stylesheet" type="text/css"/><script src="../../../assets/header.js"></script><script src="../../../assets/chat.js"></script><link href="../../../assets/favicon.ico" rel="icon" type="image/x-icon"/>
     <meta property="og:title" content="Infinite Data Stream - RxInfer Examples">
     <meta name="description" content="This example shows RxInfer capabilities of running inference for infinite time-series data.
 ">
     <meta property="og:description" content="This example shows RxInfer capabilities of running inference for infinite time-series data.
 ">
     <meta name="keywords" content="rxinfer, julia, bayesian inference, examples, probabilistic programming, message passing, probabilistic numerics, variational inference, belief propagation, advanced examples, streaming, online inference, time series">
-    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://examples.rxinfer.ml/sitemap.xml">
-    </head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../../"><img class="docs-light-only" src="../../../assets/logo.svg" alt="RxInfer.jl Examples logo"/><img class="docs-dark-only" src="../../../assets/logo-dark.svg" alt="RxInfer.jl Examples logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../../">RxInfer.jl Examples</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../../">Home</a></li><li><a class="tocitem" href="../../../how_to_contribute/">How to contribute</a></li><li><a class="tocitem" href="../../../autogenerated/list_of_examples/">List of Examples</a></li><li><span class="tocitem">Basic Examples</span><ul><li><a class="tocitem" href="../../basic_examples/bayesian_binomial_regression/">Bayesian Binomial Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_linear_regression/">Bayesian Linear Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_multinomial_regression/">Bayesian Multinomial Regression</a></li><li><a class="tocitem" href="../../basic_examples/coin_toss_model/">Coin Toss Model</a></li><li><a class="tocitem" href="../../basic_examples/feature_functions_in_bayesian_regression/">Feature Functions In Bayesian Regression</a></li><li><a class="tocitem" href="../../basic_examples/hidden_markov_model/">Hidden Markov Model</a></li><li><a class="tocitem" href="../../basic_examples/kalman_filtering_and_smoothing/">Kalman Filtering And Smoothing</a></li><li><a class="tocitem" href="../../basic_examples/pomdp_control/">Pomdp Control</a></li><li><a class="tocitem" href="../../basic_examples/predicting_bike_rental_demand/">Predicting Bike Rental Demand</a></li></ul></li><li><span class="tocitem">Advanced Examples</span><ul><li><a class="tocitem" href="../active_inference_mountain_car/">Active Inference Mountain Car</a></li><li><a class="tocitem" href="../advanced_tutorial/">Advanced Tutorial</a></li><li><a class="tocitem" href="../assessing_people_skills/">Assessing People Skills</a></li><li><a class="tocitem" href="../chance_constraints/">Chance Constraints</a></li><li><a class="tocitem" href="../conjugate-computational_variational_message_passing/">Conjugate-Computational Variational Message Passing</a></li><li><a class="tocitem" href="../drone_dynamics/">Drone Dynamics</a></li><li><a class="tocitem" href="../global_parameter_optimisation/">Global Parameter Optimisation</a></li><li><a class="tocitem" href="../gp_regression_by_ssm/">Gp Regression By Ssm</a></li><li class="is-active"><a class="tocitem" href>Infinite Data Stream</a><ul class="internal"><li><a class="tocitem" href="#Model-specification"><span>Model specification</span></a></li><li><a class="tocitem" href="#Prepare-environment"><span>Prepare environment</span></a></li><li><a class="tocitem" href="#Filtering-on-static-dataset"><span>Filtering on static dataset</span></a></li><li><a class="tocitem" href="#Filtering-on-realtime-dataset"><span>Filtering on realtime dataset</span></a></li></ul></li><li><a class="tocitem" href="../multi-agent_trajectory_planning/">Multi-Agent Trajectory Planning</a></li><li><a class="tocitem" href="../nonlinear_sensor_fusion/">Nonlinear Sensor Fusion</a></li><li><a class="tocitem" href="../robotic_arm/">Robotic Arm</a></li></ul></li><li><span class="tocitem">Problem Specific</span><ul><li><a class="tocitem" href="../../problem_specific/autoregressive_models/">Autoregressive Models</a></li><li><a class="tocitem" href="../../problem_specific/gamma_mixture/">Gamma Mixture</a></li><li><a class="tocitem" href="../../problem_specific/gaussian_mixture/">Gaussian Mixture</a></li><li><a class="tocitem" href="../../problem_specific/hierarchical_gaussian_filter/">Hierarchical Gaussian Filter</a></li><li><a class="tocitem" href="../../problem_specific/invertible_neural_network_tutorial/">Invertible Neural Network Tutorial</a></li><li><a class="tocitem" href="../../problem_specific/litter_model/">Litter Model</a></li><li><a class="tocitem" href="../../problem_specific/ode_parameter_estimation/">Ode Parameter Estimation</a></li><li><a class="tocitem" href="../../problem_specific/probit_model/">Probit Model</a></li><li><a class="tocitem" href="../../problem_specific/rts_vs_bifm_smoothing/">Rts Vs Bifm Smoothing</a></li><li><a class="tocitem" href="../../problem_specific/simple_nonlinear_node/">Simple Nonlinear Node</a></li><li><a class="tocitem" href="../../problem_specific/structural_dynamics_with_augmented_kalman_filter/">Structural Dynamics With Augmented Kalman Filter</a></li><li><a class="tocitem" href="../../problem_specific/universal_mixtures/">Universal Mixtures</a></li></ul></li><li><a class="tocitem" href="../../../how_build_works/">How we build the examples</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Advanced Examples</a></li><li class="is-active"><a href>Infinite Data Stream</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Infinite Data Stream</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl/blob/main/docs/src/categories/advanced_examples/infinite_data_stream/index.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><div class="admonition is-info"><header class="admonition-header">Contributing</header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><h1 id="Infinite-Data-Stream"><a class="docs-heading-anchor" href="#Infinite-Data-Stream">Infinite Data Stream</a><a id="Infinite-Data-Stream-1"></a><a class="docs-heading-anchor-permalink" href="#Infinite-Data-Stream" title="Permalink"></a></h1><p>This example shows the capabilities of <code>RxInfer</code> to perform Bayesian inference on real-time signals. As usual, first, we start with importing necessary packages:</p><pre><code class="language-julia hljs">using RxInfer, Plots, Random, StableRNGs</code></pre><p>For demonstration purposes we will create a synthetic environment that has a hidden underlying signal, which we cannot observer directly. Instead, we will observe a noised realisation of this hidden signal:</p><pre><code class="language-julia hljs">mutable struct Environment
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://examples.rxinfer.com/sitemap.xml">
+    </head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../../"><img class="docs-light-only" src="../../../assets/logo.svg" alt="RxInfer.jl Examples logo"/><img class="docs-dark-only" src="../../../assets/logo-dark.svg" alt="RxInfer.jl Examples logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../../">RxInfer.jl Examples</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../../">Home</a></li><li><a class="tocitem" href="../../../how_to_contribute/">How to contribute</a></li><li><a class="tocitem" href="../../../autogenerated/list_of_examples/">List of Examples</a></li><li><span class="tocitem">Basic Examples</span><ul><li><a class="tocitem" href="../../basic_examples/bayesian_binomial_regression/">Bayesian Binomial Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_linear_regression/">Bayesian Linear Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_multinomial_regression/">Bayesian Multinomial Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_networks/">Bayesian Networks</a></li><li><a class="tocitem" href="../../basic_examples/coin_toss_model/">Coin Toss Model</a></li><li><a class="tocitem" href="../../basic_examples/contextual_bandits/">Contextual Bandits</a></li><li><a class="tocitem" href="../../basic_examples/feature_functions_in_bayesian_regression/">Feature Functions In Bayesian Regression</a></li><li><a class="tocitem" href="../../basic_examples/forgetting_factors_for_online_inference/">Forgetting Factors For Online Inference</a></li><li><a class="tocitem" href="../../basic_examples/hidden_markov_model/">Hidden Markov Model</a></li><li><a class="tocitem" href="../../basic_examples/incomplete_data/">Incomplete Data</a></li><li><a class="tocitem" href="../../basic_examples/kalman_filtering_and_smoothing/">Kalman Filtering And Smoothing</a></li><li><a class="tocitem" href="../../basic_examples/pomdp_control/">Pomdp Control</a></li><li><a class="tocitem" href="../../basic_examples/predicting_bike_rental_demand/">Predicting Bike Rental Demand</a></li><li><a class="tocitem" href="../../basic_examples/t-maze_active_inference/">T-Maze Active Inference</a></li></ul></li><li><span class="tocitem">Advanced Examples</span><ul><li><a class="tocitem" href="../active_inference_mountain_car/">Active Inference Mountain Car</a></li><li><a class="tocitem" href="../assessing_people_skills/">Assessing People Skills</a></li><li><a class="tocitem" href="../autoregressive_active_inference/">Autoregressive Active Inference</a></li><li><a class="tocitem" href="../bayesian_structured_time_series/">Bayesian Structured Time Series</a></li><li><a class="tocitem" href="../chance_constraints/">Chance Constraints</a></li><li><a class="tocitem" href="../conjugate-computational_variational_message_passing/">Conjugate-Computational Variational Message Passing</a></li><li><a class="tocitem" href="../drone_dynamics/">Drone Dynamics</a></li><li><a class="tocitem" href="../efe_minimization_via_message_passing/">Efe Minimization Via Message Passing</a></li><li><a class="tocitem" href="../gp_regression_by_ssm/">Gp Regression By Ssm</a></li><li class="is-active"><a class="tocitem" href>Infinite Data Stream</a><ul class="internal"><li><a class="tocitem" href="#Model-specification"><span>Model specification</span></a></li><li><a class="tocitem" href="#Prepare-environment"><span>Prepare environment</span></a></li><li><a class="tocitem" href="#Filtering-on-static-dataset"><span>Filtering on static dataset</span></a></li><li><a class="tocitem" href="#Filtering-on-realtime-dataset"><span>Filtering on realtime dataset</span></a></li></ul></li><li><a class="tocitem" href="../integrating_neural_networks_with_flux.jl_and_lux.jl/">Integrating Neural Networks With Flux.Jl And Lux.Jl</a></li><li><a class="tocitem" href="../learning_dynamics_with_vaes/">Learning Dynamics With Vaes</a></li><li><a class="tocitem" href="../multi-agent_trajectory_planning/">Multi-Agent Trajectory Planning</a></li><li><a class="tocitem" href="../nonlinear_sensor_fusion/">Nonlinear Sensor Fusion</a></li><li><a class="tocitem" href="../parameter_optimisation_with_optim.jl/">Parameter Optimisation With Optim.Jl</a></li><li><a class="tocitem" href="../robotic_arm/">Robotic Arm</a></li><li><a class="tocitem" href="../solving_linear_systems_with_message_passing/">Solving Linear Systems With Message Passing</a></li></ul></li><li><span class="tocitem">Problem Specific</span><ul><li><a class="tocitem" href="../../problem_specific/autoregressive_models/">Autoregressive Models</a></li><li><a class="tocitem" href="../../problem_specific/gamma_mixture/">Gamma Mixture</a></li><li><a class="tocitem" href="../../problem_specific/gaussian_mixture/">Gaussian Mixture</a></li><li><a class="tocitem" href="../../problem_specific/hierarchical_gaussian_filter/">Hierarchical Gaussian Filter</a></li><li><a class="tocitem" href="../../problem_specific/invertible_neural_network_tutorial/">Invertible Neural Network Tutorial</a></li><li><a class="tocitem" href="../../problem_specific/ising_model/">Ising Model</a></li><li><a class="tocitem" href="../../problem_specific/litter_model/">Litter Model</a></li><li><a class="tocitem" href="../../problem_specific/ode_parameter_estimation/">Ode Parameter Estimation</a></li><li><a class="tocitem" href="../../problem_specific/probit_model/">Probit Model</a></li><li><a class="tocitem" href="../../problem_specific/rts_vs_bifm_smoothing/">Rts Vs Bifm Smoothing</a></li><li><a class="tocitem" href="../../problem_specific/simple_nonlinear_node/">Simple Nonlinear Node</a></li><li><a class="tocitem" href="../../problem_specific/structural_dynamics_with_augmented_kalman_filter/">Structural Dynamics With Augmented Kalman Filter</a></li><li><a class="tocitem" href="../../problem_specific/universal_mixtures/">Universal Mixtures</a></li></ul></li><li><span class="tocitem">Experimental Examples</span><ul><li><a class="tocitem" href="../../experimental_examples/bayesian_trust_learning/">Bayesian Trust Learning</a></li><li><a class="tocitem" href="../../experimental_examples/large_language_models/">Large Language Models</a></li><li><a class="tocitem" href="../../experimental_examples/latent_vector_autoregressive_model/">Latent Vector Autoregressive Model</a></li><li><a class="tocitem" href="../../experimental_examples/recurrent_switching_linear_dynamical_system/">Recurrent Switching Linear Dynamical System</a></li></ul></li><li><a class="tocitem" href="../../../how_build_works/">How we build the examples</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Advanced Examples</a></li><li class="is-active"><a href>Infinite Data Stream</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Infinite Data Stream</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl" title="View source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><div class="admonition is-info" id="Contributing-baba9dc142ba7ccb"><header class="admonition-header">Contributing<a class="admonition-anchor" href="#Contributing-baba9dc142ba7ccb" title="Permalink"></a></header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><h1 id="Infinite-Data-Stream"><a class="docs-heading-anchor" href="#Infinite-Data-Stream">Infinite Data Stream</a><a id="Infinite-Data-Stream-1"></a><a class="docs-heading-anchor-permalink" href="#Infinite-Data-Stream" title="Permalink"></a></h1><p>This example shows the capabilities of <code>RxInfer</code> to perform Bayesian inference on real-time signals. As usual, first, we start with importing necessary packages:</p><pre><code class="language-julia hljs"><span class="hljs-keyword">using</span> RxInfer, Plots, Random, StableRNGs
+</code></pre><p>For demonstration purposes we will create a synthetic environment that has a hidden underlying signal, which we cannot observer directly. Instead, we will observe a noised realisation of this hidden signal:</p><pre><code class="language-julia hljs"><span class="hljs-keyword">mutable struct</span> Environment
     rng                   :: AbstractRNG
-    current_state         :: Float64
-    observation_precision :: Float64
-    history               :: Vector{Float64}
-    observations          :: Vector{Float64}
+    current_state         :: <span class="hljs-built_in">Float64</span>
+    observation_precision :: <span class="hljs-built_in">Float64</span>
+    history               :: <span class="hljs-built_in">Vector</span>{<span class="hljs-built_in">Float64</span>}
+    observations          :: <span class="hljs-built_in">Vector</span>{<span class="hljs-built_in">Float64</span>}
     
-    Environment(current_state, observation_precision; seed = 123) = begin 
-         return new(StableRNG(seed), current_state, observation_precision, [], [])
-    end
-end
+    Environment(current_state, observation_precision; seed = <span class="hljs-number">123</span>) = <span class="hljs-keyword">begin</span> 
+         <span class="hljs-keyword">return</span> new(StableRNG(seed), current_state, observation_precision, [], [])
+    <span class="hljs-keyword">end</span>
+<span class="hljs-keyword">end</span>
 
-function getnext!(environment::Environment)
-    environment.current_state = environment.current_state + 1.0
-    nextstate  = 10sin(0.1 * environment.current_state)
+<span class="hljs-keyword">function</span> getnext!(environment::Environment)
+    environment.current_state = environment.current_state + <span class="hljs-number">1.0</span>
+    nextstate  = <span class="hljs-number">10</span>sin(<span class="hljs-number">0.1</span> * environment.current_state)
     observation = rand(NormalMeanPrecision(nextstate, environment.observation_precision))
     push!(environment.history, nextstate)
     push!(environment.observations, observation)
-    return observation
-end
+    <span class="hljs-keyword">return</span> observation
+<span class="hljs-keyword">end</span>
 
-function gethistory(environment::Environment)
-    return environment.history
-end
+<span class="hljs-keyword">function</span> gethistory(environment::Environment)
+    <span class="hljs-keyword">return</span> environment.history
+<span class="hljs-keyword">end</span>
 
-function getobservations(environment::Environment)
-    return environment.observations
-end</code></pre><pre><code class="nohighlight hljs">getobservations (generic function with 1 method)</code></pre><h2 id="Model-specification"><a class="docs-heading-anchor" href="#Model-specification">Model specification</a><a id="Model-specification-1"></a><a class="docs-heading-anchor-permalink" href="#Model-specification" title="Permalink"></a></h2><p>We assume that we don&#39;t know the shape of our signal in advance. So we try to fit a simple gaussian random walk with unknown observation noise:</p><pre><code class="language-julia hljs">@model function kalman_filter(x_prev_mean, x_prev_var, τ_shape, τ_rate, y)
+<span class="hljs-keyword">function</span> getobservations(environment::Environment)
+    <span class="hljs-keyword">return</span> environment.observations
+<span class="hljs-keyword">end</span>
+</code></pre><pre><code class="nohighlight hljs">getobservations (generic function with 1 method)</code></pre><h2 id="Model-specification"><a class="docs-heading-anchor" href="#Model-specification">Model specification</a><a id="Model-specification-1"></a><a class="docs-heading-anchor-permalink" href="#Model-specification" title="Permalink"></a></h2><p>We assume that we don&#39;t know the shape of our signal in advance. So we try to fit a simple gaussian random walk with unknown observation noise:</p><pre><code class="language-julia hljs"><span class="hljs-meta">@model</span> <span class="hljs-keyword">function</span> kalman_filter(x_prev_mean, x_prev_var, τ_shape, τ_rate, y)
     x_prev ~ Normal(mean = x_prev_mean, variance = x_prev_var)
     τ ~ Gamma(shape = τ_shape, rate = τ_rate)
 
-    # Random walk with fixed precision
-    x_current ~ Normal(mean = x_prev, precision = 1.0)
+    <span class="hljs-comment"># Random walk with fixed precision</span>
+    x_current ~ Normal(mean = x_prev, precision = <span class="hljs-number">1.0</span>)
     y ~ Normal(mean = x_current, precision = τ)
     
-end
+<span class="hljs-keyword">end</span>
 
-# We assume the following factorisation between variables 
-# in the variational distribution
-@constraints function filter_constraints()
+<span class="hljs-comment"># We assume the following factorisation between variables </span>
+<span class="hljs-comment"># in the variational distribution</span>
+<span class="hljs-meta">@constraints</span> <span class="hljs-keyword">function</span> filter_constraints()
     q(x_prev, x_current, τ) = q(x_prev, x_current)q(τ)
-end</code></pre><pre><code class="nohighlight hljs">filter_constraints (generic function with 1 method)</code></pre><h2 id="Prepare-environment"><a class="docs-heading-anchor" href="#Prepare-environment">Prepare environment</a><a id="Prepare-environment-1"></a><a class="docs-heading-anchor-permalink" href="#Prepare-environment" title="Permalink"></a></h2><pre><code class="language-julia hljs">initial_state         = 0.0
-observation_precision = 0.1</code></pre><pre><code class="nohighlight hljs">0.1</code></pre><p>After we have created the environment we can observe how our signal behaves:</p><pre><code class="language-julia hljs">testenvironment = Environment(initial_state, observation_precision);
+<span class="hljs-keyword">end</span>
+</code></pre><pre><code class="nohighlight hljs">filter_constraints (generic function with 1 method)</code></pre><h2 id="Prepare-environment"><a class="docs-heading-anchor" href="#Prepare-environment">Prepare environment</a><a id="Prepare-environment-1"></a><a class="docs-heading-anchor-permalink" href="#Prepare-environment" title="Permalink"></a></h2><pre><code class="language-julia hljs">initial_state         = <span class="hljs-number">0.0</span>
+observation_precision = <span class="hljs-number">0.1</span>
+</code></pre><pre><code class="nohighlight hljs">0.1</code></pre><p>After we have created the environment we can observe how our signal behaves:</p><pre><code class="language-julia hljs">testenvironment = Environment(initial_state, observation_precision);
 
-animation = @animate for i in 1:100
+animation = <span class="hljs-meta">@animate</span> <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:<span class="hljs-number">100</span>
     getnext!(testenvironment)
     
     history = gethistory(testenvironment)
     observations = getobservations(testenvironment)
     
-    p = plot(size = (1000, 300))
+    p = plot(size = (<span class="hljs-number">1000</span>, <span class="hljs-number">300</span>))
     
-    p = plot!(p, 1:i, history[1:i], label = &quot;Hidden signal&quot;)
-    p = scatter!(p, 1:i, observations[1:i], ms = 4, alpha = 0.7, label = &quot;Observation&quot;)
-end
+    p = plot!(p, <span class="hljs-number">1</span>:i, history[<span class="hljs-number">1</span>:i], label = <span class="hljs-string">&quot;Hidden signal&quot;</span>)
+    p = scatter!(p, <span class="hljs-number">1</span>:i, observations[<span class="hljs-number">1</span>:i], ms = <span class="hljs-number">4</span>, alpha = <span class="hljs-number">0.7</span>, label = <span class="hljs-string">&quot;Observation&quot;</span>)
+<span class="hljs-keyword">end</span>
 
-gif(animation, &quot;infinite-data-stream.gif&quot;, fps = 24, show_msg = false);</code></pre><p><img src="infinite-data-stream.gif" alt/></p><h2 id="Filtering-on-static-dataset"><a class="docs-heading-anchor" href="#Filtering-on-static-dataset">Filtering on static dataset</a><a id="Filtering-on-static-dataset-1"></a><a class="docs-heading-anchor-permalink" href="#Filtering-on-static-dataset" title="Permalink"></a></h2><p><code>RxInfer</code> is flexible and allows for running inference both on real-time and static datasets. In the next section we show how to perform the filtering procedure on a static dataset. We also will verify our inference procedure by checking on the Bethe Free Energy values:</p><pre><code class="language-julia hljs">n                  = 300
+gif(animation, <span class="hljs-string">&quot;infinite-data-stream.gif&quot;</span>, fps = <span class="hljs-number">24</span>, show_msg = <span class="hljs-literal">false</span>);
+</code></pre><p><img src="infinite-data-stream.gif" alt/></p><h2 id="Filtering-on-static-dataset"><a class="docs-heading-anchor" href="#Filtering-on-static-dataset">Filtering on static dataset</a><a id="Filtering-on-static-dataset-1"></a><a class="docs-heading-anchor-permalink" href="#Filtering-on-static-dataset" title="Permalink"></a></h2><p><code>RxInfer</code> is flexible and allows for running inference both on real-time and static datasets. In the next section we show how to perform the filtering procedure on a static dataset. We also will verify our inference procedure by checking on the Bethe Free Energy values:</p><pre><code class="language-julia hljs">n                  = <span class="hljs-number">300</span>
 static_environment = Environment(initial_state, observation_precision);
 
-for i in 1:n
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:n
     getnext!(static_environment)
-end
+<span class="hljs-keyword">end</span>
 
 static_history      = gethistory(static_environment)
 static_observations = getobservations(static_environment);
-static_datastream   = from(static_observations) |&gt; map(NamedTuple{(:y,), Tuple{Float64}}, (d) -&gt; (y = d, ));</code></pre><pre><code class="language-julia hljs">function run_static(environment, datastream)
+static_datastream   = from(static_observations) |&gt; map(<span class="hljs-built_in">NamedTuple</span>{(:y,), <span class="hljs-built_in">Tuple</span>{<span class="hljs-built_in">Float64</span>}}, (d) -&gt; (y = d, ));
+</code></pre><pre><code class="language-julia hljs"><span class="hljs-keyword">function</span> run_static(environment, datastream)
     
-    # `@autoupdates` structure specifies how to update our priors based on new posteriors
-    # For example, every time we have updated a posterior over `x_current` we update our priors
-    # over `x_prev`
-    autoupdates = @autoupdates begin 
+    <span class="hljs-comment"># `@autoupdates` structure specifies how to update our priors based on new posteriors</span>
+    <span class="hljs-comment"># For example, every time we have updated a posterior over `x_current` we update our priors</span>
+    <span class="hljs-comment"># over `x_prev`</span>
+    autoupdates = <span class="hljs-meta">@autoupdates</span> <span class="hljs-keyword">begin</span> 
         x_prev_mean, x_prev_var = mean_var(q(x_current))
         τ_shape = shape(q(τ))
         τ_rate = rate(q(τ))
-    end
+    <span class="hljs-keyword">end</span>
     
-    init = @initialization begin
-        q(x_current) = NormalMeanVariance(0.0, 1e3) 
-        q(τ) = GammaShapeRate(1.0, 1.0)
-    end
+    init = <span class="hljs-meta">@initialization</span> <span class="hljs-keyword">begin</span>
+        q(x_current) = NormalMeanVariance(<span class="hljs-number">0.0</span>, <span class="hljs-number">1e3</span>) 
+        q(τ) = GammaShapeRate(<span class="hljs-number">1.0</span>, <span class="hljs-number">1.0</span>)
+    <span class="hljs-keyword">end</span>
 
     engine = infer(
         model          = kalman_filter(),
@@ -98,53 +104,57 @@ static_datastream   = from(static_observations) |&gt; map(NamedTuple{(:y,), Tupl
         datastream     = datastream,
         autoupdates    = autoupdates,
         returnvars     = (:x_current, ),
-        keephistory    = 10_000,
+        keephistory    = <span class="hljs-number">10_000</span>,
         historyvars    = (x_current = KeepLast(), τ = KeepLast()),
         initialization = init,
-        iterations     = 10,
-        free_energy    = true,
-        autostart      = true,
+        iterations     = <span class="hljs-number">10</span>,
+        free_energy    = <span class="hljs-literal">true</span>,
+        autostart      = <span class="hljs-literal">true</span>,
     )
     
-    return engine
-end</code></pre><pre><code class="nohighlight hljs">run_static (generic function with 1 method)</code></pre><pre><code class="language-julia hljs">result = run_static(static_environment, static_datastream);</code></pre><pre><code class="language-julia hljs">static_inference = @animate for i in 1:n
+    <span class="hljs-keyword">return</span> engine
+<span class="hljs-keyword">end</span>
+</code></pre><pre><code class="nohighlight hljs">run_static (generic function with 1 method)</code></pre><pre><code class="language-julia hljs">result = run_static(static_environment, static_datastream);
+</code></pre><pre><code class="language-julia hljs">static_inference = <span class="hljs-meta">@animate</span> <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:n
     estimated = result.history[:x_current]
-    p = plot(1:i, mean.(estimated[1:i]), ribbon = var.(estimated[1:n]), label = &quot;Estimation&quot;)
-    p = plot!(static_history[1:i], label = &quot;Real states&quot;)    
-    p = scatter!(static_observations[1:i], ms = 2, label = &quot;Observations&quot;)
-    p = plot(p, size = (1000, 300), legend = :bottomright)
-end
+    p = plot(<span class="hljs-number">1</span>:i, mean.(estimated[<span class="hljs-number">1</span>:i]), ribbon = var.(estimated[<span class="hljs-number">1</span>:n]), label = <span class="hljs-string">&quot;Estimation&quot;</span>)
+    p = plot!(static_history[<span class="hljs-number">1</span>:i], label = <span class="hljs-string">&quot;Real states&quot;</span>)    
+    p = scatter!(static_observations[<span class="hljs-number">1</span>:i], ms = <span class="hljs-number">2</span>, label = <span class="hljs-string">&quot;Observations&quot;</span>)
+    p = plot(p, size = (<span class="hljs-number">1000</span>, <span class="hljs-number">300</span>), legend = :bottomright)
+<span class="hljs-keyword">end</span>
 
-gif(static_inference, &quot;infinite-data-stream-inference.gif&quot;, fps = 24, show_msg = false);</code></pre><p><img src="infinite-data-stream-inference.gif" alt/></p><pre><code class="language-julia hljs">plot(result.free_energy_history, label = &quot;Bethe Free Energy (averaged)&quot;)</code></pre><p><img src="Infinite Data Stream_10_1.png" alt/></p><h2 id="Filtering-on-realtime-dataset"><a class="docs-heading-anchor" href="#Filtering-on-realtime-dataset">Filtering on realtime dataset</a><a id="Filtering-on-realtime-dataset-1"></a><a class="docs-heading-anchor-permalink" href="#Filtering-on-realtime-dataset" title="Permalink"></a></h2><p>Next lets create a &quot;real&quot; infinite stream. We use <code>timer()</code> observable from <code>Rocket.jl</code>to emulate real-world scenario. In our example we are going to generate a new data point every <code>~41ms</code> (24 data points per second). For demonstration purposes we force stop after <code>n</code> data points, but there is no principled limitation to run inference indefinite:</p><pre><code class="language-julia hljs">function run_and_plot(environment, datastream)
+gif(static_inference, <span class="hljs-string">&quot;infinite-data-stream-inference.gif&quot;</span>, fps = <span class="hljs-number">24</span>, show_msg = <span class="hljs-literal">false</span>);
+</code></pre><p><img src="infinite-data-stream-inference.gif" alt/></p><pre><code class="language-julia hljs">plot(result.free_energy_history, label = <span class="hljs-string">&quot;Bethe Free Energy (averaged)&quot;</span>)
+</code></pre><p><img src="Infinite Data Stream_10_1.png" alt/></p><h2 id="Filtering-on-realtime-dataset"><a class="docs-heading-anchor" href="#Filtering-on-realtime-dataset">Filtering on realtime dataset</a><a id="Filtering-on-realtime-dataset-1"></a><a class="docs-heading-anchor-permalink" href="#Filtering-on-realtime-dataset" title="Permalink"></a></h2><p>Next lets create a &quot;real&quot; infinite stream. We use <code>timer()</code> observable from <code>Rocket.jl</code>to emulate real-world scenario. In our example we are going to generate a new data point every <code>~41ms</code> (24 data points per second). For demonstration purposes we force stop after <code>n</code> data points, but there is no principled limitation to run inference indefinite:</p><pre><code class="language-julia hljs"><span class="hljs-keyword">function</span> run_and_plot(environment, datastream)
     
-    # `@autoupdates` structure specifies how to update our priors based on new posteriors
-    # For example, every time we have updated a posterior over `x_current` we update our priors
-    # over `x_prev`
-    autoupdates = @autoupdates begin 
+    <span class="hljs-comment"># `@autoupdates` structure specifies how to update our priors based on new posteriors</span>
+    <span class="hljs-comment"># For example, every time we have updated a posterior over `x_current` we update our priors</span>
+    <span class="hljs-comment"># over `x_prev`</span>
+    autoupdates = <span class="hljs-meta">@autoupdates</span> <span class="hljs-keyword">begin</span> 
         x_prev_mean, x_prev_var = mean_var(q(x_current))
         τ_shape = shape(q(τ))
         τ_rate = rate(q(τ))
-    end
+    <span class="hljs-keyword">end</span>
     
     posteriors = []
     
-    plotfn = (q_current) -&gt; begin 
-        IJulia.clear_output(true)
+    plotfn = (q_current) -&gt; <span class="hljs-keyword">begin</span> 
+        IJulia.clear_output(<span class="hljs-literal">true</span>)
         
         push!(posteriors, q_current)
 
-        p = plot(mean.(posteriors), ribbon = var.(posteriors), label = &quot;Estimation&quot;)
-        p = plot!(gethistory(environment), label = &quot;Real states&quot;)    
-        p = scatter!(getobservations(environment), ms = 2, label = &quot;Observations&quot;)
-        p = plot(p, size = (1000, 300), legend = :bottomright)
+        p = plot(mean.(posteriors), ribbon = var.(posteriors), label = <span class="hljs-string">&quot;Estimation&quot;</span>)
+        p = plot!(gethistory(environment), label = <span class="hljs-string">&quot;Real states&quot;</span>)    
+        p = scatter!(getobservations(environment), ms = <span class="hljs-number">2</span>, label = <span class="hljs-string">&quot;Observations&quot;</span>)
+        p = plot(p, size = (<span class="hljs-number">1000</span>, <span class="hljs-number">300</span>), legend = :bottomright)
 
         display(p)
-    end
+    <span class="hljs-keyword">end</span>
     
-    init = @initialization begin
-        q(x_current) = NormalMeanVariance(0.0, 1e3)
-        q(τ) = GammaShapeRate(1.0, 1.0)
-    end
+    init = <span class="hljs-meta">@initialization</span> <span class="hljs-keyword">begin</span>
+        q(x_current) = NormalMeanVariance(<span class="hljs-number">0.0</span>, <span class="hljs-number">1e3</span>)
+        q(τ) = GammaShapeRate(<span class="hljs-number">1.0</span>, <span class="hljs-number">1.0</span>)
+    <span class="hljs-keyword">end</span>
 
     engine = infer(
         model         = kalman_filter(),
@@ -153,30 +163,33 @@ gif(static_inference, &quot;infinite-data-stream-inference.gif&quot;, fps = 24, 
         autoupdates   = autoupdates,
         returnvars    = (:x_current, ),
         initialization = init,
-        iterations    = 10,
-        autostart     = false,
+        iterations    = <span class="hljs-number">10</span>,
+        autostart     = <span class="hljs-literal">false</span>,
     )
     
     qsubscription = subscribe!(engine.posteriors[:x_current], plotfn)
     
     RxInfer.start(engine)
     
-    return engine
-end</code></pre><pre><code class="nohighlight hljs">run_and_plot (generic function with 1 method)</code></pre><pre><code class="language-julia hljs"># This example runs in our documentation pipeline, which does not support &quot;real-time&quot; execution context
-# We skip this code if run not in Jupyter notebook (see below an example with gif)
-engine = nothing 
-if isdefined(Main, :IJulia)
-    timegen      = 41 # 41 ms
+    <span class="hljs-keyword">return</span> engine
+<span class="hljs-keyword">end</span>
+</code></pre><pre><code class="nohighlight hljs">run_and_plot (generic function with 1 method)</code></pre><pre><code class="language-julia hljs"><span class="hljs-comment"># This example runs in our documentation pipeline, which does not support &quot;real-time&quot; execution context</span>
+<span class="hljs-comment"># We skip this code if run not in Jupyter notebook (see below an example with gif)</span>
+engine = <span class="hljs-literal">nothing</span> 
+<span class="hljs-keyword">if</span> isdefined(Main, :IJulia)
+    timegen      = <span class="hljs-number">41</span> <span class="hljs-comment"># 41 ms</span>
     environment  = Environment(initial_state, observation_precision);
-    observations = timer(timegen, timegen) |&gt; map(Float64, (_) -&gt; getnext!(environment)) |&gt; take(n) # `take!` automatically stops after `n` observations
-    datastream   = observations |&gt; map(NamedTuple{(:y,), Tuple{Float64}}, (d) -&gt; (y = d, ));
+    observations = timer(timegen, timegen) |&gt; map(<span class="hljs-built_in">Float64</span>, (_) -&gt; getnext!(environment)) |&gt; take(n) <span class="hljs-comment"># `take!` automatically stops after `n` observations</span>
+    datastream   = observations |&gt; map(<span class="hljs-built_in">NamedTuple</span>{(:y,), <span class="hljs-built_in">Tuple</span>{<span class="hljs-built_in">Float64</span>}}, (d) -&gt; (y = d, ));
     engine = run_and_plot(environment, datastream)
-end;</code></pre><p>The plot above is fully interactive and we can stop and unsubscribe from our <code>datastream</code> before it ends:</p><pre><code class="language-julia hljs">if !isnothing(engine) &amp;&amp; isdefined(Main, :IJulia)
+<span class="hljs-keyword">end</span>;
+</code></pre><p>The plot above is fully interactive and we can stop and unsubscribe from our <code>datastream</code> before it ends:</p><pre><code class="language-julia hljs"><span class="hljs-keyword">if</span> !isnothing(engine) &amp;&amp; isdefined(Main, :IJulia)
     RxInfer.stop(engine)
-    IJulia.clear_output(true)
-end;</code></pre><hr/><div class="admonition is-info"><header class="admonition-header">Contributing</header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><div class="admonition is-compat"><header class="admonition-header">Environment</header><div class="admonition-body"><p>This example was executed in a clean, isolated environment. Below are the exact package versions used:</p><p>For reproducibility:</p><ul><li>Use the same package versions when running locally</li><li>Report any issues with package compatibility</li></ul></div></div><pre><code class="nohighlight hljs">Status `~/work/RxInferExamples.jl/RxInferExamples.jl/docs/src/categories/advanced_examples/infinite_data_stream/Project.toml`
-  [91a5bcdd] Plots v1.40.9
-  [86711068] RxInfer v4.2.0
-  [860ef19b] StableRNGs v1.0.2
+    IJulia.clear_output(<span class="hljs-literal">true</span>)
+<span class="hljs-keyword">end</span>;
+</code></pre><hr/><div class="admonition is-info" id="Contributing-baba9dc142ba7ccb"><header class="admonition-header">Contributing<a class="admonition-anchor" href="#Contributing-baba9dc142ba7ccb" title="Permalink"></a></header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><div class="admonition is-compat" id="Environment-ead41e814a894220"><header class="admonition-header">Environment<a class="admonition-anchor" href="#Environment-ead41e814a894220" title="Permalink"></a></header><div class="admonition-body"><p>This example was executed in a clean, isolated environment. Below are the exact package versions used:</p><p>For reproducibility:</p><ul><li>Use the same package versions when running locally</li><li>Report any issues with package compatibility</li></ul></div></div><pre><code class="nohighlight hljs">Status `/tmp/jl_BKMWxI/Project.toml`
+  [91a5bcdd] Plots v1.41.7
+  [86711068] RxInfer v5.5.2
+  [860ef19b] StableRNGs v1.0.4
   [9a3f8284] Random v1.11.0
-</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../gp_regression_by_ssm/">« Gp Regression By Ssm</a><a class="docs-footer-nextpage" href="../multi-agent_trajectory_planning/">Multi-Agent Trajectory Planning »</a><div class="flexbox-break"></div><p class="footer-message">Created in <a href="https://biaslab.github.io/">BIASlab</a>, maintained by <a href="https://github.com/ReactiveBayes">ReactiveBayes</a>, powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.8.1 on <span class="colophon-date" title="Friday 7 March 2025 13:50">Friday 7 March 2025</span>. Using Julia version 1.11.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../gp_regression_by_ssm/">« Gp Regression By Ssm</a><a class="docs-footer-nextpage" href="../integrating_neural_networks_with_flux.jl_and_lux.jl/">Integrating Neural Networks With Flux.Jl And Lux.Jl »</a><div class="flexbox-break"></div><p class="footer-message">Created in <a href="https://biaslab.github.io/">BIASlab</a>, maintained by <a href="https://github.com/ReactiveBayes">ReactiveBayes</a>, powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.19.0 on <span class="colophon-date" title="Thursday 3 September 2026 19:09">Thursday 3 September 2026</span>. Using Julia version 1.12.7.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

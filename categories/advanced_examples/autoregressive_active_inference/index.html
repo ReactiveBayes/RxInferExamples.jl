@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Autoregressive Active Inference · RxInfer.jl Examples</title><meta name="title" content="Autoregressive Active Inference · RxInfer.jl Examples"/><meta property="og:title" content="Autoregressive Active Inference · RxInfer.jl Examples"/><meta property="twitter:title" content="Autoregressive Active Inference · RxInfer.jl Examples"/><meta name="description" content="Autoregressive Active Inference with RxInfer.jl\nThis example demonstrates active inference for a 2D thermal-coupled positioning stage. The agent has no prior knowledge of the stage&#39;s dynamics: it learns the mass, damping, and thermal expansion online with a Bayesian multivariate autoregressive model with exogenous inputs (MARX) and selects goal-directed actions by minimizing expected free energy through message passing with custom nodes and rules.\n\nCheck more examples and tutorials at https://examples.rxinfer.com\n"/><meta property="og:description" content="Autoregressive Active Inference with RxInfer.jl\nThis example demonstrates active inference for a 2D thermal-coupled positioning stage. The agent has no prior knowledge of the stage&#39;s dynamics: it learns the mass, damping, and thermal expansion online with a Bayesian multivariate autoregressive model with exogenous inputs (MARX) and selects goal-directed actions by minimizing expected free energy through message passing with custom nodes and rules.\n\nCheck more examples and tutorials at https://examples.rxinfer.com\n"/><meta property="twitter:description" content="Autoregressive Active Inference with RxInfer.jl\nThis example demonstrates active inference for a 2D thermal-coupled positioning stage. The agent has no prior knowledge of the stage&#39;s dynamics: it learns the mass, damping, and thermal expansion online with a Bayesian multivariate autoregressive model with exogenous inputs (MARX) and selects goal-directed actions by minimizing expected free energy through message passing with custom nodes and rules.\n\nCheck more examples and tutorials at https://examples.rxinfer.com\n"/><meta property="og:url" content="https://examples.rxinfer.com/categories/advanced_examples/autoregressive_active_inference/"/><meta property="twitter:url" content="https://examples.rxinfer.com/categories/advanced_examples/autoregressive_active_inference/"/><link rel="canonical" href="https://examples.rxinfer.com/categories/advanced_examples/autoregressive_active_inference/"/><script async src="https://www.googletagmanager.com/gtag/js?id=G-GMFX620VEP"></script><script>  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-GMFX620VEP', {'page_path': location.pathname + location.search + location.hash});
+</script><script data-outdated-warner src="../../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.63.2/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../../assets/documenter.js"></script><script src="../../../search_index.js"></script><script src="../../../siteinfo.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../../assets/themeswap.js"></script><link href="../../../assets/theme.css" rel="stylesheet" type="text/css"/><link href="../../../assets/header.css" rel="stylesheet" type="text/css"/><script src="../../../assets/header.js"></script><script src="../../../assets/chat.js"></script><link href="../../../assets/favicon.ico" rel="icon" type="image/x-icon"/>
+    <meta property="og:title" content="Autoregressive Active Inference - RxInfer Examples">
+    <meta name="description" content="This example demonstrates active inference for a 2D thermal-coupled positioning stage. The agent has no prior knowledge of the stage's dynamics: it learns the mass, damping, and thermal expansion online with a Bayesian multivariate autoregressive model with exogenous inputs (MARX) and selects goal-directed actions by minimizing expected free energy through message passing with custom nodes and rules.
+">
+    <meta property="og:description" content="This example demonstrates active inference for a 2D thermal-coupled positioning stage. The agent has no prior knowledge of the stage's dynamics: it learns the mass, damping, and thermal expansion online with a Bayesian multivariate autoregressive model with exogenous inputs (MARX) and selects goal-directed actions by minimizing expected free energy through message passing with custom nodes and rules.
+">
+    <meta name="keywords" content="rxinfer, julia, bayesian inference, examples, probabilistic programming, message passing, probabilistic numerics, variational inference, belief propagation, advanced examples, active inference, control, thermal stage, online learning, autoregressive model, expected free energy">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://examples.rxinfer.com/sitemap.xml">
+    </head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../../"><img class="docs-light-only" src="../../../assets/logo.svg" alt="RxInfer.jl Examples logo"/><img class="docs-dark-only" src="../../../assets/logo-dark.svg" alt="RxInfer.jl Examples logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../../">RxInfer.jl Examples</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../../">Home</a></li><li><a class="tocitem" href="../../../how_to_contribute/">How to contribute</a></li><li><a class="tocitem" href="../../../autogenerated/list_of_examples/">List of Examples</a></li><li><span class="tocitem">Basic Examples</span><ul><li><a class="tocitem" href="../../basic_examples/bayesian_binomial_regression/">Bayesian Binomial Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_linear_regression/">Bayesian Linear Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_multinomial_regression/">Bayesian Multinomial Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_networks/">Bayesian Networks</a></li><li><a class="tocitem" href="../../basic_examples/coin_toss_model/">Coin Toss Model</a></li><li><a class="tocitem" href="../../basic_examples/contextual_bandits/">Contextual Bandits</a></li><li><a class="tocitem" href="../../basic_examples/feature_functions_in_bayesian_regression/">Feature Functions In Bayesian Regression</a></li><li><a class="tocitem" href="../../basic_examples/forgetting_factors_for_online_inference/">Forgetting Factors For Online Inference</a></li><li><a class="tocitem" href="../../basic_examples/hidden_markov_model/">Hidden Markov Model</a></li><li><a class="tocitem" href="../../basic_examples/incomplete_data/">Incomplete Data</a></li><li><a class="tocitem" href="../../basic_examples/kalman_filtering_and_smoothing/">Kalman Filtering And Smoothing</a></li><li><a class="tocitem" href="../../basic_examples/pomdp_control/">Pomdp Control</a></li><li><a class="tocitem" href="../../basic_examples/predicting_bike_rental_demand/">Predicting Bike Rental Demand</a></li><li><a class="tocitem" href="../../basic_examples/t-maze_active_inference/">T-Maze Active Inference</a></li></ul></li><li><span class="tocitem">Advanced Examples</span><ul><li><a class="tocitem" href="../active_inference_mountain_car/">Active Inference Mountain Car</a></li><li><a class="tocitem" href="../assessing_people_skills/">Assessing People Skills</a></li><li class="is-active"><a class="tocitem" href>Autoregressive Active Inference</a><ul class="internal"><li><a class="tocitem" href="#1.-Problem-Statement"><span>1. Problem Statement</span></a></li><li><a class="tocitem" href="#2.-Agent-Specification"><span>2. Agent Specification</span></a></li><li><a class="tocitem" href="#3.-Experiment"><span>3. Experiment</span></a></li><li><a class="tocitem" href="#References"><span>References</span></a></li></ul></li><li><a class="tocitem" href="../bayesian_structured_time_series/">Bayesian Structured Time Series</a></li><li><a class="tocitem" href="../chance_constraints/">Chance Constraints</a></li><li><a class="tocitem" href="../conjugate-computational_variational_message_passing/">Conjugate-Computational Variational Message Passing</a></li><li><a class="tocitem" href="../drone_dynamics/">Drone Dynamics</a></li><li><a class="tocitem" href="../efe_minimization_via_message_passing/">Efe Minimization Via Message Passing</a></li><li><a class="tocitem" href="../gp_regression_by_ssm/">Gp Regression By Ssm</a></li><li><a class="tocitem" href="../infinite_data_stream/">Infinite Data Stream</a></li><li><a class="tocitem" href="../integrating_neural_networks_with_flux.jl_and_lux.jl/">Integrating Neural Networks With Flux.Jl And Lux.Jl</a></li><li><a class="tocitem" href="../learning_dynamics_with_vaes/">Learning Dynamics With Vaes</a></li><li><a class="tocitem" href="../multi-agent_trajectory_planning/">Multi-Agent Trajectory Planning</a></li><li><a class="tocitem" href="../nonlinear_sensor_fusion/">Nonlinear Sensor Fusion</a></li><li><a class="tocitem" href="../parameter_optimisation_with_optim.jl/">Parameter Optimisation With Optim.Jl</a></li><li><a class="tocitem" href="../robotic_arm/">Robotic Arm</a></li><li><a class="tocitem" href="../solving_linear_systems_with_message_passing/">Solving Linear Systems With Message Passing</a></li></ul></li><li><span class="tocitem">Problem Specific</span><ul><li><a class="tocitem" href="../../problem_specific/autoregressive_models/">Autoregressive Models</a></li><li><a class="tocitem" href="../../problem_specific/gamma_mixture/">Gamma Mixture</a></li><li><a class="tocitem" href="../../problem_specific/gaussian_mixture/">Gaussian Mixture</a></li><li><a class="tocitem" href="../../problem_specific/hierarchical_gaussian_filter/">Hierarchical Gaussian Filter</a></li><li><a class="tocitem" href="../../problem_specific/invertible_neural_network_tutorial/">Invertible Neural Network Tutorial</a></li><li><a class="tocitem" href="../../problem_specific/ising_model/">Ising Model</a></li><li><a class="tocitem" href="../../problem_specific/litter_model/">Litter Model</a></li><li><a class="tocitem" href="../../problem_specific/ode_parameter_estimation/">Ode Parameter Estimation</a></li><li><a class="tocitem" href="../../problem_specific/probit_model/">Probit Model</a></li><li><a class="tocitem" href="../../problem_specific/rts_vs_bifm_smoothing/">Rts Vs Bifm Smoothing</a></li><li><a class="tocitem" href="../../problem_specific/simple_nonlinear_node/">Simple Nonlinear Node</a></li><li><a class="tocitem" href="../../problem_specific/structural_dynamics_with_augmented_kalman_filter/">Structural Dynamics With Augmented Kalman Filter</a></li><li><a class="tocitem" href="../../problem_specific/universal_mixtures/">Universal Mixtures</a></li></ul></li><li><span class="tocitem">Experimental Examples</span><ul><li><a class="tocitem" href="../../experimental_examples/bayesian_trust_learning/">Bayesian Trust Learning</a></li><li><a class="tocitem" href="../../experimental_examples/large_language_models/">Large Language Models</a></li><li><a class="tocitem" href="../../experimental_examples/latent_vector_autoregressive_model/">Latent Vector Autoregressive Model</a></li><li><a class="tocitem" href="../../experimental_examples/recurrent_switching_linear_dynamical_system/">Recurrent Switching Linear Dynamical System</a></li></ul></li><li><a class="tocitem" href="../../../how_build_works/">How we build the examples</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Advanced Examples</a></li><li class="is-active"><a href>Autoregressive Active Inference</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Autoregressive Active Inference</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl" title="View source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><div class="admonition is-info" id="Contributing-baba9dc142ba7ccb"><header class="admonition-header">Contributing<a class="admonition-anchor" href="#Contributing-baba9dc142ba7ccb" title="Permalink"></a></header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><h1 id="Autoregressive-Active-Inference"><a class="docs-heading-anchor" href="#Autoregressive-Active-Inference">Autoregressive Active Inference</a><a id="Autoregressive-Active-Inference-1"></a><a class="docs-heading-anchor-permalink" href="#Autoregressive-Active-Inference" title="Permalink"></a></h1><p>This example demonstrates an <strong>active inference</strong> agent that controls a <strong>thermal-coupled positioning stage</strong> while learning its physical parameters online. Both perception (Bayesian filtering) and action selection (expected free energy minimisation) are expressed as message passing on a shared factor graph — no separate controller is needed.</p><p>The agent design follows <a href="#references">[1]</a>, which introduces message passing-based inference in an autoregressive active inference agent and evaluates it on robot navigation.</p><blockquote><p><strong>Navigation tip:</strong> node and rule definitions are in collapsible cells. To jump straight to the simulation, <a href="#experiment-setup">click here</a>.</p></blockquote><p>We begin by importing the required packages.</p><pre><code class="language-julia hljs"><span class="hljs-keyword">using</span> RxInfer
+<span class="hljs-keyword">using</span> LinearAlgebra
+<span class="hljs-keyword">using</span> Distributions
+<span class="hljs-keyword">using</span> DomainSets
+<span class="hljs-keyword">using</span> Optim
+<span class="hljs-keyword">using</span> ForwardDiff
+<span class="hljs-keyword">using</span> SpecialFunctions
+<span class="hljs-keyword">using</span> StatsPlots
+<span class="hljs-keyword">using</span> Plots
+
+<span class="hljs-keyword">import</span> BayesBase
+<span class="hljs-keyword">import</span> FastCholesky: cholinv
+<span class="hljs-keyword">import</span> ExponentialFamily: MatrixNormalWishart
+<span class="hljs-keyword">import</span> StatsFuns: logmvgamma
+<span class="hljs-keyword">import</span> Random
+
+default(label=<span class="hljs-string">&quot;&quot;</span>, grid=<span class="hljs-literal">false</span>, markersize=<span class="hljs-number">3</span>)
+RxInfer.disable_inference_error_hint!()
+</code></pre><h2 id="1.-Problem-Statement"><a class="docs-heading-anchor" href="#1.-Problem-Statement">1. Problem Statement</a><a id="1.-Problem-Statement-1"></a><a class="docs-heading-anchor-permalink" href="#1.-Problem-Statement" title="Permalink"></a></h2><p>The <strong>thermal-coupled positioning stage</strong> is a force-driven 2D mechanical system with unknown mass <span>$m$</span> and viscous damping <span>$d$</span>. A lumped thermal state <span>$T$</span> heats up during operation (power input <span>$P$</span>) and cools toward ambient <span>$T_\text{amb}$</span> at rate <span>$\kappa$</span>:</p><p class="math-container">\[\dot{p} = v, \qquad m\dot{v} = u - d\,v, \qquad \dot{T} = -\kappa(T - T_\text{amb}) + \eta P.\]</p><p>What makes the task nontrivial is the observation model. The agent sees the end-effector in <strong>workpiece coordinates</strong>, which are thermally offset from the stage frame by an unknown thermal expansion coefficient <span>$\alpha \in \mathbb{R}^2$</span>:</p><p class="math-container">\[y_k = p_k + \alpha\,(T_k - T_\text{amb}) + \varepsilon_k.\]</p><p>As the stage heats up, workpiece observations drift even without any applied force. The agent must navigate the end-effector through a sequence of <strong>workpiece-frame waypoints</strong> while compensating for this drift — without ever observing <span>$T$</span> or knowing <span>$\alpha$</span>.</p><pre><code class="language-julia hljs"><span class="hljs-keyword">mutable struct</span> ThermalStage
+    mass    :: <span class="hljs-built_in">Float64</span>
+    damping :: <span class="hljs-built_in">Float64</span>
+    alpha   :: <span class="hljs-built_in">Vector</span>{<span class="hljs-built_in">Float64</span>}   <span class="hljs-comment"># thermal expansion coefficient (unknown to agent)</span>
+    kappa   :: <span class="hljs-built_in">Float64</span>            <span class="hljs-comment"># cooling rate</span>
+    eta     :: <span class="hljs-built_in">Float64</span>            <span class="hljs-comment"># heat-input efficiency</span>
+    T_amb   :: <span class="hljs-built_in">Float64</span>
+    P_proc  :: <span class="hljs-built_in">Float64</span>            <span class="hljs-comment"># operating power</span>
+    sigma_obs :: <span class="hljs-built_in">Float64</span>          <span class="hljs-comment"># observation noise std (workpiece frame)</span>
+    sigma_v   :: <span class="hljs-built_in">Float64</span>          <span class="hljs-comment"># process noise on velocity</span>
+    sigma_T   :: <span class="hljs-built_in">Float64</span>          <span class="hljs-comment"># thermal process noise</span>
+    dt      :: <span class="hljs-built_in">Float64</span>
+    p :: <span class="hljs-built_in">Vector</span>{<span class="hljs-built_in">Float64</span>}          <span class="hljs-comment"># stage position (true, unobserved)</span>
+    v :: <span class="hljs-built_in">Vector</span>{<span class="hljs-built_in">Float64</span>}          <span class="hljs-comment"># stage velocity (true, unobserved)</span>
+    T :: <span class="hljs-built_in">Float64</span>                  <span class="hljs-comment"># thermal state  (true, unobserved)</span>
+    <span class="hljs-keyword">function</span> ThermalStage(; mass=<span class="hljs-number">1.0</span>, damping=<span class="hljs-number">0.5</span>, alpha=[<span class="hljs-number">0.1</span>, <span class="hljs-number">0.05</span>],
+                            kappa=<span class="hljs-number">0.1</span>, eta=<span class="hljs-number">1.0</span>, T_amb=<span class="hljs-number">0.0</span>, P_proc=<span class="hljs-number">1.0</span>,
+                            sigma_obs=<span class="hljs-number">1e-3</span>, sigma_v=<span class="hljs-number">1e-3</span>, sigma_T=<span class="hljs-number">1e-3</span>, dt=<span class="hljs-number">0.1</span>)
+        new(mass, damping, alpha, kappa, eta, T_amb, P_proc,
+            sigma_obs, sigma_v, sigma_T, dt, zeros(<span class="hljs-number">2</span>), zeros(<span class="hljs-number">2</span>), T_amb)
+    <span class="hljs-keyword">end</span>
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-keyword">function</span> stage_step!(env::ThermalStage, u::<span class="hljs-built_in">Vector</span>, process::<span class="hljs-built_in">Bool</span>=<span class="hljs-literal">false</span>)
+    dt  = env.dt
+    a   = (u .- env.damping .* env.v) ./ env.mass
+    env.v = env.v + dt .* a   + env.sigma_v .* randn(<span class="hljs-number">2</span>)
+    env.p = env.p + dt .* env.v
+    P     = process ? env.P_proc : <span class="hljs-number">0.0</span>
+    env.T = env.T + dt * (-env.kappa * (env.T - env.T_amb) + env.eta * P) + env.sigma_T * randn()
+    <span class="hljs-keyword">return</span> env.p + env.alpha .* (env.T - env.T_amb) + env.sigma_obs .* randn(<span class="hljs-number">2</span>)
+<span class="hljs-keyword">end</span>
+</code></pre><pre><code class="nohighlight hljs">stage_step! (generic function with 2 methods)</code></pre><h2 id="2.-Agent-Specification"><a class="docs-heading-anchor" href="#2.-Agent-Specification">2. Agent Specification</a><a id="2.-Agent-Specification-1"></a><a class="docs-heading-anchor-permalink" href="#2.-Agent-Specification" title="Permalink"></a></h2><p>The agent maintains a probabilistic model of its own dynamics and selects actions by minimising <strong>expected free energy</strong> (EFE). Both the model update (filtering) and action selection (planning) reduce to message passing on the same factor graph structure.</p><h3 id="2.1-Generative-Model"><a class="docs-heading-anchor" href="#2.1-Generative-Model">2.1 Generative Model</a><a id="2.1-Generative-Model-1"></a><a class="docs-heading-anchor-permalink" href="#2.1-Generative-Model" title="Permalink"></a></h3><p>The stage dynamics are approximated by a <strong>Multivariate AutoRegressive model with eXogenous inputs</strong> (MARX) <a href="#references">[1]</a>. Writing the regressor as</p><p class="math-container">\[x_k = \begin{bmatrix} y_{k-1} \\ y_{k-2} \\ u_k \\ u_{k-1} \\ u_{k-2} \end{bmatrix},\]</p><p>the next workpiece-frame observation follows <span>$y_k = M^\top x_k + \text{noise}$</span>, where the parameter matrix <span>$M$</span> and the noise precision jointly have a <strong>Matrix-Normal-Wishart</strong> prior <span>$\Phi \sim \mathrm{MNW}(M_0, U_0, V_0, \nu_0)$</span>. Updating <span>$\Phi$</span> from data gives online estimates of mass, damping, and thermal expansion — all absorbed into <span>$M$</span>.</p><p>The regressor buffers (<code>backshift</code>) and numerical stabilisation (<code>proj2psd</code>) are collected in the hidden cell below.</p><details class="admonition is-details" id="Hidden-block-of-utility-functions:-backshift,-proj2psd,-and-MatrixNormalWishart-product-override-click-to-expand-110f7fd617b836c4"><summary class="admonition-header">Hidden block of utility functions: backshift, proj2psd, and MatrixNormalWishart product override - click to expand<a class="admonition-anchor" href="#Hidden-block-of-utility-functions:-backshift,-proj2psd,-and-MatrixNormalWishart-product-override-click-to-expand-110f7fd617b836c4" title="Permalink"></a></summary><div class="admonition-body"><pre><code class="language-julia hljs">
+<span class="hljs-keyword">function</span> backshift(x::<span class="hljs-built_in">AbstractVector</span>, a::<span class="hljs-built_in">Number</span>)
+    N = size(x, <span class="hljs-number">1</span>)
+    S = Tridiagonal(ones(N - <span class="hljs-number">1</span>), zeros(N), zeros(N - <span class="hljs-number">1</span>))
+    e = [<span class="hljs-number">1.0</span>; zeros(N - <span class="hljs-number">1</span>)]
+    <span class="hljs-keyword">return</span> S * x + e * a
+<span class="hljs-keyword">end</span>
+backshift(M::<span class="hljs-built_in">AbstractMatrix</span>, a::<span class="hljs-built_in">Number</span>) = diagm(backshift(diag(M), a))
+backshift(x::<span class="hljs-built_in">AbstractMatrix</span>, a::<span class="hljs-built_in">Vector</span>) = [a x[:, <span class="hljs-number">1</span>:<span class="hljs-keyword">end</span>-<span class="hljs-number">1</span>]]
+
+<span class="hljs-keyword">function</span> proj2psd(S::<span class="hljs-built_in">AbstractMatrix</span>)
+    L, V = eigen(S)
+    S = V * diagm(max.(<span class="hljs-number">1e-8</span>, L)) * V&#x27;
+    <span class="hljs-keyword">return</span> (S + S&#x27;) / <span class="hljs-number">2</span>
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-comment"># After many MARX learning steps the Ml&#x27;*ΛlMl + Mr&#x27;*ΛrMr - rhs&#x27;*M terms grow large</span>
+<span class="hljs-comment"># (~1e4), and floating-point cancellation yields |Ω[i,j] - Ω[j,i]| &gt; 1e-8 absolute,</span>
+<span class="hljs-comment"># which triggers FastCholesky&#x27;s CI check. Wrapping matrices with Symmetric() before</span>
+<span class="hljs-comment"># each Cholesky ensures the check passes and future cholinv calls on stored U/V do too.</span>
+<span class="hljs-keyword">function</span> BayesBase.prod(::BayesBase.PreserveTypeProd{Distribution}, left::MatrixNormalWishart, right::MatrixNormalWishart)
+    Ml, Ul, Vl, νl = BayesBase.params(left)
+    Mr, Ur, Vr, νr = BayesBase.params(right)
+    Λl = cholinv(Symmetric(Ul)); Λr = cholinv(Symmetric(Ur)); Λ = Λl + Λr
+    U  = cholinv(Symmetric(Λ))
+    ΛlMl = Λl*Ml; ΛrMr = Λr*Mr; rhs = ΛlMl + ΛrMr; M = U*rhs
+    Ωl = cholinv(Symmetric(Vl)); Ωr = cholinv(Symmetric(Vr))
+    Ω  = Ωl + Ωr + Ml&#x27;*ΛlMl + Mr&#x27;*ΛrMr - rhs&#x27;*M
+    V  = cholinv(Symmetric(Ω))
+    n, p = size(Ml); ν = νl + νr + n - p - <span class="hljs-number">1</span>
+    <span class="hljs-keyword">return</span> MatrixNormalWishart(M, Symmetric(U), Symmetric(V), ν)
+<span class="hljs-keyword">end</span>
+</code></pre></div></details><p>During planning, the message arriving at an action variable from the future is proportional to <span>$\exp(-G(u))$</span>, where <span>$G(u)$</span> is the EFE of taking action <span>$u$</span>. We represent it with a custom <code>unBoltzmann</code> distribution whose <code>mode</code> (the EFE-minimising action) is found by projected-gradient descent seeded from the best box corner. The energy has an analytic gradient (see the action rules), so each solve costs a few dozen cheap iterations.</p><details class="admonition is-details" id="Hidden-block-of-unBoltzmann-distribution,-its-mode,-and-product-rules-click-to-expand-5836a733a848f0cc"><summary class="admonition-header">Hidden block of unBoltzmann distribution, its mode, and product rules - click to expand<a class="admonition-anchor" href="#Hidden-block-of-unBoltzmann-distribution,-its-mode,-and-product-rules-click-to-expand-5836a733a848f0cc" title="Permalink"></a></summary><div class="admonition-body"><pre><code class="language-julia hljs">
+<span class="hljs-comment"># The message flowing towards an action is proportional to exp(-G(u)), where G is the</span>
+<span class="hljs-comment"># expected free energy. `unBoltzmann` carries that energy together with its gradient and</span>
+<span class="hljs-comment"># a box support. The fields are type parameters rather than `::Function`/`::Integer` so</span>
+<span class="hljs-comment"># that `dist.G(u)` is a static, inlinable call rather than a dynamic dispatch.</span>
+<span class="hljs-keyword">struct</span> unBoltzmann{F,H,I&lt;:<span class="hljs-built_in">Integer</span>,R} &lt;: ContinuousMultivariateDistribution
+    G  :: F   <span class="hljs-comment"># energy function</span>
+    ∇G :: H   <span class="hljs-comment"># its gradient</span>
+    N  :: I   <span class="hljs-comment"># number of inputs</span>
+    D  :: R   <span class="hljs-comment"># box support</span>
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-comment"># Fallback for energies with no analytic gradient: differentiate with ForwardDiff.</span>
+unBoltzmann(G, N::<span class="hljs-built_in">Integer</span>, D) = unBoltzmann(G, u -&gt; ForwardDiff.gradient(G, u), N, D)
+
+BayesBase.ndims(d::unBoltzmann)   = d.N
+BayesBase.support(d::unBoltzmann) = d.D
+
+<span class="hljs-string">&quot;&quot;&quot;
+    mode(dist::unBoltzmann)
+
+The EFE-minimising action. Because the energy is smooth with an exact gradient (see the
+action rules below), a projected-gradient descent with a backtracking line search solves
+this box-constrained problem in a few dozen very cheap iterations, seeded — as before —
+from the best box corner so the search stays global.
+
+This replaces `Fminbox(LBFGS())` with `outer_iterations=100, iterations=1`, which spent
+over 99% of its time in barrier/solver bookkeeping rather than on the objective, and which
+stopped short of the minimum on most calls.
+&quot;&quot;&quot;</span>
+<span class="hljs-keyword">function</span> BayesBase.mode(dist::unBoltzmann; maxiter = <span class="hljs-number">200</span>, gtol = <span class="hljs-number">1e-10</span>)
+    lo = support(dist).a; hi = support(dist).b; N = dist.N
+    ε  = <span class="hljs-number">1e-6</span>
+
+    <span class="hljs-comment"># Seed from the best box corner.</span>
+    u = clamp.(zeros(eltype(lo), N), lo .+ ε, hi .- ε); fu = <span class="hljs-literal">Inf</span>
+    <span class="hljs-keyword">for</span> bits <span class="hljs-keyword">in</span> Iterators.product(fill((<span class="hljs-number">0</span>, <span class="hljs-number">1</span>), N)...)
+        c = [bits[i] == <span class="hljs-number">0</span> ? lo[i] + ε : hi[i] - ε <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:N]
+        g = dist.G(c)
+        <span class="hljs-keyword">if</span> isfinite(g) &amp;&amp; g &lt; fu; fu = g; u = c; <span class="hljs-keyword">end</span>
+    <span class="hljs-keyword">end</span>
+    isfinite(fu) || (fu = dist.G(u))
+
+    step = one(eltype(u))
+    <span class="hljs-keyword">for</span> _ <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:maxiter
+        g = dist.∇G(u)
+        maximum(abs, g) &lt; gtol &amp;&amp; <span class="hljs-keyword">break</span>
+        moved = <span class="hljs-literal">false</span>
+        <span class="hljs-keyword">for</span> _ <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:<span class="hljs-number">40</span>                       <span class="hljs-comment"># backtracking line search</span>
+            v  = clamp.(u .- step .* g, lo, hi)
+            fv = dist.G(v)
+            <span class="hljs-keyword">if</span> isfinite(fv) &amp;&amp; fv &lt; fu
+                u = v; fu = fv; step *= <span class="hljs-number">2</span>; moved = <span class="hljs-literal">true</span>; <span class="hljs-keyword">break</span>
+            <span class="hljs-keyword">end</span>
+            step /= <span class="hljs-number">3</span>
+            step &lt; <span class="hljs-number">1e-14</span> &amp;&amp; <span class="hljs-keyword">break</span>
+        <span class="hljs-keyword">end</span>
+        moved || <span class="hljs-keyword">break</span>                      <span class="hljs-comment"># no downhill step left: we are at the minimum</span>
+    <span class="hljs-keyword">end</span>
+    <span class="hljs-keyword">return</span> u
+<span class="hljs-keyword">end</span>
+
+BayesBase.cov(dist::unBoltzmann)       = inv(precision(dist))
+BayesBase.precision(dist::unBoltzmann) = proj2psd(ForwardDiff.hessian(dist.G, mode(dist)))
+pdf(dist::unBoltzmann, u::<span class="hljs-built_in">Vector</span>)      = exp(-dist.G(u))
+Distributions.logpdf(dist::unBoltzmann, u::<span class="hljs-built_in">Vector</span>) = -dist.G(u)
+
+BayesBase.default_prod_rule(::<span class="hljs-built_in">Type</span>{&lt;:unBoltzmann}, ::<span class="hljs-built_in">Type</span>{&lt;:unBoltzmann})      = BayesBase.ClosedProd()
+BayesBase.default_prod_rule(::<span class="hljs-built_in">Type</span>{&lt;:AbstractMvNormal}, ::<span class="hljs-built_in">Type</span>{&lt;:unBoltzmann}) = BayesBase.ClosedProd()
+BayesBase.default_prod_rule(::<span class="hljs-built_in">Type</span>{&lt;:unBoltzmann}, ::<span class="hljs-built_in">Type</span>{&lt;:AbstractMvNormal}) = BayesBase.ClosedProd()
+
+<span class="hljs-comment"># Products add energies, so they add gradients too — the analytic gradient survives the</span>
+<span class="hljs-comment"># product and `mode` never has to fall back to automatic differentiation.</span>
+<span class="hljs-keyword">function</span> BayesBase.prod(::BayesBase.ClosedProd, left::unBoltzmann, right::unBoltzmann)
+    left.N != right.N &amp;&amp; error(<span class="hljs-string">&quot;Dimensionalities of energy functions do not match.&quot;</span>)
+    G(u)  = left.G(u) + right.G(u)
+    ∇G(u) = left.∇G(u) + right.∇G(u)
+    <span class="hljs-keyword">return</span> unBoltzmann(G, ∇G, right.N, intersectdomain(left.D, right.D))
+<span class="hljs-keyword">end</span>
+<span class="hljs-keyword">function</span> BayesBase.prod(::BayesBase.ClosedProd, left::AbstractMvNormal, right::unBoltzmann)
+    ndims(left) != right.N &amp;&amp; error(<span class="hljs-string">&quot;Dimensionality mismatch.&quot;</span>)
+    Λl, μl = precision(left), mean(left)
+    G(u)  = -BayesBase.logpdf(left, u) + right.G(u)
+    ∇G(u) = Λl * (u - μl) + right.∇G(u)     <span class="hljs-comment"># -∇logpdf(N(μ, Λ⁻¹), u) = Λ(u - μ)</span>
+    <span class="hljs-keyword">return</span> unBoltzmann(G, ∇G, right.N, right.D)
+<span class="hljs-keyword">end</span>
+BayesBase.prod(::BayesBase.ClosedProd, left::unBoltzmann, right::AbstractMvNormal) = BayesBase.prod(BayesBase.ClosedProd(), right, left)
+</code></pre></div></details><p>With a Matrix-Normal-Wishart prior over <span>$\Phi$</span>, the <strong>posterior predictive</strong> of the next observation is a multivariate Student&#39;s-t. We implement it as <code>MvLocationScaleT(η, μ, Σ)</code> with degrees of freedom <span>$\eta$</span>, location <span>$\mu$</span>, and scale <span>$\Sigma$</span>.</p><details class="admonition is-details" id="Hidden-block-of-MvLocationScaleT-distribution-and-product-rules-click-to-expand-2ba3f840db71bead"><summary class="admonition-header">Hidden block of MvLocationScaleT distribution and product rules - click to expand<a class="admonition-anchor" href="#Hidden-block-of-MvLocationScaleT-distribution-and-product-rules-click-to-expand-2ba3f840db71bead" title="Permalink"></a></summary><div class="admonition-body"><pre><code class="language-julia hljs">
+<span class="hljs-keyword">struct</span> MvLocationScaleT{T,N&lt;:<span class="hljs-built_in">Real</span>,M&lt;:<span class="hljs-built_in">AbstractVector</span>{T},S&lt;:<span class="hljs-built_in">AbstractMatrix</span>{T}} &lt;: ContinuousMultivariateDistribution
+    η::N; μ::M; Σ::S
+    <span class="hljs-keyword">function</span> MvLocationScaleT(η::N, μ::M, Σ::S) <span class="hljs-keyword">where</span> {T,N&lt;:<span class="hljs-built_in">Real</span>,M&lt;:<span class="hljs-built_in">AbstractVector</span>{T},S&lt;:<span class="hljs-built_in">AbstractMatrix</span>{T}}
+        dims = length(μ)
+        η &lt;= dims &amp;&amp; error(<span class="hljs-string">&quot;Degrees of freedom must exceed the dimensionality.&quot;</span>)
+        dims !== size(Σ, <span class="hljs-number">1</span>) &amp;&amp; error(<span class="hljs-string">&quot;Dimensionalities of mean and covariance do not match.&quot;</span>)
+        <span class="hljs-keyword">return</span> new{T,N,M,S}(η, μ, Σ)
+    <span class="hljs-keyword">end</span>
+<span class="hljs-keyword">end</span>
+
+BayesBase.params(p::MvLocationScaleT)    = (p.η, p.μ, p.Σ)
+BayesBase.ndims(p::MvLocationScaleT)     = length(p.μ)
+BayesBase.mean(p::MvLocationScaleT)      = p.μ
+BayesBase.mode(p::MvLocationScaleT)      = p.μ
+BayesBase.cov(p::MvLocationScaleT)       = p.η &gt; <span class="hljs-number">2</span> ? p.η / (p.η - <span class="hljs-number">2</span>) * p.Σ : error(<span class="hljs-string">&quot;Degrees of freedom must exceed 2.&quot;</span>)
+BayesBase.precision(p::MvLocationScaleT) = inv(cov(p))
+
+<span class="hljs-keyword">function</span> pdf(p::MvLocationScaleT, x::<span class="hljs-built_in">Vector</span>)
+    d = ndims(p); η, μ, Σ = params(p)
+    <span class="hljs-keyword">return</span> sqrt(<span class="hljs-number">1</span> / ((η * <span class="hljs-literal">π</span>)^d * det(Σ))) * gamma((η + d) / <span class="hljs-number">2</span>) / gamma(η / <span class="hljs-number">2</span>) * (<span class="hljs-number">1</span> + <span class="hljs-number">1</span> / η * (x - μ)&#x27; * inv(Σ) * (x - μ))^(-(η + d) / <span class="hljs-number">2</span>)
+<span class="hljs-keyword">end</span>
+<span class="hljs-keyword">function</span> Distributions.logpdf(p::MvLocationScaleT, x::<span class="hljs-built_in">Vector</span>)
+    d = ndims(p); η, μ, Σ = params(p)
+    <span class="hljs-keyword">return</span> -d / <span class="hljs-number">2</span> * log(η * <span class="hljs-literal">π</span>) - <span class="hljs-number">1</span> / <span class="hljs-number">2</span> * logdet(Σ) + loggamma((η + d) / <span class="hljs-number">2</span>) - loggamma(η / <span class="hljs-number">2</span>) - (η + d) / <span class="hljs-number">2</span> * log(<span class="hljs-number">1</span> + <span class="hljs-number">1</span> / η * (x - μ)&#x27; * inv(Σ) * (x - μ))
+<span class="hljs-keyword">end</span>
+
+BayesBase.default_prod_rule(::<span class="hljs-built_in">Type</span>{&lt;:MvLocationScaleT}, ::<span class="hljs-built_in">Type</span>{&lt;:MvLocationScaleT}) = BayesBase.ClosedProd()
+BayesBase.default_prod_rule(::<span class="hljs-built_in">Type</span>{&lt;:AbstractMvNormal}, ::<span class="hljs-built_in">Type</span>{&lt;:MvLocationScaleT}) = BayesBase.ClosedProd()
+BayesBase.default_prod_rule(::<span class="hljs-built_in">Type</span>{&lt;:MvLocationScaleT}, ::<span class="hljs-built_in">Type</span>{&lt;:AbstractMvNormal}) = BayesBase.ClosedProd()
+BayesBase.default_prod_rule(::<span class="hljs-built_in">Type</span>{&lt;:MvLocationScaleT}, ::<span class="hljs-built_in">Type</span>{&lt;:unBoltzmann})      = BayesBase.ClosedProd()
+BayesBase.default_prod_rule(::<span class="hljs-built_in">Type</span>{&lt;:unBoltzmann}, ::<span class="hljs-built_in">Type</span>{&lt;:MvLocationScaleT})      = BayesBase.ClosedProd()
+
+<span class="hljs-keyword">function</span> BayesBase.prod(::BayesBase.ClosedProd, left::MvLocationScaleT, right::MvLocationScaleT)
+    ndims(left) != ndims(right) &amp;&amp; error(<span class="hljs-string">&quot;Dimensionality mismatch.&quot;</span>)
+    ηl, μl, Σl = params(left); ηr, μr, Σr = params(right)
+    Λl = inv(ηl / (ηl - <span class="hljs-number">2</span>) * Σl); Λr = inv(ηr / (ηr - <span class="hljs-number">2</span>) * Σr)
+    Σ = inv(Λl + Λr); μ = Σ * (Λl * μl + Λr * μr)
+    <span class="hljs-keyword">return</span> MvNormalMeanCovariance(μ, Σ)
+<span class="hljs-keyword">end</span>
+<span class="hljs-keyword">function</span> BayesBase.prod(::BayesBase.ClosedProd, left::AbstractMvNormal, right::MvLocationScaleT)
+    ndims(left) != ndims(right) &amp;&amp; error(<span class="hljs-string">&quot;Dimensionality mismatch.&quot;</span>)
+    μl, Σl = mean_cov(left); ηr, μr, Σr = params(right)
+    Λl = inv(Σl); Λr = inv(ηr / (ηr - <span class="hljs-number">2</span>) * Σr)
+    Σ = inv(Λl + Λr); μ = Σ * (Λl * μl + Λr * μr)
+    <span class="hljs-keyword">return</span> MvNormalMeanCovariance(μ, Σ)
+<span class="hljs-keyword">end</span>
+BayesBase.prod(::BayesBase.ClosedProd, left::MvLocationScaleT, right::AbstractMvNormal) = BayesBase.prod(BayesBase.ClosedProd(), right, left)
+<span class="hljs-keyword">function</span> BayesBase.prod(::BayesBase.ClosedProd, left::MvLocationScaleT, right::unBoltzmann)
+    ndims(left) != ndims(right) &amp;&amp; error(<span class="hljs-string">&quot;Dimensionality mismatch.&quot;</span>)
+    opts = Optim.Options(time_limit=<span class="hljs-number">1.0</span>, allow_f_increases=<span class="hljs-literal">true</span>, iterations=<span class="hljs-number">10</span>)
+    Q(y) = -logpdf(left, y) - right.G(y)
+    gradQ(J, y) = ForwardDiff.gradient!(J, Q, y)
+    results = optimize(Q, gradQ, mean(left), LBFGS(), opts)
+    y_map = Optim.minimizer(results)
+    P_lap = proj2psd(ForwardDiff.hessian(Q, y_map))
+    <span class="hljs-keyword">return</span> MvNormalMeanPrecision(y_map, P_lap)
+<span class="hljs-keyword">end</span>
+BayesBase.prod(::BayesBase.ClosedProd, left::unBoltzmann, right::MvLocationScaleT) = BayesBase.prod(BayesBase.ClosedProd(), right, left)
+</code></pre></div></details><p>The <code>MARX</code> node is declared as a stochastic node with seven edges. The message passing rules are split by direction: the <code>:Φ</code> rule updates the parameter belief from a completed transition, the <code>:out</code>/<code>:outprev</code> rules compute the posterior-predictive Student&#39;s-t, and the <code>:in</code>/<code>:inprev</code> rules compute the EFE message towards actions.</p><details class="admonition is-details" id="Hidden-block-of-MARX-node-declaration,-rule-metadata,-and-MvLocationScaleT-output-rule-click-to-expand-1255696dcd2e28d"><summary class="admonition-header">Hidden block of MARX node declaration, rule metadata, and MvLocationScaleT output rule - click to expand<a class="admonition-anchor" href="#Hidden-block-of-MARX-node-declaration,-rule-metadata,-and-MvLocationScaleT-output-rule-click-to-expand-1255696dcd2e28d" title="Permalink"></a></summary><div class="admonition-body"><pre><code class="language-julia hljs">
+<span class="hljs-keyword">struct</span> MARX <span class="hljs-keyword">end</span>
+<span class="hljs-meta">@node</span> MARX Stochastic [out, outprev1, outprev2, <span class="hljs-keyword">in</span>, inprev1, inprev2, Φ]
+
+<span class="hljs-string">&quot;&quot;&quot;
+    MARXMeta(Dy, u_lims)
+
+Problem constants that the MARX message rules need: the output dimension and the box
+limits on each action. Passing them as rule *metadata* rather than reading them from
+globals keeps the rule bodies type-stable — which matters here because they sit in the
+innermost loop of the planner.
+&quot;&quot;&quot;</span>
+<span class="hljs-keyword">struct</span> MARXMeta{T}
+    Dy     :: <span class="hljs-built_in">Int</span>
+    u_lims :: <span class="hljs-built_in">Tuple</span>{T,T}
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-meta">@meta</span> <span class="hljs-keyword">function</span> marx_meta(Dy, u_lims)
+    MARX() -&gt; MARXMeta(Dy, u_lims)
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-meta">@rule</span> MvLocationScaleT(:out, Marginalisation) (q_ν::PointMass, q_μ::PointMass, q_σ::PointMass) = <span class="hljs-keyword">begin</span>
+    <span class="hljs-keyword">return</span> MvLocationScaleT(q_ν, q_μ, q_σ)
+<span class="hljs-keyword">end</span>
+</code></pre></div></details><h4 id="Parameter-learning-rule-(:Φ)"><a class="docs-heading-anchor" href="#Parameter-learning-rule-(:Φ)">Parameter-learning rule (<code>:Φ</code>)</a><a id="Parameter-learning-rule-(:Φ)-1"></a><a class="docs-heading-anchor-permalink" href="#Parameter-learning-rule-(:Φ)" title="Permalink"></a></h4><p>Given a fully observed transition, the message towards <span>$\Phi$</span> is the Matrix-Normal-Wishart sufficient-statistic update of one regression datapoint.</p><details class="admonition is-details" id="Hidden-block-of-MARX-:Φ-parameter-learning-rules-click-to-expand-7baec551fb7613ab"><summary class="admonition-header">Hidden block of MARX :Φ parameter-learning rules - click to expand<a class="admonition-anchor" href="#Hidden-block-of-MARX-:Φ-parameter-learning-rules-click-to-expand-7baec551fb7613ab" title="Permalink"></a></summary><div class="admonition-body"><pre><code class="language-julia hljs">
+
+<span class="hljs-comment"># Conjugate update of the MARX parameter belief from one fully observed transition.</span>
+<span class="hljs-comment"># `inv(x x&#x27; + εI)` is a rank-one-plus-ridge inverse, so Sherman–Morrison gives it in</span>
+<span class="hljs-comment"># closed form and no 10x10 factorisation is needed.</span>
+<span class="hljs-keyword">function</span> marx_parameter_update(y_k, x_k)
+    Dy = length(y_k)
+    Dx = length(x_k)
+    ε  = <span class="hljs-number">1e-8</span>
+    U_ = (I(Dx) - (x_k * x_k&#x27;) ./ (ε + dot(x_k, x_k))) ./ ε      <span class="hljs-comment"># == inv(x_k*x_k&#x27; + ε*I)</span>
+    M_ = U_ * (x_k * y_k&#x27;)
+    V_ = (<span class="hljs-number">1</span> / ε) * <span class="hljs-built_in">Matrix</span>(I(Dy) * <span class="hljs-number">1.0</span>)                          <span class="hljs-comment"># == inv(ε*I)</span>
+    ν_ = <span class="hljs-number">2</span> - Dx + Dy
+    <span class="hljs-keyword">return</span> MatrixNormalWishart(M_, U_, V_, ν_)
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-meta">@rule</span> MARX(:Φ, Marginalisation) (q_out::PointMass, q_outprev1::PointMass, q_outprev2::PointMass, q_in::PointMass, q_inprev1::PointMass, q_inprev2::PointMass, meta::MARXMeta) = <span class="hljs-keyword">begin</span>
+    y_k = mean(q_out)
+    x_k = [mean(q_outprev1); mean(q_outprev2); mean(q_in); mean(q_inprev1); mean(q_inprev2)]
+    <span class="hljs-keyword">return</span> marx_parameter_update(y_k, x_k)
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-comment"># The remaining parameter messages carry no information about Φ.</span>
+<span class="hljs-meta">@rule</span> MARX(:Φ, Marginalisation) (m_out::AbstractMvNormal, m_outprev1::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal,MvLocationScaleT}, q_outprev2::PointMass, m_in::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal,unBoltzmann}, m_inprev1::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal,unBoltzmann}, q_inprev2::PointMass, meta::MARXMeta) = <span class="hljs-keyword">begin</span>
+    <span class="hljs-keyword">return</span> Uninformative()
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-meta">@rule</span> MARX(:Φ, Marginalisation) (m_out::AbstractMvNormal, m_outprev1::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal,MvLocationScaleT}, m_outprev2::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal}, m_in::AbstractMvNormal, m_inprev1::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal,unBoltzmann}, m_inprev2::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal,unBoltzmann}, meta::MARXMeta) = <span class="hljs-keyword">begin</span>
+    <span class="hljs-keyword">return</span> Uninformative()
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-meta">@rule</span> MARX(:Φ, Marginalisation) (m_out::AbstractMvNormal, q_outprev1::PointMass, q_outprev2::PointMass, m_in::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal,unBoltzmann}, q_inprev1::PointMass, q_inprev2::PointMass, meta::MARXMeta) = <span class="hljs-keyword">begin</span>
+    <span class="hljs-keyword">return</span> Uninformative()
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-meta">@rule</span> MARX(:Φ, Marginalisation) (q_out::<span class="hljs-built_in">Union</span>{AbstractMvNormal,unBoltzmann}, q_outprev1::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal,unBoltzmann}, q_outprev2::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal,unBoltzmann}, q_in::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal,unBoltzmann}, q_inprev1::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal,unBoltzmann}, q_inprev2::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal,unBoltzmann}, meta::MARXMeta) = <span class="hljs-keyword">begin</span>
+    <span class="hljs-keyword">return</span> Uninformative()
+<span class="hljs-keyword">end</span>
+
+</code></pre></div></details><h4 id="Prediction-rules-(:out,-:outprev)"><a class="docs-heading-anchor" href="#Prediction-rules-(:out,-:outprev)">Prediction rules (<code>:out</code>, <code>:outprev</code>)</a><a id="Prediction-rules-(:out,-:outprev)-1"></a><a class="docs-heading-anchor-permalink" href="#Prediction-rules-(:out,-:outprev)" title="Permalink"></a></h4><p>These rules return the posterior-predictive multivariate Student&#39;s-t of an output given the parameter belief and the rest of the regressor. With posterior <span>$\Phi=(M,U,V,\nu)$</span> and regressor <span>$x$</span>, the predictive is <span>$\mathrm{T}_{\nu-D_y+1}\!\big(M^\top x,\ \tfrac{1+x^\top U x}{\nu-D_y+1}V^{-1}\big)$</span>.</p><details class="admonition is-details" id="Hidden-block-of-MARX-:out-/-:outprev-message-rules-click-to-expand-123b8e122a77a29f"><summary class="admonition-header">Hidden block of MARX :out / :outprev message rules - click to expand<a class="admonition-anchor" href="#Hidden-block-of-MARX-:out-/-:outprev-message-rules-click-to-expand-123b8e122a77a29f" title="Permalink"></a></summary><div class="admonition-body"><pre><code class="language-julia hljs">
+
+<span class="hljs-comment"># Posterior predictive of the MARX node: given the regressor `x` and the parameter belief</span>
+<span class="hljs-comment"># Φ = MNW(M, U, V, ν), the predicted output is multivariate location-scale-t with</span>
+<span class="hljs-comment">#</span>
+<span class="hljs-comment">#     η = ν - Dy + 1,   μ = Mᵀx,   Σ = (1 + xᵀUx)/η · V⁻¹.</span>
+<span class="hljs-comment">#</span>
+<span class="hljs-comment"># This is exactly `posterior_predictive` (see below); `U` is used directly rather than</span>
+<span class="hljs-comment"># being inverted twice, and `V` is inverted once instead of once per evaluation.</span>
+<span class="hljs-keyword">function</span> marx_predictive(Φ, x)
+    M, U, V, ν = params(Φ)
+    Dy = size(M, <span class="hljs-number">2</span>)
+    η  = ν - Dy + <span class="hljs-number">1</span>
+    <span class="hljs-keyword">return</span> MvLocationScaleT(η, M&#x27; * x, (<span class="hljs-number">1</span> + x&#x27; * U * x) / η * inv(V))
+<span class="hljs-keyword">end</span>
+
+marx_regressor(o1, o2, i0, i1, i2) = [mode(o1); mode(o2); mode(i0); mode(i1); mode(i2)]
+
+<span class="hljs-comment"># --- :out — predict the next output -------------------------------------------</span>
+<span class="hljs-meta">@rule</span> MARX(:out, Marginalisation) (q_outprev1::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal}, q_outprev2::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal}, q_in::PointMass, q_inprev1::PointMass, q_inprev2::PointMass, m_Φ::MatrixNormalWishart, meta::MARXMeta) = <span class="hljs-keyword">begin</span>
+    <span class="hljs-keyword">return</span> marx_predictive(m_Φ, marx_regressor(q_outprev1, q_outprev2, q_in, q_inprev1, q_inprev2))
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-meta">@rule</span> MARX(:out, Marginalisation) (q_outprev1::PointMass, q_outprev2::PointMass, m_in::unBoltzmann, q_inprev1::PointMass, q_inprev2::PointMass, m_Φ::MatrixNormalWishart, meta::MARXMeta) = <span class="hljs-keyword">begin</span>
+    <span class="hljs-keyword">return</span> marx_predictive(m_Φ, marx_regressor(q_outprev1, q_outprev2, m_in, q_inprev1, q_inprev2))
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-meta">@rule</span> MARX(:out, Marginalisation) (m_outprev1::<span class="hljs-built_in">Union</span>{AbstractMvNormal,MvLocationScaleT}, q_outprev2::PointMass, m_in::<span class="hljs-built_in">Union</span>{AbstractMvNormal,unBoltzmann}, m_inprev1::<span class="hljs-built_in">Union</span>{PointMass,unBoltzmann}, q_inprev2::<span class="hljs-built_in">Union</span>{PointMass,unBoltzmann}, m_Φ::MatrixNormalWishart, meta::MARXMeta) = <span class="hljs-keyword">begin</span>
+    <span class="hljs-keyword">return</span> marx_predictive(m_Φ, marx_regressor(m_outprev1, q_outprev2, m_in, m_inprev1, q_inprev2))
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-meta">@rule</span> MARX(:out, Marginalisation) (m_outprev1::<span class="hljs-built_in">Union</span>{AbstractMvNormal,MvLocationScaleT}, m_outprev2::<span class="hljs-built_in">Union</span>{AbstractMvNormal,MvLocationScaleT}, m_in::<span class="hljs-built_in">Union</span>{AbstractMvNormal,MvLocationScaleT,unBoltzmann}, m_inprev1::<span class="hljs-built_in">Union</span>{AbstractMvNormal,MvLocationScaleT,unBoltzmann}, m_inprev2::<span class="hljs-built_in">Union</span>{AbstractMvNormal,MvLocationScaleT,unBoltzmann}, m_Φ::MatrixNormalWishart, meta::MARXMeta) = <span class="hljs-keyword">begin</span>
+    <span class="hljs-keyword">return</span> marx_predictive(m_Φ, marx_regressor(m_outprev1, m_outprev2, m_in, m_inprev1, m_inprev2))
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-meta">@rule</span> MARX(:out, Marginalisation) (q_outprev1::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal,unBoltzmann}, q_outprev2::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal,unBoltzmann}, q_in::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal,unBoltzmann}, q_inprev1::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal,unBoltzmann}, q_inprev2::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal,unBoltzmann}, q_Φ::MatrixNormalWishart, meta::MARXMeta) = <span class="hljs-keyword">begin</span>
+    <span class="hljs-keyword">return</span> marx_predictive(q_Φ, marx_regressor(q_outprev1, q_outprev2, q_in, q_inprev1, q_inprev2))
+<span class="hljs-keyword">end</span>
+
+
+<span class="hljs-comment"># --- :outprev1 — backward message towards the previous output -----------------</span>
+<span class="hljs-comment"># Energy as a function of `outprev1`, with every other regressor block held fixed.</span>
+<span class="hljs-comment"># The `mode(...)` calls are evaluated once here rather than on every energy evaluation.</span>
+<span class="hljs-keyword">function</span> marx_outprev1_message(Φ, m_star, o2, i0, i1, i2, Dy, Du)
+    tail = [mode(o2); mode(i0); mode(i1); mode(i2)]
+    G(outprev1) = logpdf(marx_predictive(Φ, [outprev1; tail]), m_star)
+    <span class="hljs-keyword">return</span> unBoltzmann(G, Dy, ProductDomain([(-<span class="hljs-literal">Inf</span> .. <span class="hljs-literal">Inf</span>) <span class="hljs-keyword">for</span> _ <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:Du]))
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-meta">@rule</span> MARX(:outprev1, Marginalisation) (q_out::unBoltzmann, q_outprev2::PointMass, q_in::unBoltzmann, q_inprev1::AbstractMvNormal, q_inprev2::PointMass, q_Φ::MatrixNormalWishart, meta::MARXMeta) = <span class="hljs-keyword">begin</span>
+    <span class="hljs-keyword">return</span> marx_outprev1_message(q_Φ, mode(q_out), q_outprev2, q_in, q_inprev1, q_inprev2,
+                                 meta.Dy, length(mode(q_in)))
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-meta">@rule</span> MARX(:outprev1, Marginalisation) (q_out::unBoltzmann, q_outprev2::PointMass, q_in::unBoltzmann, q_inprev1::unBoltzmann, q_inprev2::PointMass, q_Φ::MatrixNormalWishart, meta::MARXMeta) = <span class="hljs-keyword">begin</span>
+    <span class="hljs-keyword">return</span> marx_outprev1_message(q_Φ, mode(q_out), q_outprev2, q_in, q_inprev1, q_inprev2,
+                                 meta.Dy, length(mode(q_in)))
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-meta">@rule</span> MARX(:outprev1, Marginalisation) (q_out::<span class="hljs-built_in">Union</span>{AbstractMvNormal,MvLocationScaleT}, q_outprev2::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal}, q_in::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal}, q_inprev1::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal}, q_inprev2::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal}, m_Φ::MatrixNormalWishart, meta::MARXMeta) = <span class="hljs-keyword">begin</span>
+    <span class="hljs-keyword">return</span> marx_outprev1_message(m_Φ, mean(q_out), q_outprev2, q_in, q_inprev1, q_inprev2,
+                                 meta.Dy, length(mode(q_in)))
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-meta">@rule</span> MARX(:outprev1, Marginalisation) (q_out::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal,unBoltzmann}, q_outprev2::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal}, q_in::<span class="hljs-built_in">Union</span>{PointMass,unBoltzmann,AbstractMvNormal}, q_inprev1::<span class="hljs-built_in">Union</span>{PointMass,unBoltzmann,AbstractMvNormal}, q_inprev2::<span class="hljs-built_in">Union</span>{PointMass,unBoltzmann,AbstractMvNormal}, q_Φ::MatrixNormalWishart, meta::MARXMeta) = <span class="hljs-keyword">begin</span>
+    <span class="hljs-keyword">return</span> marx_outprev1_message(q_Φ, mode(q_out), q_outprev2, q_in, q_inprev1, q_inprev2,
+                                 meta.Dy, length(mode(q_in)))
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-meta">@rule</span> MARX(:outprev1, Marginalisation) (m_out::<span class="hljs-built_in">Union</span>{AbstractMvNormal,MvLocationScaleT}, q_outprev2::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal}, m_in::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal}, m_inprev1::<span class="hljs-built_in">Union</span>{PointMass,unBoltzmann}, q_inprev2::<span class="hljs-built_in">Union</span>{PointMass,unBoltzmann}, m_Φ::MatrixNormalWishart, meta::MARXMeta) = <span class="hljs-keyword">begin</span>
+    <span class="hljs-keyword">return</span> marx_outprev1_message(m_Φ, mean(m_out), q_outprev2, m_in, m_inprev1, q_inprev2,
+                                 meta.Dy, length(mode(m_in)))
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-meta">@rule</span> MARX(:outprev1, Marginalisation) (m_out::AbstractMvNormal, m_outprev2::AbstractMvNormal, m_in::AbstractMvNormal, m_inprev1::AbstractMvNormal, m_inprev2::AbstractMvNormal, m_Φ::MatrixNormalWishart, meta::MARXMeta) = <span class="hljs-keyword">begin</span>
+    <span class="hljs-keyword">return</span> marx_outprev1_message(m_Φ, mean(m_out), m_outprev2, m_in, m_inprev1, m_inprev2,
+                                 meta.Dy, length(mode(m_in)))
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-meta">@rule</span> MARX(:outprev1, Marginalisation) (m_out::MvNormalMeanCovariance, q_outprev2::PointMass, m_in::<span class="hljs-built_in">Union</span>{PointMass,unBoltzmann}, m_inprev1::<span class="hljs-built_in">Union</span>{PointMass,unBoltzmann}, q_inprev2::<span class="hljs-built_in">Union</span>{PointMass,unBoltzmann}, m_Φ::MatrixNormalWishart, meta::MARXMeta) = <span class="hljs-keyword">begin</span>
+    <span class="hljs-keyword">return</span> marx_outprev1_message(m_Φ, mean(m_out), q_outprev2, m_in, m_inprev1, q_inprev2,
+                                 meta.Dy, length(mode(m_in)))
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-meta">@rule</span> MARX(:outprev1, Marginalisation) (m_out::AbstractMvNormal, m_outprev2::AbstractMvNormal, m_in::AbstractMvNormal, m_inprev1::<span class="hljs-built_in">Union</span>{PointMass,unBoltzmann}, m_inprev2::<span class="hljs-built_in">Union</span>{PointMass,unBoltzmann}, m_Φ::MatrixNormalWishart, meta::MARXMeta) = <span class="hljs-keyword">begin</span>
+    <span class="hljs-keyword">return</span> marx_outprev1_message(m_Φ, mean(m_out), m_outprev2, m_in, m_inprev1, m_inprev2,
+                                 meta.Dy, length(mode(m_in)))
+<span class="hljs-keyword">end</span>
+
+
+<span class="hljs-comment"># --- :outprev2 — carries no information back ----------------------------------</span>
+<span class="hljs-meta">@rule</span> MARX(:outprev2, Marginalisation) (q_out::AbstractMvNormal, q_outprev1::unBoltzmann, q_in::<span class="hljs-built_in">Union</span>{PointMass,unBoltzmann}, q_inprev1::<span class="hljs-built_in">Union</span>{PointMass,unBoltzmann}, q_inprev2::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal}, q_Φ::MatrixNormalWishart, meta::MARXMeta) = <span class="hljs-keyword">begin</span>
+    <span class="hljs-keyword">return</span> Uninformative()
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-meta">@rule</span> MARX(:outprev2, Marginalisation) (m_out::AbstractMvNormal, m_outprev1::AbstractMvNormal, m_in::AbstractMvNormal, m_inprev1::AbstractMvNormal, m_inprev2::AbstractMvNormal, m_Φ::MatrixNormalWishart, meta::MARXMeta) = <span class="hljs-keyword">begin</span>
+    <span class="hljs-keyword">return</span> Uninformative()
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-meta">@rule</span> MARX(:outprev2, Marginalisation) (m_out::AbstractMvNormal, m_outprev1::AbstractMvNormal, m_in::AbstractMvNormal, m_inprev1::unBoltzmann, m_inprev2::unBoltzmann, m_Φ::MatrixNormalWishart, meta::MARXMeta) = <span class="hljs-keyword">begin</span>
+    <span class="hljs-keyword">return</span> Uninformative()
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-meta">@rule</span> MARX(:outprev2, Marginalisation) (q_out::AbstractMvNormal, q_outprev1::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal}, q_in::unBoltzmann, q_inprev1::unBoltzmann, q_inprev2::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal}, q_Φ::MatrixNormalWishart, meta::MARXMeta) = <span class="hljs-keyword">begin</span>
+    <span class="hljs-keyword">return</span> Uninformative()
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-meta">@rule</span> MARX(:outprev2, Marginalisation) (q_out::AbstractMvNormal, q_outprev1::AbstractMvNormal, q_in::<span class="hljs-built_in">Union</span>{PointMass,unBoltzmann,AbstractMvNormal}, q_inprev1::<span class="hljs-built_in">Union</span>{PointMass,unBoltzmann,AbstractMvNormal}, q_inprev2::<span class="hljs-built_in">Union</span>{PointMass,unBoltzmann,AbstractMvNormal}, q_Φ::MatrixNormalWishart, meta::MARXMeta) = <span class="hljs-keyword">begin</span>
+    <span class="hljs-keyword">return</span> Uninformative()
+<span class="hljs-keyword">end</span>
+
+</code></pre></div></details><h4 id="Action-rules-(:in,-:inprev)-—-expected-free-energy"><a class="docs-heading-anchor" href="#Action-rules-(:in,-:inprev)-—-expected-free-energy">Action rules (<code>:in</code>, <code>:inprev</code>) — expected free energy</a><a id="Action-rules-(:in,-:inprev)-—-expected-free-energy-1"></a><a class="docs-heading-anchor-permalink" href="#Action-rules-(:in,-:inprev)-—-expected-free-energy" title="Permalink"></a></h4><p>The message towards an action is an <code>unBoltzmann</code> whose energy is the expected free energy <a href="#references">[1]</a></p><p class="math-container">\[G(u) = \underbrace{-\tfrac12\log\det\Sigma}_{\text{epistemic}} \;+\; \underbrace{\tfrac12\,\tfrac{\eta}{\eta-2}\operatorname{tr}(S_*^{-1}\Sigma) + \tfrac12 (\mu-m_*)^\top S_*^{-1}(\mu-m_*)}_{\text{pragmatic}},\]</p><p>where <span>$(\eta,\mu,\Sigma)$</span> is the predicted output under action <span>$u$</span> and <span>$(m_*,S_*)$</span> is the goal.</p><details class="admonition is-details" id="Hidden-block-of-MARX-:in-/-:inprev-action-(expected-free-energy)-rules-click-to-expand-d7191db76cacf535"><summary class="admonition-header">Hidden block of MARX :in / :inprev action (expected free energy) rules - click to expand<a class="admonition-anchor" href="#Hidden-block-of-MARX-:in-/-:inprev-action-(expected-free-energy)-rules-click-to-expand-d7191db76cacf535" title="Permalink"></a></summary><div class="admonition-body"><pre><code class="language-julia hljs">
+
+<span class="hljs-comment"># Expected free energy of an action, in closed form.</span>
+<span class="hljs-comment">#</span>
+<span class="hljs-comment">#     G(u) = -½ logdet Σ(u)  +  ½·η/(η-2)·tr(S⁻¹Σ(u))  +  ½ (μ(u)-m)ᵀS⁻¹(μ(u)-m)</span>
+<span class="hljs-comment">#</span>
+<span class="hljs-comment"># Two structural facts make this cheap. First, Σ(u) = s(u)/η · V⁻¹ is a *scalar* multiple</span>
+<span class="hljs-comment"># of a fixed matrix, so</span>
+<span class="hljs-comment">#</span>
+<span class="hljs-comment">#     logdet Σ(u) = Dy·log(s(u)/η) + logdet V⁻¹      and      tr(S⁻¹Σ(u)) = s(u)/η · tr(S⁻¹V⁻¹),</span>
+<span class="hljs-comment">#</span>
+<span class="hljs-comment"># with both trailing terms constant. Second, the regressor is affine in the action,</span>
+<span class="hljs-comment"># x(u) = Pu + q, so s(u) = c₀ + uᵀAu + 2bᵀu and μ(u) = Bu + μ₀ are a quadratic and an</span>
+<span class="hljs-comment"># affine map in Du = 2 dimensions. Precomputing (A, b, c₀, B, μ₀) once per message turns</span>
+<span class="hljs-comment"># each evaluation into a handful of 2x2 operations, and makes the gradient analytic — so</span>
+<span class="hljs-comment"># the optimiser never needs automatic differentiation.</span>
+<span class="hljs-keyword">struct</span> MARXEFE{T}
+    A       :: Symmetric{T,<span class="hljs-built_in">Matrix</span>{T}}   <span class="hljs-comment"># s(u) = c₀ + uᵀAu + 2bᵀu</span>
+    b       :: <span class="hljs-built_in">Vector</span>{T}
+    c0      :: T
+    B       :: <span class="hljs-built_in">Matrix</span>{T}                <span class="hljs-comment"># μ(u) = Bu + μ₀</span>
+    mu0     :: <span class="hljs-built_in">Vector</span>{T}
+    S0inv   :: <span class="hljs-built_in">Matrix</span>{T}
+    mstar   :: <span class="hljs-built_in">Vector</span>{T}
+    invη    :: T
+    Dy      :: <span class="hljs-built_in">Int</span>
+    logdetΩ :: T
+    κtr     :: T                        <span class="hljs-comment"># ½·η/(η-2)·(1/η)·tr(S⁻¹V⁻¹)</span>
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-keyword">function</span> MARXEFE(Φ, m_star, S_star, x_y, x_u, Du)
+    M, U, V, ν = params(Φ)
+    Dy = length(m_star)
+    η  = ν - Dy + <span class="hljs-number">1</span>
+    Ω  = inv(V)
+
+    idx = (length(x_y) + <span class="hljs-number">1</span>):(length(x_y) + Du)          <span class="hljs-comment"># the action block of the regressor</span>
+    q   = vcat(x_y, zeros(eltype(M), Du), x_u)
+
+    S0inv = inv(S_star)
+    <span class="hljs-keyword">return</span> MARXEFE(Symmetric(U[idx, idx]), U[idx, :] * q, <span class="hljs-number">1</span> + dot(q, U, q),
+                   <span class="hljs-built_in">Matrix</span>(transpose(M[idx, :])), M&#x27; * q, S0inv, collect(m_star),
+                   <span class="hljs-number">1</span> / η, Dy, logdet(Ω), <span class="hljs-number">1</span> / <span class="hljs-number">2</span> * η / (η - <span class="hljs-number">2</span>) * (<span class="hljs-number">1</span> / η) * tr(S_star \ Ω))
+<span class="hljs-keyword">end</span>
+
+efe_scale(e::MARXEFE, u) = e.c0 + dot(u, e.A, u) + <span class="hljs-number">2</span> * dot(e.b, u)
+
+(e::MARXEFE)(u) = <span class="hljs-keyword">begin</span>
+    s = efe_scale(e, u)
+    d = e.B * u + e.mu0 - e.mstar
+    <span class="hljs-keyword">return</span> -<span class="hljs-number">1</span> / <span class="hljs-number">2</span> * (e.Dy * log(e.invη * s) + e.logdetΩ) + e.κtr * s + <span class="hljs-number">1</span> / <span class="hljs-number">2</span> * dot(d, e.S0inv, d)
+<span class="hljs-keyword">end</span>
+
+efe_gradient(e::MARXEFE, u) = <span class="hljs-keyword">begin</span>
+    s = efe_scale(e, u)
+    d = e.B * u + e.mu0 - e.mstar
+    <span class="hljs-keyword">return</span> (-<span class="hljs-number">1</span> / <span class="hljs-number">2</span> * e.Dy / s + e.κtr) * (<span class="hljs-number">2</span> * (e.A * u + e.b)) + e.B&#x27; * (e.S0inv * d)
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-keyword">function</span> marx_efe_message(Φ, m_star, S_star, x_y, x_u, Du, u_lims)
+    e = MARXEFE(Φ, m_star, S_star, x_y, x_u, Du)
+    <span class="hljs-keyword">return</span> unBoltzmann(e, u -&gt; efe_gradient(e, u), Du,
+                       ProductDomain([u_lims[<span class="hljs-number">1</span>] .. u_lims[<span class="hljs-number">2</span>] <span class="hljs-keyword">for</span> _ <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:Du]))
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-comment"># --- :in — the action message -------------------------------------------------</span>
+<span class="hljs-meta">@rule</span> MARX(:<span class="hljs-keyword">in</span>, Marginalisation) (m_out::MvNormalMeanCovariance, q_outprev1::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal,MvLocationScaleT}, q_outprev2::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal,MvLocationScaleT}, q_inprev1::PointMass, q_inprev2::PointMass, m_Φ::MatrixNormalWishart, meta::MARXMeta) = <span class="hljs-keyword">begin</span>
+    m_star, S_star = mean_cov(m_out)
+    <span class="hljs-keyword">return</span> marx_efe_message(m_Φ, m_star, S_star,
+                            [mode(q_outprev1); mode(q_outprev2)],
+                            [mode(q_inprev1); mode(q_inprev2)],
+                            length(mode(q_inprev1)), meta.u_lims)
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-meta">@rule</span> MARX(:<span class="hljs-keyword">in</span>, Marginalisation) (m_out::AbstractMvNormal, m_outprev1::<span class="hljs-built_in">Union</span>{AbstractMvNormal,MvLocationScaleT}, q_outprev2::PointMass, m_inprev1::unBoltzmann, q_inprev2::PointMass, m_Φ::MatrixNormalWishart, meta::MARXMeta) = <span class="hljs-keyword">begin</span>
+    m_star, S_star = mean_cov(m_out)
+    <span class="hljs-keyword">return</span> marx_efe_message(m_Φ, m_star, S_star,
+                            [mode(m_outprev1); mode(q_outprev2)],
+                            [mode(m_inprev1); mode(q_inprev2)],
+                            length(mode(m_inprev1)), meta.u_lims)
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-meta">@rule</span> MARX(:<span class="hljs-keyword">in</span>, Marginalisation) (m_out::AbstractMvNormal, m_outprev1::<span class="hljs-built_in">Union</span>{AbstractMvNormal,MvLocationScaleT}, m_outprev2::AbstractMvNormal, m_inprev1::AbstractMvNormal, m_inprev2::AbstractMvNormal, m_Φ::MatrixNormalWishart, meta::MARXMeta) = <span class="hljs-keyword">begin</span>
+    m_star, S_star = mean_cov(m_out)
+    <span class="hljs-keyword">return</span> marx_efe_message(m_Φ, m_star, S_star,
+                            [mode(m_outprev1); mode(m_outprev2)],
+                            [mode(m_inprev1); mode(m_inprev2)],
+                            length(mode(m_inprev1)), meta.u_lims)
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-meta">@rule</span> MARX(:<span class="hljs-keyword">in</span>, Marginalisation) (m_out::AbstractMvNormal, m_outprev1::<span class="hljs-built_in">Union</span>{AbstractMvNormal,MvLocationScaleT}, m_outprev2::AbstractMvNormal, m_inprev1::unBoltzmann, m_inprev2::unBoltzmann, m_Φ::MatrixNormalWishart, meta::MARXMeta) = <span class="hljs-keyword">begin</span>
+    m_star, S_star = mean_cov(m_out)
+    <span class="hljs-keyword">return</span> marx_efe_message(m_Φ, m_star, S_star,
+                            [mode(m_outprev1); mode(m_outprev2)],
+                            [mode(m_inprev1); mode(m_inprev2)],
+                            length(mode(m_inprev1)), meta.u_lims)
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-meta">@rule</span> MARX(:<span class="hljs-keyword">in</span>, Marginalisation) (m_out::AbstractMvNormal, q_outprev1::PointMass, q_outprev2::PointMass, q_inprev1::PointMass, q_inprev2::PointMass, m_Φ::MatrixNormalWishart, meta::MARXMeta) = <span class="hljs-keyword">begin</span>
+    m_star, S_star = mean_cov(m_out)
+    <span class="hljs-keyword">return</span> marx_efe_message(m_Φ, m_star, S_star,
+                            [mode(q_outprev1); mode(q_outprev2)],
+                            [mode(q_inprev1); mode(q_inprev2)],
+                            length(mode(q_inprev1)), meta.u_lims)
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-meta">@rule</span> MARX(:<span class="hljs-keyword">in</span>, Marginalisation) (q_out::AbstractMvNormal, q_outprev1::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal}, q_outprev2::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal}, q_inprev1::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal}, q_inprev2::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal}, q_Φ::MatrixNormalWishart, meta::MARXMeta) = <span class="hljs-keyword">begin</span>
+    m_star, S_star = mean_cov(q_out)
+    <span class="hljs-keyword">return</span> marx_efe_message(q_Φ, m_star, S_star,
+                            [mode(q_outprev1); mode(q_outprev2)],
+                            [mode(q_inprev1); mode(q_inprev2)],
+                            length(mode(q_inprev1)), meta.u_lims)
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-meta">@rule</span> MARX(:<span class="hljs-keyword">in</span>, Marginalisation) (q_out::AbstractMvNormal, q_outprev1::unBoltzmann, q_outprev2::AbstractMvNormal, q_inprev1::unBoltzmann, q_inprev2::unBoltzmann, q_Φ::MatrixNormalWishart, meta::MARXMeta) = <span class="hljs-keyword">begin</span>
+    m_star, S_star = mean_cov(q_out)
+    <span class="hljs-keyword">return</span> marx_efe_message(q_Φ, m_star, S_star,
+                            [mode(q_outprev1); mode(q_outprev2)],
+                            [mode(q_inprev1); mode(q_inprev2)],
+                            length(mode(q_inprev1)), meta.u_lims)
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-meta">@rule</span> MARX(:<span class="hljs-keyword">in</span>, Marginalisation) (q_out::<span class="hljs-built_in">Union</span>{PointMass,unBoltzmann}, q_outprev1::<span class="hljs-built_in">Union</span>{AbstractMvNormal,unBoltzmann}, q_outprev2::<span class="hljs-built_in">Union</span>{AbstractMvNormal,PointMass}, q_inprev1::<span class="hljs-built_in">Union</span>{PointMass,unBoltzmann}, q_inprev2::<span class="hljs-built_in">Union</span>{PointMass,unBoltzmann}, q_Φ::MatrixNormalWishart, meta::MARXMeta) = <span class="hljs-keyword">begin</span>
+    <span class="hljs-keyword">return</span> marx_efe_message(q_Φ, mode(q_out), <span class="hljs-number">1e-1</span> * diagm(ones(length(mode(q_out)))),
+                            [mode(q_outprev1); mode(q_outprev2)],
+                            [mode(q_inprev1); mode(q_inprev2)],
+                            length(mode(q_inprev1)), meta.u_lims)
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-meta">@rule</span> MARX(:<span class="hljs-keyword">in</span>, Marginalisation) (q_out::AbstractMvNormal, q_outprev1::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal,unBoltzmann}, q_outprev2::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal,unBoltzmann}, q_inprev1::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal,unBoltzmann}, q_inprev2::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal,unBoltzmann}, q_Φ::MatrixNormalWishart, meta::MARXMeta) = <span class="hljs-keyword">begin</span>
+    m_star, S_star = mean_cov(q_out)
+    <span class="hljs-keyword">return</span> marx_efe_message(q_Φ, m_star, S_star,
+                            [mode(q_outprev1); mode(q_outprev2)],
+                            [mode(q_inprev1); mode(q_inprev2)],
+                            length(mode(q_inprev1)), meta.u_lims)
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-meta">@rule</span> MARX(:<span class="hljs-keyword">in</span>, Marginalisation) (q_out::PointMass, q_outprev1::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal}, q_outprev2::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal}, q_inprev1::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal,unBoltzmann}, q_inprev2::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal,unBoltzmann}, q_Φ::MatrixNormalWishart, meta::MARXMeta) = <span class="hljs-keyword">begin</span>
+    <span class="hljs-keyword">return</span> marx_efe_message(q_Φ, mode(q_out), <span class="hljs-number">1e-12</span> * diagm(ones(length(mode(q_out)))),
+                            [mode(q_outprev1); mode(q_outprev2)],
+                            [mode(q_inprev1); mode(q_inprev2)],
+                            length(mode(q_inprev1)), meta.u_lims)
+<span class="hljs-keyword">end</span>
+
+
+<span class="hljs-comment"># --- :inprev1 / :inprev2 — carry no information back --------------------------</span>
+<span class="hljs-meta">@rule</span> MARX(:inprev1, Marginalisation) (q_out::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal,unBoltzmann}, q_outprev1::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal,unBoltzmann}, q_outprev2::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal,unBoltzmann}, q_in::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal,unBoltzmann}, q_inprev2::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal,unBoltzmann}, q_Φ::MatrixNormalWishart, meta::MARXMeta) = <span class="hljs-keyword">begin</span>
+    <span class="hljs-keyword">return</span> Uninformative()
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-meta">@rule</span> MARX(:inprev1, Marginalisation) (m_out::AbstractMvNormal, q_outprev1::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal,MvLocationScaleT}, q_outprev2::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal,MvLocationScaleT}, q_in::<span class="hljs-built_in">Union</span>{PointMass,unBoltzmann}, q_inprev2::<span class="hljs-built_in">Union</span>{PointMass,unBoltzmann}, m_Φ::MatrixNormalWishart, meta::MARXMeta) = <span class="hljs-keyword">begin</span>
+    <span class="hljs-keyword">return</span> Uninformative()
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-meta">@rule</span> MARX(:inprev1, Marginalisation) (m_out::AbstractMvNormal, m_outprev1::<span class="hljs-built_in">Union</span>{AbstractMvNormal,MvLocationScaleT}, q_outprev2::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal}, m_in::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal,unBoltzmann}, q_inprev2::<span class="hljs-built_in">Union</span>{PointMass,unBoltzmann}, m_Φ::MatrixNormalWishart, meta::MARXMeta) = <span class="hljs-keyword">begin</span>
+    <span class="hljs-keyword">return</span> Uninformative()
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-meta">@rule</span> MARX(:inprev1, Marginalisation) (m_out::AbstractMvNormal, m_outprev1::<span class="hljs-built_in">Union</span>{AbstractMvNormal,MvLocationScaleT}, m_outprev2::AbstractMvNormal, m_in::AbstractMvNormal, m_inprev2::<span class="hljs-built_in">Union</span>{AbstractMvNormal,unBoltzmann}, m_Φ::MatrixNormalWishart, meta::MARXMeta) = <span class="hljs-keyword">begin</span>
+    <span class="hljs-keyword">return</span> Uninformative()
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-meta">@rule</span> MARX(:inprev2, Marginalisation) (m_out::AbstractMvNormal, m_outprev1::AbstractMvNormal, m_outprev2::AbstractMvNormal, m_in::AbstractMvNormal, m_inprev1::AbstractMvNormal, m_Φ::MatrixNormalWishart, meta::MARXMeta) = <span class="hljs-keyword">begin</span>
+    <span class="hljs-keyword">return</span> Uninformative()
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-meta">@rule</span> MARX(:inprev2, Marginalisation) (q_out::AbstractMvNormal, q_outprev1::unBoltzmann, q_outprev2::AbstractMvNormal, q_in::unBoltzmann, q_inprev1::unBoltzmann, q_Φ::MatrixNormalWishart, meta::MARXMeta) = <span class="hljs-keyword">begin</span>
+    <span class="hljs-keyword">return</span> Uninformative()
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-meta">@rule</span> MARX(:inprev2, Marginalisation) (m_out::AbstractMvNormal, m_outprev1::MvLocationScaleT, m_outprev2::AbstractMvNormal, m_in::AbstractMvNormal, m_inprev1::unBoltzmann, m_Φ::MatrixNormalWishart, meta::MARXMeta) = <span class="hljs-keyword">begin</span>
+    <span class="hljs-keyword">return</span> Uninformative()
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-meta">@rule</span> MARX(:inprev2, Marginalisation) (q_out::AbstractMvNormal, q_outprev1::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal}, q_outprev2::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal}, q_in::unBoltzmann, q_inprev1::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal}, q_Φ::MatrixNormalWishart, meta::MARXMeta) = <span class="hljs-keyword">begin</span>
+    <span class="hljs-keyword">return</span> Uninformative()
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-meta">@rule</span> MARX(:inprev2, Marginalisation) (q_out::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal,unBoltzmann}, q_outprev1::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal,unBoltzmann}, q_outprev2::<span class="hljs-built_in">Union</span>{PointMass,AbstractMvNormal,unBoltzmann}, q_in::<span class="hljs-built_in">Union</span>{PointMass,unBoltzmann}, q_inprev1::<span class="hljs-built_in">Union</span>{PointMass,unBoltzmann}, q_Φ::MatrixNormalWishart, meta::MARXMeta) = <span class="hljs-keyword">begin</span>
+    <span class="hljs-keyword">return</span> Uninformative()
+<span class="hljs-keyword">end</span>
+
+</code></pre></div></details><p>The posterior predictive and its EFE components are also available as standalone functions for inspection and the landscape plot in the results section.</p><pre><code class="language-julia hljs">posterior_predictive(x, M, U, V, ν, Dx, Dy) = (ν - Dy + <span class="hljs-number">1</span>, M&#x27; * x, (<span class="hljs-number">1</span> + x&#x27; * U * x) / (ν - Dy + <span class="hljs-number">1</span>) * inv(V))
+
+<span class="hljs-keyword">function</span> logevidence(y, x, M, U, V, ν, Dx, Dy)
+    η, μ, Σ = posterior_predictive(x, M, U, V, ν, Dx, Dy)
+    <span class="hljs-keyword">return</span> -<span class="hljs-number">1</span> / <span class="hljs-number">2</span> * (Dy * log(η * <span class="hljs-literal">π</span>) + logdet(Σ) - <span class="hljs-number">2</span> * logmvgamma(Dy, (η + Dy) / <span class="hljs-number">2</span>) + <span class="hljs-number">2</span> * logmvgamma(Dy, (η + Dy - <span class="hljs-number">1</span>) / <span class="hljs-number">2</span>) + (η + Dy) * log(<span class="hljs-number">1</span> + <span class="hljs-number">1</span> / η * (y - μ)&#x27; * inv(Σ) * (y - μ)))
+<span class="hljs-keyword">end</span>
+
+mutualinfo(Σ) = <span class="hljs-number">1</span> / <span class="hljs-number">2</span> * logdet(Σ)
+<span class="hljs-keyword">function</span> crossentropy(goal, η, μ, Σ)
+    m_star = mean(goal); S_star = cov(goal)
+    <span class="hljs-keyword">return</span> <span class="hljs-number">1</span> / <span class="hljs-number">2</span> * (η / (η - <span class="hljs-number">2</span>) * tr(inv(S_star) * Σ) + (μ - m_star)&#x27; * inv(S_star) * (μ - m_star))
+<span class="hljs-keyword">end</span>
+</code></pre><pre><code class="nohighlight hljs">crossentropy (generic function with 1 method)</code></pre><h3 id="2.2-Bayesian-Filtering"><a class="docs-heading-anchor" href="#2.2-Bayesian-Filtering">2.2 Bayesian Filtering</a><a id="2.2-Bayesian-Filtering-1"></a><a class="docs-heading-anchor-permalink" href="#2.2-Bayesian-Filtering" title="Permalink"></a></h3><p>At every time step the agent updates its belief over <span>$\Phi$</span> from the latest observation–action pair. <code>MARX_learning</code> is a single-step model: given the current parameter belief and the observed transition <span>$(y_{k-2}, y_{k-1}, u_{k-2}, u_{k-1}, u_k) \to y_k$</span>, one call to <code>infer</code> returns the conjugate MatrixNormalWishart posterior.</p><pre><code class="language-julia hljs"><span class="hljs-meta">@model</span> <span class="hljs-keyword">function</span> MARX_learning(y_k, y_kmin1, y_kmin2, u_k, u_kmin1, u_kmin2, M_kmin1, U_kmin1, V_kmin1, ν_kmin1)
+    Φ ~ MatrixNormalWishart(M_kmin1, U_kmin1, V_kmin1, ν_kmin1)
+    y_k ~ MARX(y_kmin1, y_kmin2, u_k, u_kmin1, u_kmin2, Φ)
+<span class="hljs-keyword">end</span>
+</code></pre><h3 id="2.3-Planning"><a class="docs-heading-anchor" href="#2.3-Planning">2.3 Planning</a><a id="2.3-Planning-1"></a><a class="docs-heading-anchor-permalink" href="#2.3-Planning" title="Permalink"></a></h3><p><code>MARX_planning</code> unrolls the model over a horizon of <code>len_horizon</code> steps and places a Gaussian goal prior on the final predicted output. Imposing point-mass constraints on the action posteriors turns inference into EFE minimisation <a href="#references">[1]</a>: the variational posterior over each <span>$u_t$</span> concentrates on the action that jointly minimises epistemic cost (information gain about <span>$\Phi$</span>) and pragmatic cost (distance to the goal).</p><p>The agent selects <span>$u_k = \arg\min_u\,G(u)$</span> from the first time step of the plan, then re-plans at the next step with the updated belief.</p><pre><code class="language-julia hljs"><span class="hljs-meta">@model</span> <span class="hljs-keyword">function</span> MARX_planning(y_tmin1, y_tmin2, u_tmin1, u_tmin2, M_k, U_k, V_k, ν_k, Υ, m_star, S_star, len_horizon)
+    Φ ~ MatrixNormalWishart(M_k, U_k, V_k, ν_k)
+    u_[<span class="hljs-number">1</span>] ~ MvNormalMeanPrecision(zeros(<span class="hljs-number">2</span>), Υ)
+    u_[<span class="hljs-number">2</span>] ~ MvNormalMeanPrecision(zeros(<span class="hljs-number">2</span>), Υ)
+    y_[<span class="hljs-number">1</span>] ~ MARX(y_tmin1, y_tmin2, u_[<span class="hljs-number">1</span>], u_tmin1, u_tmin2, Φ)
+    y_[<span class="hljs-number">2</span>] ~ MARX(y_[<span class="hljs-number">1</span>], y_tmin1, u_[<span class="hljs-number">2</span>], u_[<span class="hljs-number">1</span>], u_tmin1, Φ)
+    <span class="hljs-keyword">for</span> t <span class="hljs-keyword">in</span> <span class="hljs-number">3</span>:len_horizon
+        u_[t] ~ MvNormalMeanPrecision(zeros(<span class="hljs-number">2</span>), Υ)
+        y_[t] ~ MARX(y_[t-<span class="hljs-number">1</span>], y_[t-<span class="hljs-number">2</span>], u_[t], u_[t-<span class="hljs-number">1</span>], u_[t-<span class="hljs-number">2</span>], Φ)
+    <span class="hljs-keyword">end</span>
+    y_[len_horizon] ~ MvNormalMeanCovariance(m_star, S_star)
+<span class="hljs-keyword">end</span>
+</code></pre><p>&lt;a id=&quot;experiment-setup&quot;&gt;&lt;/a&gt;</p><h2 id="3.-Experiment"><a class="docs-heading-anchor" href="#3.-Experiment">3. Experiment</a><a id="3.-Experiment-1"></a><a class="docs-heading-anchor-permalink" href="#3.-Experiment" title="Permalink"></a></h2><p>We run a <strong>four-waypoint diamond task</strong>: the end-effector must visit four points arranged in a diamond in workpiece coordinates. The stage starts cold (<span>$T = T_\text{amb}$</span>); once exploration ends, the machine switches on and the thermal state climbs monotonically toward its steady value <span>$T_\infty = \eta P / \kappa = 10$</span>. The thermal expansion <span>$\alpha (T - T_\text{amb})$</span> grows throughout the trial, so the stage must be driven to progressively larger compensating positions to keep the end-effector at each waypoint.</p><p>The prior <span>$M_0$</span> encodes the exact <strong>second-order AR coefficients</strong> of the stage (1.95 and <span>$-0.95$</span>, derivable from mass, damping and time-step) together with a <strong>weakly informative control gain of 0.1</strong> — ten times the true value. The overestimate produces larger initial actions that keep the expected free energy landscape well-conditioned before the model has absorbed enough data. With <span>$\nu_0 = 15$</span>, the posterior adapts to the true gain within roughly 15 planning steps: this is continual adaptation, not identification from scratch.</p><p>Exploration spans 90 steps: 60 steps of four-phase excitation (<span>$\pm x$</span>, <span>$\pm y$</span>) followed by a 30-step settling phase with zero force so the stage damps back near the origin. The machine starts heating only after exploration ends (<span>$k &gt; 90$</span>).</p><p>The dimensions and action limits that the message-passing rules need are passed to them as rule <em>metadata</em> (<code>MARXMeta</code>, attached with <code>@meta</code>) rather than read from globals, which keeps the rule bodies type-stable.</p><pre><code class="language-julia hljs">Random.seed!(<span class="hljs-number">3</span>)
+
+Δt          = <span class="hljs-number">0.1</span>
+len_trial   = <span class="hljs-number">400</span>
+len_horizon = <span class="hljs-number">5</span>
+n_explore   = <span class="hljs-number">90</span>    <span class="hljs-comment"># 60 active + 30 settling (u=0 to damp residual displacement)</span>
+goal_radius = <span class="hljs-number">0.1</span>
+
+Mu = <span class="hljs-number">2</span>; My = <span class="hljs-number">2</span>
+Dy = <span class="hljs-number">2</span>
+Du = <span class="hljs-number">2</span>
+Dx = My * Dy + (Mu + <span class="hljs-number">1</span>) * Du
+
+u_lims = (-<span class="hljs-number">2.0</span>, <span class="hljs-number">2.0</span>)
+
+<span class="hljs-comment"># Waypoints in workpiece frame (diamond)</span>
+waypoints   = [[<span class="hljs-number">1.0</span>, <span class="hljs-number">0.0</span>], [<span class="hljs-number">2.0</span>, <span class="hljs-number">1.0</span>], [<span class="hljs-number">1.0</span>, <span class="hljs-number">2.0</span>], [<span class="hljs-number">0.0</span>, <span class="hljs-number">1.0</span>]]
+wp_idx      = <span class="hljs-number">1</span>
+m_star      = waypoints[wp_idx]
+S_star      = <span class="hljs-number">5e-3</span> * diagm(ones(Dy))
+goal        = MvNormalMeanCovariance(m_star, S_star)
+
+<span class="hljs-comment"># Physics-informed prior: second-order stage AR coefficients are exact (1.95, -0.95).</span>
+<span class="hljs-comment"># Control gain is set to 0.1 — 10× the true value of 0.01 (dt²/mass).  The overestimate</span>
+<span class="hljs-comment"># produces larger initial actions, which keeps the EFE landscape well-conditioned before</span>
+<span class="hljs-comment"># the posterior has seen enough data.  With ν0=15 the posterior adapts within ~15 steps.</span>
+M0 = zeros(Dx, Dy)
+M0[<span class="hljs-number">1</span>,<span class="hljs-number">1</span>] = <span class="hljs-number">1.95</span>;  M0[<span class="hljs-number">2</span>,<span class="hljs-number">2</span>] = <span class="hljs-number">1.95</span>   <span class="hljs-comment"># y_{k-1} → y_k  (exact)</span>
+M0[<span class="hljs-number">3</span>,<span class="hljs-number">1</span>] = -<span class="hljs-number">0.95</span>; M0[<span class="hljs-number">4</span>,<span class="hljs-number">2</span>] = -<span class="hljs-number">0.95</span>  <span class="hljs-comment"># y_{k-2} → y_k  (exact)</span>
+M0[<span class="hljs-number">5</span>,<span class="hljs-number">1</span>] = <span class="hljs-number">0.1</span>;   M0[<span class="hljs-number">6</span>,<span class="hljs-number">2</span>] = <span class="hljs-number">0.1</span>    <span class="hljs-comment"># u_k     → y_k  (weakly informative overestimate)</span>
+
+U0 = <span class="hljs-number">1.0</span> * diagm(ones(Dx))  <span class="hljs-comment"># row covariance: uncertain about thermal/lag terms</span>
+V0 = <span class="hljs-number">1.0</span> * diagm(ones(Dy))  <span class="hljs-comment"># Wishart scale</span>
+ν<span class="hljs-number">0</span> = <span class="hljs-number">15.0</span>                    <span class="hljs-comment"># weak prior — data adapts M quickly</span>
+Υ  = <span class="hljs-number">1e-6</span> * diagm(ones(Du))
+
+stage = ThermalStage(mass=<span class="hljs-number">1.0</span>, damping=<span class="hljs-number">0.5</span>, alpha=[<span class="hljs-number">0.1</span>, <span class="hljs-number">0.05</span>],
+                     kappa=<span class="hljs-number">0.1</span>, eta=<span class="hljs-number">1.0</span>, T_amb=<span class="hljs-number">0.0</span>, P_proc=<span class="hljs-number">1.0</span>,
+                     sigma_obs=<span class="hljs-number">1e-3</span>, sigma_v=<span class="hljs-number">1e-3</span>, sigma_T=<span class="hljs-number">1e-3</span>, dt=Δt)
+</code></pre><pre><code class="nohighlight hljs">Main.var&quot;##WeaveSandBox#277&quot;.ThermalStage(1.0, 0.5, [0.1, 0.05], 0.1, 1.0, 
+0.0, 1.0, 0.001, 0.001, 0.001, 0.1, [0.0, 0.0], [0.0, 0.0], 0.0)</code></pre><h3 id="Simulation"><a class="docs-heading-anchor" href="#Simulation">Simulation</a><a id="Simulation-1"></a><a class="docs-heading-anchor-permalink" href="#Simulation" title="Permalink"></a></h3><p>At every step the agent (1) applies the scheduled force and observes the workpiece position, (2) checks for waypoint arrival and advances the goal, (3) updates its MARX belief from the new transition, (4) selects the next action — structured exploration at first, then EFE-optimal force — and (5) records a one-step-ahead prediction.</p><p>The prior <span>$M_0$</span> encodes the stage mechanics from the start, so the agent acts sensibly even before seeing data. Exploration consists of 60 steps of systematic excitation followed by 30 zero-force settling steps. After exploration the machine turns on, the thermal state climbs, and the workpiece-frame observations drift. The low <span>$\nu_0 = 15$</span> lets the posterior track this drift continuously: the AR coefficients and inferred control gain update at every step, demonstrating continual adaptation rather than one-shot system identification.</p><pre><code class="language-julia hljs"><span class="hljs-string">&quot;&quot;&quot;
+    run_simulation(stage, prior, waypoints; kwargs...)
+
+One closed-loop trial. At every step the agent (1) observes the stage, (2) updates its
+belief over Φ from the latest transition, and (3) either excites the system (exploration)
+or plans by minimising expected free energy over the horizon.
+
+The loop lives in a function rather than at top level so that every variable inside is
+type-stable — at top level each access would go through a global lookup.
+&quot;&quot;&quot;</span>
+<span class="hljs-keyword">function</span> run_simulation(stage, prior, waypoints;
+                        len_trial, n_explore, n_active = <span class="hljs-number">60</span>, len_horizon,
+                        goal_radius, Dy, Du, Dx, My, Mu, u_lims, Υ, meta)
+
+    M_k, U_k, V_k, ν_k = prior
+
+    z_sim = zeros(<span class="hljs-number">2</span>, len_trial)     <span class="hljs-comment"># true stage position (ground truth, not seen by agent)</span>
+    y_sim = zeros(Dy, len_trial)    <span class="hljs-comment"># workpiece-frame observations</span>
+    u_sim = zeros(Du, len_trial)
+    T_sim = zeros(len_trial)        <span class="hljs-comment"># true thermal state (ground truth, not seen by agent)</span>
+
+    Ms = zeros(Dx, Dy, len_trial); Us = zeros(Dx, Dx, len_trial)
+    Vs = zeros(Dy, Dy, len_trial); νs = zeros(len_trial)
+    preds_m = zeros(Dy, len_trial + <span class="hljs-number">1</span>)
+    preds_S = repeat(diagm(ones(Dy)), outer=[<span class="hljs-number">1</span>, <span class="hljs-number">1</span>, len_trial + <span class="hljs-number">1</span>])
+    goal_switches = <span class="hljs-built_in">Int</span>[]
+    wp_history    = fill(<span class="hljs-number">1</span>, len_trial)
+
+    ybuffer = zeros(Dy, My)
+    ubuffer = zeros(Du, Mu + <span class="hljs-number">1</span>)
+    wp_idx  = <span class="hljs-number">1</span>
+    m_star  = waypoints[wp_idx]
+    S_star  = <span class="hljs-number">5e-3</span> * diagm(ones(Dy))
+    process_flag = <span class="hljs-literal">false</span>
+
+    <span class="hljs-keyword">for</span> k <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:len_trial
+        <span class="hljs-comment"># 1. Step the environment; machine is on after exploration</span>
+        y_sim[:, k] = stage_step!(stage, u_sim[:, k], process_flag)
+        z_sim[:, k] = stage.p
+        T_sim[k]    = stage.T
+        wp_history[k] = wp_idx
+
+        <span class="hljs-comment"># 2. Check arrival and advance to next waypoint</span>
+        <span class="hljs-keyword">if</span> k &gt; n_explore &amp;&amp; norm(y_sim[:, k] - m_star) &lt; goal_radius &amp;&amp; wp_idx &lt; length(waypoints)
+            wp_idx += <span class="hljs-number">1</span>
+            m_star  = waypoints[wp_idx]
+            S_star  = <span class="hljs-number">5e-3</span> * diagm(ones(Dy))
+            push!(goal_switches, k)
+        <span class="hljs-keyword">end</span>
+
+        <span class="hljs-comment"># 3. Machine is always on after exploration; T rises monotonically toward T∞</span>
+        process_flag = (k &gt; n_explore)
+
+        <span class="hljs-comment"># 4. Learn: conjugate MARX update from latest transition</span>
+        learning = infer(
+            model = MARX_learning(y_kmin1=ybuffer[:, <span class="hljs-number">1</span>], y_kmin2=ybuffer[:, <span class="hljs-number">2</span>], u_k=ubuffer[:, <span class="hljs-number">1</span>],
+                                  u_kmin1=ubuffer[:, <span class="hljs-number">2</span>], u_kmin2=ubuffer[:, <span class="hljs-number">3</span>],
+                                  M_kmin1=M_k, U_kmin1=U_k, V_kmin1=V_k, ν_kmin1=ν_k),
+            data = (y_k=y_sim[:, k],), meta = meta,
+        )
+        M_k, U_k, V_k, ν_k = params(learning.posteriors[:Φ])
+        V_k = (V_k + V_k&#x27;) / <span class="hljs-number">2</span> + <span class="hljs-number">1e-8</span> * diagm(ones(Dy))
+        U_k = (U_k + U_k&#x27;) / <span class="hljs-number">2</span> + <span class="hljs-number">1e-8</span> * diagm(ones(Dx))
+        Ms[:, :, k] = M_k; Us[:, :, k] = U_k; Vs[:, :, k] = V_k; νs[k] = ν_k
+        ybuffer = backshift(ybuffer, y_sim[:, k])
+
+        <span class="hljs-comment"># 5. Act: structured exploration or EFE planning</span>
+        <span class="hljs-keyword">local</span> u_next
+        <span class="hljs-keyword">if</span> k &lt;= n_active
+            <span class="hljs-comment"># Four-phase structured exploration (±x then ±y) to learn decoupled dynamics</span>
+            q = n_active ÷ <span class="hljs-number">4</span>
+            u_next = k &lt;= q  ? [ <span class="hljs-number">0.4</span>,  <span class="hljs-number">0.0</span>] .+ <span class="hljs-number">0.05</span> .* (<span class="hljs-number">2</span> .* rand(Du) .- <span class="hljs-number">1</span>) :
+                     k &lt;= <span class="hljs-number">2</span>q ? [-<span class="hljs-number">0.4</span>,  <span class="hljs-number">0.0</span>] .+ <span class="hljs-number">0.05</span> .* (<span class="hljs-number">2</span> .* rand(Du) .- <span class="hljs-number">1</span>) :
+                     k &lt;= <span class="hljs-number">3</span>q ? [ <span class="hljs-number">0.0</span>,  <span class="hljs-number">0.4</span>] .+ <span class="hljs-number">0.05</span> .* (<span class="hljs-number">2</span> .* rand(Du) .- <span class="hljs-number">1</span>) :
+                               [ <span class="hljs-number">0.0</span>, -<span class="hljs-number">0.4</span>] .+ <span class="hljs-number">0.05</span> .* (<span class="hljs-number">2</span> .* rand(Du) .- <span class="hljs-number">1</span>)
+        <span class="hljs-keyword">elseif</span> k &lt;= n_explore
+            <span class="hljs-comment"># Settling phase: zero force, stage damps back toward origin</span>
+            u_next = zeros(Du)
+        <span class="hljs-keyword">else</span>
+            inits = <span class="hljs-meta">@initialization</span> <span class="hljs-keyword">begin</span>
+                q(Φ)  = learning.posteriors[:Φ]
+                q(y_) = vague(MvNormalMeanCovariance, Dy)
+                q(u_) = vague(MvNormalMeanCovariance, Du)
+            <span class="hljs-keyword">end</span>
+            cons = <span class="hljs-meta">@constraints</span> <span class="hljs-keyword">begin</span>
+                q(y_, u_, Φ) = q(y_)q(u_)q(Φ)
+                q(y_) = q(y_[<span class="hljs-keyword">begin</span>])..q(y_[<span class="hljs-keyword">end</span>])
+                q(u_) = q(u_[<span class="hljs-keyword">begin</span>])..q(u_[<span class="hljs-keyword">end</span>])
+                q(u_) :: PointMassFormConstraint()
+            <span class="hljs-keyword">end</span>
+            planning = infer(
+                model = MARX_planning(M_k=M_k, U_k=U_k, V_k=V_k, ν_k=ν_k, Υ=Υ,
+                                      m_star=m_star, S_star=S_star, len_horizon=len_horizon),
+                data = (y_tmin1=ybuffer[:, <span class="hljs-number">1</span>], y_tmin2=ybuffer[:, <span class="hljs-number">2</span>],
+                        u_tmin1=ubuffer[:, <span class="hljs-number">1</span>], u_tmin2=ubuffer[:, <span class="hljs-number">2</span>]),
+                initialization = inits, constraints = cons, iterations = <span class="hljs-number">30</span>,
+                meta = meta, options = (limit_stack_depth = <span class="hljs-number">100</span>,),
+            )
+            u_next = mode(planning.posteriors[:u_][<span class="hljs-keyword">end</span>][<span class="hljs-number">1</span>])
+        <span class="hljs-keyword">end</span>
+        u_next = clamp.(u_next, u_lims...)
+
+        <span class="hljs-keyword">if</span> k &lt; len_trial
+            u_sim[:, k+<span class="hljs-number">1</span>] = u_next
+            ubuffer = backshift(ubuffer, u_sim[:, k+<span class="hljs-number">1</span>])
+        <span class="hljs-keyword">end</span>
+
+        <span class="hljs-comment"># 6. One-step-ahead prediction (for visualisation)</span>
+        x_k = [ybuffer[:]; ubuffer[:]]
+        η, μ, Σ = posterior_predictive(x_k, M_k, U_k, V_k, ν_k, Dx, Dy)
+        preds_m[:, k+<span class="hljs-number">1</span>] = μ; preds_S[:, :, k+<span class="hljs-number">1</span>] = Σ * η / (η - <span class="hljs-number">2</span>)
+    <span class="hljs-keyword">end</span>
+
+    <span class="hljs-keyword">return</span> (; y_sim, z_sim, u_sim, T_sim, Ms, Us, Vs, νs, preds_m, preds_S, goal_switches, wp_history)
+<span class="hljs-keyword">end</span>
+
+results = run_simulation(stage, (M0, U0, V0, ν<span class="hljs-number">0</span>), waypoints;
+                         len_trial, n_explore, len_horizon, goal_radius,
+                         Dy, Du, Dx, My, Mu, u_lims, Υ, meta = marx_meta(Dy, u_lims))
+
+(; y_sim, z_sim, u_sim, T_sim, Ms, Us, Vs, νs, preds_m, preds_S, goal_switches, wp_history) = results
+
+println(<span class="hljs-string">&quot;final workpiece pos = &quot;</span>, round.(y_sim[:, <span class="hljs-keyword">end</span>], digits=<span class="hljs-number">3</span>))
+println(<span class="hljs-string">&quot;final thermal state = &quot;</span>, round(T_sim[<span class="hljs-keyword">end</span>], digits=<span class="hljs-number">3</span>),
+        <span class="hljs-string">&quot;  (steady state ≈ &quot;</span>, round(stage.eta * stage.P_proc / stage.kappa, digits=<span class="hljs-number">1</span>), <span class="hljs-string">&quot;)&quot;</span>)
+println(<span class="hljs-string">&quot;waypoints reached   = &quot;</span>, length(goal_switches), <span class="hljs-string">&quot; / &quot;</span>, length(waypoints) - <span class="hljs-number">1</span>,
+        <span class="hljs-string">&quot;  (switches at steps &quot;</span>, goal_switches, <span class="hljs-string">&quot;)&quot;</span>)
+</code></pre><pre><code class="nohighlight hljs">final workpiece pos = [-0.005, 0.965]
+final thermal state = 9.552  (steady state ≈ 10.0)
+waypoints reached   = 3 / 3  (switches at steps [103, 129, 144])</code></pre><h3 id="Results"><a class="docs-heading-anchor" href="#Results">Results</a><a id="Results-1"></a><a class="docs-heading-anchor-permalink" href="#Results" title="Permalink"></a></h3><h4 id="Trajectory"><a class="docs-heading-anchor" href="#Trajectory">Trajectory</a><a id="Trajectory-1"></a><a class="docs-heading-anchor-permalink" href="#Trajectory" title="Permalink"></a></h4><p>The trajectory in workpiece coordinates shows the exploration phase (gray), followed by EFE-driven navigation between the four waypoints. The dashed line traces the <strong>true stage position</strong> — the gap between the solid and dashed paths is the thermal expansion offset <span>$\alpha(T - T_\text{amb})$</span>, which grows as the machine heats up.</p><pre><code class="language-julia hljs">wp_colors = [<span class="hljs-string">&quot;royalblue&quot;</span>, <span class="hljs-string">&quot;darkorange&quot;</span>, <span class="hljs-string">&quot;forestgreen&quot;</span>, <span class="hljs-string">&quot;crimson&quot;</span>]
+wp_labels = [<span class="hljs-string">&quot;waypoint <span class="hljs-variable">$i</span> <span class="hljs-subst">$(waypoints[i])</span>&quot;</span> <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:length(waypoints)]
+
+ptraj = scatter([<span class="hljs-number">0.0</span>], [<span class="hljs-number">0.0</span>], label=<span class="hljs-string">&quot;start&quot;</span>, color=<span class="hljs-string">&quot;seagreen&quot;</span>, markersize=<span class="hljs-number">7</span>)
+<span class="hljs-keyword">for</span> (i, w) <span class="hljs-keyword">in</span> enumerate(waypoints)
+    scatter!([w[<span class="hljs-number">1</span>]], [w[<span class="hljs-number">2</span>]], marker=:star5, color=wp_colors[i],
+             markersize=<span class="hljs-number">10</span>, label=wp_labels[i])
+    covellipse!(w, <span class="hljs-number">5e-3</span> * diagm(ones(<span class="hljs-number">2</span>)), n_std=<span class="hljs-number">2</span>, linecolor=wp_colors[i],
+                color=wp_colors[i], fillalpha=<span class="hljs-number">0.08</span>, linewidth=<span class="hljs-number">2</span>)
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-comment"># True stage trajectory (dashed) — not available to the agent</span>
+plot!(z_sim[<span class="hljs-number">1</span>, :], z_sim[<span class="hljs-number">2</span>, :], label=<span class="hljs-string">&quot;stage position (true)&quot;</span>, color=<span class="hljs-string">&quot;gray&quot;</span>,
+      linestyle=:dash, linewidth=<span class="hljs-number">1</span>, alpha=<span class="hljs-number">0.6</span>)
+
+<span class="hljs-comment"># Observed workpiece trajectory</span>
+plot!(y_sim[<span class="hljs-number">1</span>, <span class="hljs-number">1</span>:n_explore], y_sim[<span class="hljs-number">2</span>, <span class="hljs-number">1</span>:n_explore], label=<span class="hljs-string">&quot;exploration&quot;</span>,
+      color=<span class="hljs-string">&quot;gray&quot;</span>, linewidth=<span class="hljs-number">2</span>)
+segs = vcat([n_explore], goal_switches, [len_trial])
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:length(segs)-<span class="hljs-number">1</span>
+    a, b = segs[i], segs[i+<span class="hljs-number">1</span>]
+    col  = i &lt;= length(wp_colors) ? wp_colors[i] : <span class="hljs-string">&quot;gray&quot;</span>
+    plot!(y_sim[<span class="hljs-number">1</span>, a:b], y_sim[<span class="hljs-number">2</span>, a:b], label=<span class="hljs-string">&quot;wp <span class="hljs-variable">$i</span> phase&quot;</span>, color=col, linewidth=<span class="hljs-number">2</span>)
+<span class="hljs-keyword">end</span>
+plot!(aspect_ratio=:equal, xlabel=<span class="hljs-string">&quot;x (workpiece)&quot;</span>, ylabel=<span class="hljs-string">&quot;y (workpiece)&quot;</span>,
+      legend=:topright, size=(<span class="hljs-number">620</span>, <span class="hljs-number">580</span>), title=<span class="hljs-string">&quot;Waypoint navigation under thermal expansion&quot;</span>)
+</code></pre><p><img src="Autoregressive Active Inference_15_1.png" alt/></p><h4 id="Thermal-state-and-expansion-offset"><a class="docs-heading-anchor" href="#Thermal-state-and-expansion-offset">Thermal state and expansion offset</a><a id="Thermal-state-and-expansion-offset-1"></a><a class="docs-heading-anchor-permalink" href="#Thermal-state-and-expansion-offset" title="Permalink"></a></h4><p>The upper panel shows the thermal state <span>$T_k$</span> (hidden from the agent) together with the steady-state value <span>$T_\infty = \eta P / \kappa$</span>. The lower panel shows the magnitude of the thermal offset <span>$\|\alpha(T_k - T_\text{amb})\|$</span> that the agent&#39;s observations carry. Vertical dashed lines mark goal switches.</p><pre><code class="language-julia hljs">t_axis   = Δt .* (<span class="hljs-number">1</span>:len_trial)
+T_steady = stage.eta * stage.P_proc / stage.kappa
+alpha_v  = stage.alpha
+offset   = [norm(alpha_v .* T_sim[k]) <span class="hljs-keyword">for</span> k <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:len_trial]
+
+pT = plot(t_axis, T_sim, label=<span class="hljs-string">&quot;T (true, hidden)&quot;</span>, color=<span class="hljs-string">&quot;firebrick&quot;</span>, linewidth=<span class="hljs-number">2</span>)
+hline!([T_steady], label=<span class="hljs-string">&quot;T∞ = <span class="hljs-subst">$(T_steady)</span>&quot;</span>, linestyle=:dash, color=<span class="hljs-string">&quot;firebrick&quot;</span>, alpha=<span class="hljs-number">0.5</span>)
+vline!([Δt .* goal_switches], linestyle=:dash, color=<span class="hljs-string">&quot;black&quot;</span>, alpha=<span class="hljs-number">0.4</span>, label=<span class="hljs-string">&quot;&quot;</span>)
+ylabel!(<span class="hljs-string">&quot;thermal state&quot;</span>); xlabel!(<span class="hljs-string">&quot;&quot;</span>)
+
+pO = plot(t_axis, offset, label=<span class="hljs-string">&quot;|α(T − T₀)|&quot;</span>, color=<span class="hljs-string">&quot;darkorange&quot;</span>, linewidth=<span class="hljs-number">2</span>,
+          xlabel=<span class="hljs-string">&quot;time (s)&quot;</span>, ylabel=<span class="hljs-string">&quot;offset magnitude&quot;</span>)
+vline!([Δt .* goal_switches], linestyle=:dash, color=<span class="hljs-string">&quot;black&quot;</span>, alpha=<span class="hljs-number">0.4</span>, label=<span class="hljs-string">&quot;&quot;</span>)
+
+plot(pT, pO, layout=(<span class="hljs-number">2</span>,<span class="hljs-number">1</span>), size=(<span class="hljs-number">700</span>, <span class="hljs-number">420</span>), legend=:right)
+</code></pre><p><img src="Autoregressive Active Inference_16_1.png" alt/></p><h4 id="The-expected-free-energy-landscape"><a class="docs-heading-anchor" href="#The-expected-free-energy-landscape">The expected free energy landscape</a><a id="The-expected-free-energy-landscape-1"></a><a class="docs-heading-anchor-permalink" href="#The-expected-free-energy-landscape" title="Permalink"></a></h4><p>Evaluating <span>$G(u)$</span> over the force space at a selected planning step reveals what the agent is optimising. The white marker is the chosen action.</p><pre><code class="language-julia hljs"><span class="hljs-keyword">function</span> efe_landscape(u; tpoint, g)
+    M = Ms[:, :, tpoint]; U = Us[:, :, tpoint]; V = Vs[:, :, tpoint]; ν = νs[tpoint]
+    x = [y_sim[:, tpoint-<span class="hljs-number">1</span>]; y_sim[:, tpoint-<span class="hljs-number">2</span>]; u; u_sim[:, tpoint-<span class="hljs-number">1</span>]; u_sim[:, tpoint-<span class="hljs-number">2</span>]]
+    η, μ, Σ = posterior_predictive(x, M, U, V, ν, Dx, Dy)
+    <span class="hljs-keyword">return</span> mutualinfo(Σ) + crossentropy(g, η, μ, Σ)
+<span class="hljs-keyword">end</span>
+
+tp    = isempty(goal_switches) ? n_explore + <span class="hljs-number">30</span> : goal_switches[<span class="hljs-number">1</span>] + <span class="hljs-number">20</span>
+g_tp  = MvNormalMeanCovariance(waypoints[wp_history[tp]], S_star)
+ur    = range(u_lims[<span class="hljs-number">1</span>], u_lims[<span class="hljs-number">2</span>], length=<span class="hljs-number">61</span>)
+Gland = [efe_landscape([ui, uj], tpoint=tp, g=g_tp) <span class="hljs-keyword">for</span> ui <span class="hljs-keyword">in</span> ur, uj <span class="hljs-keyword">in</span> ur]
+gmin  = argmin(Gland)
+pefe  = heatmap(ur, ur, Gland&#x27;, color=:viridis,
+                xlabel=<span class="hljs-string">&quot;force x (u₁)&quot;</span>, ylabel=<span class="hljs-string">&quot;force y (u₂)&quot;</span>,
+                title=<span class="hljs-string">&quot;Expected free energy at step <span class="hljs-variable">$tp</span>&quot;</span>, size=(<span class="hljs-number">560</span>, <span class="hljs-number">480</span>))
+scatter!([ur[gmin[<span class="hljs-number">1</span>]]], [ur[gmin[<span class="hljs-number">2</span>]]], color=:white, markersize=<span class="hljs-number">8</span>, label=<span class="hljs-string">&quot;argmin&quot;</span>)
+</code></pre><p><img src="Autoregressive Active Inference_17_1.png" alt/></p><h4 id="Animation"><a class="docs-heading-anchor" href="#Animation">Animation</a><a id="Animation-1"></a><a class="docs-heading-anchor-permalink" href="#Animation" title="Permalink"></a></h4><p>The animation shows the closed-loop behaviour: workpiece-frame trajectory (solid), true stage position (dashed), the active waypoint (bright star), and the one-step-ahead predictive belief (purple ellipse).</p><pre><code class="language-julia hljs">anim = <span class="hljs-meta">@animate</span> <span class="hljs-keyword">for</span> k <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:<span class="hljs-number">2</span>:len_trial
+    gi = wp_history[k]
+    scatter([<span class="hljs-number">0.0</span>], [<span class="hljs-number">0.0</span>], color=<span class="hljs-string">&quot;seagreen&quot;</span>, markersize=<span class="hljs-number">5</span>, label=<span class="hljs-string">&quot;start&quot;</span>,
+            title=<span class="hljs-string">&quot;step <span class="hljs-variable">$k</span> / <span class="hljs-variable">$len_trial</span>  |  T=<span class="hljs-subst">$(round(T_sim[k],digits=<span class="hljs-number">2</span>)</span>)&quot;</span>)
+    <span class="hljs-keyword">for</span> (i, w) <span class="hljs-keyword">in</span> enumerate(waypoints)
+        active = (i == gi)
+        col    = wp_colors[i]
+        scatter!([w[<span class="hljs-number">1</span>]], [w[<span class="hljs-number">2</span>]], marker=active ? :star8 : :star5, color=col,
+                 markersize=active ? <span class="hljs-number">12</span> : <span class="hljs-number">7</span>, alpha=active ? <span class="hljs-number">1.0</span> : <span class="hljs-number">0.4</span>, label=<span class="hljs-string">&quot;&quot;</span>)
+        covellipse!(w, <span class="hljs-number">5e-3</span> * diagm(ones(<span class="hljs-number">2</span>)), n_std=<span class="hljs-number">2</span>, linecolor=col,
+                    color=col, fillalpha=active ? <span class="hljs-number">0.12</span> : <span class="hljs-number">0.03</span>, linewidth=active ? <span class="hljs-number">2</span> : <span class="hljs-number">1</span>, label=<span class="hljs-string">&quot;&quot;</span>)
+    <span class="hljs-keyword">end</span>
+    plot!(z_sim[<span class="hljs-number">1</span>, <span class="hljs-number">1</span>:k], z_sim[<span class="hljs-number">2</span>, <span class="hljs-number">1</span>:k], color=<span class="hljs-string">&quot;gray&quot;</span>, linestyle=:dash,
+          linewidth=<span class="hljs-number">1</span>, alpha=<span class="hljs-number">0.5</span>, label=<span class="hljs-string">&quot;stage (true)&quot;</span>)
+    plot!(y_sim[<span class="hljs-number">1</span>, <span class="hljs-number">1</span>:k], y_sim[<span class="hljs-number">2</span>, <span class="hljs-number">1</span>:k], color=<span class="hljs-string">&quot;royalblue&quot;</span>, linewidth=<span class="hljs-number">2</span>, label=<span class="hljs-string">&quot;workpiece (obs)&quot;</span>)
+    scatter!([y_sim[<span class="hljs-number">1</span>, k]], [y_sim[<span class="hljs-number">2</span>, k]], color=<span class="hljs-string">&quot;royalblue&quot;</span>, markersize=<span class="hljs-number">5</span>, label=<span class="hljs-string">&quot;&quot;</span>)
+    covellipse!(preds_m[:, k+<span class="hljs-number">1</span>], preds_S[:, :, k+<span class="hljs-number">1</span>], n_std=<span class="hljs-number">1</span>,
+                color=<span class="hljs-string">&quot;purple&quot;</span>, fillalpha=<span class="hljs-number">0.15</span>, label=<span class="hljs-string">&quot;prediction&quot;</span>)
+    plot!(xlims=(-<span class="hljs-number">1.5</span>, <span class="hljs-number">3.5</span>), ylims=(-<span class="hljs-number">1.5</span>, <span class="hljs-number">3.5</span>), aspect_ratio=:equal,
+          legend=:topleft, size=(<span class="hljs-number">520</span>, <span class="hljs-number">520</span>))
+<span class="hljs-keyword">end</span>
+gif(anim, <span class="hljs-string">&quot;thermal-stage-active-inference.gif&quot;</span>, fps=<span class="hljs-number">12</span>)
+</code></pre><pre><code class="nohighlight hljs">Plots.AnimatedGif(&quot;/home/runner/work/RxInferExamples.jl/RxInferExamples.jl/
+docs/src/categories/advanced_examples/autoregressive_active_inference/therm
+al-stage-active-inference.gif&quot;)</code></pre><p><img src="thermal-stage-active-inference.gif" alt/></p><p>&lt;a id=&quot;references&quot;&gt;&lt;/a&gt;</p><h2 id="References"><a class="docs-heading-anchor" href="#References">References</a><a id="References-1"></a><a class="docs-heading-anchor-permalink" href="#References" title="Permalink"></a></h2><p>[1] Kouw, W. M., Nisslbeck, T. N., &amp; Nuijten, W. L. N. (2026). <em>Message Passing-Based Inference in an Autoregressive Active Inference Agent</em>. In: Active Inference (IWAI 2025). Communications in Computer and Information Science, vol 2857, pp. 285–298. Springer, Cham. <a href="https://doi.org/10.1007/978-3-032-16955-6_16">https://doi.org/10.1007/978-3-032-16955-6_16</a></p><hr/><div class="admonition is-info" id="Contributing-baba9dc142ba7ccb"><header class="admonition-header">Contributing<a class="admonition-anchor" href="#Contributing-baba9dc142ba7ccb" title="Permalink"></a></header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><div class="admonition is-compat" id="Environment-ead41e814a894220"><header class="admonition-header">Environment<a class="admonition-anchor" href="#Environment-ead41e814a894220" title="Permalink"></a></header><div class="admonition-body"><p>This example was executed in a clean, isolated environment. Below are the exact package versions used:</p><p>For reproducibility:</p><ul><li>Use the same package versions when running locally</li><li>Report any issues with package compatibility</li></ul></div></div><pre><code class="nohighlight hljs">Status `/tmp/jl_BKMWxI/Project.toml`
+  [b4ee3484] BayesBase v1.5.9
+  [31c24e10] Distributions v0.25.131
+⌅ [5b8099bc] DomainSets v0.7.18
+  [62312e5e] ExponentialFamily v2.5.1
+  [2d5283b6] FastCholesky v1.4.3
+⌅ [f6369f11] ForwardDiff v0.10.39
+  [429524aa] Optim v2.3.1
+  [91a5bcdd] Plots v1.41.7
+  [86711068] RxInfer v5.5.2
+  [276daf66] SpecialFunctions v2.9.0
+⌅ [4c63d2b9] StatsFuns v1.5.2
+  [f3b207a7] StatsPlots v0.15.8
+  [37e2e46d] LinearAlgebra v1.12.0
+  [9a3f8284] Random v1.11.0
+Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated`
+</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../assessing_people_skills/">« Assessing People Skills</a><a class="docs-footer-nextpage" href="../bayesian_structured_time_series/">Bayesian Structured Time Series »</a><div class="flexbox-break"></div><p class="footer-message">Created in <a href="https://biaslab.github.io/">BIASlab</a>, maintained by <a href="https://github.com/ReactiveBayes">ReactiveBayes</a>, powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.19.0 on <span class="colophon-date" title="Thursday 3 September 2026 19:09">Thursday 3 September 2026</span>. Using Julia version 1.12.7.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

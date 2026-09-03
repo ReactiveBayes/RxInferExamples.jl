@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Solving Linear Systems With Message Passing · RxInfer.jl Examples</title><meta name="title" content="Solving Linear Systems With Message Passing · RxInfer.jl Examples"/><meta property="og:title" content="Solving Linear Systems With Message Passing · RxInfer.jl Examples"/><meta property="twitter:title" content="Solving Linear Systems With Message Passing · RxInfer.jl Examples"/><meta name="description" content="Solving Linear Systems with Message Passing with RxInfer.jl\nThis tutorial turns a linear system into a Gaussian factor graph, solves it with the `GaussianCoupling` node, and visualizes convergence and the difference between tree and loopy uncertainty estimates. It then puts the same graph on a heated grid whose boundary sources drift over time: a state-space submodel with a learned Wishart coupling is plugged into the grid, and the temperature field is recovered from source sensors that occasionally go offline.\n\nCheck more examples and tutorials at https://examples.rxinfer.com\n"/><meta property="og:description" content="Solving Linear Systems with Message Passing with RxInfer.jl\nThis tutorial turns a linear system into a Gaussian factor graph, solves it with the `GaussianCoupling` node, and visualizes convergence and the difference between tree and loopy uncertainty estimates. It then puts the same graph on a heated grid whose boundary sources drift over time: a state-space submodel with a learned Wishart coupling is plugged into the grid, and the temperature field is recovered from source sensors that occasionally go offline.\n\nCheck more examples and tutorials at https://examples.rxinfer.com\n"/><meta property="twitter:description" content="Solving Linear Systems with Message Passing with RxInfer.jl\nThis tutorial turns a linear system into a Gaussian factor graph, solves it with the `GaussianCoupling` node, and visualizes convergence and the difference between tree and loopy uncertainty estimates. It then puts the same graph on a heated grid whose boundary sources drift over time: a state-space submodel with a learned Wishart coupling is plugged into the grid, and the temperature field is recovered from source sensors that occasionally go offline.\n\nCheck more examples and tutorials at https://examples.rxinfer.com\n"/><meta property="og:url" content="https://examples.rxinfer.com/categories/advanced_examples/solving_linear_systems_with_message_passing/"/><meta property="twitter:url" content="https://examples.rxinfer.com/categories/advanced_examples/solving_linear_systems_with_message_passing/"/><link rel="canonical" href="https://examples.rxinfer.com/categories/advanced_examples/solving_linear_systems_with_message_passing/"/><script async src="https://www.googletagmanager.com/gtag/js?id=G-GMFX620VEP"></script><script>  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-GMFX620VEP', {'page_path': location.pathname + location.search + location.hash});
+</script><script data-outdated-warner src="../../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.63.2/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../../assets/documenter.js"></script><script src="../../../search_index.js"></script><script src="../../../siteinfo.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../../assets/themeswap.js"></script><link href="../../../assets/theme.css" rel="stylesheet" type="text/css"/><link href="../../../assets/header.css" rel="stylesheet" type="text/css"/><script src="../../../assets/header.js"></script><script src="../../../assets/chat.js"></script><link href="../../../assets/favicon.ico" rel="icon" type="image/x-icon"/>
+    <meta property="og:title" content="Solving Linear Systems with Message Passing - RxInfer Examples">
+    <meta name="description" content="This tutorial turns a linear system into a Gaussian factor graph, solves it with the `GaussianCoupling` node, and visualizes convergence and the difference between tree and loopy uncertainty estimates. It then puts the same graph on a heated grid whose boundary sources drift over time: a state-space submodel with a learned Wishart coupling is plugged into the grid, and the temperature field is recovered from source sensors that occasionally go offline.
+">
+    <meta property="og:description" content="This tutorial turns a linear system into a Gaussian factor graph, solves it with the `GaussianCoupling` node, and visualizes convergence and the difference between tree and loopy uncertainty estimates. It then puts the same graph on a heated grid whose boundary sources drift over time: a state-space submodel with a learned Wishart coupling is plugged into the grid, and the temperature field is recovered from source sensors that occasionally go offline.
+">
+    <meta name="keywords" content="rxinfer, julia, bayesian inference, examples, probabilistic programming, message passing, probabilistic numerics, variational inference, belief propagation, advanced examples, linear algebra, gaussian belief propagation, nested models, missing data, smoothing">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://examples.rxinfer.com/sitemap.xml">
+    </head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../../"><img class="docs-light-only" src="../../../assets/logo.svg" alt="RxInfer.jl Examples logo"/><img class="docs-dark-only" src="../../../assets/logo-dark.svg" alt="RxInfer.jl Examples logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../../">RxInfer.jl Examples</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../../">Home</a></li><li><a class="tocitem" href="../../../how_to_contribute/">How to contribute</a></li><li><a class="tocitem" href="../../../autogenerated/list_of_examples/">List of Examples</a></li><li><span class="tocitem">Basic Examples</span><ul><li><a class="tocitem" href="../../basic_examples/bayesian_binomial_regression/">Bayesian Binomial Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_linear_regression/">Bayesian Linear Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_multinomial_regression/">Bayesian Multinomial Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_networks/">Bayesian Networks</a></li><li><a class="tocitem" href="../../basic_examples/coin_toss_model/">Coin Toss Model</a></li><li><a class="tocitem" href="../../basic_examples/contextual_bandits/">Contextual Bandits</a></li><li><a class="tocitem" href="../../basic_examples/feature_functions_in_bayesian_regression/">Feature Functions In Bayesian Regression</a></li><li><a class="tocitem" href="../../basic_examples/forgetting_factors_for_online_inference/">Forgetting Factors For Online Inference</a></li><li><a class="tocitem" href="../../basic_examples/hidden_markov_model/">Hidden Markov Model</a></li><li><a class="tocitem" href="../../basic_examples/incomplete_data/">Incomplete Data</a></li><li><a class="tocitem" href="../../basic_examples/kalman_filtering_and_smoothing/">Kalman Filtering And Smoothing</a></li><li><a class="tocitem" href="../../basic_examples/pomdp_control/">Pomdp Control</a></li><li><a class="tocitem" href="../../basic_examples/predicting_bike_rental_demand/">Predicting Bike Rental Demand</a></li><li><a class="tocitem" href="../../basic_examples/t-maze_active_inference/">T-Maze Active Inference</a></li></ul></li><li><span class="tocitem">Advanced Examples</span><ul><li><a class="tocitem" href="../active_inference_mountain_car/">Active Inference Mountain Car</a></li><li><a class="tocitem" href="../assessing_people_skills/">Assessing People Skills</a></li><li><a class="tocitem" href="../autoregressive_active_inference/">Autoregressive Active Inference</a></li><li><a class="tocitem" href="../bayesian_structured_time_series/">Bayesian Structured Time Series</a></li><li><a class="tocitem" href="../chance_constraints/">Chance Constraints</a></li><li><a class="tocitem" href="../conjugate-computational_variational_message_passing/">Conjugate-Computational Variational Message Passing</a></li><li><a class="tocitem" href="../drone_dynamics/">Drone Dynamics</a></li><li><a class="tocitem" href="../efe_minimization_via_message_passing/">Efe Minimization Via Message Passing</a></li><li><a class="tocitem" href="../gp_regression_by_ssm/">Gp Regression By Ssm</a></li><li><a class="tocitem" href="../infinite_data_stream/">Infinite Data Stream</a></li><li><a class="tocitem" href="../integrating_neural_networks_with_flux.jl_and_lux.jl/">Integrating Neural Networks With Flux.Jl And Lux.Jl</a></li><li><a class="tocitem" href="../learning_dynamics_with_vaes/">Learning Dynamics With Vaes</a></li><li><a class="tocitem" href="../multi-agent_trajectory_planning/">Multi-Agent Trajectory Planning</a></li><li><a class="tocitem" href="../nonlinear_sensor_fusion/">Nonlinear Sensor Fusion</a></li><li><a class="tocitem" href="../parameter_optimisation_with_optim.jl/">Parameter Optimisation With Optim.Jl</a></li><li><a class="tocitem" href="../robotic_arm/">Robotic Arm</a></li><li class="is-active"><a class="tocitem" href>Solving Linear Systems With Message Passing</a><ul class="internal"><li><a class="tocitem" href="#A-linear-system-as-a-Gaussian-model"><span>A linear system as a Gaussian model</span></a></li><li><a class="tocitem" href="#Warm-up:-a-chain"><span>Warm-up: a chain</span></a></li><li><a class="tocitem" href="#Add-one-edge:-a-loopy-graph"><span>Add one edge: a loopy graph</span></a></li><li><a class="tocitem" href="#Turn-up-the-coupling"><span>Turn up the coupling</span></a></li><li><a class="tocitem" href="#From-one-solve-to-a-stream-of-solves:-heat-on-a-grid"><span>From one solve to a stream of solves: heat on a grid</span></a></li><li><a class="tocitem" href="#Takeaways"><span>Takeaways</span></a></li></ul></li></ul></li><li><span class="tocitem">Problem Specific</span><ul><li><a class="tocitem" href="../../problem_specific/autoregressive_models/">Autoregressive Models</a></li><li><a class="tocitem" href="../../problem_specific/gamma_mixture/">Gamma Mixture</a></li><li><a class="tocitem" href="../../problem_specific/gaussian_mixture/">Gaussian Mixture</a></li><li><a class="tocitem" href="../../problem_specific/hierarchical_gaussian_filter/">Hierarchical Gaussian Filter</a></li><li><a class="tocitem" href="../../problem_specific/invertible_neural_network_tutorial/">Invertible Neural Network Tutorial</a></li><li><a class="tocitem" href="../../problem_specific/ising_model/">Ising Model</a></li><li><a class="tocitem" href="../../problem_specific/litter_model/">Litter Model</a></li><li><a class="tocitem" href="../../problem_specific/ode_parameter_estimation/">Ode Parameter Estimation</a></li><li><a class="tocitem" href="../../problem_specific/probit_model/">Probit Model</a></li><li><a class="tocitem" href="../../problem_specific/rts_vs_bifm_smoothing/">Rts Vs Bifm Smoothing</a></li><li><a class="tocitem" href="../../problem_specific/simple_nonlinear_node/">Simple Nonlinear Node</a></li><li><a class="tocitem" href="../../problem_specific/structural_dynamics_with_augmented_kalman_filter/">Structural Dynamics With Augmented Kalman Filter</a></li><li><a class="tocitem" href="../../problem_specific/universal_mixtures/">Universal Mixtures</a></li></ul></li><li><span class="tocitem">Experimental Examples</span><ul><li><a class="tocitem" href="../../experimental_examples/bayesian_trust_learning/">Bayesian Trust Learning</a></li><li><a class="tocitem" href="../../experimental_examples/large_language_models/">Large Language Models</a></li><li><a class="tocitem" href="../../experimental_examples/latent_vector_autoregressive_model/">Latent Vector Autoregressive Model</a></li><li><a class="tocitem" href="../../experimental_examples/recurrent_switching_linear_dynamical_system/">Recurrent Switching Linear Dynamical System</a></li></ul></li><li><a class="tocitem" href="../../../how_build_works/">How we build the examples</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Advanced Examples</a></li><li class="is-active"><a href>Solving Linear Systems With Message Passing</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Solving Linear Systems With Message Passing</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl" title="View source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><div class="admonition is-info" id="Contributing-baba9dc142ba7ccb"><header class="admonition-header">Contributing<a class="admonition-anchor" href="#Contributing-baba9dc142ba7ccb" title="Permalink"></a></header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><h1 id="Solving-Linear-Systems-with-Message-Passing"><a class="docs-heading-anchor" href="#Solving-Linear-Systems-with-Message-Passing">Solving Linear Systems with Message Passing</a><a id="Solving-Linear-Systems-with-Message-Passing-1"></a><a class="docs-heading-anchor-permalink" href="#Solving-Linear-Systems-with-Message-Passing" title="Permalink"></a></h1><p>Most of us solve <span>$Ax=b$</span> with a direct linear-algebra routine. In this tutorial we take a more scenic route: every unknown becomes a node in a graph, every nonzero off-diagonal entry becomes a coupling, and local Gaussian messages cooperate to recover the solution.</p><p>This is useful beyond solving one small system. The graph view exposes sparsity, supports distributed computation, and gives us a live view of convergence. It also reveals a subtle behavior: on graphs with cycles the means can be exact even when the reported variances are not.</p><pre><code class="language-julia hljs"><span class="hljs-keyword">using</span> LinearAlgebra
+<span class="hljs-keyword">using</span> Plots
+<span class="hljs-keyword">using</span> Random
+<span class="hljs-keyword">using</span> ReactiveMP
+<span class="hljs-keyword">using</span> RxInfer
+<span class="hljs-keyword">using</span> StableRNGs
+<span class="hljs-keyword">using</span> OneHotArrays
+
+default(; linewidth = <span class="hljs-number">2</span>, markersize = <span class="hljs-number">5</span>, legend = :best)
+</code></pre><h2 id="A-linear-system-as-a-Gaussian-model"><a class="docs-heading-anchor" href="#A-linear-system-as-a-Gaussian-model">A linear system as a Gaussian model</a><a id="A-linear-system-as-a-Gaussian-model-1"></a><a class="docs-heading-anchor-permalink" href="#A-linear-system-as-a-Gaussian-model" title="Permalink"></a></h2><p>Assume that <span>$A$</span> is symmetric and positive definite. The unnormalized Gaussian</p><p class="math-container">\[p(x) \propto \exp\left(-\frac{1}{2}x^\mathsf{T}Ax+b^\mathsf{T}x\right)\]</p><p>has mean <span>$A^{-1}b$</span>, so finding its mean solves <span>$Ax=b$</span>. Expanding the exponent gives two kinds of factor:</p><ul><li>an univiariate Normal distribution for each diagonal entry <span>$\exp(b_ix_i - \frac{1}{2} x_i^2A_{ii})$</span>;</li><li>an edge potential <span>$\exp(-A_{ij}x_i x_j)$</span> for each nonzero off-diagonal entry.</li></ul><p>The <code>GaussianCoupling</code> node represents exactly that edge potential: <code>GaussianCoupling(xᵢ, -A[i, j])</code>.</p><pre><code class="language-julia hljs"><span class="hljs-meta">@model</span> <span class="hljs-keyword">function</span> linear_system_model(b, A)
+    n = length(b)
+
+    <span class="hljs-comment"># exp(bᵢxᵢ - Aᵢᵢxᵢ²/2), written as an ordinary normalized Gaussian.</span>
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:n
+        x[i] ~ Normal(mean = b[i] / A[i, i], precision = A[i, i])
+    <span class="hljs-keyword">end</span>
+
+    <span class="hljs-comment"># One GaussianCoupling factor for every edge of the sparse matrix.</span>
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:(n - <span class="hljs-number">1</span>), j <span class="hljs-keyword">in</span> (i + <span class="hljs-number">1</span>):n
+        <span class="hljs-keyword">if</span> !iszero(A[i, j])
+            x[j] ~ GaussianCoupling(x[i], -A[i, j])
+        <span class="hljs-keyword">end</span>
+    <span class="hljs-keyword">end</span>
+<span class="hljs-keyword">end</span>
+</code></pre><p>The graph can contain feedback loops, so it needs an initial message before updates can circulate. We start with a broad Gaussian message. This is only a computational starting point; it is not an extra prior in the model. <code>KeepEach()</code> records the belief after every sweep so that we can watch the algorithm settle.</p><pre><code class="language-julia hljs"><span class="hljs-keyword">function</span> solve_with_messages(A, b; iterations = <span class="hljs-number">20</span>)
+    <span class="hljs-meta">@assert</span> issymmetric(A) <span class="hljs-string">&quot;A must be symmetric&quot;</span>
+    <span class="hljs-meta">@assert</span> isposdef(A) <span class="hljs-string">&quot;A must be positive definite&quot;</span>
+
+    initialization = <span class="hljs-meta">@initialization</span> <span class="hljs-keyword">begin</span>
+        μ(x) = NormalMeanVariance(<span class="hljs-number">0.0</span>, <span class="hljs-number">1e6</span>)
+    <span class="hljs-keyword">end</span>
+
+    result = infer(
+        model = linear_system_model(A = A),
+        data = (b = b,),
+        initialization = initialization,
+        returnvars = (x = KeepEach(),),
+        iterations = iterations,
+        options = (limit_stack_depth = <span class="hljs-number">100</span>,),   <span class="hljs-comment"># keeps large graphs from exhausting the stack</span>
+    )
+
+    beliefs = result.posteriors[:x]
+    means = reduce(hcat, (mean.(belief) <span class="hljs-keyword">for</span> belief <span class="hljs-keyword">in</span> beliefs))
+    variances = reduce(hcat, (var.(belief) <span class="hljs-keyword">for</span> belief <span class="hljs-keyword">in</span> beliefs))
+    <span class="hljs-keyword">return</span> (; result, beliefs, means, variances)
+<span class="hljs-keyword">end</span>
+</code></pre><pre><code class="nohighlight hljs">solve_with_messages (generic function with 1 method)</code></pre><h2 id="Warm-up:-a-chain"><a class="docs-heading-anchor" href="#Warm-up:-a-chain">Warm-up: a chain</a><a id="Warm-up:-a-chain-1"></a><a class="docs-heading-anchor-permalink" href="#Warm-up:-a-chain" title="Permalink"></a></h2><p>First consider four unknowns coupled in a chain. The corresponding factor graph has no cycles. This is the friendly case: both the means and marginal variances returned by message passing are exact.</p><pre><code class="language-julia hljs">A_tree = [
+    <span class="hljs-number">3.0</span>  -<span class="hljs-number">0.8</span>   <span class="hljs-number">0.0</span>   <span class="hljs-number">0.0</span>
+   -<span class="hljs-number">0.8</span>   <span class="hljs-number">3.5</span>  -<span class="hljs-number">0.6</span>   <span class="hljs-number">0.0</span>
+    <span class="hljs-number">0.0</span>  -<span class="hljs-number">0.6</span>   <span class="hljs-number">2.8</span>  -<span class="hljs-number">0.7</span>
+    <span class="hljs-number">0.0</span>   <span class="hljs-number">0.0</span>  -<span class="hljs-number">0.7</span>   <span class="hljs-number">2.5</span>
+]
+b_tree = [<span class="hljs-number">1.0</span>, -<span class="hljs-number">0.5</span>, <span class="hljs-number">2.0</span>, <span class="hljs-number">0.75</span>]
+tree = solve_with_messages(A_tree, b_tree; iterations = <span class="hljs-number">12</span>)
+
+x_exact_tree = A_tree \ b_tree
+v_exact_tree = diag(inv(A_tree))
+
+println(<span class="hljs-string">&quot;largest mean error:     &quot;</span>, maximum(abs.(tree.means[:, <span class="hljs-keyword">end</span>] - x_exact_tree)))
+println(<span class="hljs-string">&quot;largest variance error: &quot;</span>, maximum(abs.(tree.variances[:, <span class="hljs-keyword">end</span>] - v_exact_tree)))
+</code></pre><pre><code class="nohighlight hljs">largest mean error:     2.220446049250313e-16
+largest variance error: 0.0</code></pre><p>Before looking at the numbers, look at the graph itself. Circles are unknowns, the small dark squares are the Gaussian self-potentials, and every <code>A</code> square is one <code>GaussianCoupling</code> factor sitting on a nonzero off-diagonal entry of <span>$A$</span>. For the chain there is exactly one path between any two unknowns: no loops, so message passing is exact in every respect. The picture at the bottom explains how to convert an A into the respective factor graph.</p><pre><code class="language-julia hljs"><span class="hljs-comment"># A picture of the factor graph itself, drawn directly with Plots so it composes with</span>
+<span class="hljs-comment"># other subplots: a circle per unknown, a labelled square per `GaussianCoupling` factor (one for</span>
+<span class="hljs-comment"># every nonzero off-diagonal of A), and a small dark square for each Gaussian</span>
+<span class="hljs-comment"># self-potential. The double loop mirrors `linear_system_model` line by line.</span>
+<span class="hljs-keyword">function</span> factor_graph(A; positions, kwargs...)
+    n = size(A, <span class="hljs-number">1</span>)
+    sub(k) = join(<span class="hljs-string">&#x27;₀&#x27;</span> + d <span class="hljs-keyword">for</span> d <span class="hljs-keyword">in</span> reverse(digits(k)))
+    selfpos = [p .+ (<span class="hljs-number">0.16</span>, <span class="hljs-number">0.16</span>) <span class="hljs-keyword">for</span> p <span class="hljs-keyword">in</span> positions]
+
+    xs = [first.(positions); first.(selfpos)]
+    ys = [last.(positions); last.(selfpos)]
+    p = plot(;
+        legend = <span class="hljs-literal">false</span>, axis = <span class="hljs-literal">false</span>, grid = <span class="hljs-literal">false</span>, ticks = <span class="hljs-literal">false</span>, aspect_ratio = :equal,
+        xlims = extrema(xs) .+ (-<span class="hljs-number">0.5</span>, <span class="hljs-number">0.5</span>), ylims = extrema(ys) .+ (-<span class="hljs-number">0.5</span>, <span class="hljs-number">0.5</span>), kwargs...
+    )
+
+    <span class="hljs-comment"># Edges first, so that the nodes are drawn on top of them.</span>
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:n
+        plot!(p, [positions[i][<span class="hljs-number">1</span>], selfpos[i][<span class="hljs-number">1</span>]], [positions[i][<span class="hljs-number">2</span>], selfpos[i][<span class="hljs-number">2</span>]]; color = :gray40, linewidth = <span class="hljs-number">1.5</span>)
+    <span class="hljs-keyword">end</span>
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:(n - <span class="hljs-number">1</span>), j <span class="hljs-keyword">in</span> (i + <span class="hljs-number">1</span>):n
+        <span class="hljs-keyword">if</span> !iszero(A[i, j])
+            plot!(p, [positions[i][<span class="hljs-number">1</span>], positions[j][<span class="hljs-number">1</span>]], [positions[i][<span class="hljs-number">2</span>], positions[j][<span class="hljs-number">2</span>]]; color = :gray40, linewidth = <span class="hljs-number">1.5</span>)
+        <span class="hljs-keyword">end</span>
+    <span class="hljs-keyword">end</span>
+
+    <span class="hljs-comment"># A labelled square per `GaussianCoupling` factor, halfway along its edge.</span>
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:(n - <span class="hljs-number">1</span>), j <span class="hljs-keyword">in</span> (i + <span class="hljs-number">1</span>):n
+        <span class="hljs-keyword">if</span> !iszero(A[i, j])
+            mid = (positions[i] .+ positions[j]) ./ <span class="hljs-number">2</span>
+            scatter!(p, [mid[<span class="hljs-number">1</span>]], [mid[<span class="hljs-number">2</span>]]; marker = :square, markersize = <span class="hljs-number">13</span>, color = :gray90, markerstrokecolor = :gray40)
+            annotate!(p, mid[<span class="hljs-number">1</span>], mid[<span class="hljs-number">2</span>], text(<span class="hljs-string">&quot;A<span class="hljs-subst">$(sub(i)</span>)<span class="hljs-subst">$(sub(j)</span>)&quot;</span>, <span class="hljs-number">8</span>, :gray10))
+        <span class="hljs-keyword">end</span>
+    <span class="hljs-keyword">end</span>
+
+    <span class="hljs-comment"># A small dark square per Gaussian self-potential and a circle per unknown.</span>
+    scatter!(p, first.(selfpos), last.(selfpos); marker = :square, markersize = <span class="hljs-number">6</span>, color = :gray60, markerstrokecolor = :gray40)
+    scatter!(p, first.(positions), last.(positions); marker = :circle, markersize = <span class="hljs-number">12</span>, color = :white, markerstrokecolor = :black)
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:n
+        annotate!(p, positions[i][<span class="hljs-number">1</span>], positions[i][<span class="hljs-number">2</span>], text(<span class="hljs-string">&quot;x<span class="hljs-subst">$(sub(i)</span>)&quot;</span>, <span class="hljs-number">9</span>, :gray10))
+    <span class="hljs-keyword">end</span>
+    <span class="hljs-keyword">return</span> p
+<span class="hljs-keyword">end</span>
+
+fg = factor_graph(A_tree; positions = [(float(i), <span class="hljs-number">0.0</span>) <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:<span class="hljs-number">4</span>], title = <span class="hljs-string">&quot;Chain: factor graph&quot;</span>);
+
+p_tree_graph = heatmap(
+    abs.(A_tree .- Diagonal(diag(A_tree))),
+    title = <span class="hljs-string">&quot;Chain: edge strengths |Aᵢⱼ|&quot;</span>,
+    xlabel = <span class="hljs-string">&quot;variable j&quot;</span>, ylabel = <span class="hljs-string">&quot;variable i&quot;</span>,
+    aspect_ratio = :equal, color = :blues, yflip = <span class="hljs-literal">true</span>, xticks = <span class="hljs-number">1</span>:<span class="hljs-number">4</span>, yticks = <span class="hljs-number">1</span>:<span class="hljs-number">4</span>,
+);
+
+plot(p_tree_graph, fg; layout = (<span class="hljs-number">1</span>, <span class="hljs-number">2</span>), size = (<span class="hljs-number">900</span>, <span class="hljs-number">360</span>))
+</code></pre><p><img src="Solving Linear Systems with Message Passing_5_1.png" alt/></p><h2 id="Add-one-edge:-a-loopy-graph"><a class="docs-heading-anchor" href="#Add-one-edge:-a-loopy-graph">Add one edge: a loopy graph</a><a id="Add-one-edge:-a-loopy-graph-1"></a><a class="docs-heading-anchor-permalink" href="#Add-one-edge:-a-loopy-graph" title="Permalink"></a></h2><p>Closing the chain into a ring creates a feedback loop. We keep the matrix strictly diagonally dominant, a convenient sufficient condition for convergence. Watch what changes: the means still converge to <code>A \ b</code>, while the variances become loop-dependent approximations.</p><pre><code class="language-julia hljs">A_loop = copy(A_tree)
+A_loop[<span class="hljs-number">1</span>, <span class="hljs-number">4</span>] = A_loop[<span class="hljs-number">4</span>, <span class="hljs-number">1</span>] = -<span class="hljs-number">0.9</span>
+loop = solve_with_messages(A_loop, b_tree; iterations = <span class="hljs-number">20</span>)
+
+x_exact_loop = A_loop \ b_tree
+v_exact_loop = diag(inv(A_loop))
+residuals = [norm(A_loop * loop.means[:, k] - b_tree) <span class="hljs-keyword">for</span> k <span class="hljs-keyword">in</span> axes(loop.means, <span class="hljs-number">2</span>)]
+
+<span class="hljs-meta">@assert</span> all(A_loop[i, i] &gt; sum(abs, A_loop[i, :]) - A_loop[i, i] <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> axes(A_loop, <span class="hljs-number">1</span>))
+println(<span class="hljs-string">&quot;final residual ‖Ax-b‖: &quot;</span>, residuals[<span class="hljs-keyword">end</span>])
+</code></pre><pre><code class="nohighlight hljs">final residual ‖Ax-b‖: 1.7076154076488082e-14</code></pre><p>Here is what that one extra matrix entry does to the graph: it closes the chain into a ring. Now there are two routes between any pair of unknowns and messages can circulate around the cycle indefinitely - this is exactly why the variances come out approximate below, while the means still converge to the true solution.</p><pre><code class="language-julia hljs">factor_graph(A_loop; positions = [(<span class="hljs-number">0.0</span>, <span class="hljs-number">1.0</span>), (<span class="hljs-number">1.0</span>, <span class="hljs-number">1.0</span>), (<span class="hljs-number">1.0</span>, <span class="hljs-number">0.0</span>), (<span class="hljs-number">0.0</span>, <span class="hljs-number">0.0</span>)])
+</code></pre><p><img src="Solving Linear Systems with Message Passing_7_1.png" alt/></p><pre><code class="language-julia hljs">p_convergence = plot(
+    residuals, yscale = :log10, marker = :circle, label = <span class="hljs-literal">false</span>,
+    xlabel = <span class="hljs-string">&quot;message-passing sweep&quot;</span>, ylabel = <span class="hljs-string">&quot;‖Ax-b‖₂&quot;</span>,
+    title = <span class="hljs-string">&quot;Local messages converge globally&quot;</span>,
+)
+
+p_paths = plot(
+    xlabel = <span class="hljs-string">&quot;message-passing sweep&quot;</span>, ylabel = <span class="hljs-string">&quot;mean&quot;</span>,
+    title = <span class="hljs-string">&quot;Belief means settling&quot;</span>,
+)
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> axes(loop.means, <span class="hljs-number">1</span>)
+    plot!(p_paths, loop.means[i, :], label = <span class="hljs-string">&quot;x<span class="hljs-variable">$i</span>&quot;</span>, marker = :circle)
+    hline!(p_paths, [x_exact_loop[i]], color = i, linestyle = :dash, label = <span class="hljs-literal">false</span>)
+<span class="hljs-keyword">end</span>
+plot(p_convergence, p_paths; layout = (<span class="hljs-number">1</span>, <span class="hljs-number">2</span>), size = (<span class="hljs-number">950</span>, <span class="hljs-number">360</span>))
+</code></pre><p><img src="Solving Linear Systems with Message Passing_8_1.png" alt/></p><pre><code class="language-julia hljs">variance_error = <span class="hljs-number">100</span> .* (loop.variances[:, <span class="hljs-keyword">end</span>] .- v_exact_loop) ./ v_exact_loop
+
+p_variances = bar(
+    (<span class="hljs-number">1</span>:<span class="hljs-number">4</span>) .- <span class="hljs-number">0.18</span>, v_exact_loop,
+    label = <span class="hljs-string">&quot;diag(inv(A))&quot;</span>, bar_width = <span class="hljs-number">0.35</span>,
+    xlabel = <span class="hljs-string">&quot;variable&quot;</span>, ylabel = <span class="hljs-string">&quot;marginal variance&quot;</span>,
+    title = <span class="hljs-string">&quot;Cycles change the variance estimate&quot;</span>, xticks = <span class="hljs-number">1</span>:<span class="hljs-number">4</span>,
+)
+bar!(p_variances, (<span class="hljs-number">1</span>:<span class="hljs-number">4</span>) .+ <span class="hljs-number">0.18</span>, loop.variances[:, <span class="hljs-keyword">end</span>], label = <span class="hljs-string">&quot;loopy message passing&quot;</span>, bar_width = <span class="hljs-number">0.35</span>)
+
+p_variance_error = bar(
+    <span class="hljs-number">1</span>:<span class="hljs-number">4</span>, variance_error, label = <span class="hljs-literal">false</span>,
+    xlabel = <span class="hljs-string">&quot;variable&quot;</span>, ylabel = <span class="hljs-string">&quot;relative error (%)&quot;</span>,
+    title = <span class="hljs-string">&quot;Variance error despite exact means&quot;</span>,
+)
+plot(p_variances, p_variance_error; layout = (<span class="hljs-number">1</span>, <span class="hljs-number">2</span>), size = (<span class="hljs-number">950</span>, <span class="hljs-number">360</span>))
+</code></pre><p><img src="Solving Linear Systems with Message Passing_9_1.png" alt/></p><h2 id="Turn-up-the-coupling"><a class="docs-heading-anchor" href="#Turn-up-the-coupling">Turn up the coupling</a><a id="Turn-up-the-coupling-1"></a><a class="docs-heading-anchor-permalink" href="#Turn-up-the-coupling" title="Permalink"></a></h2><p>Message passing is most comfortable when each diagonal term dominates the edges around it. The next experiment scales every off-diagonal coupling while keeping the diagonal fixed. As the system approaches the edge of diagonal dominance, information echoes more strongly around the ring and convergence slows.</p><pre><code class="language-julia hljs">diagonal = Diagonal(diag(A_loop))
+off_diagonal = A_loop - diagonal
+coupling_scales = [<span class="hljs-number">0.25</span>, <span class="hljs-number">0.6</span>, <span class="hljs-number">0.9</span>]
+
+p_coupling = plot(
+    yscale = :log10, xlabel = <span class="hljs-string">&quot;message-passing sweep&quot;</span>, ylabel = <span class="hljs-string">&quot;‖Ax-b‖₂&quot;</span>,
+    title = <span class="hljs-string">&quot;Stronger feedback needs more sweeps&quot;</span>,
+)
+<span class="hljs-keyword">for</span> scale <span class="hljs-keyword">in</span> coupling_scales
+    A_scaled = diagonal + scale * off_diagonal
+    run = solve_with_messages(<span class="hljs-built_in">Matrix</span>(A_scaled), b_tree; iterations = <span class="hljs-number">20</span>)
+    errors = [norm(A_scaled * run.means[:, k] - b_tree) <span class="hljs-keyword">for</span> k <span class="hljs-keyword">in</span> axes(run.means, <span class="hljs-number">2</span>)]
+    plot!(p_coupling, errors, marker = :circle, label = <span class="hljs-string">&quot;scale = <span class="hljs-variable">$scale</span>&quot;</span>)
+<span class="hljs-keyword">end</span>
+p_coupling
+</code></pre><p><img src="Solving Linear Systems with Message Passing_10_1.png" alt/></p><h2 id="From-one-solve-to-a-stream-of-solves:-heat-on-a-grid"><a class="docs-heading-anchor" href="#From-one-solve-to-a-stream-of-solves:-heat-on-a-grid">From one solve to a stream of solves: heat on a grid</a><a id="From-one-solve-to-a-stream-of-solves:-heat-on-a-grid-1"></a><a class="docs-heading-anchor-permalink" href="#From-one-solve-to-a-stream-of-solves:-heat-on-a-grid" title="Permalink"></a></h2><p>So far <span>$b$</span> was a fixed vector. Now let <span>$A$</span> describe a <span>$20 \times 20$</span> grid of cells (the discrete Laplacian plus a small leak <span>$\kappa$</span> to the ambient), and let the right-hand side change over time: four segments of the boundary are in contact with the outside, two of them hot and two of them cold, and those temperatures drift. Each time step is one linear system, and the graph we already built solves all of them at once, while borrowing strength across time.</p><p>The only sensors are a thermometer at every source segment, and they occasionally go offline. When a source sensor drops out, its temperature has to be inferred from its own past and from what the other three sources are doing.</p><pre><code class="language-julia hljs"><span class="hljs-keyword">function</span> grid_laplacian(m, κ)
+    idx(r, c) = (r - <span class="hljs-number">1</span>) * m + c
+    A = zeros(m * m, m * m)
+    <span class="hljs-keyword">for</span> r <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:m, c <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:m, (dr, dc) <span class="hljs-keyword">in</span> ((<span class="hljs-number">1</span>, <span class="hljs-number">0</span>), (-<span class="hljs-number">1</span>, <span class="hljs-number">0</span>), (<span class="hljs-number">0</span>, <span class="hljs-number">1</span>), (<span class="hljs-number">0</span>, -<span class="hljs-number">1</span>))
+        rr, cc = r + dr, c + dc
+        <span class="hljs-keyword">if</span> <span class="hljs-number">1</span> &lt;= rr &lt;= m &amp;&amp; <span class="hljs-number">1</span> &lt;= cc &lt;= m
+            A[idx(r, c), idx(rr, cc)] = -<span class="hljs-number">1.0</span>
+            A[idx(r, c), idx(r, c)] += <span class="hljs-number">1.0</span>
+        <span class="hljs-keyword">end</span>
+    <span class="hljs-keyword">end</span>
+    <span class="hljs-keyword">return</span> A + κ * I
+<span class="hljs-keyword">end</span>
+
+m, κ = <span class="hljs-number">20</span>, <span class="hljs-number">0.1</span>   <span class="hljs-comment"># the leak sets how fast the sweeps settle: with κ = 0.01 the grid needs ~400 of them, with 0.1 about 50</span>
+cell(r, c) = (r - <span class="hljs-number">1</span>) * m + c
+A_grid = grid_laplacian(m, κ)
+n_grid = size(A_grid, <span class="hljs-number">1</span>)
+
+source_cells = [                                                       <span class="hljs-comment"># north, east, south, west</span>
+    [cell(<span class="hljs-number">1</span>, c) <span class="hljs-keyword">for</span> c <span class="hljs-keyword">in</span> <span class="hljs-number">6</span>:<span class="hljs-number">10</span>], [cell(r, m) <span class="hljs-keyword">for</span> r <span class="hljs-keyword">in</span> <span class="hljs-number">6</span>:<span class="hljs-number">10</span>], [cell(m, c) <span class="hljs-keyword">for</span> c <span class="hljs-keyword">in</span> <span class="hljs-number">11</span>:<span class="hljs-number">15</span>], [cell(r, <span class="hljs-number">1</span>) <span class="hljs-keyword">for</span> r <span class="hljs-keyword">in</span> <span class="hljs-number">11</span>:<span class="hljs-number">15</span>],
+]
+K = length(source_cells)
+
+cell_map = fill(<span class="hljs-number">0.0</span>, m, m)
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> reduce(vcat, source_cells)
+    cell_map[div(i - <span class="hljs-number">1</span>, m) + <span class="hljs-number">1</span>, mod(i - <span class="hljs-number">1</span>, m) + <span class="hljs-number">1</span>] = <span class="hljs-number">1.0</span>
+<span class="hljs-keyword">end</span>
+p_grid_sparsity = heatmap(
+    abs.(A_grid .- Diagonal(diag(A_grid))), title = <span class="hljs-string">&quot;Grid: edge strengths |Aᵢⱼ|&quot;</span>,
+    xlabel = <span class="hljs-string">&quot;cell j&quot;</span>, ylabel = <span class="hljs-string">&quot;cell i&quot;</span>, aspect_ratio = :equal, color = :blues, yflip = <span class="hljs-literal">true</span>, colorbar = <span class="hljs-literal">false</span>,
+)
+p_grid_cells = heatmap(
+    cell_map, title = <span class="hljs-string">&quot;Source segments&quot;</span>, aspect_ratio = :equal, yflip = <span class="hljs-literal">true</span>,
+    color = cgrad([:white, :firebrick]), clims = (<span class="hljs-number">0</span>, <span class="hljs-number">1</span>), colorbar = <span class="hljs-literal">false</span>, framestyle = :none,
+)
+plot(p_grid_sparsity, p_grid_cells; layout = (<span class="hljs-number">1</span>, <span class="hljs-number">2</span>), size = (<span class="hljs-number">900</span>, <span class="hljs-number">400</span>))
+</code></pre><p><img src="Solving Linear Systems with Message Passing_11_1.png" alt/></p><p>The heat-grid factor graph has 400 unknowns, but its texture is already visible in a small patch. A <span>$4 \times 4$</span> corner of the grid shows what the chain and the ring could not: every plaquette of the lattice is a loop, and neighbouring loops share edges. This is the regime where the means stay exact under convergence while the variances are genuinely approximate.</p><pre><code class="language-julia hljs">factor_graph(grid_laplacian(<span class="hljs-number">4</span>, κ); positions = [(float(c), -float(r)) <span class="hljs-keyword">for</span> r <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:<span class="hljs-number">4</span> <span class="hljs-keyword">for</span> c <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:<span class="hljs-number">4</span>])
+</code></pre><p><img src="Solving Linear Systems with Message Passing_12_1.png" alt/></p><p>The data are generated by a daily profile plus a slow drift that follows a random walk, one per source:</p><p class="math-container">\[b_k(t) = s_k(t) + d_k(t), \qquad d_k(t) = d_k(t-1) + \varepsilon_k(t), \quad \varepsilon_k(t) \sim \mathcal{N}(0, \tau_d^{-1}).\]</p><p>The true temperature field at each step is the steady state <span>$x_t = A^{-1} b_t$</span>. The model below is not told the profile <span>$s_k(t)$</span>; it sees only the source sensors, which have precision <span>$\tau_y$</span>, and two of those sensors go offline for a while: entries of <code>Y_b</code> become <code>missing</code>.</p><pre><code class="language-julia hljs">T, period = <span class="hljs-number">120</span>, <span class="hljs-number">40</span>
+τ_d, τ_y = <span class="hljs-number">25.0</span>, <span class="hljs-number">25.0</span>   <span class="hljs-comment"># drift, source sensors</span>
+rng = StableRNG(<span class="hljs-number">42</span>)
+
+profile_level, profile_swing, profile_phase = [<span class="hljs-number">2.0</span>, -<span class="hljs-number">2.0</span>, <span class="hljs-number">1.0</span>, -<span class="hljs-number">1.0</span>], [<span class="hljs-number">8.0</span>, <span class="hljs-number">7.0</span>, <span class="hljs-number">8.0</span>, <span class="hljs-number">7.0</span>], [<span class="hljs-number">0.0</span>, <span class="hljs-literal">π</span> / <span class="hljs-number">2</span>, <span class="hljs-literal">π</span>, <span class="hljs-number">3</span><span class="hljs-literal">π</span> / <span class="hljs-number">2</span>]
+S_known = [profile_level[k] + profile_swing[k] * sin(<span class="hljs-number">2</span><span class="hljs-literal">π</span> * t / period + profile_phase[k]) <span class="hljs-keyword">for</span> t <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:T, k <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:K]
+D_true = cumsum(vcat(zeros(<span class="hljs-number">1</span>, K), randn(rng, T - <span class="hljs-number">1</span>, K) ./ sqrt(τ_d)); dims = <span class="hljs-number">1</span>)
+B_true = S_known .+ D_true
+
+full_b(bk) = (v = zeros(n_grid); <span class="hljs-keyword">for</span> k <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:K; v[source_cells[k]] .= bk[k]; <span class="hljs-keyword">end</span>; v)
+X_true = reduce(hcat, (A_grid \ full_b(B_true[t, :]) <span class="hljs-keyword">for</span> t <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:T))&#x27;   <span class="hljs-comment"># T × n</span>
+
+dropouts = <span class="hljs-built_in">Dict</span>(<span class="hljs-number">2</span> =&gt; <span class="hljs-number">40</span>:<span class="hljs-number">70</span>, <span class="hljs-number">4</span> =&gt; <span class="hljs-number">90</span>:<span class="hljs-number">100</span>)
+Y_b = <span class="hljs-built_in">Matrix</span>{<span class="hljs-built_in">Union</span>{<span class="hljs-built_in">Float64</span>, <span class="hljs-built_in">Missing</span>}}(B_true .+ randn(rng, T, K) ./ sqrt(τ_y))
+<span class="hljs-keyword">for</span> (k, window) <span class="hljs-keyword">in</span> dropouts
+    Y_b[window, k] .= <span class="hljs-literal">missing</span>
+<span class="hljs-keyword">end</span>
+
+source_names = [<span class="hljs-string">&quot;north&quot;</span>, <span class="hljs-string">&quot;east&quot;</span>, <span class="hljs-string">&quot;south&quot;</span>, <span class="hljs-string">&quot;west&quot;</span>]
+p_sources = plot(layout = (<span class="hljs-number">2</span>, <span class="hljs-number">2</span>), size = (<span class="hljs-number">950</span>, <span class="hljs-number">500</span>), legend = :topright)
+<span class="hljs-keyword">for</span> k <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:K
+    plot!(p_sources[k], <span class="hljs-number">1</span>:T, S_known[:, k], linestyle = :dash, color = :gray, label = <span class="hljs-string">&quot;daily profile sₖ(t)&quot;</span>)
+    plot!(p_sources[k], <span class="hljs-number">1</span>:T, B_true[:, k], color = k, label = <span class="hljs-string">&quot;true bₖ(t)&quot;</span>)
+    scatter!(p_sources[k], <span class="hljs-number">1</span>:T, Y_b[:, k], color = k, markersize = <span class="hljs-number">2</span>, markerstrokewidth = <span class="hljs-number">0</span>, alpha = <span class="hljs-number">0.6</span>, label = <span class="hljs-string">&quot;sensor&quot;</span>)
+    haskey(dropouts, k) &amp;&amp; vspan!(p_sources[k], [first(dropouts[k]), last(dropouts[k])], color = :gray, alpha = <span class="hljs-number">0.2</span>, label = <span class="hljs-string">&quot;offline&quot;</span>)
+    plot!(p_sources[k], title = <span class="hljs-string">&quot;source: <span class="hljs-subst">$(source_names[k])</span>&quot;</span>, xlabel = k &gt; <span class="hljs-number">2</span> ? <span class="hljs-string">&quot;time&quot;</span> : <span class="hljs-string">&quot;&quot;</span>, ylabel = <span class="hljs-string">&quot;temperature&quot;</span>)
+<span class="hljs-keyword">end</span>
+p_sources
+</code></pre><p><img src="Solving Linear Systems with Message Passing_13_1.png" alt/></p><h3 id="A-state-space-prior-for-the-sources"><a class="docs-heading-anchor" href="#A-state-space-prior-for-the-sources">A state-space prior for the sources</a><a id="A-state-space-prior-for-the-sources-1"></a><a class="docs-heading-anchor-permalink" href="#A-state-space-prior-for-the-sources" title="Permalink"></a></h3><p>Before wiring the sources into the grid, give them a prior of their own. The four temperatures at time <span>$t$</span> form one vector <span>$b_t$</span> that follows a random walk with an unknown <span>$4 \times 4$</span> transition precision <span>$\Lambda \sim \mathrm{Wishart}$</span>: the sources drift together or apart, and <span>$\Lambda$</span> learns how. Each sensor is a scalar reading of one component, <span>$\langle b_t, e_k \rangle$</span>, with a learned precision <span>$\tau$</span>, so a single <code>missing</code> entry drops one likelihood term instead of a whole time slice.</p><p>We write this as a <em>submodel</em>. The arguments of a <code>@model</code> are its Markov blanket, the variables it shares with the outside: <code>y_b</code> (the data), <code>b</code> (the states it creates), <code>Λ</code> and <code>τ</code> (hyperparameters owned by the caller) and the constant <code>dim_latent</code>. Everything else stays internal. A submodel is invoked with <code>~</code>: all but one interface are given by keyword and the remaining one is bound to the left-hand side, so <code>b ~ lss_prior(y_b = y_b, Λ = Λ, τ = τ, dim_latent = 4)</code> hands the whole array of states back to the caller. Factorisation constraints for the factors inside a submodel live in a <code>for q in lss_prior</code> block. First we run it on its own, wrapped in a top-level model that declares <span>$\Lambda$</span> and <span>$\tau$</span>.</p><pre><code class="language-julia hljs">unit(k, n) = onehot(k, <span class="hljs-number">1</span>:n)  <span class="hljs-comment"># eₖ as a plain vector, so dot(b[t], eₖ) picks component k</span>
+
+<span class="hljs-meta">@model</span> <span class="hljs-keyword">function</span> lss_prior(y_b, b, Λ, τ, dim_latent)
+    b[<span class="hljs-number">1</span>] ~ MvNormalMeanPrecision(zeros(dim_latent), <span class="hljs-number">0.01</span> * diageye(dim_latent))
+    <span class="hljs-keyword">for</span> t <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:size(y_b, <span class="hljs-number">1</span>)
+        <span class="hljs-keyword">if</span> t &gt; <span class="hljs-number">1</span>
+            b[t] ~ MvNormalMeanPrecision(b[t - <span class="hljs-number">1</span>], Λ)
+        <span class="hljs-keyword">end</span>
+        <span class="hljs-keyword">for</span> k <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:dim_latent
+            y_b[t, k] ~ NormalMeanPrecision(dot(b[t], unit(k, dim_latent)), τ)
+        <span class="hljs-keyword">end</span>
+    <span class="hljs-keyword">end</span>
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-meta">@model</span> <span class="hljs-keyword">function</span> linear_state_space_model(y_b, dim_latent)
+    Λ ~ Wishart(dim_latent + <span class="hljs-number">2</span>, diageye(dim_latent))
+    τ ~ GammaShapeRate(<span class="hljs-number">1</span>, <span class="hljs-number">1</span>)
+    b ~ lss_prior(y_b = y_b, Λ = Λ, τ = τ, dim_latent = dim_latent)
+<span class="hljs-keyword">end</span>
+
+lss_constraints = <span class="hljs-meta">@constraints</span> <span class="hljs-keyword">begin</span>
+    <span class="hljs-keyword">for</span> q <span class="hljs-keyword">in</span> lss_prior
+        q(b, Λ, τ) = q(b)q(Λ)q(τ)
+    <span class="hljs-keyword">end</span>
+<span class="hljs-keyword">end</span>
+
+lss_init = <span class="hljs-meta">@initialization</span> <span class="hljs-keyword">begin</span>
+    q(Λ) = Wishart(K + <span class="hljs-number">2</span>, diageye(K))
+    q(τ) = GammaShapeRate(<span class="hljs-number">1.0</span>, <span class="hljs-number">1.0</span>)
+<span class="hljs-keyword">end</span>
+
+lss_result = infer(
+    model = linear_state_space_model(dim_latent = K),
+    data = (y_b = Y_b,),
+    constraints = lss_constraints,
+    initialization = lss_init,
+    returnvars = (b = KeepLast(), Λ = KeepLast(), τ = KeepLast()),
+    options = (limit_stack_depth = <span class="hljs-number">100</span>,),
+    iterations = <span class="hljs-number">10</span>,
+)
+
+B_lss_mean = reduce(hcat, mean.(lss_result.posteriors[:b]))&#x27;   <span class="hljs-comment"># T × 4</span>
+B_lss_std = reduce(hcat, (sqrt.(var(q)) <span class="hljs-keyword">for</span> q <span class="hljs-keyword">in</span> lss_result.posteriors[:b]))&#x27;
+observed = .!ismissing.(Y_b)
+println(<span class="hljs-string">&quot;max error on observed entries: &quot;</span>, maximum(abs.(B_lss_mean[observed] .- B_true[observed])))
+println(<span class="hljs-string">&quot;max error on missing entries:  &quot;</span>, maximum(abs.(B_lss_mean[.!observed] .- B_true[.!observed])))
+println(<span class="hljs-string">&quot;learned sensor precision: &quot;</span>, mean(lss_result.posteriors[:τ]), <span class="hljs-string">&quot;  (true τ_y = &quot;</span>, τ_y, <span class="hljs-string">&quot;)&quot;</span>)
+</code></pre><pre><code class="nohighlight hljs">max error on observed entries: 0.5252585205970188
+max error on missing entries:  1.3195610913317362
+learned sensor precision: 17.010869360240218  (true τ_y = 25.0)</code></pre><pre><code class="language-julia hljs">p_lss = plot(layout = (<span class="hljs-number">2</span>, <span class="hljs-number">2</span>), size = (<span class="hljs-number">1100</span>, <span class="hljs-number">760</span>), legend = :outertop, legend_columns = <span class="hljs-number">2</span>, margin = <span class="hljs-number">4</span>Plots.mm)
+<span class="hljs-keyword">for</span> k <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:K
+    haskey(dropouts, k) &amp;&amp; vspan!(p_lss[k], [first(dropouts[k]), last(dropouts[k])], color = :gray, alpha = <span class="hljs-number">0.2</span>, label = <span class="hljs-string">&quot;offline&quot;</span>)
+    plot!(p_lss[k], <span class="hljs-number">1</span>:T, B_lss_mean[:, k], ribbon = <span class="hljs-number">2</span> .* B_lss_std[:, k], color = k, fillalpha = <span class="hljs-number">0.25</span>, label = <span class="hljs-string">&quot;posterior ± 2σ&quot;</span>)
+    plot!(p_lss[k], <span class="hljs-number">1</span>:T, B_true[:, k], color = :black, linestyle = :dash, label = <span class="hljs-string">&quot;true bₖ(t)&quot;</span>)
+    plot!(p_lss[k], title = <span class="hljs-string">&quot;source: <span class="hljs-subst">$(source_names[k])</span>&quot;</span>, xlabel = k &gt; <span class="hljs-number">2</span> ? <span class="hljs-string">&quot;time&quot;</span> : <span class="hljs-string">&quot;&quot;</span>, ylabel = <span class="hljs-string">&quot;temperature&quot;</span>)
+<span class="hljs-keyword">end</span>
+p_lss
+</code></pre><p><img src="Solving Linear Systems with Message Passing_15_1.png" alt/></p><p>While a sensor is offline the state-space prior carries the source on its own past and on the learned coupling <span>$\Lambda$</span> to the other three sources; the uncertainty grows, but stays bounded. Now the same submodel goes into the grid.</p><h3 id="The-model"><a class="docs-heading-anchor" href="#The-model">The model</a><a id="The-model-1"></a><a class="docs-heading-anchor-permalink" href="#The-model" title="Permalink"></a></h3><p>Each time slice is the linear system from the first half, scaled by an inverse temperature <span>$\beta$</span>. Multiplying both <span>$A$</span> and <span>$b$</span> by <span>$\beta$</span> leaves the solution <span>$A^{-1}b$</span> untouched, but changes the covariance to <span>$(\beta A)^{-1}$</span>: <span>$\beta$</span> says how tightly the field is expected to follow the steady-state equation. Interior cells keep the Gaussian self-potential of <code>linear_system_model</code> with <span>$b_i = 0$</span>, written with a static right-hand side <code>b0</code> of zeros. The source cells are driven by the state instead: all cells of segment <span>$k$</span> share the temperature <span>$\langle b_t, e_k \rangle$</span>, and the coupling <span>$\exp(\beta\, b_{t,k} x_i)$</span> is one <code>GaussianCoupling</code> node between that temperature and each cell of the segment. The prior on <span>$b_t$</span> is the submodel from the previous section, plugged in with one line. Its hyperparameters are not learned a second time: the first loopy sweeps through the grid send wild messages to the sources, and a variational update of <span>$\tau$</span> or <span>$\Lambda$</span> that sees them collapses to zero and never recovers. The posterior means from the standalone run go in as constants instead, through the same two interfaces. The field itself has no dynamics of its own: every slice is the steady state for its sources, exactly as in the data, and all memory lives in <span>$b_t$</span>.</p><p>One subtlety of the potential remains. <span>$\exp(b^\mathsf{T}x - \frac{1}{2}x^\mathsf{T}Ax)$</span> integrates over <span>$x$</span> to <span>$\exp(\frac{1}{2}b^\mathsf{T}A^{-1}b)$</span> up to a constant. When <span>$b$</span> is data this is irrelevant; when <span>$b$</span> is latent it is a <em>negative</em> precision <span>$\beta\, M^\mathsf{T}A^{-1}M$</span> on the segment temperatures (<span>$M$</span> is the cell-to-segment indicator), about <span>$8\beta$</span> per segment on this grid. Cancelling it exactly would need <span>$A^{-1}M$</span>, four extra solves. We keep it instead and make it harmless by keeping <span>$\beta$</span> small. While a sensor is online its precision of <span>$25$</span> swamps the pull. During a long dropout the source is held only by the random walk, whose slowest mode over a gap of <span>$L$</span> steps has precision about <span>$\Lambda\pi^2/(L+1)^2 \approx 0.1$</span> for the 31-step outage; the pull has to stay well below that, otherwise the posterior on the blind source is no longer proper and the sweeps diverge. <span>$\beta = 0.003$</span> puts the pull at <span>$0.025$</span>: the field is still solved exactly, since <span>$\beta$</span> only rescales the potential, and the price is a slightly wider error during the outage.</p><pre><code class="language-julia hljs"><span class="hljs-meta">@model</span> <span class="hljs-keyword">function</span> heat_grid_model(y_b, b0, A, β, Λ, τ, source_cells)
+    T, n, K = size(y_b, <span class="hljs-number">1</span>), size(A, <span class="hljs-number">1</span>), length(source_cells)
+    <span class="hljs-keyword">local</span> x, bs   <span class="hljs-comment"># declared once so all loops below refer to the same variables</span>
+
+    <span class="hljs-comment"># The state-space prior on the sources, with the sensor likelihood inside it.</span>
+    <span class="hljs-comment"># Λ and τ are plain matrices/numbers here: the interfaces accept constants as well as variables.</span>
+    b ~ lss_prior(y_b = y_b, Λ = Λ, τ = τ, dim_latent = K)
+
+    <span class="hljs-keyword">for</span> t <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:T
+        <span class="hljs-comment"># The linear system at time t, exactly as before, scaled by β.</span>
+        <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:n
+            x[t, i] ~ Normal(mean = b0[i] / A[i, i], precision = β * A[i, i])
+        <span class="hljs-keyword">end</span>
+        <span class="hljs-comment"># Every cell of segment k is driven by component k of the state.</span>
+        <span class="hljs-keyword">for</span> k <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:K
+            bs[t, k] := dot(b[t], unit(k, K))
+            <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> source_cells[k]
+                x[t, i] ~ GaussianCoupling(bs[t, k], β)
+            <span class="hljs-keyword">end</span>
+        <span class="hljs-keyword">end</span>
+        <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:(n - <span class="hljs-number">1</span>), j <span class="hljs-keyword">in</span> (i + <span class="hljs-number">1</span>):n
+            <span class="hljs-keyword">if</span> !iszero(A[i, j])
+                x[t, j] ~ GaussianCoupling(x[t, i], -β * A[i, j])
+            <span class="hljs-keyword">end</span>
+        <span class="hljs-keyword">end</span>
+    <span class="hljs-keyword">end</span>
+<span class="hljs-keyword">end</span>
+</code></pre><p>The graph has loops within each time slice and a chain across time for the sources, so we again start from broad messages, on the field <code>x</code> and on the segment temperatures <code>bs</code>. With <span>$\Lambda$</span> and <span>$\tau$</span> fixed the whole model is Gaussian and no factorisation constraints are needed.</p><pre><code class="language-julia hljs">β = <span class="hljs-number">0.003</span>    <span class="hljs-comment"># inverse temperature of the linear-system potential; see the note on the normaliser above</span>
+
+Λ_hat = mean(lss_result.posteriors[:Λ])   <span class="hljs-comment"># plug-in hyperparameters from the standalone run</span>
+τ_hat = mean(lss_result.posteriors[:τ])
+
+grid_init = <span class="hljs-meta">@initialization</span> <span class="hljs-keyword">begin</span>
+    μ(x) = NormalMeanVariance(<span class="hljs-number">0.0</span>, <span class="hljs-number">1e6</span>)
+    μ(bs) = NormalMeanVariance(<span class="hljs-number">0.0</span>, <span class="hljs-number">1e6</span>)
+<span class="hljs-keyword">end</span>
+
+grid_result = infer(
+    model = heat_grid_model(A = A_grid, β = β, Λ = Λ_hat, τ = τ_hat, source_cells = source_cells),
+    data = (y_b = Y_b, b0 = zeros(n_grid)),
+    initialization = grid_init,
+    returnvars = (x = KeepLast(), b = KeepLast()),
+    options = (limit_stack_depth = <span class="hljs-number">100</span>,),   <span class="hljs-comment"># the graph is deep: 120 slices × 400 cells</span>
+    iterations = <span class="hljs-number">10</span>,
+)
+
+x_post = grid_result.posteriors[:x]   <span class="hljs-comment"># T × n matrix of beliefs</span>
+b_post = grid_result.posteriors[:b]   <span class="hljs-comment"># T beliefs over the 4-vector of source temperatures</span>
+X_mean, X_std = mean.(x_post), std.(x_post)
+B_mean = reduce(hcat, mean.(b_post))&#x27;                    <span class="hljs-comment"># T × 4</span>
+B_std = reduce(hcat, (sqrt.(var(q)) <span class="hljs-keyword">for</span> q <span class="hljs-keyword">in</span> b_post))&#x27;   <span class="hljs-comment"># T × 4</span>
+println(<span class="hljs-string">&quot;largest deviation of the posterior mean from the true field: &quot;</span>, maximum(abs.(X_mean - X_true)))
+println(<span class="hljs-string">&quot;all variances proper: &quot;</span>, all(&gt;(<span class="hljs-number">0</span>), var.(x_post)) &amp;&amp; all(q -&gt; all(&gt;(<span class="hljs-number">0</span>), var(q)), b_post))
+</code></pre><pre><code class="nohighlight hljs">largest deviation of the posterior mean from the true field: 2.844591172410
+0563
+all variances proper: true</code></pre><h3 id="Sources-recovered-through-the-grid"><a class="docs-heading-anchor" href="#Sources-recovered-through-the-grid">Sources recovered through the grid</a><a id="Sources-recovered-through-the-grid-1"></a><a class="docs-heading-anchor-permalink" href="#Sources-recovered-through-the-grid" title="Permalink"></a></h3><pre><code class="language-julia hljs">p_grid_sources = plot(layout = (<span class="hljs-number">2</span>, <span class="hljs-number">2</span>), size = (<span class="hljs-number">1100</span>, <span class="hljs-number">760</span>), legend = :outertop, legend_columns = <span class="hljs-number">2</span>, margin = <span class="hljs-number">4</span>Plots.mm)
+<span class="hljs-keyword">for</span> k <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:K
+    haskey(dropouts, k) &amp;&amp; vspan!(p_grid_sources[k], [first(dropouts[k]), last(dropouts[k])], color = :gray, alpha = <span class="hljs-number">0.2</span>, label = <span class="hljs-string">&quot;offline&quot;</span>)
+    plot!(p_grid_sources[k], <span class="hljs-number">1</span>:T, B_mean[:, k], ribbon = <span class="hljs-number">2</span> .* B_std[:, k], color = k, fillalpha = <span class="hljs-number">0.25</span>, label = <span class="hljs-string">&quot;through the grid ± 2σ&quot;</span>)
+    plot!(p_grid_sources[k], <span class="hljs-number">1</span>:T, B_lss_mean[:, k], color = :gray30, linewidth = <span class="hljs-number">1</span>, label = <span class="hljs-string">&quot;state-space model alone&quot;</span>)
+    plot!(p_grid_sources[k], <span class="hljs-number">1</span>:T, B_true[:, k], color = :black, linestyle = :dash, label = <span class="hljs-string">&quot;true bₖ(t)&quot;</span>)
+    plot!(p_grid_sources[k], title = <span class="hljs-string">&quot;source: <span class="hljs-subst">$(source_names[k])</span>&quot;</span>, xlabel = k &gt; <span class="hljs-number">2</span> ? <span class="hljs-string">&quot;time&quot;</span> : <span class="hljs-string">&quot;&quot;</span>, ylabel = <span class="hljs-string">&quot;temperature&quot;</span>)
+<span class="hljs-keyword">end</span>
+p_grid_sources
+</code></pre><p><img src="Solving Linear Systems with Message Passing_18_1.png" alt/></p><p>The estimates follow the state-space model alone closely. With no thermometers inside the plate the field has nothing of its own to say about the sources; the only route back from the grid is the un-cancelled normaliser, which does nothing while the sensors are online and, during the long outage, pushes the blind source a little further away from zero than the random walk alone would (here that happens to land closer to the truth, but it is a bias, not information). What the grid adds is the field: every slice is solved together with the sources, dropouts included.</p><h3 id="Are-the-numbers-right?"><a class="docs-heading-anchor" href="#Are-the-numbers-right?">Are the numbers right?</a><a id="Are-the-numbers-right?-1"></a><a class="docs-heading-anchor-permalink" href="#Are-the-numbers-right?" title="Permalink"></a></h3><p>The whole model is one big sparse Gaussian with <span>$120 \times (400 + 4)$</span> variables. Its exact posterior would need a dense <span>$48\,000 \times 48\,000$</span> solve, which is exactly the kind of computation message passing lets us avoid. On the earlier small examples we saw that Gaussian message passing returns exact means and slightly optimistic variances on loopy graphs, and the same holds here: the posterior mean tracks the true field while the sensors are online, and the uncertainty around a source grows only while its sensor is offline.</p><pre><code class="language-julia hljs">p_field_error = plot(xlabel = <span class="hljs-string">&quot;time&quot;</span>, ylabel = <span class="hljs-string">&quot;|posterior mean − truth|&quot;</span>, title = <span class="hljs-string">&quot;Errors grow only while a sensor is offline&quot;</span>)
+<span class="hljs-keyword">for</span> k <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:<span class="hljs-number">4</span>
+    plot!(p_field_error, <span class="hljs-number">1</span>:T, abs.(B_mean[:, k] - B_true[:, k]), color = k, label = <span class="hljs-string">&quot;source: <span class="hljs-subst">$(source_names[k])</span>&quot;</span>)
+<span class="hljs-keyword">end</span>
+<span class="hljs-keyword">for</span> (k, window) <span class="hljs-keyword">in</span> dropouts
+    vspan!(p_field_error, [first(window), last(window)], color = :gray, alpha = <span class="hljs-number">0.2</span>, label = k == <span class="hljs-number">2</span> ? <span class="hljs-string">&quot;sensor offline&quot;</span> : <span class="hljs-literal">false</span>)
+<span class="hljs-keyword">end</span>
+p_field_error
+</code></pre><p><img src="Solving Linear Systems with Message Passing_19_1.png" alt/></p><h3 id="The-field,-live"><a class="docs-heading-anchor" href="#The-field,-live">The field, live</a><a id="The-field,-live-1"></a><a class="docs-heading-anchor-permalink" href="#The-field,-live" title="Permalink"></a></h3><p>Finally, the whole picture in motion: the true temperature field, the posterior mean, where the two differ, and how far the posterior standard deviation of every cell rises above its level when all sensors are online, with the source temperatures below. The absolute standard deviation is dominated by the field noise <span>$(\beta A)^{-1}$</span> and barely changes in time; the increase caused by a blind sensor is small but spreads from that wall into the plate. Thick bars mark the source segments, red while their sensor is offline. As the day goes on, the hot and cold spots rotate around the grid.</p><pre><code class="language-julia hljs">to_grid(v) = reshape(v, m, m)&#x27;   <span class="hljs-comment"># row r, column c  ↔  cell(r, c)</span>
+rc(i) = (div(i - <span class="hljs-number">1</span>, m) + <span class="hljs-number">1</span>, mod(i - <span class="hljs-number">1</span>, m) + <span class="hljs-number">1</span>)
+interior = setdiff(<span class="hljs-number">1</span>:n_grid, reduce(vcat, source_cells))
+temp_max = sort(abs.(vec(X_true[:, interior])))[round(<span class="hljs-built_in">Int</span>, <span class="hljs-number">0.98</span> * <span class="hljs-keyword">end</span>)]   <span class="hljs-comment"># let the hottest cells saturate</span>
+temp_lims = (-temp_max, temp_max)
+X_err = abs.(X_mean - X_true)
+err_lims = (<span class="hljs-number">0.0</span>, sort(vec(X_err))[round(<span class="hljs-built_in">Int</span>, <span class="hljs-number">0.995</span> * <span class="hljs-keyword">end</span>)])
+X_extra_std = X_std .- minimum(X_std; dims = <span class="hljs-number">1</span>)   <span class="hljs-comment"># how much each cell&#x27;s std rises above its all-sensors-online level</span>
+std_lims = (<span class="hljs-number">0.0</span>, maximum(X_extra_std))
+
+<span class="hljs-keyword">function</span> field_panel(values, title; clims, color)
+    p = heatmap(values; title, clims, color, aspect_ratio = :equal, yflip = <span class="hljs-literal">true</span>, framestyle = :none, colorbar = <span class="hljs-literal">true</span>, titlefontsize = <span class="hljs-number">11</span>)
+    <span class="hljs-keyword">return</span> p
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-keyword">function</span> mark_cells!(p, t)
+    <span class="hljs-keyword">for</span> (k, cells) <span class="hljs-keyword">in</span> enumerate(source_cells)
+        offline = haskey(dropouts, k) &amp;&amp; t <span class="hljs-keyword">in</span> dropouts[k]
+        plot!(p, last.(rc.(cells)), first.(rc.(cells)), color = offline ? :red : :black, linewidth = offline ? <span class="hljs-number">5</span> : <span class="hljs-number">3</span>, label = <span class="hljs-literal">false</span>)
+    <span class="hljs-keyword">end</span>
+    <span class="hljs-keyword">return</span> p
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-keyword">function</span> field_frame(t)
+    offline = count(k -&gt; t <span class="hljs-keyword">in</span> dropouts[k], keys(dropouts))
+    p_true = mark_cells!(field_panel(to_grid(X_true[t, :]), <span class="hljs-string">&quot;true temperature&quot;</span>; clims = temp_lims, color = cgrad(:RdBu, rev = <span class="hljs-literal">true</span>)), t)
+    p_mean = mark_cells!(field_panel(to_grid(X_mean[t, :]), <span class="hljs-string">&quot;posterior mean&quot;</span>; clims = temp_lims, color = cgrad(:RdBu, rev = <span class="hljs-literal">true</span>)), t)
+    p_err  = mark_cells!(field_panel(to_grid(X_err[t, :]), <span class="hljs-string">&quot;|posterior mean − truth|&quot;</span>; clims = err_lims, color = :viridis), t)
+    p_std  = mark_cells!(field_panel(to_grid(X_extra_std[t, :]), <span class="hljs-string">&quot;std above online baseline&quot;</span>; clims = std_lims, color = :viridis), t)
+    p_b = plot(legend = :outertop, legend_columns = <span class="hljs-number">4</span>, xlabel = <span class="hljs-string">&quot;time&quot;</span>, ylabel = <span class="hljs-string">&quot;source temperature&quot;</span>, xlims = (<span class="hljs-number">1</span>, T), ylims = (-<span class="hljs-number">12</span>, <span class="hljs-number">12</span>), left_margin = <span class="hljs-number">6</span>Plots.mm)
+    <span class="hljs-keyword">for</span> (k, window) <span class="hljs-keyword">in</span> dropouts
+        vspan!(p_b, [first(window), last(window)], color = :gray, alpha = <span class="hljs-number">0.15</span>, label = <span class="hljs-literal">false</span>)
+    <span class="hljs-keyword">end</span>
+    <span class="hljs-keyword">for</span> k <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:K
+        plot!(p_b, <span class="hljs-number">1</span>:t, B_mean[<span class="hljs-number">1</span>:t, k], ribbon = <span class="hljs-number">2</span> .* B_std[<span class="hljs-number">1</span>:t, k], color = k, fillalpha = <span class="hljs-number">0.2</span>, label = source_names[k])
+        plot!(p_b, <span class="hljs-number">1</span>:t, B_true[<span class="hljs-number">1</span>:t, k], color = k, linestyle = :dot, linewidth = <span class="hljs-number">1</span>, label = <span class="hljs-literal">false</span>)
+    <span class="hljs-keyword">end</span>
+    vline!(p_b, [t], color = :black, linewidth = <span class="hljs-number">1</span>, label = <span class="hljs-literal">false</span>)
+    plot(p_true, p_mean, p_err, p_std, p_b; layout = <span class="hljs-meta">@layout</span>([a b c d; e{<span class="hljs-number">0.42</span>h}]), size = (<span class="hljs-number">1300</span>, <span class="hljs-number">580</span>), margin = <span class="hljs-number">2</span>Plots.mm, bottom_margin = <span class="hljs-number">5</span>Plots.mm,
+         plot_title = <span class="hljs-string">&quot;t = <span class="hljs-variable">$t</span>   ·   <span class="hljs-variable">$offline</span> sensor(s) offline&quot;</span>, plot_titlefontsize = <span class="hljs-number">12</span>)
+<span class="hljs-keyword">end</span>
+
+anim = <span class="hljs-meta">@animate</span> <span class="hljs-keyword">for</span> t <span class="hljs-keyword">in</span> [<span class="hljs-number">1</span>:T; fill(T, <span class="hljs-number">12</span>)]
+    field_frame(t)
+<span class="hljs-keyword">end</span>
+gif(anim, <span class="hljs-string">&quot;heat-grid-filter.gif&quot;</span>, fps = <span class="hljs-number">6</span>, show_msg = <span class="hljs-literal">false</span>);
+</code></pre><p><img src="heat-grid-filter.gif" alt/></p><p>A single frame from the middle of the first outage:</p><pre><code class="language-julia hljs">field_frame(<span class="hljs-number">55</span>)
+</code></pre><p><img src="Solving Linear Systems with Message Passing_21_1.png" alt/></p><h2 id="Takeaways"><a class="docs-heading-anchor" href="#Takeaways">Takeaways</a><a id="Takeaways-1"></a><a class="docs-heading-anchor-permalink" href="#Takeaways" title="Permalink"></a></h2><ul><li><code>GaussianCoupling(x[i], -A[i, j])</code> turns a matrix off-diagonal into a pairwise Gaussian coupling.</li><li>Sparse matrices become sparse factor graphs, and local message updates recover the global solution.</li><li>Loopy graphs need initial messages; <code>μ(x) = NormalMeanVariance(0, 1e6)</code> is a neutral broad starting point.</li><li>Under suitable convergence conditions, the means solve <span>$Ax=b$</span> exactly.</li><li>Variances are exact on trees, but generally approximate on graphs with cycles.</li><li>The same graph solves a whole sequence of systems: give <span>$b$</span> a temporal prior, feed it observations (missing ones included) and message passing turns into a smoother over time.</li><li>A prior written as a submodel is reused with one <code>~</code> line; its hyperparameters go on the Markov blanket, so the caller decides whether they are learned (with constraints scoped by <code>for q in submodel</code>) or plugged in as constants.</li><li>When <span>$b$</span> becomes latent, the normaliser of <span>$\exp(b^\mathsf{T}x - \frac{1}{2}x^\mathsf{T}Ax)$</span> turns into a negative precision on <span>$b$</span> that scales with <span>$\beta$</span>. It only matters where the data go quiet: keep <span>$\beta$</span> small enough that the temporal prior still dominates during the longest dropout, and <span>$A^{-1}$</span> is never needed.</li></ul><p>For production linear solves, Julia&#39;s specialized factorizations remain the natural default. The message-passing formulation becomes interesting when the graph is distributed, when local updates matter, or when the linear system is one component of a larger probabilistic model.</p><hr/><div class="admonition is-info" id="Contributing-baba9dc142ba7ccb"><header class="admonition-header">Contributing<a class="admonition-anchor" href="#Contributing-baba9dc142ba7ccb" title="Permalink"></a></header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><div class="admonition is-compat" id="Environment-ead41e814a894220"><header class="admonition-header">Environment<a class="admonition-anchor" href="#Environment-ead41e814a894220" title="Permalink"></a></header><div class="admonition-body"><p>This example was executed in a clean, isolated environment. Below are the exact package versions used:</p><p>For reproducibility:</p><ul><li>Use the same package versions when running locally</li><li>Report any issues with package compatibility</li></ul></div></div><pre><code class="nohighlight hljs">Status `/tmp/jl_BKMWxI/Project.toml`
+  [f526b714] GraphViz v0.2.0
+  [0b1bfda6] OneHotArrays v0.2.11
+  [91a5bcdd] Plots v1.41.7
+  [a194aa59] ReactiveMP v6.5.0
+  [86711068] RxInfer v5.5.2
+  [860ef19b] StableRNGs v1.0.4
+  [37e2e46d] LinearAlgebra v1.12.0
+  [9a3f8284] Random v1.11.0
+</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../robotic_arm/">« Robotic Arm</a><a class="docs-footer-nextpage" href="../../problem_specific/autoregressive_models/">Autoregressive Models »</a><div class="flexbox-break"></div><p class="footer-message">Created in <a href="https://biaslab.github.io/">BIASlab</a>, maintained by <a href="https://github.com/ReactiveBayes">ReactiveBayes</a>, powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.19.0 on <span class="colophon-date" title="Thursday 3 September 2026 19:09">Thursday 3 September 2026</span>. Using Julia version 1.12.7.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

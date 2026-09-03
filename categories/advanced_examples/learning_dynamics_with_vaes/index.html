@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Learning Dynamics With Vaes · RxInfer.jl Examples</title><meta name="title" content="Learning Dynamics With Vaes · RxInfer.jl Examples"/><meta property="og:title" content="Learning Dynamics With Vaes · RxInfer.jl Examples"/><meta property="twitter:title" content="Learning Dynamics With Vaes · RxInfer.jl Examples"/><meta name="description" content="Learning Dynamics with VAEs with RxInfer.jl\nThis example shows how to use RxInfer.jl automated inference to learn dynamics in latent space of a VAE.\n\nCheck more examples and tutorials at https://examples.rxinfer.com\n"/><meta property="og:description" content="Learning Dynamics with VAEs with RxInfer.jl\nThis example shows how to use RxInfer.jl automated inference to learn dynamics in latent space of a VAE.\n\nCheck more examples and tutorials at https://examples.rxinfer.com\n"/><meta property="twitter:description" content="Learning Dynamics with VAEs with RxInfer.jl\nThis example shows how to use RxInfer.jl automated inference to learn dynamics in latent space of a VAE.\n\nCheck more examples and tutorials at https://examples.rxinfer.com\n"/><meta property="og:url" content="https://examples.rxinfer.com/categories/advanced_examples/learning_dynamics_with_vaes/"/><meta property="twitter:url" content="https://examples.rxinfer.com/categories/advanced_examples/learning_dynamics_with_vaes/"/><link rel="canonical" href="https://examples.rxinfer.com/categories/advanced_examples/learning_dynamics_with_vaes/"/><script async src="https://www.googletagmanager.com/gtag/js?id=G-GMFX620VEP"></script><script>  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-GMFX620VEP', {'page_path': location.pathname + location.search + location.hash});
+</script><script data-outdated-warner src="../../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.63.2/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../../assets/documenter.js"></script><script src="../../../search_index.js"></script><script src="../../../siteinfo.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../../assets/themeswap.js"></script><link href="../../../assets/theme.css" rel="stylesheet" type="text/css"/><link href="../../../assets/header.css" rel="stylesheet" type="text/css"/><script src="../../../assets/header.js"></script><script src="../../../assets/chat.js"></script><link href="../../../assets/favicon.ico" rel="icon" type="image/x-icon"/>
+    <meta property="og:title" content="Learning Dynamics with VAEs - RxInfer Examples">
+    <meta name="description" content="This example shows how to use RxInfer.jl automated inference to learn dynamics in latent space of a VAE.
+">
+    <meta property="og:description" content="This example shows how to use RxInfer.jl automated inference to learn dynamics in latent space of a VAE.
+">
+    <meta name="keywords" content="rxinfer, julia, bayesian inference, examples, probabilistic programming, message passing, probabilistic numerics, variational inference, belief propagation, advanced examples, vae, dynamics">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://examples.rxinfer.com/sitemap.xml">
+    </head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../../"><img class="docs-light-only" src="../../../assets/logo.svg" alt="RxInfer.jl Examples logo"/><img class="docs-dark-only" src="../../../assets/logo-dark.svg" alt="RxInfer.jl Examples logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../../">RxInfer.jl Examples</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../../">Home</a></li><li><a class="tocitem" href="../../../how_to_contribute/">How to contribute</a></li><li><a class="tocitem" href="../../../autogenerated/list_of_examples/">List of Examples</a></li><li><span class="tocitem">Basic Examples</span><ul><li><a class="tocitem" href="../../basic_examples/bayesian_binomial_regression/">Bayesian Binomial Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_linear_regression/">Bayesian Linear Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_multinomial_regression/">Bayesian Multinomial Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_networks/">Bayesian Networks</a></li><li><a class="tocitem" href="../../basic_examples/coin_toss_model/">Coin Toss Model</a></li><li><a class="tocitem" href="../../basic_examples/contextual_bandits/">Contextual Bandits</a></li><li><a class="tocitem" href="../../basic_examples/feature_functions_in_bayesian_regression/">Feature Functions In Bayesian Regression</a></li><li><a class="tocitem" href="../../basic_examples/forgetting_factors_for_online_inference/">Forgetting Factors For Online Inference</a></li><li><a class="tocitem" href="../../basic_examples/hidden_markov_model/">Hidden Markov Model</a></li><li><a class="tocitem" href="../../basic_examples/incomplete_data/">Incomplete Data</a></li><li><a class="tocitem" href="../../basic_examples/kalman_filtering_and_smoothing/">Kalman Filtering And Smoothing</a></li><li><a class="tocitem" href="../../basic_examples/pomdp_control/">Pomdp Control</a></li><li><a class="tocitem" href="../../basic_examples/predicting_bike_rental_demand/">Predicting Bike Rental Demand</a></li><li><a class="tocitem" href="../../basic_examples/t-maze_active_inference/">T-Maze Active Inference</a></li></ul></li><li><span class="tocitem">Advanced Examples</span><ul><li><a class="tocitem" href="../active_inference_mountain_car/">Active Inference Mountain Car</a></li><li><a class="tocitem" href="../assessing_people_skills/">Assessing People Skills</a></li><li><a class="tocitem" href="../autoregressive_active_inference/">Autoregressive Active Inference</a></li><li><a class="tocitem" href="../bayesian_structured_time_series/">Bayesian Structured Time Series</a></li><li><a class="tocitem" href="../chance_constraints/">Chance Constraints</a></li><li><a class="tocitem" href="../conjugate-computational_variational_message_passing/">Conjugate-Computational Variational Message Passing</a></li><li><a class="tocitem" href="../drone_dynamics/">Drone Dynamics</a></li><li><a class="tocitem" href="../efe_minimization_via_message_passing/">Efe Minimization Via Message Passing</a></li><li><a class="tocitem" href="../gp_regression_by_ssm/">Gp Regression By Ssm</a></li><li><a class="tocitem" href="../infinite_data_stream/">Infinite Data Stream</a></li><li><a class="tocitem" href="../integrating_neural_networks_with_flux.jl_and_lux.jl/">Integrating Neural Networks With Flux.Jl And Lux.Jl</a></li><li class="is-active"><a class="tocitem" href>Learning Dynamics With Vaes</a><ul class="internal"><li><a class="tocitem" href="#Part-1:-Creating-a-Dataset-of-Rotating-Digits"><span>Part 1: Creating a Dataset of Rotating Digits</span></a></li><li><a class="tocitem" href="#Part-2:-Building-the-VAE-Model"><span>Part 2: Building the VAE Model</span></a></li><li><a class="tocitem" href="#Part-3:-Training-the-VAE"><span>Part 3: Training the VAE</span></a></li><li><a class="tocitem" href="#Part-4:-Integrating-VAE-with-RxInfer-for-Bayesian-Inference"><span>Part 4: Integrating VAE with RxInfer for Bayesian Inference</span></a></li></ul></li><li><a class="tocitem" href="../multi-agent_trajectory_planning/">Multi-Agent Trajectory Planning</a></li><li><a class="tocitem" href="../nonlinear_sensor_fusion/">Nonlinear Sensor Fusion</a></li><li><a class="tocitem" href="../parameter_optimisation_with_optim.jl/">Parameter Optimisation With Optim.Jl</a></li><li><a class="tocitem" href="../robotic_arm/">Robotic Arm</a></li><li><a class="tocitem" href="../solving_linear_systems_with_message_passing/">Solving Linear Systems With Message Passing</a></li></ul></li><li><span class="tocitem">Problem Specific</span><ul><li><a class="tocitem" href="../../problem_specific/autoregressive_models/">Autoregressive Models</a></li><li><a class="tocitem" href="../../problem_specific/gamma_mixture/">Gamma Mixture</a></li><li><a class="tocitem" href="../../problem_specific/gaussian_mixture/">Gaussian Mixture</a></li><li><a class="tocitem" href="../../problem_specific/hierarchical_gaussian_filter/">Hierarchical Gaussian Filter</a></li><li><a class="tocitem" href="../../problem_specific/invertible_neural_network_tutorial/">Invertible Neural Network Tutorial</a></li><li><a class="tocitem" href="../../problem_specific/ising_model/">Ising Model</a></li><li><a class="tocitem" href="../../problem_specific/litter_model/">Litter Model</a></li><li><a class="tocitem" href="../../problem_specific/ode_parameter_estimation/">Ode Parameter Estimation</a></li><li><a class="tocitem" href="../../problem_specific/probit_model/">Probit Model</a></li><li><a class="tocitem" href="../../problem_specific/rts_vs_bifm_smoothing/">Rts Vs Bifm Smoothing</a></li><li><a class="tocitem" href="../../problem_specific/simple_nonlinear_node/">Simple Nonlinear Node</a></li><li><a class="tocitem" href="../../problem_specific/structural_dynamics_with_augmented_kalman_filter/">Structural Dynamics With Augmented Kalman Filter</a></li><li><a class="tocitem" href="../../problem_specific/universal_mixtures/">Universal Mixtures</a></li></ul></li><li><span class="tocitem">Experimental Examples</span><ul><li><a class="tocitem" href="../../experimental_examples/bayesian_trust_learning/">Bayesian Trust Learning</a></li><li><a class="tocitem" href="../../experimental_examples/large_language_models/">Large Language Models</a></li><li><a class="tocitem" href="../../experimental_examples/latent_vector_autoregressive_model/">Latent Vector Autoregressive Model</a></li><li><a class="tocitem" href="../../experimental_examples/recurrent_switching_linear_dynamical_system/">Recurrent Switching Linear Dynamical System</a></li></ul></li><li><a class="tocitem" href="../../../how_build_works/">How we build the examples</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Advanced Examples</a></li><li class="is-active"><a href>Learning Dynamics With Vaes</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Learning Dynamics With Vaes</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl" title="View source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><div class="admonition is-info" id="Contributing-baba9dc142ba7ccb"><header class="admonition-header">Contributing<a class="admonition-anchor" href="#Contributing-baba9dc142ba7ccb" title="Permalink"></a></header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><h1 id="Learning-Dynamics-with-VAEs"><a class="docs-heading-anchor" href="#Learning-Dynamics-with-VAEs">Learning Dynamics with VAEs</a><a id="Learning-Dynamics-with-VAEs-1"></a><a class="docs-heading-anchor-permalink" href="#Learning-Dynamics-with-VAEs" title="Permalink"></a></h1><p>Bayesian inference often struggles in high-dimensional spaces (not with RxInfer.jl, it actually happens rarely) - a challenge known as the &quot;curse of dimensionality.&quot; </p><blockquote><p><strong>The curse of dimensionality</strong> refers to various phenomena that arise when analyzing data in high-dimensional spaces that do not occur in low-dimensional settings. In Bayesian inference context, the curse of dimensionality refers to the exponential increase in computational difficulty and statistical challenges as the number of parameters (dimensions) in a model increases.</p></blockquote><p>There are several approaches to tackle this problem, among them:</p><ol><li><strong>Hierarchical models</strong> - Breaking down complex problems into nested, <a href="https://reactivebayes.github.io/GraphPPL.jl/stable/nested_models/">simpler components</a></li><li><strong>&quot;Compromise&quot; approaches</strong> - Being &quot;partially Bayesian&quot; by combining Bayesian and non-fully Bayesian methods</li></ol><p>In this notebook, we explore the compromise approach. We&#39;ll use a Variational Autoencoder (VAE) to learn a low-dimensional latent representation of MNIST digits, and then perform Bayesian inference on the dynamics of rotating digits in this latent space.</p><blockquote><p><strong>Variational Autoencoder (VAE)</strong>: A type of neural network architecture that learns to encode data into a compressed latent representation and then decode it back to the original form. Unlike traditional autoencoders, VAEs encode data as probability distributions rather than fixed points, making them generative models capable of creating new data samples.</p><p><strong>Latent representation</strong>: A compressed, lower-dimensional encoding of data that captures its essential features. Think of it as finding the most important aspects of complex data while discarding noise and redundancy.</p><p><strong>MNIST digits</strong>: A standard dataset in machine learning consisting of 28×28 pixel grayscale images of handwritten digits (0-9), commonly used for training image processing systems.</p></blockquote><blockquote><p><strong>Note:</strong> This is a simple example with simplified data that serves as a template for more interesting applications.</p><p>Throughout this demonstration we will use CPU for computation; however, the model is fully GPU compatible. See <a href="https://mrazomej.github.io/AutoEncoderToolkit.jl/stable/">AutoEncoderToolkit.jl</a> for more details.</p></blockquote><p>This demonstrates how we can leverage the strengths of both worlds:</p><ul><li>VAEs for efficient dimensionality reduction (non-fully Bayesian)</li><li>Bayesian inference for modeling dynamics in the reduced space</li></ul><blockquote><p><strong>Dimensionality reduction</strong>: The process of reducing the number of variables under consideration by obtaining a set of principal variables that still preserves the essential information in the data.</p></blockquote><blockquote><p><strong>Dynamics</strong>: In this context, refers to how the latent representations change over time or with certain transformations (like rotation of digits).</p></blockquote><pre><code class="language-julia hljs"><span class="hljs-keyword">import</span> AutoEncoderToolkit
+<span class="hljs-keyword">import</span> Flux
+<span class="hljs-keyword">using</span> MLDatasets: MNIST
+<span class="hljs-keyword">import</span> JLD2
+<span class="hljs-keyword">using</span> Plots
+<span class="hljs-keyword">using</span> Statistics
+<span class="hljs-keyword">using</span> RxInfer, ReactiveMP, LinearAlgebra
+</code></pre><h2 id="Part-1:-Creating-a-Dataset-of-Rotating-Digits"><a class="docs-heading-anchor" href="#Part-1:-Creating-a-Dataset-of-Rotating-Digits">Part 1: Creating a Dataset of Rotating Digits</a><a id="Part-1:-Creating-a-Dataset-of-Rotating-Digits-1"></a><a class="docs-heading-anchor-permalink" href="#Part-1:-Creating-a-Dataset-of-Rotating-Digits" title="Permalink"></a></h2><p>First, we need data to work with. Instead of using static MNIST digits, we&#39;ll create a dataset of rotating digits. This will give us a clear transformation to model in the latent space.</p><p>We&#39;ll select a few examples of digits <code>0</code> and <code>1</code>, then generate multiple rotated versions of each. This will create a dataset where we know exactly how the images are related to each other through the rotation transformation.</p><pre><code class="language-julia hljs"><span class="hljs-string">&quot;&quot;&quot;
+    generate_rotated_sequence(image, n_frames=36, max_angle=360)
+
+Generate a sequence of rotated versions of an input image.
+Returns the sequence of rotated images.
+&quot;&quot;&quot;</span>
+<span class="hljs-keyword">function</span> generate_rotated_sequence(image, n_frames=<span class="hljs-number">36</span>, max_angle=<span class="hljs-number">360</span>)
+    img_2d = image[:, :, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>]
+    
+    <span class="hljs-comment"># Get image dimensions</span>
+    height, width = size(img_2d)
+    
+    <span class="hljs-comment"># Create array to store rotated images</span>
+    rotated_images = []
+    
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:n_frames
+        <span class="hljs-comment"># Calculate rotation angle for this frame</span>
+        angle = (i-<span class="hljs-number">1</span>) * max_angle / n_frames
+        
+        <span class="hljs-comment"># Create rotation matrix</span>
+        rotation = [cosd(angle) -sind(angle); sind(angle) cosd(angle)]
+        
+        <span class="hljs-comment"># Create empty image for the rotated result</span>
+        rotated = zeros(<span class="hljs-built_in">Float32</span>, height, width)
+        
+        <span class="hljs-comment"># Center of the image</span>
+        center_y, center_x = (height+<span class="hljs-number">1</span>)/<span class="hljs-number">2</span>, (width+<span class="hljs-number">1</span>)/<span class="hljs-number">2</span>
+        
+        <span class="hljs-comment"># Apply rotation to each pixel</span>
+        <span class="hljs-keyword">for</span> y <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:height, x <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:width
+            <span class="hljs-comment"># Convert to coordinates relative to center</span>
+            y_centered = y - center_y
+            x_centered = x - center_x
+            
+            <span class="hljs-comment"># Apply rotation</span>
+            new_coords = rotation * [x_centered, y_centered]
+            
+            <span class="hljs-comment"># Convert back to image coordinates</span>
+            new_x = round(<span class="hljs-built_in">Int</span>, new_coords[<span class="hljs-number">1</span>] + center_x)
+            new_y = round(<span class="hljs-built_in">Int</span>, new_coords[<span class="hljs-number">2</span>] + center_y)
+            
+            <span class="hljs-comment"># Check if the new coordinates are within bounds</span>
+            <span class="hljs-keyword">if</span> <span class="hljs-number">1</span> &lt;= new_x &lt;= width &amp;&amp; <span class="hljs-number">1</span> &lt;= new_y &lt;= height
+                rotated[y, x] = img_2d[new_y, new_x]
+            <span class="hljs-keyword">end</span>
+        <span class="hljs-keyword">end</span>
+        
+        <span class="hljs-comment"># Store the rotated image</span>
+        push!(rotated_images, rotated)
+    <span class="hljs-keyword">end</span>
+    
+    <span class="hljs-keyword">return</span> rotated_images
+<span class="hljs-keyword">end</span>
+</code></pre><pre><code class="nohighlight hljs">Main.var&quot;##WeaveSandBox#277&quot;.generate_rotated_sequence</code></pre><p>In order to download datasets without having to manually confirm the download, we can set to true the <code>DATADEPS_ALWAYS_ACCEPT</code> environmental variable. Read more about MLDatasets.jl <a href="https://juliaml.github.io/MLDatasets.jl/stable/">here</a>.</p><pre><code class="language-julia hljs"><span class="hljs-literal">ENV</span>[<span class="hljs-string">&quot;DATADEPS_ALWAYS_ACCEPT&quot;</span>] = <span class="hljs-literal">true</span>
+</code></pre><pre><code class="nohighlight hljs">true</code></pre><pre><code class="language-julia hljs"><span class="hljs-string">&quot;&quot;&quot;
+    create_rotated_mnist_dataset(n_samples_per_digit=10, n_rotations=36)
+
+Create a dataset of rotated MNIST digits (0s and 1s).
+Returns the dataset and labels.
+&quot;&quot;&quot;</span>
+<span class="hljs-keyword">function</span> create_rotated_mnist_dataset(n_samples_per_digit=<span class="hljs-number">10</span>, n_rotations=<span class="hljs-number">36</span>)
+    <span class="hljs-comment"># Load MNIST data</span>
+    train_dataset = MNIST(split=:train)
+    
+    <span class="hljs-comment"># Find indices of 0s and 1s</span>
+    indices_0 = findall(x -&gt; x == <span class="hljs-number">0</span>, train_dataset.targets)
+    indices_1 = findall(x -&gt; x == <span class="hljs-number">1</span>, train_dataset.targets)
+    
+    <span class="hljs-comment"># Select a subset of each digit</span>
+    selected_indices_0 = indices_0[<span class="hljs-number">1</span>:n_samples_per_digit]
+    selected_indices_1 = indices_1[<span class="hljs-number">1</span>:n_samples_per_digit]
+    
+    <span class="hljs-comment"># Combine indices</span>
+    selected_indices = vcat(selected_indices_0, selected_indices_1)
+    
+    <span class="hljs-comment"># Create arrays to store rotated images and labels</span>
+    rotated_images = []
+    rotated_labels = []
+    
+    <span class="hljs-comment"># For each selected digit</span>
+    <span class="hljs-keyword">for</span> (i, idx) <span class="hljs-keyword">in</span> enumerate(selected_indices)
+        <span class="hljs-comment"># Get the original image</span>
+        original = <span class="hljs-built_in">Float32</span>.(reshape(train_dataset.features[:, :, idx], <span class="hljs-number">28</span>, <span class="hljs-number">28</span>))
+        
+        <span class="hljs-comment"># Get the label</span>
+        label = train_dataset.targets[idx]
+        
+        <span class="hljs-comment"># Generate rotated versions</span>
+        rotations = generate_rotated_sequence(original, n_rotations)
+        
+        <span class="hljs-comment"># Add to dataset</span>
+        <span class="hljs-keyword">for</span> rotated <span class="hljs-keyword">in</span> rotations
+            push!(rotated_images, rotated)
+            push!(rotated_labels, label)
+        <span class="hljs-keyword">end</span>
+    <span class="hljs-keyword">end</span>
+    
+    <span class="hljs-comment"># Convert to arrays</span>
+    X = zeros(<span class="hljs-built_in">Float32</span>, <span class="hljs-number">28</span>, <span class="hljs-number">28</span>, <span class="hljs-number">1</span>, length(rotated_images))
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:length(rotated_images)
+        X[:, :, <span class="hljs-number">1</span>, i] = rotated_images[i]
+    <span class="hljs-keyword">end</span>
+    
+    y = rotated_labels
+    
+    <span class="hljs-comment"># we will use a binarized version of the MNIST datase</span>
+    threshold = <span class="hljs-number">0.5</span> * maximum(X)
+    X = <span class="hljs-built_in">Float32</span>.(X .&gt; threshold)
+    
+    <span class="hljs-keyword">return</span> X, y
+<span class="hljs-keyword">end</span>
+</code></pre><pre><code class="nohighlight hljs">Main.var&quot;##WeaveSandBox#277&quot;.create_rotated_mnist_dataset</code></pre><pre><code class="language-julia hljs"><span class="hljs-comment"># Create rotated MNIST dataset</span>
+println(<span class="hljs-string">&quot;Creating rotated MNIST dataset...&quot;</span>)
+n_samples_per_digit = <span class="hljs-number">10</span>  <span class="hljs-comment"># Number of original digits to use</span>
+n_rotations = <span class="hljs-number">36</span>  <span class="hljs-comment"># Number of rotations per digit</span>
+
+rotated_train_data, rotated_train_labels = create_rotated_mnist_dataset(n_samples_per_digit, n_rotations)
+println(<span class="hljs-string">&quot;Rotated dataset created with <span class="hljs-subst">$(size(rotated_train_data, <span class="hljs-number">4</span>)</span>) images&quot;</span>)
+
+<span class="hljs-comment"># Create an animation of sample rotated digits</span>
+sample_indices = rand(<span class="hljs-number">1</span>:n_samples_per_digit*<span class="hljs-number">2</span>, <span class="hljs-number">5</span>)  <span class="hljs-comment"># 5 random digits from our dataset</span>
+sample_animation = <span class="hljs-meta">@animate</span> <span class="hljs-keyword">for</span> angle_idx <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:n_rotations
+    <span class="hljs-comment"># Create a plot with 5 random digits at the same rotation angle</span>
+    p = plot(layout=(<span class="hljs-number">1</span>, <span class="hljs-number">5</span>), size=(<span class="hljs-number">1000</span>, <span class="hljs-number">200</span>))
+    <span class="hljs-keyword">for</span> (i, digit_idx) <span class="hljs-keyword">in</span> enumerate(sample_indices)
+        <span class="hljs-comment"># Calculate the index in the full dataset</span>
+        idx = (digit_idx-<span class="hljs-number">1</span>) * n_rotations + angle_idx
+        <span class="hljs-comment"># Use binary colors (white background, black digits)</span>
+        heatmap!(p, rotated_train_data[:, :, <span class="hljs-number">1</span>, idx], 
+                color=[:black, :white], 
+                colorbar=<span class="hljs-literal">false</span>,
+                title=<span class="hljs-string">&quot;Digit: <span class="hljs-subst">$(rotated_train_labels[idx])</span>&quot;</span>, 
+                subplot=i, axis=<span class="hljs-literal">false</span>)
+    <span class="hljs-keyword">end</span>
+    plot!(p, title=<span class="hljs-string">&quot;Rotation: <span class="hljs-subst">$(round((angle_idx-<span class="hljs-number">1</span>)</span>*360/n_rotations, digits=1))°&quot;</span>)
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-comment"># Save as GIF with 10 frames per second</span>
+gif(sample_animation, <span class="hljs-string">&quot;rotated_digits_samples.gif&quot;</span>, fps=<span class="hljs-number">10</span>, show_msg=<span class="hljs-literal">false</span>);
+</code></pre><pre><code class="nohighlight hljs">Creating rotated MNIST dataset...
+Rotated dataset created with 720 images</code></pre><p><img src="rotated_digits_samples.gif" alt/></p><h2 id="Part-2:-Building-the-VAE-Model"><a class="docs-heading-anchor" href="#Part-2:-Building-the-VAE-Model">Part 2: Building the VAE Model</a><a id="Part-2:-Building-the-VAE-Model-1"></a><a class="docs-heading-anchor-permalink" href="#Part-2:-Building-the-VAE-Model" title="Permalink"></a></h2><p>Now we&#39;ll define our Variational Autoencoder. The VAE will learn to compress the high-dimensional image data <code>(28×28 = 784 dimensions)</code> into a much lower-dimensional latent space (just 2 dimensions in this example).</p><blockquote><p><strong>Variational Autoencoder (VAE) architecture</strong>: A VAE consists of two main components:</p><ul><li>An <strong>encoder</strong> network that compresses input data into a probability distribution in latent space</li><li>A <strong>decoder</strong> network that reconstructs the original data from samples in the latent space</li></ul><p>Unlike traditional autoencoders, VAEs don&#39;t encode to exact points but to probability distributions, making them generative models.</p><p><strong>Latent space regularization</strong>: VAEs use a special loss function that includes both reconstruction error and a regularization term (KL divergence) that encourages the latent space to be well-structured and continuous, making it suitable for interpolation and generation.</p></blockquote><p>This is the &quot;non-Bayesian&quot; part of our approach - we&#39;re using a neural network for dimensionality reduction rather than a fully Bayesian model, which can be computationally intractable for high-dimensional image data.</p><blockquote><p><strong>Computational intractability</strong>: A fully Bayesian approach would require modeling the joint probability distribution of all 784 pixels, which would involve an enormous number of parameters and complex dependencies. This becomes computationally prohibitive as the dimensionality increases - a manifestation of the &quot;curse of dimensionality&quot; mentioned earlier.</p></blockquote><svg viewBox="0 0 800 185" width="100%" style="max-width: 800px; display: block; margin: 1em auto; color: inherit; font-size: 14px;" role="img" aria-labelledby="vae-arch-title">
+  <title id="vae-arch-title">VAE architecture: a 784-dimensional input is compressed by the encoder network into a 2-dimensional latent space, then reconstructed by the decoder network back into 784 dimensions.</title>
+  <defs>
+    <marker id="vae-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <g fill="none" stroke="currentColor" stroke-width="1.5">
+    <!-- Encoder / Decoder groupings -->
+    <rect x="150" y="30" width="150" height="130" rx="8" stroke-dasharray="5 4" opacity="0.55"/>
+    <rect x="490" y="30" width="150" height="130" rx="8" stroke-dasharray="5 4" opacity="0.55"/>
+    <!-- Blocks -->
+    <rect x="10"  y="76" width="110" height="56" rx="6" fill="currentColor" fill-opacity="0.07"/>
+    <rect x="170" y="76" width="110" height="56" rx="6" fill="currentColor" fill-opacity="0.07"/>
+    <rect x="330" y="76" width="130" height="56" rx="6" fill="currentColor" fill-opacity="0.07"/>
+    <rect x="510" y="76" width="110" height="56" rx="6" fill="currentColor" fill-opacity="0.07"/>
+    <rect x="670" y="76" width="110" height="56" rx="6" fill="currentColor" fill-opacity="0.07"/>
+    <!-- Arrows -->
+    <path d="M 120 104 H 165" marker-end="url(#vae-arrow)"/>
+    <path d="M 285 104 H 325" marker-end="url(#vae-arrow)"/>
+    <path d="M 460 104 H 505" marker-end="url(#vae-arrow)"/>
+    <path d="M 625 104 H 665" marker-end="url(#vae-arrow)"/>
+  </g>
+  <g fill="currentColor" text-anchor="middle">
+    <text x="225" y="50" font-size="13" opacity="0.75">Encoder</text>
+    <text x="565" y="50" font-size="13" opacity="0.75">Decoder</text>
+    <text x="65"  y="99">Input<tspan x="65" dy="18">784d</tspan></text>
+    <text x="225" y="99">Neural<tspan x="225" dy="18">Network</tspan></text>
+    <text x="395" y="99">Latent Space<tspan x="395" dy="18">2d</tspan></text>
+    <text x="565" y="99">Neural<tspan x="565" dy="18">Network</tspan></text>
+    <text x="725" y="99">Output<tspan x="725" dy="18">784d</tspan></text>
+  </g>
+</svg><pre><code class="language-julia hljs"><span class="hljs-string">&quot;&quot;&quot;
+    create_vae(n_latent=2, n_channels_init=32)
+
+Create a VAE model with convolutional encoder and decoder.
+Returns the VAE model with a 2D latent space by default.
+&quot;&quot;&quot;</span>
+<span class="hljs-keyword">function</span> create_vae(n_latent=<span class="hljs-number">2</span>, n_channels_init=<span class="hljs-number">32</span>)
+    <span class="hljs-comment"># Define convolutional layers for encoder</span>
+    conv_layers = Flux.Chain(
+        Flux.Conv((<span class="hljs-number">4</span>, <span class="hljs-number">4</span>), <span class="hljs-number">1</span> =&gt; n_channels_init, Flux.relu; stride=<span class="hljs-number">2</span>, pad=<span class="hljs-number">1</span>),
+        Flux.Conv((<span class="hljs-number">4</span>, <span class="hljs-number">4</span>), n_channels_init =&gt; n_channels_init * <span class="hljs-number">2</span>, Flux.relu; stride=<span class="hljs-number">2</span>, pad=<span class="hljs-number">1</span>),
+        AutoEncoderToolkit.Flatten(),
+        Flux.Dense(n_channels_init * <span class="hljs-number">2</span> * <span class="hljs-number">7</span> * <span class="hljs-number">7</span> =&gt; <span class="hljs-number">256</span>, Flux.relu),
+        Flux.Dense(<span class="hljs-number">256</span> =&gt; <span class="hljs-number">256</span>, Flux.relu),
+    )
+
+    <span class="hljs-comment"># Define layers for μ and log(σ)</span>
+    μ_layer = Flux.Dense(<span class="hljs-number">256</span>, n_latent, Flux.identity)
+    logσ_layer = Flux.Dense(<span class="hljs-number">256</span>, n_latent, Flux.identity, bias=fill(-<span class="hljs-number">1.0f0</span>, n_latent))
+
+    <span class="hljs-comment"># Build encoder</span>
+    encoder = AutoEncoderToolkit.JointGaussianLogEncoder(conv_layers, μ_layer, logσ_layer)
+
+    <span class="hljs-comment"># Define deconvolutional layers for decoder</span>
+    deconv_layers = Flux.Chain(
+        Flux.Dense(n_latent =&gt; <span class="hljs-number">256</span>, Flux.identity),
+        Flux.Dense(<span class="hljs-number">256</span> =&gt; <span class="hljs-number">256</span>, Flux.relu),
+        Flux.Dense(<span class="hljs-number">256</span> =&gt; n_channels_init * <span class="hljs-number">2</span> * <span class="hljs-number">7</span> * <span class="hljs-number">7</span>, Flux.relu),
+        AutoEncoderToolkit.Reshape(<span class="hljs-number">7</span>, <span class="hljs-number">7</span>, n_channels_init * <span class="hljs-number">2</span>, :),
+        Flux.ConvTranspose((<span class="hljs-number">4</span>, <span class="hljs-number">4</span>), n_channels_init * <span class="hljs-number">2</span> =&gt; n_channels_init, Flux.relu; stride=<span class="hljs-number">2</span>, pad=<span class="hljs-number">1</span>),
+        Flux.ConvTranspose((<span class="hljs-number">4</span>, <span class="hljs-number">4</span>), n_channels_init =&gt; <span class="hljs-number">1</span>, x -&gt; Flux.sigmoid_fast(x * <span class="hljs-number">5.0</span>); stride=<span class="hljs-number">2</span>, pad=<span class="hljs-number">1</span>),
+    )
+
+    <span class="hljs-comment"># Define decoder - use BernoulliDecoder for binarized data</span>
+    decoder = AutoEncoderToolkit.BernoulliDecoder(deconv_layers)
+
+    <span class="hljs-comment"># Define VAE model</span>
+    vae = encoder * decoder |&gt; Flux.cpu
+    
+    <span class="hljs-keyword">return</span> vae
+<span class="hljs-keyword">end</span>;
+</code></pre><h2 id="Part-3:-Training-the-VAE"><a class="docs-heading-anchor" href="#Part-3:-Training-the-VAE">Part 3: Training the VAE</a><a id="Part-3:-Training-the-VAE-1"></a><a class="docs-heading-anchor-permalink" href="#Part-3:-Training-the-VAE" title="Permalink"></a></h2><p>Now we&#39;ll train the VAE on our rotated digit dataset. The VAE learns to:</p><ol><li>Encode images into a 2D latent space (encoder)</li><li>Decode points from the latent space back to images (decoder)</li></ol><p>The training process and function implementation used here are adapted from the <a href="https://mrazomej.github.io/AutoEncoderToolkit.jl/stable/quickstart/">AutoEncoderToolkit.jl documentation</a>, which provides comprehensive examples for implementing various autoencoder architectures in Julia.</p><pre><code class="language-julia hljs"><span class="hljs-string">&quot;&quot;&quot;
+    train_vae(vae, train_data; n_epoch=50, batch_size=64, learning_rate=1e-3)
+
+Train a VAE model on the provided data.
+Returns the trained model and training metrics.
+&quot;&quot;&quot;</span>
+<span class="hljs-keyword">function</span> train_vae(vae, train_data; n_epoch=<span class="hljs-number">50</span>, batch_size=<span class="hljs-number">64</span>, learning_rate=<span class="hljs-number">1e-3</span>)
+    <span class="hljs-comment"># Create data loader</span>
+    train_loader = Flux.DataLoader(train_data, batchsize=batch_size, shuffle=<span class="hljs-literal">true</span>)
+    
+    <span class="hljs-comment"># Setup optimizer</span>
+    opt_vae = Flux.Train.setup(Flux.Optimisers.Adam(learning_rate), vae)
+    
+    <span class="hljs-comment"># Initialize arrays to save metrics</span>
+    train_losses = <span class="hljs-built_in">Array</span>{<span class="hljs-built_in">Float32</span>}(<span class="hljs-literal">undef</span>, n_epoch)
+    
+    <span class="hljs-comment"># Loop through epochs</span>
+    <span class="hljs-keyword">for</span> epoch <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:n_epoch
+        batch_losses = <span class="hljs-built_in">Float32</span>[]
+        
+        <span class="hljs-comment"># Calculate β value with annealing scheme</span>
+        β_value = epoch &lt;= <span class="hljs-number">15</span> ? <span class="hljs-number">0.1f0</span> + (epoch - <span class="hljs-number">1</span>) / <span class="hljs-number">15</span> * <span class="hljs-number">0.9f0</span> : <span class="hljs-number">1.0f0</span>
+        
+        <span class="hljs-comment"># Loop through batches</span>
+        <span class="hljs-keyword">for</span> (i, x) <span class="hljs-keyword">in</span> enumerate(train_loader)
+            <span class="hljs-comment"># Train VAE with current β value (doesn&#x27;t return a value)</span>
+            AutoEncoderToolkit.VAEs.train!(vae, x, opt_vae; loss_kwargs=(β=β_value,))
+            
+            <span class="hljs-comment"># Calculate loss separately</span>
+            batch_loss = AutoEncoderToolkit.VAEs.loss(vae, x; β=β_value)
+            push!(batch_losses, batch_loss)
+            
+            <span class="hljs-comment"># Print progress for every 10 batches</span>
+            <span class="hljs-keyword">if</span> i % <span class="hljs-number">10</span> == <span class="hljs-number">0</span>
+                println(<span class="hljs-string">&quot;Epoch: <span class="hljs-variable">$epoch</span>/<span class="hljs-variable">$n_epoch</span> | Batch: <span class="hljs-variable">$i</span>/<span class="hljs-subst">$(length(train_loader)</span>) | Loss: <span class="hljs-subst">$(round(mean(batch_losses)</span>, digits=4))&quot;</span>)
+            <span class="hljs-keyword">end</span>
+        <span class="hljs-keyword">end</span>
+        
+        <span class="hljs-comment"># Record average loss for epoch</span>
+        train_losses[epoch] = mean(batch_losses)
+        
+        <span class="hljs-comment"># Print epoch summary</span>
+        println(<span class="hljs-string">&quot;Epoch <span class="hljs-variable">$epoch</span>/<span class="hljs-variable">$n_epoch</span> completed | Avg Loss: <span class="hljs-subst">$(round(train_losses[epoch], digits=<span class="hljs-number">4</span>)</span>)&quot;</span>)
+    <span class="hljs-keyword">end</span>
+    
+    <span class="hljs-keyword">return</span> vae, train_losses
+<span class="hljs-keyword">end</span>
+</code></pre><pre><code class="nohighlight hljs">Main.var&quot;##WeaveSandBox#277&quot;.train_vae</code></pre><pre><code class="language-julia hljs"><span class="hljs-comment"># # Create and train the VAE model on the rotated dataset</span>
+<span class="hljs-comment"># # We will skip the training step within the notebook and will load the pre-trained model instead, feel free to uncomment the following lines to train the model yourself.</span>
+<span class="hljs-comment"># println(&quot;Creating VAE model...&quot;)</span>
+<span class="hljs-comment"># vae = create_vae()</span>
+
+<span class="hljs-comment"># println(&quot;Training VAE on rotated MNIST dataset...&quot;)</span>
+<span class="hljs-comment"># vae, losses = train_vae(vae, rotated_train_data, n_epoch=100)</span>
+
+<span class="hljs-comment"># # Save the trained model parameters</span>
+<span class="hljs-comment"># model_params = Dict()</span>
+<span class="hljs-comment"># for (i, p) in enumerate(Flux.params(vae))</span>
+<span class="hljs-comment">#     model_params[&quot;param_$i&quot;] = Flux.cpu(p)  # Move to CPU before saving</span>
+<span class="hljs-comment"># end</span>
+
+<span class="hljs-comment"># # Save the parameters dictionary</span>
+<span class="hljs-comment"># JLD2.save(&quot;rotated_mnist_vae_params.jld2&quot;, model_params)</span>
+<span class="hljs-comment"># println(&quot;Model parameters saved to: rotated_mnist_vae_params.jld2&quot;)</span>
+
+<span class="hljs-comment"># # Plot training loss</span>
+<span class="hljs-comment"># loss_plot = plot(losses, title=&quot;VAE Training Loss (Rotated MNIST)&quot;, xlabel=&quot;Epoch&quot;, ylabel=&quot;Loss&quot;, </span>
+<span class="hljs-comment">#                  legend=false, linewidth=2, color=:blue)</span>
+</code></pre><pre><code class="language-julia hljs"><span class="hljs-comment"># Create an empty VAE with the same architecture as the one you saved</span>
+<span class="hljs-keyword">function</span> load_vae(filepath; n_latent=<span class="hljs-number">2</span>, n_channels_init=<span class="hljs-number">32</span>)
+    <span class="hljs-comment"># Create a new VAE with the same architecture</span>
+    vae = create_vae(n_latent, n_channels_init)
+    
+    <span class="hljs-comment"># Load the saved parameters</span>
+    model_params = JLD2.load(filepath)
+    
+    <span class="hljs-comment"># Get the parameters of the current model</span>
+    ps = Flux.params(vae)
+    
+    <span class="hljs-comment"># Replace the parameters with the loaded ones</span>
+    <span class="hljs-keyword">for</span> (i, p) <span class="hljs-keyword">in</span> enumerate(ps)
+        param_key = <span class="hljs-string">&quot;param_<span class="hljs-variable">$i</span>&quot;</span>
+        <span class="hljs-keyword">if</span> haskey(model_params, param_key)
+            <span class="hljs-comment"># Copy values from saved parameters to the model</span>
+            copyto!(p, model_params[param_key])
+        <span class="hljs-keyword">else</span>
+            <span class="hljs-meta">@warn</span> <span class="hljs-string">&quot;Parameter <span class="hljs-variable">$param_key</span> not found in saved model&quot;</span>
+        <span class="hljs-keyword">end</span>
+    <span class="hljs-keyword">end</span>
+    
+    <span class="hljs-keyword">return</span> vae
+<span class="hljs-keyword">end</span>
+
+vae = load_vae(<span class="hljs-string">&quot;rotated_mnist_vae_params.jld2&quot;</span>);
+</code></pre><pre><code class="language-julia hljs"><span class="hljs-comment"># Display original and reconstructed images</span>
+img = rotated_train_data[:, :, :, <span class="hljs-number">42</span>]
+p1 = heatmap(img[:, :, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>] |&gt; Flux.cpu, color=[:black, :white], colorbar=<span class="hljs-literal">false</span>, title=<span class="hljs-string">&quot;Original Image&quot;</span>)
+<span class="hljs-comment"># Reshape to add channel dimension (H×W → H×W×C) for network input</span>
+encoded_img = vae.encoder(reshape(img, size(img)..., <span class="hljs-number">1</span>))
+<span class="hljs-comment"># p represents pixel-wise probabilities (Bernoulli parameters) since we&#x27;re using binarized images</span>
+decoded_img = vae.decoder(encoded_img.μ)
+p2 = heatmap(decoded_img.p[:, :, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>], color=:grays, title=<span class="hljs-string">&quot;Reconstructed Image&quot;</span>)
+display(plot(p1, p2, layout=(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>), size=(<span class="hljs-number">800</span>, <span class="hljs-number">400</span>)))
+</code></pre><p><img src="Learning Dynamics with VAEs_10_1.png" alt/></p><h2 id="Part-4:-Integrating-VAE-with-RxInfer-for-Bayesian-Inference"><a class="docs-heading-anchor" href="#Part-4:-Integrating-VAE-with-RxInfer-for-Bayesian-Inference">Part 4: Integrating VAE with RxInfer for Bayesian Inference</a><a id="Part-4:-Integrating-VAE-with-RxInfer-for-Bayesian-Inference-1"></a><a class="docs-heading-anchor-permalink" href="#Part-4:-Integrating-VAE-with-RxInfer-for-Bayesian-Inference" title="Permalink"></a></h2><p>Now we&#39;ll explore the Bayesian component of our approach. Using RxInfer, we&#39;ll perform probabilistic inference on the latent space dynamics of rotating digits, enabling us to simultaneously model the underlying rotation process and generate predictions of future images.</p><p>First, we need to create a custom node that connects our VAE to the RxInfer framework. This is really <a href="https://docs.rxinfer.com/stable/manuals/customization/custom-node/">simple</a>, we just need to define a node and a couple of rules. </p><p>We will create a VAENode with input and output interfaces. Nodes in RxInfer require messages to be passed between them during inference. In this case, we have the luxury of not needing to solve any tough integrals:</p><ul><li>We&#39;ll use the encoder as our message passing function toward the input interface (from images to latent space)</li><li>The forward message for the output interface will be our decoder (from latent space to images)</li></ul><pre><code class="language-julia hljs"><span class="hljs-comment"># Create a VAE wrapper to help with RxInfer integration</span>
+<span class="hljs-keyword">struct</span> VAENode <span class="hljs-keyword">end</span>
+
+<span class="hljs-comment"># Meta struct to store the VAE model for use in message passing rules</span>
+<span class="hljs-keyword">struct</span> VAEMeta{F}
+    vae::F
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-comment"># Define a custom VAE node for RxInfer</span>
+<span class="hljs-meta">@node</span> VAENode Stochastic [out, x]
+
+<span class="hljs-comment"># Define the backward message passing rule (z ← out)</span>
+<span class="hljs-meta">@rule</span> VAENode(:x, Marginalisation) (q_out::PointMass, meta::VAEMeta) = <span class="hljs-keyword">begin</span>
+    <span class="hljs-comment"># Get the value from the output message</span>
+    x_val = mean(q_out)
+    
+    <span class="hljs-comment"># Pass through encoder to get latent distribution</span>
+    <span class="hljs-comment"># Need to reshape x_val to match expected input shape</span>
+    x_reshaped = reshape(x_val, <span class="hljs-number">28</span>, <span class="hljs-number">28</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>)
+    encoded = meta.vae.encoder(x_reshaped)
+    
+    z_mean = vec(encoded.μ) |&gt; Flux.cpu
+    z_var = exp.(vec(encoded.logσ)) .^ <span class="hljs-number">2</span> |&gt; Flux.cpu
+    
+    <span class="hljs-comment"># Return multivariate normal distribution</span>
+    <span class="hljs-keyword">return</span> MvNormalMeanCovariance(z_mean, Diagonal(z_var))
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-meta">@rule</span> VAENode(:out, Marginalisation) (q_x::MultivariateNormalDistributionsFamily, meta::VAEMeta) = <span class="hljs-keyword">begin</span> 
+    <span class="hljs-comment"># from the latent distribution, sample a value</span>
+    z_val = mean(q_x)
+    <span class="hljs-comment"># Convert to Float32 to match the decoder&#x27;s parameter type</span>
+    z_val = <span class="hljs-built_in">Float32</span>.(z_val)
+    <span class="hljs-comment"># pass through decoder to get image distribution</span>
+    decoder_output = meta.vae.decoder(z_val)
+    
+    <span class="hljs-comment"># return the image distribution</span>
+    <span class="hljs-keyword">return</span> decoder_output.p
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-comment"># DONE!</span>
+</code></pre><p>Now we&#39;ll define a state space model to capture the dynamics of rotation in the latent space. This model assumes:</p><ol><li>The latent state evolves according to a linear dynamical system with unknown transition matrix and noise</li><li>The observed images are generated from the latent states through the VAE</li></ol><pre><code class="language-julia hljs"><span class="hljs-comment"># Define the state space model using the VAE node</span>
+<span class="hljs-meta">@model</span> <span class="hljs-keyword">function</span> ssm_vae(y)
+    Λₛ ~ Wishart(<span class="hljs-number">4</span>, diageye(<span class="hljs-number">2</span>)) <span class="hljs-comment"># Precision matrix for the transition matrix</span>
+    Hₛ ~ MvNormal(μ = zeros(<span class="hljs-number">4</span>), Λ = diageye(<span class="hljs-number">4</span>)) <span class="hljs-comment"># Vectorized 2×2 transition matrix prior</span>
+
+    <span class="hljs-comment"># Initial state</span>
+    x[<span class="hljs-number">1</span>] ~ MvNormal(μ = zeros(<span class="hljs-number">2</span>), Σ = diageye(<span class="hljs-number">2</span>)) 
+    y[<span class="hljs-number">1</span>] ~ VAENode(x[<span class="hljs-number">1</span>])
+
+    <span class="hljs-comment"># State space model evolution</span>
+    <span class="hljs-keyword">for</span> t <span class="hljs-keyword">in</span> <span class="hljs-number">2</span>:length(y)
+        x[t] ~ ContinuousTransition(x[t-<span class="hljs-number">1</span>], Hₛ, Λₛ)  <span class="hljs-comment"># equivalent to x[t] := Hₛ * x[t-1] + ϵ[t]</span>
+        y[t] ~ VAENode(x[t])
+    <span class="hljs-keyword">end</span>
+<span class="hljs-keyword">end</span>
+</code></pre><p>After specifying our model, we need to set up several components that will guide the inference process:</p><ol><li><p><strong>Constraints</strong>: We&#39;ll specify factorization constraints on the approximate posterior distribution, assuming independence between variables transition matrix and precision matrix, <code>q(x, Hₛ, Λₛ) = q(x)q(Hₛ)q(Λₛ)</code>.</p></li><li><p><strong>Transition function</strong>: This reshapes our vector representation of the transition matrix into the <code>2×2</code> matrix form needed for the state equation.</p></li><li><p><strong>Metadata</strong>: We provide RxInfer with information about our custom VAE node and continuous transition function.</p></li><li><p><strong>Initial marginals</strong>: Starting distributions for our unknown parameters (transition matrix and precision matrix).</p></li></ol><p>These components define how our inference algorithm will learn the dynamics of rotation in the latent space.</p><pre><code class="language-julia hljs"><span class="hljs-comment"># Define constraints for inference</span>
+constraints = <span class="hljs-meta">@constraints</span> <span class="hljs-keyword">begin</span>
+    q(x, Hₛ, Λₛ) = q(x)q(Hₛ)q(Λₛ)
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-comment"># Define transition function</span>
+transition(h) = reshape(h, (<span class="hljs-number">2</span>, <span class="hljs-number">2</span>))
+
+<span class="hljs-comment"># Define metadata for inference</span>
+meta = <span class="hljs-meta">@meta</span> <span class="hljs-keyword">begin</span>
+    ContinuousTransition() -&gt;  CTMeta(transition)
+    VAENode() -&gt; VAEMeta(vae)
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-comment"># Define initial marginals</span>
+initmarginals = <span class="hljs-meta">@initialization</span> <span class="hljs-keyword">begin</span>
+    q(Hₛ) = MvNormalMeanCovariance(zeros(<span class="hljs-number">4</span>), <span class="hljs-number">1e2</span>diagm(ones(<span class="hljs-number">4</span>)))
+    q(Λₛ) = Wishart(<span class="hljs-number">4</span>, diageye(<span class="hljs-number">2</span>))
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-comment"># Create model</span>
+ssm_vae_model = ssm_vae();
+</code></pre><p>Let&#39;s generate a sequence of rotated images to use for inference.</p><pre><code class="language-julia hljs"><span class="hljs-comment"># Select a sample image from the dataset (e.g., the first digit 1)</span>
+println(<span class="hljs-string">&quot;Generating rotated image sequence...&quot;</span>)
+digit_indices = findall(rotated_train_labels .== <span class="hljs-number">1</span>)
+sample_image = rotated_train_data[:, :, :, digit_indices[<span class="hljs-number">1</span>]]
+
+<span class="hljs-comment"># Generate and display the rotation sequence</span>
+rotation_anim = generate_rotated_sequence(sample_image, <span class="hljs-number">100</span>, <span class="hljs-number">360</span>)
+
+<span class="hljs-comment"># Create an animation of the rotating sequence used for learning dynamics</span>
+println(<span class="hljs-string">&quot;Creating rotation animation for learning dynamics...&quot;</span>)
+rotation_animation = <span class="hljs-meta">@animate</span> <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:length(rotation_anim)
+    heatmap(rotation_anim[i], color=[:black, :white], colorbar=<span class="hljs-literal">false</span>, 
+            title=<span class="hljs-string">&quot;Observed Rotations <span class="hljs-subst">$(round((i-<span class="hljs-number">1</span>)</span>*360/length(rotation_anim), digits=1))°&quot;</span>,
+            axis=<span class="hljs-literal">false</span>, aspect_ratio=:equal, size=(<span class="hljs-number">400</span>, <span class="hljs-number">400</span>))
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-comment"># Save as GIF with 10 frames per second</span>
+gif(rotation_animation, <span class="hljs-string">&quot;rotation_learning_animation.gif&quot;</span>, fps=<span class="hljs-number">10</span>, show_msg=<span class="hljs-literal">false</span>);
+</code></pre><pre><code class="nohighlight hljs">Generating rotated image sequence...
+Creating rotation animation for learning dynamics...</code></pre><p><img src="rotation_learning_animation.gif" alt/></p><p>Now, we are going to do something cool here. We will not only pass 100 images to our model to infer the dynamics, but we will also have RxInfer predict the next 100 images. This means <strong>we&#39;ll simultaneously learn the dynamics and generate predictions</strong> for future images.</p><pre><code class="language-julia hljs"><span class="hljs-comment"># Prepare rotated sequence for inference</span>
+<span class="hljs-comment"># Convert the rotated images to the format expected by the VAE node</span>
+rotated_data = []
+<span class="hljs-keyword">for</span> img <span class="hljs-keyword">in</span> rotation_anim
+    img_4d = reshape(img, size(img)..., <span class="hljs-number">1</span>, <span class="hljs-number">1</span>)
+    push!(rotated_data, img_4d)
+<span class="hljs-keyword">end</span>
+n_obs = length(rotated_data);
+n_pred = <span class="hljs-number">100</span>;
+<span class="hljs-comment"># Create data structure for inference</span>
+data = (y = [rotated_data; repeat([<span class="hljs-literal">missing</span>], n_pred)],);
+</code></pre><pre><code class="language-julia hljs">println(<span class="hljs-string">&quot;Running inference...&quot;</span>)
+result = infer(
+    model = ssm_vae_model, 
+    meta = meta, 
+    initialization = initmarginals, 
+    data = data, 
+    constraints = constraints, 
+    iterations = <span class="hljs-number">50</span>, 
+    showprogress = <span class="hljs-literal">true</span>, 
+    free_energy = <span class="hljs-literal">false</span>, 
+    free_energy_diagnostics = <span class="hljs-literal">nothing</span>, 
+    options = (limit_stack_depth = <span class="hljs-number">100</span>,)
+)
+</code></pre><pre><code class="nohighlight hljs">Running inference...
+Inference results:
+  Posteriors       | available for (x, Λₛ, Hₛ)
+  Predictions      | available for (y)</code></pre><pre><code class="language-julia hljs"><span class="hljs-comment"># Create an animation that distinguishes between observations and predictions</span>
+y_pred = result.predictions[:y][<span class="hljs-keyword">end</span>];
+println(<span class="hljs-string">&quot;Creating observation-prediction animation...&quot;</span>)
+continuation_animation = <span class="hljs-meta">@animate</span> <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:length(y_pred)
+    <span class="hljs-keyword">if</span> i == <span class="hljs-number">1</span>
+        <span class="hljs-comment"># First frame gets a more descriptive title</span>
+        heatmap(y_pred[i][:, :, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>], color=:grays, 
+                title=<span class="hljs-string">&quot;Rotating Digit: <span class="hljs-variable">$n_obs</span> observations → <span class="hljs-variable">$n_pred</span> predictions&quot;</span>,
+                axis=<span class="hljs-literal">false</span>, aspect_ratio=:equal, size=(<span class="hljs-number">400</span>, <span class="hljs-number">400</span>))
+    <span class="hljs-keyword">elseif</span> i &lt;= n_obs
+        <span class="hljs-comment"># Rest of observations</span>
+        heatmap(y_pred[i][:, :, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>], color=:grays, 
+                title=<span class="hljs-string">&quot;Observation #<span class="hljs-variable">$i</span> of <span class="hljs-variable">$n_obs</span>&quot;</span>,
+                axis=<span class="hljs-literal">false</span>, colorbar=<span class="hljs-literal">false</span>, aspect_ratio=:equal, size=(<span class="hljs-number">400</span>, <span class="hljs-number">400</span>))
+    <span class="hljs-keyword">else</span>
+        <span class="hljs-comment"># Predictions - with red title text</span>
+        heatmap(y_pred[i][:, :, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>], color=:inferno, 
+                title=(<span class="hljs-string">&quot;Prediction #<span class="hljs-subst">$(i-n_obs)</span> of <span class="hljs-variable">$n_pred</span> ahead&quot;</span>),
+                title_location=:center, titlefontcolor=:red,
+                axis=<span class="hljs-literal">false</span>, aspect_ratio=:equal, size=(<span class="hljs-number">400</span>, <span class="hljs-number">400</span>),
+                border=:red, colorbar=<span class="hljs-literal">false</span>, borderwidth=<span class="hljs-number">3</span>)
+    <span class="hljs-keyword">end</span>
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-comment"># Save as GIF with 10 frames per second</span>
+gif(continuation_animation, <span class="hljs-string">&quot;observation_prediction_animation.gif&quot;</span>, fps=<span class="hljs-number">24</span>, show_msg=<span class="hljs-literal">false</span>);
+</code></pre><pre><code class="nohighlight hljs">Creating observation-prediction animation...</code></pre><p><img src="observation_prediction_animation.gif" alt/></p><p>Let&#39;s visualize the observations and predictions side by side.</p><pre><code class="language-julia hljs"><span class="hljs-keyword">function</span> create_digit_strips_with_titles(y_pred, n_obs=<span class="hljs-number">100</span>, n_pred_to_show=<span class="hljs-number">50</span>)
+    <span class="hljs-comment"># Get image dimensions</span>
+    img_height, img_width = size(y_pred[<span class="hljs-number">1</span>][:,:,<span class="hljs-number">1</span>,<span class="hljs-number">1</span>])
+    
+    <span class="hljs-comment"># Create a single large image for observations (top row)</span>
+    obs_strip = zeros(img_height, img_width * n_obs)
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:n_obs
+        obs_strip[:, ((i-<span class="hljs-number">1</span>)*img_width+<span class="hljs-number">1</span>):(i*img_width)] = y_pred[i][:,:,<span class="hljs-number">1</span>,<span class="hljs-number">1</span>]
+    <span class="hljs-keyword">end</span>
+    
+    <span class="hljs-comment"># For predictions, use the first 50 predictions (101-150)</span>
+    pred_indices = (n_obs+<span class="hljs-number">1</span>):(n_obs+n_pred_to_show)
+    
+    <span class="hljs-comment"># Create a single large image for predictions (bottom row)</span>
+    <span class="hljs-comment"># Make each prediction twice as wide to fill the same space</span>
+    pred_strip = zeros(img_height, img_width * n_pred_to_show * <span class="hljs-number">2</span>)
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:n_pred_to_show
+        <span class="hljs-comment"># Fill a 2x wider space for each prediction</span>
+        start_col = ((i-<span class="hljs-number">1</span>)*img_width*<span class="hljs-number">2</span>+<span class="hljs-number">1</span>)
+        end_col = (i*img_width*<span class="hljs-number">2</span>)
+        
+        <span class="hljs-comment"># Repeat each column to double the width</span>
+        <span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:img_width
+            pred_strip[:, start_col+<span class="hljs-number">2</span>*(j-<span class="hljs-number">1</span>):start_col+<span class="hljs-number">2</span>*(j-<span class="hljs-number">1</span>)+<span class="hljs-number">1</span>] .= y_pred[pred_indices[i]][:, j, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>]
+        <span class="hljs-keyword">end</span>
+    <span class="hljs-keyword">end</span>
+    
+    <span class="hljs-comment"># Create tick positions and labels</span>
+    obs_tick_pos = range(<span class="hljs-number">1</span>, img_width*n_obs, length=<span class="hljs-number">11</span>)
+    obs_tick_labels = string.(range(<span class="hljs-number">1</span>, n_obs, length=<span class="hljs-number">11</span>))
+    
+    <span class="hljs-comment"># For predictions, show ticks from 101 to 150</span>
+    pred_tick_pos = range(<span class="hljs-number">1</span>, img_width*n_pred_to_show*<span class="hljs-number">2</span>, length=<span class="hljs-number">6</span>)
+    pred_tick_labels = string.(range(n_obs+<span class="hljs-number">1</span>, n_obs+n_pred_to_show, length=<span class="hljs-number">6</span>))
+    
+    <span class="hljs-comment"># Plot observations (1-100)</span>
+    p1 = heatmap(
+        obs_strip,
+        color=:grays, 
+        colorbar=<span class="hljs-literal">false</span>,
+        yticks=<span class="hljs-literal">false</span>,
+        xticks=(obs_tick_pos, obs_tick_labels),
+        framestyle=:box,
+        title=<span class="hljs-string">&quot;Observation Sequence&quot;</span>,
+        titlefontsize=<span class="hljs-number">12</span>,
+        titlefontcolor=:blue,
+        size=(<span class="hljs-number">1000</span>, <span class="hljs-number">100</span>)
+    )
+    
+    <span class="hljs-comment"># Plot predictions (101-150)</span>
+    p2 = heatmap(
+        pred_strip,
+        color=:inferno, 
+        colorbar=<span class="hljs-literal">false</span>,
+        yticks=<span class="hljs-literal">false</span>,
+        xticks=(pred_tick_pos, pred_tick_labels),
+        framestyle=:box,
+        title=<span class="hljs-string">&quot;Prediction Sequence&quot;</span>,
+        titlefontsize=<span class="hljs-number">12</span>,
+        titlefontcolor=:red,
+        size=(<span class="hljs-number">1000</span>, <span class="hljs-number">150</span>)  <span class="hljs-comment"># Make this row taller</span>
+    )
+    
+    <span class="hljs-comment"># Create a small plot for the simultaneous learning message</span>
+    message_plot = plot(
+        grid=<span class="hljs-literal">false</span>,
+        showaxis=<span class="hljs-literal">false</span>,
+        ticks=<span class="hljs-literal">false</span>,
+        framestyle=:none,
+        size=(<span class="hljs-number">1000</span>, <span class="hljs-number">30</span>),
+        margin=<span class="hljs-number">0</span>Plots.mm,
+        bottom_margin=-<span class="hljs-number">5</span>Plots.mm,
+        top_margin=-<span class="hljs-number">5</span>Plots.mm
+    )
+    
+    <span class="hljs-comment"># Combine the plots</span>
+    p = plot(
+        p1, message_plot, p2,
+        layout=grid(<span class="hljs-number">3</span>, <span class="hljs-number">1</span>, heights=[<span class="hljs-number">0.35</span>, <span class="hljs-number">0.1</span>, <span class="hljs-number">0.55</span>]),
+        size=(<span class="hljs-number">1000</span>, <span class="hljs-number">280</span>),
+        margin=<span class="hljs-number">5</span>Plots.mm
+    )
+    
+    <span class="hljs-keyword">return</span> p
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-comment"># Create the strips with titles and message</span>
+println(<span class="hljs-string">&quot;Creating digit strips with titles...&quot;</span>)
+n_obs = <span class="hljs-number">100</span>  <span class="hljs-comment"># Number of observations</span>
+n_pred_to_show = <span class="hljs-number">50</span>  <span class="hljs-comment"># Number of predictions to show (101-150)</span>
+
+final_strips = create_digit_strips_with_titles(
+    result.predictions[:y][<span class="hljs-keyword">end</span>], n_obs, n_pred_to_show
+)
+display(final_strips)
+</code></pre><pre><code class="nohighlight hljs">Creating digit strips with titles...</code></pre><p><img src="Learning Dynamics with VAEs_18_1.png" alt/></p><p>Let&#39;s also plot the predicted trajectories with uncertainty ribbons.</p><pre><code class="language-julia hljs"><span class="hljs-comment"># Extract the real latent trajectories from the data</span>
+real_latent_dim1 = first.(first.(vae.encoder.(rotated_data)))
+real_latent_dim2 = last.(first.(vae.encoder.(rotated_data)))
+
+<span class="hljs-comment"># Create improved plots with both inferred and real trajectories</span>
+p1 = plot(<span class="hljs-number">1</span>:length(mean.(result.posteriors[:x][<span class="hljs-keyword">end</span>])), 
+          first.(mean.(result.posteriors[:x][<span class="hljs-keyword">end</span>])), 
+          ribbon=first.(std.(result.posteriors[:x][<span class="hljs-keyword">end</span>])), 
+          xlabel=<span class="hljs-string">&quot;Time Step&quot;</span>, ylabel=<span class="hljs-string">&quot;Latent Dimension 1&quot;</span>, 
+          label=<span class="hljs-string">&quot;Predicted&quot;</span>, 
+          linewidth=<span class="hljs-number">2</span>, alpha=<span class="hljs-number">0.7</span>)
+
+<span class="hljs-comment"># Add the real trajectory to dimension 1 plot</span>
+plot!(p1, <span class="hljs-number">1</span>:length(real_latent_dim1), real_latent_dim1, 
+      label=<span class="hljs-string">&quot;Real trajectory&quot;</span>, 
+      linewidth=<span class="hljs-number">2</span>, linestyle=:dash, color=:red)
+
+<span class="hljs-comment"># Create dimension 2 plot</span>
+p2 = plot(<span class="hljs-number">1</span>:length(mean.(result.posteriors[:x][<span class="hljs-keyword">end</span>])), 
+          last.(mean.(result.posteriors[:x][<span class="hljs-keyword">end</span>])), 
+          ribbon=last.(std.(result.posteriors[:x][<span class="hljs-keyword">end</span>])),
+          xlabel=<span class="hljs-string">&quot;Time Step&quot;</span>, ylabel=<span class="hljs-string">&quot;Latent Dimension 2&quot;</span>, 
+          label=<span class="hljs-string">&quot;Predicted&quot;</span>, 
+          linewidth=<span class="hljs-number">2</span>, alpha=<span class="hljs-number">0.7</span>)
+
+<span class="hljs-comment"># Add the real trajectory to dimension 2 plot</span>
+plot!(p2, <span class="hljs-number">1</span>:length(real_latent_dim2), real_latent_dim2, 
+      label=<span class="hljs-string">&quot;Real trajectory&quot;</span>, 
+      linewidth=<span class="hljs-number">2</span>, linestyle=:dash, color=:red)
+
+<span class="hljs-comment"># Combine the plots</span>
+plot(p1, p2, layout=(<span class="hljs-number">1</span>,<span class="hljs-number">2</span>), size=(<span class="hljs-number">1000</span>, <span class="hljs-number">300</span>), 
+     title=<span class="hljs-string">&quot;Latent Space Trajectory&quot;</span>)
+</code></pre><p><img src="Learning Dynamics with VAEs_19_1.png" alt/></p><p>Lastly, let&#39;s analyze the learned rotation matrix.</p><pre><code class="language-julia hljs"><span class="hljs-comment"># Analyze the learned rotation matrix</span>
+H_matrix = reshape(mean(result.posteriors[:Hₛ][<span class="hljs-keyword">end</span>]), (<span class="hljs-number">2</span>, <span class="hljs-number">2</span>))
+println(<span class="hljs-string">&quot;Learned rotation matrix:&quot;</span>)
+display(H_matrix)
+
+<span class="hljs-comment"># Calculate eigenvalues and eigenvectors</span>
+eigen_vals, eigen_vecs = eigen(H_matrix)
+
+<span class="hljs-comment"># Calculate the rotation angle from the matrix</span>
+rotation_angle = atan(H_matrix[<span class="hljs-number">2</span>,<span class="hljs-number">1</span>], H_matrix[<span class="hljs-number">1</span>,<span class="hljs-number">1</span>]) * <span class="hljs-number">180</span> / <span class="hljs-literal">π</span>
+
+<span class="hljs-comment"># Calculate the determinant (should be close to 1 for a rotation)</span>
+det_H = det(H_matrix)
+
+<span class="hljs-comment"># Calculate the matrix norm (measure of scaling)</span>
+norm_H = norm(H_matrix)
+
+<span class="hljs-comment"># Print analysis results</span>
+println(<span class="hljs-string">&quot;\n=== Rotation Matrix Analysis ===&quot;</span>)
+println(<span class="hljs-string">&quot;Determinant: <span class="hljs-subst">$(round(det_H, digits=<span class="hljs-number">5</span>)</span>) (ideal for pure rotation: 1.0)&quot;</span>)
+println(<span class="hljs-string">&quot;Matrix norm: <span class="hljs-subst">$(round(norm_H, digits=<span class="hljs-number">5</span>)</span>)&quot;</span>)
+println(<span class="hljs-string">&quot;Eigenvalues: <span class="hljs-subst">$(round.(abs.(eigen_vals)</span>, digits=5)) ∠ <span class="hljs-subst">$(round.(angle.(eigen_vals)</span> .* 180/π, digits=2))°&quot;</span>)
+println(<span class="hljs-string">&quot;Estimated rotation angle per step: <span class="hljs-subst">$(round(rotation_angle, digits=<span class="hljs-number">2</span>)</span>)°&quot;</span>)
+println(<span class="hljs-string">&quot;Expected rotation angle per step: <span class="hljs-subst">$(round(<span class="hljs-number">360</span>/<span class="hljs-number">100</span>, digits=<span class="hljs-number">2</span>)</span>)°&quot;</span>)
+
+<span class="hljs-comment"># Check if it&#x27;s close to a pure rotation</span>
+is_pure_rotation = isapprox(det_H, <span class="hljs-number">1.0</span>, atol=<span class="hljs-number">0.05</span>) &amp;&amp; 
+                   all(isapprox.(abs.(eigen_vals), <span class="hljs-number">1.0</span>, atol=<span class="hljs-number">0.05</span>))
+
+println(<span class="hljs-string">&quot;\n=== Interpretation ===&quot;</span>)
+<span class="hljs-keyword">if</span> is_pure_rotation
+    println(<span class="hljs-string">&quot;✓ The matrix is very close to a pure rotation matrix.&quot;</span>)
+<span class="hljs-keyword">else</span>
+    println(<span class="hljs-string">&quot;⚠ The matrix includes some scaling or shearing in addition to rotation.&quot;</span>)
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-comment"># Check if eigenvalues are complex conjugates (as expected for rotation)</span>
+<span class="hljs-keyword">if</span> all(isapprox.(real(eigen_vals[<span class="hljs-number">1</span>]), real(eigen_vals[<span class="hljs-number">2</span>]), atol=<span class="hljs-number">1e-10</span>)) &amp;&amp; 
+   isapprox(imag(eigen_vals[<span class="hljs-number">1</span>]), -imag(eigen_vals[<span class="hljs-number">2</span>]), atol=<span class="hljs-number">1e-10</span>)
+    println(<span class="hljs-string">&quot;✓ Eigenvalues form a complex conjugate pair, as expected for rotation.&quot;</span>)
+<span class="hljs-keyword">else</span>
+    println(<span class="hljs-string">&quot;⚠ Eigenvalues don&#x27;t form a perfect complex conjugate pair.&quot;</span>)
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-comment"># Check if the rotation angle matches expectation</span>
+angle_error = abs(rotation_angle - <span class="hljs-number">360</span>/<span class="hljs-number">100</span>)
+<span class="hljs-keyword">if</span> angle_error &lt; <span class="hljs-number">1.0</span>
+    println(<span class="hljs-string">&quot;✓ Rotation angle matches expected value very closely (error &lt; 1°).&quot;</span>)
+<span class="hljs-keyword">elseif</span> angle_error &lt; <span class="hljs-number">2.0</span>
+    println(<span class="hljs-string">&quot;✓ Rotation angle is reasonably close to expected value (error &lt; 2°).&quot;</span>)
+<span class="hljs-keyword">else</span>
+    println(<span class="hljs-string">&quot;⚠ Rotation angle differs from expected value by <span class="hljs-subst">$(round(angle_error, digits=<span class="hljs-number">2</span>)</span>)°.&quot;</span>)
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-comment"># Overall assessment</span>
+println(<span class="hljs-string">&quot;\n=== Overall Assessment ===&quot;</span>)
+<span class="hljs-keyword">if</span> is_pure_rotation &amp;&amp; angle_error &lt; <span class="hljs-number">2.0</span>
+    println(<span class="hljs-string">&quot;The learned matrix is an excellent approximation of the expected rotation.&quot;</span>)
+<span class="hljs-keyword">elseif</span> angle_error &lt; <span class="hljs-number">5.0</span>
+    println(<span class="hljs-string">&quot;The learned matrix captures the rotation well, with some minor deviations.&quot;</span>)
+<span class="hljs-keyword">else</span>
+    println(<span class="hljs-string">&quot;The learned matrix approximates the rotation, but has significant deviations.&quot;</span>)
+<span class="hljs-keyword">end</span>
+</code></pre><pre><code class="nohighlight hljs">Learned rotation matrix:
+2×2 Matrix{Float64}:
+ 0.985487   -0.048242
+ 0.0721243   0.97395
+
+=== Rotation Matrix Analysis ===
+Determinant: 0.96329 (ideal for pure rotation: 1.0)
+Matrix norm: 1.38827
+Eigenvalues: [0.98148, 0.98148] ∠ [-3.43, 3.43]°
+Estimated rotation angle per step: 4.19°
+Expected rotation angle per step: 3.6°
+
+=== Interpretation ===
+✓ The matrix is very close to a pure rotation matrix.
+✓ Eigenvalues form a complex conjugate pair, as expected for rotation.
+✓ Rotation angle matches expected value very closely (error &lt; 1°).
+
+=== Overall Assessment ===
+The learned matrix is an excellent approximation of the expected rotation.</code></pre><hr/><div class="admonition is-info" id="Contributing-baba9dc142ba7ccb"><header class="admonition-header">Contributing<a class="admonition-anchor" href="#Contributing-baba9dc142ba7ccb" title="Permalink"></a></header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><div class="admonition is-compat" id="Environment-ead41e814a894220"><header class="admonition-header">Environment<a class="admonition-anchor" href="#Environment-ead41e814a894220" title="Permalink"></a></header><div class="admonition-body"><p>This example was executed in a clean, isolated environment. Below are the exact package versions used:</p><p>For reproducibility:</p><ul><li>Use the same package versions when running locally</li><li>Report any issues with package compatibility</li></ul></div></div><pre><code class="nohighlight hljs">Status `/tmp/jl_BKMWxI/Project.toml`
+  [1575904b] AutoEncoderToolkit v0.1.2
+⌅ [587475ba] Flux v0.14.25
+  [033835bb] JLD2 v0.6.6
+  [eb30cadb] MLDatasets v0.7.21
+  [91a5bcdd] Plots v1.41.7
+  [a194aa59] ReactiveMP v6.5.0
+  [86711068] RxInfer v5.5.2
+  [10745b16] Statistics v1.11.5
+Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated`
+</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../integrating_neural_networks_with_flux.jl_and_lux.jl/">« Integrating Neural Networks With Flux.Jl And Lux.Jl</a><a class="docs-footer-nextpage" href="../multi-agent_trajectory_planning/">Multi-Agent Trajectory Planning »</a><div class="flexbox-break"></div><p class="footer-message">Created in <a href="https://biaslab.github.io/">BIASlab</a>, maintained by <a href="https://github.com/ReactiveBayes">ReactiveBayes</a>, powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.19.0 on <span class="colophon-date" title="Thursday 3 September 2026 19:09">Thursday 3 September 2026</span>. Using Julia version 1.12.7.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Bayesian Structured Time Series · RxInfer.jl Examples</title><meta name="title" content="Bayesian Structured Time Series · RxInfer.jl Examples"/><meta property="og:title" content="Bayesian Structured Time Series · RxInfer.jl Examples"/><meta property="twitter:title" content="Bayesian Structured Time Series · RxInfer.jl Examples"/><meta name="description" content="Bayesian Structured Time Series with RxInfer.jl\nThis notebooks covers RxInfer usage in the Bayesian Structured Time Series setting.\n\nCheck more examples and tutorials at https://examples.rxinfer.com\n"/><meta property="og:description" content="Bayesian Structured Time Series with RxInfer.jl\nThis notebooks covers RxInfer usage in the Bayesian Structured Time Series setting.\n\nCheck more examples and tutorials at https://examples.rxinfer.com\n"/><meta property="twitter:description" content="Bayesian Structured Time Series with RxInfer.jl\nThis notebooks covers RxInfer usage in the Bayesian Structured Time Series setting.\n\nCheck more examples and tutorials at https://examples.rxinfer.com\n"/><meta property="og:url" content="https://examples.rxinfer.com/categories/advanced_examples/bayesian_structured_time_series/"/><meta property="twitter:url" content="https://examples.rxinfer.com/categories/advanced_examples/bayesian_structured_time_series/"/><link rel="canonical" href="https://examples.rxinfer.com/categories/advanced_examples/bayesian_structured_time_series/"/><script async src="https://www.googletagmanager.com/gtag/js?id=G-GMFX620VEP"></script><script>  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-GMFX620VEP', {'page_path': location.pathname + location.search + location.hash});
+</script><script data-outdated-warner src="../../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.63.2/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../../assets/documenter.js"></script><script src="../../../search_index.js"></script><script src="../../../siteinfo.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../../assets/themeswap.js"></script><link href="../../../assets/theme.css" rel="stylesheet" type="text/css"/><link href="../../../assets/header.css" rel="stylesheet" type="text/css"/><script src="../../../assets/header.js"></script><script src="../../../assets/chat.js"></script><link href="../../../assets/favicon.ico" rel="icon" type="image/x-icon"/>
+    <meta property="og:title" content="Bayesian Structured Time Series - RxInfer Examples">
+    <meta name="description" content="This notebooks covers RxInfer usage in the Bayesian Structured Time Series setting.
+">
+    <meta property="og:description" content="This notebooks covers RxInfer usage in the Bayesian Structured Time Series setting.
+">
+    <meta name="keywords" content="rxinfer, julia, bayesian inference, examples, probabilistic programming, message passing, probabilistic numerics, variational inference, belief propagation, advanced examples, bayesian, time series, structured">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://examples.rxinfer.com/sitemap.xml">
+    </head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../../"><img class="docs-light-only" src="../../../assets/logo.svg" alt="RxInfer.jl Examples logo"/><img class="docs-dark-only" src="../../../assets/logo-dark.svg" alt="RxInfer.jl Examples logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../../">RxInfer.jl Examples</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../../">Home</a></li><li><a class="tocitem" href="../../../how_to_contribute/">How to contribute</a></li><li><a class="tocitem" href="../../../autogenerated/list_of_examples/">List of Examples</a></li><li><span class="tocitem">Basic Examples</span><ul><li><a class="tocitem" href="../../basic_examples/bayesian_binomial_regression/">Bayesian Binomial Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_linear_regression/">Bayesian Linear Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_multinomial_regression/">Bayesian Multinomial Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_networks/">Bayesian Networks</a></li><li><a class="tocitem" href="../../basic_examples/coin_toss_model/">Coin Toss Model</a></li><li><a class="tocitem" href="../../basic_examples/contextual_bandits/">Contextual Bandits</a></li><li><a class="tocitem" href="../../basic_examples/feature_functions_in_bayesian_regression/">Feature Functions In Bayesian Regression</a></li><li><a class="tocitem" href="../../basic_examples/forgetting_factors_for_online_inference/">Forgetting Factors For Online Inference</a></li><li><a class="tocitem" href="../../basic_examples/hidden_markov_model/">Hidden Markov Model</a></li><li><a class="tocitem" href="../../basic_examples/incomplete_data/">Incomplete Data</a></li><li><a class="tocitem" href="../../basic_examples/kalman_filtering_and_smoothing/">Kalman Filtering And Smoothing</a></li><li><a class="tocitem" href="../../basic_examples/pomdp_control/">Pomdp Control</a></li><li><a class="tocitem" href="../../basic_examples/predicting_bike_rental_demand/">Predicting Bike Rental Demand</a></li><li><a class="tocitem" href="../../basic_examples/t-maze_active_inference/">T-Maze Active Inference</a></li></ul></li><li><span class="tocitem">Advanced Examples</span><ul><li><a class="tocitem" href="../active_inference_mountain_car/">Active Inference Mountain Car</a></li><li><a class="tocitem" href="../assessing_people_skills/">Assessing People Skills</a></li><li><a class="tocitem" href="../autoregressive_active_inference/">Autoregressive Active Inference</a></li><li class="is-active"><a class="tocitem" href>Bayesian Structured Time Series</a><ul class="internal"><li><a class="tocitem" href="#1.-Setup-and-Data-Generation"><span>1. Setup &amp; Data Generation</span></a></li><li><a class="tocitem" href="#2.-The-Gaussian-STS-Model"><span>2. The Gaussian STS Model</span></a></li><li><a class="tocitem" href="#3.-Bonus-Track:-Poisson-Likelihood-(Counting-Tacos)"><span>3. Bonus Track: Poisson Likelihood (Counting Tacos)</span></a></li></ul></li><li><a class="tocitem" href="../chance_constraints/">Chance Constraints</a></li><li><a class="tocitem" href="../conjugate-computational_variational_message_passing/">Conjugate-Computational Variational Message Passing</a></li><li><a class="tocitem" href="../drone_dynamics/">Drone Dynamics</a></li><li><a class="tocitem" href="../efe_minimization_via_message_passing/">Efe Minimization Via Message Passing</a></li><li><a class="tocitem" href="../gp_regression_by_ssm/">Gp Regression By Ssm</a></li><li><a class="tocitem" href="../infinite_data_stream/">Infinite Data Stream</a></li><li><a class="tocitem" href="../integrating_neural_networks_with_flux.jl_and_lux.jl/">Integrating Neural Networks With Flux.Jl And Lux.Jl</a></li><li><a class="tocitem" href="../learning_dynamics_with_vaes/">Learning Dynamics With Vaes</a></li><li><a class="tocitem" href="../multi-agent_trajectory_planning/">Multi-Agent Trajectory Planning</a></li><li><a class="tocitem" href="../nonlinear_sensor_fusion/">Nonlinear Sensor Fusion</a></li><li><a class="tocitem" href="../parameter_optimisation_with_optim.jl/">Parameter Optimisation With Optim.Jl</a></li><li><a class="tocitem" href="../robotic_arm/">Robotic Arm</a></li><li><a class="tocitem" href="../solving_linear_systems_with_message_passing/">Solving Linear Systems With Message Passing</a></li></ul></li><li><span class="tocitem">Problem Specific</span><ul><li><a class="tocitem" href="../../problem_specific/autoregressive_models/">Autoregressive Models</a></li><li><a class="tocitem" href="../../problem_specific/gamma_mixture/">Gamma Mixture</a></li><li><a class="tocitem" href="../../problem_specific/gaussian_mixture/">Gaussian Mixture</a></li><li><a class="tocitem" href="../../problem_specific/hierarchical_gaussian_filter/">Hierarchical Gaussian Filter</a></li><li><a class="tocitem" href="../../problem_specific/invertible_neural_network_tutorial/">Invertible Neural Network Tutorial</a></li><li><a class="tocitem" href="../../problem_specific/ising_model/">Ising Model</a></li><li><a class="tocitem" href="../../problem_specific/litter_model/">Litter Model</a></li><li><a class="tocitem" href="../../problem_specific/ode_parameter_estimation/">Ode Parameter Estimation</a></li><li><a class="tocitem" href="../../problem_specific/probit_model/">Probit Model</a></li><li><a class="tocitem" href="../../problem_specific/rts_vs_bifm_smoothing/">Rts Vs Bifm Smoothing</a></li><li><a class="tocitem" href="../../problem_specific/simple_nonlinear_node/">Simple Nonlinear Node</a></li><li><a class="tocitem" href="../../problem_specific/structural_dynamics_with_augmented_kalman_filter/">Structural Dynamics With Augmented Kalman Filter</a></li><li><a class="tocitem" href="../../problem_specific/universal_mixtures/">Universal Mixtures</a></li></ul></li><li><span class="tocitem">Experimental Examples</span><ul><li><a class="tocitem" href="../../experimental_examples/bayesian_trust_learning/">Bayesian Trust Learning</a></li><li><a class="tocitem" href="../../experimental_examples/large_language_models/">Large Language Models</a></li><li><a class="tocitem" href="../../experimental_examples/latent_vector_autoregressive_model/">Latent Vector Autoregressive Model</a></li><li><a class="tocitem" href="../../experimental_examples/recurrent_switching_linear_dynamical_system/">Recurrent Switching Linear Dynamical System</a></li></ul></li><li><a class="tocitem" href="../../../how_build_works/">How we build the examples</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Advanced Examples</a></li><li class="is-active"><a href>Bayesian Structured Time Series</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Bayesian Structured Time Series</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl" title="View source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><div class="admonition is-info" id="Contributing-baba9dc142ba7ccb"><header class="admonition-header">Contributing<a class="admonition-anchor" href="#Contributing-baba9dc142ba7ccb" title="Permalink"></a></header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><h1 id="Bayesian-Structured-Time-Series"><a class="docs-heading-anchor" href="#Bayesian-Structured-Time-Series">Bayesian Structured Time Series</a><a id="Bayesian-Structured-Time-Series-1"></a><a class="docs-heading-anchor-permalink" href="#Bayesian-Structured-Time-Series" title="Permalink"></a></h1><h3 id="The-Great-NeurIPS-2025-Taco-Forecast"><a class="docs-heading-anchor" href="#The-Great-NeurIPS-2025-Taco-Forecast">The Great NeurIPS 2025 Taco Forecast 🌮</a><a id="The-Great-NeurIPS-2025-Taco-Forecast-1"></a><a class="docs-heading-anchor-permalink" href="#The-Great-NeurIPS-2025-Taco-Forecast" title="Permalink"></a></h3><p><strong>Location</strong>: San Diego, CA <strong>Objective</strong>: Decompose the latent drivers of Al Pastor consumption.</p><p>Welcome to San Diego! You are attending <strong>NeurIPS 2025</strong>. Between the Deep Learning keynotes and the poster sessions, there is one variable that dominates the conference dynamics: <strong>The hunger for Tacos.</strong></p><p>We suspect that local weather plays a role (San Diegans are notoriously sensitive to the cold), but it implies only part of the story. There are hidden rhythms—weekly cycles, trend shifts, and random shocks—that govern the lines at the taqueria.</p><p>In this notebook, we will build a <strong>Bayesian Structured Time Series (STS)</strong> model using <code>RxInfer.jl</code> to predict this demand.</p><p>This notebook is inspired by the excellent STS repository from <a href="https://github.com/probml/sts-jax">here (sts-jax)</a>.</p><p>We are going to extend it by <strong>treating the transition dynamics matrix</strong> (which governs the frequency and damping of these cycles) as a collection of <strong>unknown random variables</strong> and learn them simultaneously with the states. Instead of hard-coding &quot;Taco Tuesday&quot; to exactly 7 days, we let the model discover the rhythm.</p><h2 id="1.-Setup-and-Data-Generation"><a class="docs-heading-anchor" href="#1.-Setup-and-Data-Generation">1. Setup &amp; Data Generation</a><a id="1.-Setup-and-Data-Generation-1"></a><a class="docs-heading-anchor-permalink" href="#1.-Setup-and-Data-Generation" title="Permalink"></a></h2><p>We need <code>RxInfer</code> for the probabilistic inference. To ground our simulation in reality we use a pre-downloaded snapshot of real San Diego weather data (originally fetched from <a href="https://open-meteo.com/">open-meteo</a>), which ships with this example so the notebook stays fully reproducible and offline.</p><pre><code class="language-julia hljs"><span class="hljs-keyword">using</span> RxInfer, LinearAlgebra, Statistics, Plots, StableRNGs
+<span class="hljs-keyword">using</span> CSV, DataFrames, Dates, Random, Distributions
+
+theme(:wong)
+
+rng = StableRNG(<span class="hljs-number">42</span>)
+
+println(<span class="hljs-string">&quot;Libraries loaded. Preparation for consumption initiated.&quot;</span>)
+</code></pre><pre><code class="nohighlight hljs">Libraries loaded. Preparation for consumption initiated.</code></pre><h3 id="The-Data:-&quot;World-Knowledge&quot;-Logic"><a class="docs-heading-anchor" href="#The-Data:-&quot;World-Knowledge&quot;-Logic">The Data: &quot;World Knowledge&quot; Logic</a><a id="The-Data:-&quot;World-Knowledge&quot;-Logic-1"></a><a class="docs-heading-anchor-permalink" href="#The-Data:-&quot;World-Knowledge&quot;-Logic" title="Permalink"></a></h3><p>We don&#39;t have the actual sales ledger from the taqueria yet, so we will generate a <strong>Taco Demand Index</strong> based on real weather history and some &quot;World Knowledge&quot; assumptions:</p><ol><li><strong>The Patio Curve:</strong> Humans prefer eating tacos outside at 72°F.</li><li><strong>The Rain Penalty:</strong> Rain kills the vibe.</li><li><strong>The Calendar:</strong> Tuesdays and Weekends imply higher demand.</li></ol><pre><code class="language-julia hljs"><span class="hljs-comment"># We load a pre-downloaded snapshot of San Diego weather (open-meteo) that ships with this</span>
+<span class="hljs-comment"># example. This keeps the notebook fully reproducible and offline. The snapshot was fetched once</span>
+<span class="hljs-comment"># with the open-meteo Archive API for `lat=32.7157, lon=-117.1611` over a 3-year window; nulls</span>
+<span class="hljs-comment"># returned by the API were cleaned (temperature linearly interpolated, rain filled with 0.0).</span>
+<span class="hljs-comment"># To regenerate it against fresh data, re-run the fetch and overwrite `weather_history.csv`.</span>
+<span class="hljs-keyword">function</span> load_real_weather()
+    println(<span class="hljs-string">&quot;📂 Loading San Diego Weather snapshot...&quot;</span>)
+    <span class="hljs-keyword">return</span> CSV.read(joinpath(<span class="hljs-meta">@__DIR__</span>, <span class="hljs-string">&quot;weather_history.csv&quot;</span>), DataFrame; types = <span class="hljs-built_in">Dict</span>(:Date =&gt; Date))
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-comment"># Feel free to change the logic or use real data (please share!)</span>
+<span class="hljs-keyword">function</span> calculate_taco_demand(df_weather::DataFrame; 
+                                   <span class="hljs-comment"># 1. Define &quot;True&quot; Parameters</span>
+                                   β_true = <span class="hljs-number">2.0</span>,           <span class="hljs-comment"># Temp coefficient</span>
+                                   σ_obs  = <span class="hljs-number">5.0</span>,           <span class="hljs-comment"># Measurement noise (epsilon)</span>
+                                   
+                                   <span class="hljs-comment"># 2. Process Noise Variances (The &quot;Jitter&quot; of the states)</span>
+                                   σ_level  = <span class="hljs-number">0.5</span>,         <span class="hljs-comment"># Trend wobble</span>
+                                   σ_daily  = <span class="hljs-number">1.0</span>,         <span class="hljs-comment"># Daily cycle wobble</span>
+                                   σ_weekly = <span class="hljs-number">0.8</span>,         <span class="hljs-comment"># Weekly cycle wobble</span>
+                                   σ_ar     = <span class="hljs-number">2.0</span>,         <span class="hljs-comment"># AR residual noise</span>
+                                   
+                                   <span class="hljs-comment"># 3. Cycle Dynamics (Damping &amp; Frequency)</span>
+                                   <span class="hljs-comment"># We pick reasonable &quot;Physics&quot; for the cycles</span>
+                                   damp_daily = <span class="hljs-number">0.99</span>, freq_daily = <span class="hljs-number">2</span><span class="hljs-literal">π</span>/<span class="hljs-number">1</span>,  
+                                   damp_week  = <span class="hljs-number">0.98</span>, freq_week  = <span class="hljs-number">2</span><span class="hljs-literal">π</span>/<span class="hljs-number">7</span>,
+                                   rho_ar     = <span class="hljs-number">0.7</span>)
+    
+    <span class="hljs-comment"># --- A. Construct Matrices ---</span>
+    
+    <span class="hljs-comment"># State Dimensions: [Level, DailyCos, DailySin, WeeklyCos, WeeklySin, AR]</span>
+    D = <span class="hljs-number">6</span> 
+    
+    <span class="hljs-comment"># R Matrix: Maps 4 noise sources to 6 states</span>
+    R = [<span class="hljs-number">1.0</span> <span class="hljs-number">0.0</span> <span class="hljs-number">0.0</span> <span class="hljs-number">0.0</span>;
+         <span class="hljs-number">0.0</span> <span class="hljs-number">1.0</span> <span class="hljs-number">0.0</span> <span class="hljs-number">0.0</span>;
+         <span class="hljs-number">0.0</span> <span class="hljs-number">0.0</span> <span class="hljs-number">0.0</span> <span class="hljs-number">0.0</span>; <span class="hljs-comment"># Sine component gets no direct noise (deterministic rotation)</span>
+         <span class="hljs-number">0.0</span> <span class="hljs-number">0.0</span> <span class="hljs-number">1.0</span> <span class="hljs-number">0.0</span>;
+         <span class="hljs-number">0.0</span> <span class="hljs-number">0.0</span> <span class="hljs-number">0.0</span> <span class="hljs-number">0.0</span>; <span class="hljs-comment"># Sine component gets no direct noise</span>
+         <span class="hljs-number">0.0</span> <span class="hljs-number">0.0</span> <span class="hljs-number">0.0</span> <span class="hljs-number">1.0</span>]
+
+    <span class="hljs-comment"># Q Matrix: Covariance of Process Noise eta</span>
+    Q_diag = [σ_level^<span class="hljs-number">2</span>, σ_daily^<span class="hljs-number">2</span>, σ_weekly^<span class="hljs-number">2</span>, σ_ar^<span class="hljs-number">2</span>]
+    dist_η = MvNormal(zeros(<span class="hljs-number">4</span>), diagm(Q_diag))
+
+    <span class="hljs-comment"># H Matrix: Observation Selection</span>
+    H = [<span class="hljs-number">1.0</span>, <span class="hljs-number">1.0</span>, <span class="hljs-number">0.0</span>, <span class="hljs-number">1.0</span>, <span class="hljs-number">0.0</span>, <span class="hljs-number">1.0</span>]
+
+    <span class="hljs-comment"># F Matrix: Transition Dynamics</span>
+    <span class="hljs-comment"># We build the rotation blocks manually for the &quot;True&quot; simulation</span>
+    F = zeros(D, D)
+    F[<span class="hljs-number">1</span>,<span class="hljs-number">1</span>] = <span class="hljs-number">1.0</span> <span class="hljs-comment"># Random Walk Trend</span>
+    
+    <span class="hljs-comment"># Daily Block</span>
+    F[<span class="hljs-number">2</span>,<span class="hljs-number">2</span>] = damp_daily * cos(freq_daily); F[<span class="hljs-number">2</span>,<span class="hljs-number">3</span>] = damp_daily * sin(freq_daily)
+    F[<span class="hljs-number">3</span>,<span class="hljs-number">2</span>] = -damp_daily * sin(freq_daily); F[<span class="hljs-number">3</span>,<span class="hljs-number">3</span>] = damp_daily * cos(freq_daily)
+    
+    <span class="hljs-comment"># Weekly Block</span>
+    F[<span class="hljs-number">4</span>,<span class="hljs-number">4</span>] = damp_week * cos(freq_week); F[<span class="hljs-number">4</span>,<span class="hljs-number">5</span>] = damp_week * sin(freq_week)
+    F[<span class="hljs-number">5</span>,<span class="hljs-number">4</span>] = -damp_week * sin(freq_week); F[<span class="hljs-number">5</span>,<span class="hljs-number">5</span>] = damp_week * cos(freq_week)
+    
+    <span class="hljs-comment"># AR Block</span>
+    F[<span class="hljs-number">6</span>,<span class="hljs-number">6</span>] = rho_ar
+
+    <span class="hljs-comment"># --- B. Simulation Loop ---</span>
+    
+    n_steps = size(df_weather, <span class="hljs-number">1</span>)
+    
+    <span class="hljs-comment"># Storage</span>
+    z_history = zeros(D, n_steps)
+    y_history = zeros(n_steps)
+    
+    <span class="hljs-comment"># Initial State z_0</span>
+    <span class="hljs-comment"># [Level=150, Daily=10, DailySin=0, Weekly=20, WeeklySin=0, AR=0]</span>
+    z_current = [<span class="hljs-number">150.0</span>, <span class="hljs-number">10.0</span>, <span class="hljs-number">0.0</span>, <span class="hljs-number">20.0</span>, <span class="hljs-number">0.0</span>, <span class="hljs-number">0.0</span>]
+    
+    <span class="hljs-keyword">for</span> t <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:n_steps
+        <span class="hljs-comment"># 1. Sample Noise</span>
+        η_t = rand(rng, dist_η)       <span class="hljs-comment"># Process Noise</span>
+        ϵ_t = randn(rng) * σ_obs    <span class="hljs-comment"># Measurement Noise</span>
+        
+        <span class="hljs-comment"># 2. State Transition: z(t) = F * z(t-1) + R * η</span>
+        <span class="hljs-comment"># Note: In the formula z(t+1) depends on z(t), here we update step-by-step</span>
+        z_new = F * z_current + R * η_t
+        
+        <span class="hljs-comment"># 3. Regression Component: x(t)&#x27; * beta</span>
+        <span class="hljs-comment"># Center temp at 72F (Patio curve proxy) just for linearity</span>
+        temp_effect = (df_weather.Max_Temp_F[t] - <span class="hljs-number">72.0</span>) * β_true
+        
+        <span class="hljs-comment"># 4. Observation: y(t) = H * z(t) + Regression + epsilon</span>
+        y_val = dot(H, z_new) + temp_effect + ϵ_t
+        
+        <span class="hljs-comment"># Store &amp; Update</span>
+        z_history[:, t] = z_new
+        y_history[t]    = y_val
+        z_current       = z_new
+    <span class="hljs-keyword">end</span>
+    
+    df_out = deepcopy(df_weather)
+    df_out.Taco_Demand_Index = round.(y_history, digits=<span class="hljs-number">1</span>)
+    
+    <span class="hljs-keyword">return</span> df_out
+<span class="hljs-keyword">end</span>
+
+df_weather_history = load_real_weather()
+df_history = calculate_taco_demand(deepcopy(df_weather_history))
+demand = df_history.Taco_Demand_Index
+temperature = df_history.Max_Temp_F
+dates = df_history.Date
+
+<span class="hljs-comment"># Reference &quot;today&quot; for plotting: the last day covered by the historical snapshot.</span>
+REFERENCE_DATE = last(dates)
+
+<span class="hljs-comment"># Split Train/Test</span>
+n_total = length(demand)
+n_predict = round(<span class="hljs-built_in">Int</span>, n_total * <span class="hljs-number">0.1</span>) <span class="hljs-comment"># Holdout 10% of data</span>
+n_train = n_total - n_predict
+
+println(<span class="hljs-string">&quot;Data Ready. Training on <span class="hljs-variable">$n_train</span> days.&quot;</span>)
+p1 = plot(dates[<span class="hljs-number">1</span>:n_train], demand[<span class="hljs-number">1</span>:n_train], label=<span class="hljs-string">&quot;Observed Demand&quot;</span>, title=<span class="hljs-string">&quot;Taco Demand Index&quot;</span>, color=:gray)
+p2 = plot(dates[<span class="hljs-number">1</span>:n_train], temperature[<span class="hljs-number">1</span>:n_train], label=<span class="hljs-string">&quot;Temperature&quot;</span>, color=:red)
+plot(p1, p2, layout=(<span class="hljs-number">2</span>,<span class="hljs-number">1</span>), size=(<span class="hljs-number">1000</span>, <span class="hljs-number">600</span>))
+</code></pre><pre><code class="nohighlight hljs">📂 Loading San Diego Weather snapshot...
+Data Ready. Training on 987 days.</code></pre><p><img src="Bayesian Structured Time Series_2_1.png" alt/></p><h2 id="2.-The-Gaussian-STS-Model"><a class="docs-heading-anchor" href="#2.-The-Gaussian-STS-Model">2. The Gaussian STS Model</a><a id="2.-The-Gaussian-STS-Model-1"></a><a class="docs-heading-anchor-permalink" href="#2.-The-Gaussian-STS-Model" title="Permalink"></a></h2><p>We define a State Space Model (SSM) with the following full formulation:</p><p class="math-container">\[y_t = H_t z_t + x_t^T \beta + \epsilon_t, \quad \epsilon_t \sim N(0, \sigma_t^2)\]</p><p class="math-container">\[z_{t+1} = F_t z_t + R_t \eta_t, \quad \eta_t \sim N(0, Q_t)\]</p><h3 id="The-Latent-Dynamics"><a class="docs-heading-anchor" href="#The-Latent-Dynamics">The Latent Dynamics</a><a id="The-Latent-Dynamics-1"></a><a class="docs-heading-anchor-permalink" href="#The-Latent-Dynamics" title="Permalink"></a></h3><p>Our state vector <span>$z_t$</span> has dimension <span>$D=6$</span>, representing: <code>[Level, Daily_Cos, Daily_Sin, Weekly_Cos, Weekly_Sin, AR_Residual]</code></p><h4 id="a.-The-Transition-Matrix-(F)"><a class="docs-heading-anchor" href="#a.-The-Transition-Matrix-(F)">a. The Transition Matrix (<span>$F$</span>)</a><a id="a.-The-Transition-Matrix-(F)-1"></a><a class="docs-heading-anchor-permalink" href="#a.-The-Transition-Matrix-(F)" title="Permalink"></a></h4><p>The transition matrix <span>$F$</span> is constructed from <strong>5 non-zero learnable components</strong> (parameters), which we infer from data. These aren&#39;t just static numbers; they represent the physics of seasonality:</p><ul><li><p class="math-container">\[F_1, F_2\]</p>: Control the <strong>damping</strong> and <strong>rotation frequency</strong> of the <strong>Daily</strong> cycle.</li><li><p class="math-container">\[F_3, F_4\]</p>: Control the <strong>damping</strong> and <strong>rotation frequency</strong> of the <strong>Weekly</strong> cycle.</li><li><p class="math-container">\[F_5\]</p>: Controls the decay rate of the <strong>Autoregressive (AR)</strong> trend.</li></ul><p><span>$F(\theta) = \begin{pmatrix}   1 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 \\
+  0 &amp; F_1 &amp; F_2 &amp; 0 &amp; 0 &amp; 0 \\
+  0 &amp; -F_2 &amp; F_1 &amp; 0 &amp; 0 &amp; 0 \\
+  0 &amp; 0 &amp; 0 &amp; F_3 &amp; F_4 &amp; 0 \\
+  0 &amp; 0 &amp; 0 &amp; -F_4 &amp; F_3 &amp; 0 \\
+  0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; F_5   \end{pmatrix}$</span></p><h4 id="b.-The-Selection-Matrix-(R)"><a class="docs-heading-anchor" href="#b.-The-Selection-Matrix-(R)">b. The Selection Matrix (<span>$R$</span>)</a><a id="b.-The-Selection-Matrix-(R)-1"></a><a class="docs-heading-anchor-permalink" href="#b.-The-Selection-Matrix-(R)" title="Permalink"></a></h4><p class="math-container">\[R\]</p><p>is a selection matrix, which is a subset of columns of the base vector <span>$e_i$</span>. It acts as a bridge, converting the non-singular covariance matrix <span>$Q_t$</span> (of the lower-dimensional noise <span>$\eta_t$</span>) into the (possibly singular) covariance matrix of the latent state <span>$z_t$</span>.</p><p>In our case, we have 4 sources of noise driving 6 states (Level, Daily Base, Weekly Base, AR), so <span>$R$</span> maps <span>$\mathbb{R}^4 \to \mathbb{R}^6$</span>.</p><pre><code class="language-julia hljs"><span class="hljs-comment"># State Dimension</span>
+D = <span class="hljs-number">6</span>
+<span class="hljs-comment"># Observation Matrix: We sum Level(1) + Daily(2) + Weekly(4) + AR(6)</span>
+H_vec = [<span class="hljs-number">1.0</span>, <span class="hljs-number">1.0</span>, <span class="hljs-number">0.0</span>, <span class="hljs-number">1.0</span>, <span class="hljs-number">0.0</span>, <span class="hljs-number">1.0</span>]
+
+<span class="hljs-comment"># Transition Function: Dynamically builds M based on parameter F</span>
+<span class="hljs-keyword">function</span> transition(F)
+    FT = eltype(F)
+    M = zeros(FT, <span class="hljs-number">6</span>, <span class="hljs-number">6</span>)
+    M[<span class="hljs-number">1</span>,<span class="hljs-number">1</span>] = one(FT) <span class="hljs-comment"># Random Walk Trend</span>
+    
+    <span class="hljs-comment"># Daily Block (Rotation Matrix)</span>
+    M[<span class="hljs-number">2</span>,<span class="hljs-number">2</span>] = F[<span class="hljs-number">1</span>]; M[<span class="hljs-number">2</span>,<span class="hljs-number">3</span>] = F[<span class="hljs-number">2</span>]; 
+    M[<span class="hljs-number">3</span>,<span class="hljs-number">2</span>] = -F[<span class="hljs-number">2</span>]; M[<span class="hljs-number">3</span>,<span class="hljs-number">3</span>] = F[<span class="hljs-number">1</span>]
+    
+    <span class="hljs-comment"># Weekly Block (Rotation Matrix)</span>
+    M[<span class="hljs-number">4</span>,<span class="hljs-number">4</span>] = F[<span class="hljs-number">3</span>]; M[<span class="hljs-number">4</span>,<span class="hljs-number">5</span>] = F[<span class="hljs-number">4</span>]; 
+    M[<span class="hljs-number">5</span>,<span class="hljs-number">4</span>] = -F[<span class="hljs-number">4</span>]; M[<span class="hljs-number">5</span>,<span class="hljs-number">5</span>] = F[<span class="hljs-number">3</span>]
+    
+    <span class="hljs-comment"># AR Block</span>
+    M[<span class="hljs-number">6</span>,<span class="hljs-number">6</span>] = F[<span class="hljs-number">5</span>]
+    <span class="hljs-keyword">return</span> M
+<span class="hljs-keyword">end</span>
+</code></pre><pre><code class="nohighlight hljs">transition (generic function with 1 method)</code></pre><pre><code class="language-julia hljs"><span class="hljs-comment"># The Gaussian STS Model</span>
+<span class="hljs-meta">@model</span> <span class="hljs-keyword">function</span> rxsts(H, X, y, R, priors)
+    <span class="hljs-comment"># Hyperparameters</span>
+    τy    ~ priors[:τy]
+    β     ~ priors[:β]
+    <span class="hljs-comment"># Prior for the covariance matrix Q</span>
+    Q     ~ Wishart(priors[:Q].df, priors[:Q].S)
+    zprev ~ priors[:z0]
+    F     ~ priors[:F] <span class="hljs-comment"># Learning the 5 non-zero components</span>
+    
+    <span class="hljs-keyword">for</span> t <span class="hljs-keyword">in</span> eachindex(y)
+        <span class="hljs-comment"># Process Noise sampled FRESH at every step</span>
+        η[t] ~ MvNormal(mean=zeros(<span class="hljs-number">4</span>), precision=Q)
+        <span class="hljs-comment"># 1. State Transition</span>
+        <span class="hljs-comment"># We use ContinuousTransition because M depends on the random variable F</span>
+        z_mean[t] ~ ContinuousTransition(zprev, F, diageye(D)) <span class="hljs-comment"># z₁[t] := F * z₁[t-1]</span>
+        <span class="hljs-comment"># Map the 4D noise to 6D state</span>
+        z_shock[t] ~ R * η[t]
+
+        <span class="hljs-comment"># Combine: Next State = (F * Prev) + (R * Noise)</span>
+        z[t]  ~ z_mean[t] + z_shock[t]
+        
+        <span class="hljs-comment"># 2. Observation</span>
+        μ[t]  ~ dot(H, z[t]) + dot(X[t], β)
+        y[t]  ~ Normal(mean = μ[t], precision = τy)
+        
+        zprev = z[t]
+    <span class="hljs-keyword">end</span>
+<span class="hljs-keyword">end</span>
+</code></pre><pre><code class="language-julia hljs"><span class="hljs-comment"># Constraints &amp; Meta</span>
+<span class="hljs-meta">@constraints</span> <span class="hljs-keyword">function</span> rxsts_constraints()
+    q(z, z_mean, z_shock, zprev, F, Q, η, μ, y, τy, β) = q(z, z_mean, z_shock, zprev,μ, y, β, η)q(F)q(Q)q(τy)
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-meta">@meta</span> <span class="hljs-keyword">function</span> rxsts_meta()
+    ContinuousTransition() -&gt; CTMeta(transition)
+<span class="hljs-keyword">end</span>
+</code></pre><pre><code class="nohighlight hljs">rxsts_meta (generic function with 1 method)</code></pre><h3 id="Inference"><a class="docs-heading-anchor" href="#Inference">Inference</a><a id="Inference-1"></a><a class="docs-heading-anchor-permalink" href="#Inference" title="Permalink"></a></h3><p>We prepare the priors and the <span>$R$</span> matrix. Note that we center the temperature data (Regressors <code>X</code>) so the <span>$\beta$</span> coefficient is interpretable as deviation from the mean.</p><pre><code class="language-julia hljs"><span class="hljs-comment"># R Matrix: Selection matrix mapping noise to specific states</span>
+<span class="hljs-comment"># Indices 1(Level), 2(Daily), 4(Weekly), 6(AR) get noise.</span>
+R = [<span class="hljs-number">1</span> <span class="hljs-number">0</span> <span class="hljs-number">0</span> <span class="hljs-number">0</span>; 
+     <span class="hljs-number">0</span> <span class="hljs-number">1</span> <span class="hljs-number">0</span> <span class="hljs-number">0</span>; 
+     <span class="hljs-number">0</span> <span class="hljs-number">0</span> <span class="hljs-number">0</span> <span class="hljs-number">0</span>; 
+     <span class="hljs-number">0</span> <span class="hljs-number">0</span> <span class="hljs-number">1</span> <span class="hljs-number">0</span>; 
+     <span class="hljs-number">0</span> <span class="hljs-number">0</span> <span class="hljs-number">0</span> <span class="hljs-number">0</span>; 
+     <span class="hljs-number">0</span> <span class="hljs-number">0</span> <span class="hljs-number">0</span> <span class="hljs-number">1</span>]
+
+<span class="hljs-comment"># Data Prep</span>
+X_input = [[temp] <span class="hljs-keyword">for</span> temp <span class="hljs-keyword">in</span> temperature]
+y_input = [demand[<span class="hljs-number">1</span>:n_train]; fill(<span class="hljs-literal">missing</span>, n_predict)]
+
+priors = <span class="hljs-built_in">Dict</span>(
+    :τy =&gt; GammaShapeRate(<span class="hljs-number">10.0</span>, <span class="hljs-number">1.0</span>),
+    :β  =&gt; MvNormalMeanPrecision(zeros(<span class="hljs-number">1</span>), diageye(<span class="hljs-number">1</span>)),
+    :z0 =&gt; MvNormalMeanPrecision(ones(D), diageye(D)),
+    :F  =&gt; MvNormalMeanPrecision(randn(rng, <span class="hljs-number">5</span>), diageye(<span class="hljs-number">5</span>)),
+    :Q  =&gt; Wishart(<span class="hljs-number">6</span>, diagm([<span class="hljs-number">1.0</span>, <span class="hljs-number">1.0</span>, <span class="hljs-number">1.0</span>, <span class="hljs-number">1.0</span>])),
+    :η  =&gt; MvNormalMeanPrecision(zeros(<span class="hljs-number">4</span>), diageye(<span class="hljs-number">4</span>))
+)
+
+<span class="hljs-meta">@initialization</span> <span class="hljs-keyword">function</span> rxsts_init(priors)
+    q(F)  = priors[:F]
+    q(Q)  = priors[:Q]
+    q(τy) = priors[:τy]
+    μ(z)  = priors[:z0]
+
+<span class="hljs-keyword">end</span>
+
+results = infer(
+    model = rxsts(H=H_vec, X=X_input, R=R, priors=priors),
+    data = (y = y_input,),
+    constraints = rxsts_constraints(),
+    meta = rxsts_meta(),
+    initialization = rxsts_init(priors),
+    options = (limit_stack_depth = <span class="hljs-number">100</span>,),
+    returnvars = KeepLast(),
+    iterations = <span class="hljs-number">15</span>, <span class="hljs-comment"># VMP Iterations</span>
+    showprogress = <span class="hljs-literal">true</span>
+)
+</code></pre><pre><code class="nohighlight hljs">Inference results:
+  Posteriors       | available for (z_shock, μ, F, τy, Q, z, β, η, zprev, z
+_mean)
+  Predictions      | available for (y)</code></pre><h3 id="Visualization-and-Decomposition"><a class="docs-heading-anchor" href="#Visualization-and-Decomposition">Visualization &amp; Decomposition</a><a id="Visualization-and-Decomposition-1"></a><a class="docs-heading-anchor-permalink" href="#Visualization-and-Decomposition" title="Permalink"></a></h3><p>Let&#39;s see what the model discovered:</p><pre><code class="language-julia hljs"><span class="hljs-comment"># Extract learned Beta</span>
+β_mean = mean(results.posteriors[:β])[<span class="hljs-number">1</span>]
+β_var  = var(results.posteriors[:β])[<span class="hljs-number">1</span>]
+println(<span class="hljs-string">&quot;Learned Temperature Coefficient β:  <span class="hljs-subst">$(round(β_mean, digits=<span class="hljs-number">3</span>)</span>) ± <span class="hljs-subst">$(round(sqrt(β_var)</span>, digits=3))&quot;</span>)
+</code></pre><pre><code class="nohighlight hljs">Learned Temperature Coefficient β:  2.006 ± 0.003</code></pre><p>Considering we had 2 as the ground truth parameter for β, we can be satisfied with this estimate. Now we compare the Transition Matrix. </p><pre><code class="language-julia hljs"><span class="hljs-comment"># 1. Reconstruct the &quot;True&quot; Transition Matrix F</span>
+<span class="hljs-comment"># Using the same parameters used in the data generation</span>
+damp_daily_true = <span class="hljs-number">0.99</span>
+freq_daily_true = <span class="hljs-number">2</span><span class="hljs-literal">π</span>/<span class="hljs-number">1</span>    <span class="hljs-comment"># Period of 1 day</span>
+damp_week_true  = <span class="hljs-number">0.98</span>
+freq_week_true  = <span class="hljs-number">2</span><span class="hljs-literal">π</span>/<span class="hljs-number">7</span>    <span class="hljs-comment"># Period of 7 days</span>
+rho_ar_true     = <span class="hljs-number">0.7</span>
+
+F_true = zeros(<span class="hljs-number">6</span>, <span class="hljs-number">6</span>)
+F_true[<span class="hljs-number">1</span>,<span class="hljs-number">1</span>] = <span class="hljs-number">1.0</span> <span class="hljs-comment"># Random Walk Trend</span>
+
+<span class="hljs-comment"># Daily Block</span>
+F_true[<span class="hljs-number">2</span>,<span class="hljs-number">2</span>] = damp_daily_true * cos(freq_daily_true); F_true[<span class="hljs-number">2</span>,<span class="hljs-number">3</span>] = damp_daily_true * sin(freq_daily_true)
+F_true[<span class="hljs-number">3</span>,<span class="hljs-number">2</span>] = -damp_daily_true * sin(freq_daily_true); F_true[<span class="hljs-number">3</span>,<span class="hljs-number">3</span>] = damp_daily_true * cos(freq_daily_true)
+
+<span class="hljs-comment"># Weekly Block</span>
+F_true[<span class="hljs-number">4</span>,<span class="hljs-number">4</span>] = damp_week_true * cos(freq_week_true); F_true[<span class="hljs-number">4</span>,<span class="hljs-number">5</span>] = damp_week_true * sin(freq_week_true)
+F_true[<span class="hljs-number">5</span>,<span class="hljs-number">4</span>] = -damp_week_true * sin(freq_week_true); F_true[<span class="hljs-number">5</span>,<span class="hljs-number">5</span>] = damp_week_true * cos(freq_week_true)
+
+<span class="hljs-comment"># AR Block</span>
+F_true[<span class="hljs-number">6</span>,<span class="hljs-number">6</span>] = rho_ar_true
+
+<span class="hljs-comment"># 2. Extract the Learned F (Mean of the Posterior)</span>
+<span class="hljs-comment"># Assuming &#x27;results&#x27; contains the output of the first infer() call</span>
+F_learned_mean = transition(mean(results.posteriors[:F]))
+
+<span class="hljs-comment"># 3. Compare and Visualize</span>
+println(<span class="hljs-string">&quot;--- Transition Matrix Comparison ---&quot;</span>)
+println(<span class="hljs-string">&quot;True Transition Matrix F:&quot;</span>)
+display(round.(F_true, digits=<span class="hljs-number">3</span>))
+
+println(<span class="hljs-string">&quot;\nLearned Transition Matrix F (Posterior Mean):&quot;</span>)
+display(round.(F_learned_mean, digits=<span class="hljs-number">3</span>))
+
+<span class="hljs-comment"># Calculate error metrics</span>
+mse_f = mean((F_learned_mean .- F_true).^<span class="hljs-number">2</span>)
+println(<span class="hljs-string">&quot;\nMean Squared Error of F elements: &quot;</span>, round(mse_f, digits=<span class="hljs-number">6</span>))
+
+<span class="hljs-comment"># Plot Comparison Heatmaps</span>
+p_true = heatmap(F_true, title=<span class="hljs-string">&quot;True F&quot;</span>, yflip=<span class="hljs-literal">true</span>, aspect_ratio=:equal, clim=(<span class="hljs-number">0</span>,<span class="hljs-number">1</span>))
+p_learned = heatmap(F_learned_mean, title=<span class="hljs-string">&quot;Learned F&quot;</span>, yflip=<span class="hljs-literal">true</span>, aspect_ratio=:equal, clim=(<span class="hljs-number">0</span>,<span class="hljs-number">1</span>))
+p_diff = heatmap(abs.(F_learned_mean - F_true), title=<span class="hljs-string">&quot;Abs. Difference&quot;</span>, yflip=<span class="hljs-literal">true</span>, aspect_ratio=:equal, color=:viridis)
+
+plot(p_true, p_learned, p_diff, layout=(<span class="hljs-number">1</span>,<span class="hljs-number">3</span>), size=(<span class="hljs-number">1200</span>, <span class="hljs-number">350</span>))
+</code></pre><pre><code class="nohighlight hljs">--- Transition Matrix Comparison ---
+True Transition Matrix F:
+6×6 Matrix{Float64}:
+ 1.0  0.0    0.0    0.0    0.0    0.0
+ 0.0  0.99  -0.0    0.0    0.0    0.0
+ 0.0  0.0    0.99   0.0    0.0    0.0
+ 0.0  0.0    0.0    0.611  0.766  0.0
+ 0.0  0.0    0.0   -0.766  0.611  0.0
+ 0.0  0.0    0.0    0.0    0.0    0.7
+
+Learned Transition Matrix F (Posterior Mean):
+6×6 Matrix{Float64}:
+ 1.0   0.0    0.0     0.0    0.0    0.0
+ 0.0   0.238  0.235   0.0    0.0    0.0
+ 0.0  -0.235  0.238   0.0    0.0    0.0
+ 0.0   0.0    0.0     0.26   0.074  0.0
+ 0.0   0.0    0.0    -0.074  0.26   0.0
+ 0.0   0.0    0.0     0.0    0.0    0.247
+
+Mean Squared Error of F elements: 0.073615</code></pre><p><img src="Bayesian Structured Time Series_8_1.png" alt/></p><p>We can see that the model is able to capture the structure of the data and the weekly cycle. It fails to capture the daily cycle, this makes sense as the model is only given data with the weekly cycle as input. </p><pre><code class="language-julia hljs">z_means = mean.(results.posteriors[:z])
+z_vars = var.(results.posteriors[:z]);
+
+level_means, level_vars = getindex.(z_means, <span class="hljs-number">1</span>), getindex.(z_vars, <span class="hljs-number">1</span>)
+daily_means, daily_vars = getindex.(z_means, <span class="hljs-number">2</span>), getindex.(z_vars, <span class="hljs-number">2</span>)
+weekly_means, weekly_vars = getindex.(z_means, <span class="hljs-number">4</span>), getindex.(z_vars, <span class="hljs-number">4</span>)
+ar_means, ar_vars = getindex.(z_means, <span class="hljs-number">6</span>), getindex.(z_vars, <span class="hljs-number">6</span>)
+temp_means = β_mean .* temperature
+
+pred_means = mean.(results.predictions[:y][<span class="hljs-keyword">end</span>])
+pred_vars = var.(results.predictions[:y][<span class="hljs-keyword">end</span>]);
+</code></pre><pre><code class="language-julia hljs">
+history_window = <span class="hljs-number">50</span> 
+
+start_idx = max(<span class="hljs-number">1</span>, n_train - history_window)
+
+p_forecast = plot(dates[start_idx:n_train], demand[start_idx:n_train], 
+    label=<span class="hljs-string">&quot;Training Data (last <span class="hljs-variable">$history_window</span> days)&quot;</span>, color=:gray, 
+    title=<span class="hljs-string">&quot;Forecast: <span class="hljs-subst">$(n_predict)</span> Steps Ahead&quot;</span>,
+    legend=:topleft
+)
+
+plot!(dates[n_train+<span class="hljs-number">1</span>:<span class="hljs-keyword">end</span>], demand[n_train+<span class="hljs-number">1</span>:<span class="hljs-keyword">end</span>], 
+    label=<span class="hljs-string">&quot;Simulated Demand&quot;</span>, color=:red, lw=<span class="hljs-number">2</span>
+)
+
+<span class="hljs-comment"># We assume pred_means aligns with the full dataset length</span>
+plot!(dates[n_train+<span class="hljs-number">1</span>:<span class="hljs-keyword">end</span>], pred_means[n_train+<span class="hljs-number">1</span>:<span class="hljs-keyword">end</span>], 
+    ribbon=sqrt.(pred_vars[n_train+<span class="hljs-number">1</span>:<span class="hljs-keyword">end</span>]), 
+    label=<span class="hljs-string">&quot;Mean Forecast (±2σ)&quot;</span>, color=:green, fillalpha=<span class="hljs-number">0.2</span>, lw=<span class="hljs-number">2</span>
+)
+
+vline!([dates[n_train]], label=<span class="hljs-string">&quot;Cutoff&quot;</span>, color=:black, linestyle=:dash)
+
+display(p_forecast)
+</code></pre><p><img src="Bayesian Structured Time Series_10_1.png" alt/></p><pre><code class="language-julia hljs">l = <span class="hljs-meta">@layout</span> [a; b; c; d]
+p_trend = plot(dates[<span class="hljs-number">1</span>:n_train], level_means[<span class="hljs-number">1</span>:n_train], ribbon=sqrt.(level_vars[<span class="hljs-number">1</span>:n_train]), label=<span class="hljs-string">&quot;Trend (Base Demand)&quot;</span>, color=:blue)
+p_week  = plot(dates[<span class="hljs-number">1</span>:n_train], weekly_means[<span class="hljs-number">1</span>:n_train], ribbon=sqrt.(weekly_vars[<span class="hljs-number">1</span>:n_train]), label=<span class="hljs-string">&quot;Weekly Seasonality (Zoom)&quot;</span>, color=:purple, lw=<span class="hljs-number">2</span>)
+p_daily = plot(dates[<span class="hljs-number">1</span>:n_train], daily_means[<span class="hljs-number">1</span>:n_train], ribbon=sqrt.(daily_vars[<span class="hljs-number">1</span>:n_train]), label=<span class="hljs-string">&quot;Daily Seasonality (Zoom)&quot;</span>, color=:orange)
+p_ar    = plot(dates[<span class="hljs-number">1</span>:n_train], ar_means[<span class="hljs-number">1</span>:n_train], ribbon=sqrt.(ar_vars[<span class="hljs-number">1</span>:n_train]), label=<span class="hljs-string">&quot;AR Residuals&quot;</span>, color=:gray)
+
+plot(p_trend, p_week, p_daily, p_ar, layout=l, size=(<span class="hljs-number">800</span>, <span class="hljs-number">1000</span>))
+</code></pre><p><img src="Bayesian Structured Time Series_11_1.png" alt/></p><p>And now! Let&#39;s predict some future! For that we use a short pre-downloaded weather forecast (bundled with this example) covering the days right after our historical window [Note by the time you read this, it could be way beyond Neurips 2025, or even way beyond 2025 :D] but hope you could still use it for some tacos predictions in San Diego :D</p><pre><code class="language-julia hljs"><span class="hljs-comment"># Like the historical data, the forecast is a pre-downloaded snapshot (open-meteo Forecast API,</span>
+<span class="hljs-comment"># 14 days from the snapshot date) that ships with this example, keeping the notebook offline and</span>
+<span class="hljs-comment"># reproducible. Regenerate `weather_forecast.csv` the same way to refresh it.</span>
+<span class="hljs-keyword">function</span> get_forecast(days::<span class="hljs-built_in">Int</span>)
+    println(<span class="hljs-string">&quot;📂 Loading Forecast snapshot&quot;</span>)
+    df = CSV.read(joinpath(<span class="hljs-meta">@__DIR__</span>, <span class="hljs-string">&quot;weather_forecast.csv&quot;</span>), DataFrame; types = <span class="hljs-built_in">Dict</span>(:Date =&gt; Date))
+    <span class="hljs-keyword">return</span> first(df, days)
+<span class="hljs-keyword">end</span>
+</code></pre><pre><code class="nohighlight hljs">get_forecast (generic function with 1 method)</code></pre><h3 id="Showtime"><a class="docs-heading-anchor" href="#Showtime">Showtime</a><a id="Showtime-1"></a><a class="docs-heading-anchor-permalink" href="#Showtime" title="Permalink"></a></h3><p>Now, let&#39;s predict the future! We use the bundled 14-day weather forecast snapshot. (Note: By the time you read this, Neurips 2025 might be ancient history, but hopefully, the code still helps you find the best days for tacos in San Diego!)</p><pre><code class="language-julia hljs">days_ahead = <span class="hljs-number">14</span>
+
+df_weather_future  = get_forecast(days_ahead)
+
+df_weather_full = vcat(df_weather_history, df_weather_future)
+unique!(df_weather_full, :Date)
+sort!(df_weather_full, :Date)
+
+df_demand_history = calculate_taco_demand(deepcopy(df_weather_history))
+demand_history = df_demand_history.Taco_Demand_Index
+
+temperature_full = df_weather_full.Max_Temp_F
+dates_full = df_weather_full.Date;
+
+
+X_input_future = [[temp] <span class="hljs-keyword">for</span> temp <span class="hljs-keyword">in</span> temperature_full]
+<span class="hljs-comment"># We observe the historical demand and forecast every remaining day in the combined</span>
+<span class="hljs-comment"># timeline. Deriving the number of forecast steps from the data keeps `y` aligned with</span>
+<span class="hljs-comment"># `dates_full`/`X_input_future` regardless of how many forecast days overlap the history.</span>
+n_forecast_steps = length(dates_full) - length(demand_history)
+y_input_future = [demand_history; fill(<span class="hljs-literal">missing</span>, n_forecast_steps)]
+
+results_future = infer(
+    model = rxsts(H=H_vec, X=X_input_future, R=R, priors=priors),
+    data = (y = y_input_future,),
+    constraints = rxsts_constraints(),
+    meta = rxsts_meta(),
+    initialization = rxsts_init(priors),
+    options = (limit_stack_depth = <span class="hljs-number">100</span>,),
+    returnvars = KeepLast(),
+    iterations = <span class="hljs-number">15</span>, <span class="hljs-comment"># VMP Iterations</span>
+    showprogress = <span class="hljs-literal">true</span>
+)
+</code></pre><pre><code class="nohighlight hljs">📂 Loading Forecast snapshot
+Inference results:
+  Posteriors       | available for (z_shock, μ, F, τy, Q, z, β, η, zprev, z
+_mean)
+  Predictions      | available for (y)</code></pre><pre><code class="language-julia hljs">y_pred_mean = mean.(results_future.predictions[:y][<span class="hljs-keyword">end</span>])
+y_pred_var = var.(results_future.predictions[:y][<span class="hljs-keyword">end</span>]);
+</code></pre><pre><code class="language-julia hljs">n_view = <span class="hljs-number">30</span>
+n_total = length(dates_full)
+view_range = (n_total - n_view):n_total
+n_train = length(demand_history)
+
+<span class="hljs-comment"># Indices</span>
+hist_indices = intersect(view_range, <span class="hljs-number">1</span>:n_train)
+pred_indices = intersect(view_range, n_train:n_total)
+
+future_means = y_pred_mean[n_train+<span class="hljs-number">1</span>:<span class="hljs-keyword">end</span>]
+min_val, min_idx_local = findmin(future_means)
+
+<span class="hljs-comment"># Map back to global index</span>
+best_idx_global = n_train + min_idx_local
+best_date = dates_full[best_idx_global]
+
+println(<span class="hljs-string">&quot;The optimal date for tacos is: <span class="hljs-variable">$best_date</span>&quot;</span>)
+
+<span class="hljs-comment"># PLOT</span>
+p = plot(dates_full[hist_indices], demand_history[hist_indices], 
+    label = <span class="hljs-string">&quot;Simulated Demand&quot;</span>, color = :red, lw = <span class="hljs-number">2</span>,
+    title = <span class="hljs-string">&quot;Forecast: Next <span class="hljs-subst">$(length(pred_indices)</span>-1) Days&quot;</span>, 
+    legend = :topleft, ylabel=<span class="hljs-string">&quot;Demand Index&quot;</span>)
+
+plot!(dates_full[pred_indices], y_pred_mean[pred_indices], 
+    ribbon = sqrt.(y_pred_var[pred_indices]),
+    label = <span class="hljs-string">&quot;Forecast&quot;</span>, color = :blue, lw = <span class="hljs-number">2</span>, fillalpha=<span class="hljs-number">0.2</span>)
+
+<span class="hljs-comment"># Mark the snapshot cutoff (the &quot;today&quot; of the pre-downloaded data)</span>
+vline!([REFERENCE_DATE], label=<span class="hljs-string">&quot;Snapshot Date&quot;</span>, color=:black, linestyle=:dash)
+
+<span class="hljs-comment"># Mark &quot;Best Date&quot; with a Vertical Line + EXACT DATE in Legend</span>
+vline!([best_date], 
+    linestyle = :dot, linewidth = <span class="hljs-number">2</span>, color = :green, 
+    label = <span class="hljs-string">&quot;Best Date: <span class="hljs-variable">$best_date</span>&quot;</span>)
+
+<span class="hljs-comment"># Highlight the specific minimum point</span>
+scatter!([best_date], [min_val], 
+    color = :gold, markersize = <span class="hljs-number">8</span>, markerstrokecolor = :green, label = <span class="hljs-string">&quot;&quot;</span>)
+
+<span class="hljs-comment"># Simplified Annotation pointing to the date</span>
+annotate!(best_date, min_val - <span class="hljs-number">10</span>, 
+    text(<span class="hljs-string">&quot;Use this entry point!&quot;</span>, :top, :center, <span class="hljs-number">8</span>, :green))
+
+display(p)
+</code></pre><pre><code class="nohighlight hljs">The optimal date for tacos is: 2026-07-10</code></pre><p><img src="Bayesian Structured Time Series_15_1.png" alt/></p><h2 id="3.-Bonus-Track:-Poisson-Likelihood-(Counting-Tacos)"><a class="docs-heading-anchor" href="#3.-Bonus-Track:-Poisson-Likelihood-(Counting-Tacos)">3. Bonus Track: Poisson Likelihood (Counting Tacos)</a><a id="3.-Bonus-Track:-Poisson-Likelihood-(Counting-Tacos)-1"></a><a class="docs-heading-anchor-permalink" href="#3.-Bonus-Track:-Poisson-Likelihood-(Counting-Tacos)" title="Permalink"></a></h2><p>The Gaussian model assumes demand is continuous. But tacos are discrete integers! To handle this, we swap the Likelihood to <strong>Poisson</strong>. Since Poisson is not conjugate to Gaussian states, we use the <strong>Augmented Poisson</strong> node to approximate the posterior.</p><pre><code class="language-julia hljs"><span class="hljs-keyword">struct</span> AugmentedPoisson <span class="hljs-keyword">end</span>
+<span class="hljs-meta">@node</span> AugmentedPoisson Stochastic [out , η] 
+
+<span class="hljs-meta">@rule</span> AugmentedPoisson(:η, Marginalisation) (q_out::PointMass,) = <span class="hljs-keyword">begin</span>
+    m_λ = <span class="hljs-meta">@call_rule</span> Poisson(:l, Marginalisation) (q_out = q_out, )
+    samples = rand(rng, m_λ, <span class="hljs-number">500</span>)
+    map!(λ -&gt; log(λ + <span class="hljs-number">1e-6</span>), samples, samples)
+    <span class="hljs-keyword">return</span> NormalMeanVariance(mean(samples), var(samples))
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-comment">#Return the median of the log Normal distribution after exp because the mean is causing instability.</span>
+<span class="hljs-meta">@rule</span> AugmentedPoisson(:out, Marginalisation) (q_η::GaussianDistributionsFamily,) = <span class="hljs-keyword">begin</span>
+    <span class="hljs-keyword">return</span> Poisson(exp(mean(q_η)))
+<span class="hljs-keyword">end</span>
+
+
+<span class="hljs-meta">@model</span> <span class="hljs-keyword">function</span> rxsts_poisson(H, X, y, R, priors)
+    β  ~ priors[:β]
+    Q  ~ priors[:Q]
+    η  ~ MvNormal(mean=mean(priors[:η]), precision=Q)
+    zprev ~ priors[:z0]
+    F     ~ priors[:F]
+    <span class="hljs-keyword">for</span> t <span class="hljs-keyword">in</span> eachindex(y)
+        z₁[t] ~ ContinuousTransition(zprev, F, <span class="hljs-number">1e-2</span>diageye(D))
+        z₂[t] ~ R * η
+        z[t]  ~ z₁[t] + z₂[t]
+        μ[t]  ~ dot(H, z[t]) + dot(X[t], β)
+        y[t]  ~ AugmentedPoisson(μ[t])
+        zprev = z[t]
+    <span class="hljs-keyword">end</span>
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-meta">@constraints</span> <span class="hljs-keyword">function</span> rxsts_poisson_constraints()
+    q(z, z₁, z₂, zprev, F, Q, η, μ, β, y) = q(z, z₁, z₂, zprev, β, η, μ,y)q(F)q(Q)
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-meta">@meta</span> <span class="hljs-keyword">function</span> rxsts_poisson_meta()
+    ContinuousTransition() -&gt; CTMeta(transition)
+<span class="hljs-keyword">end</span>
+
+priors_poisson = <span class="hljs-built_in">Dict</span>(
+    :β  =&gt; MvNormalMeanPrecision(zeros(<span class="hljs-number">1</span>), diageye(<span class="hljs-number">1</span>)),
+    :z0 =&gt; MvNormalMeanPrecision(ones(D), diageye(D)),
+    :F  =&gt; MvNormalMeanPrecision(randn(rng, <span class="hljs-number">5</span>), diageye(<span class="hljs-number">5</span>)),
+    :Q  =&gt; Wishart(<span class="hljs-number">6</span>, diagm([<span class="hljs-number">1.0</span>, <span class="hljs-number">1.0</span>, <span class="hljs-number">1.0</span>, <span class="hljs-number">1.0</span>])),
+    :η  =&gt; MvNormalMeanPrecision(randn(rng, <span class="hljs-number">4</span>), diageye(<span class="hljs-number">4</span>))
+)
+
+<span class="hljs-meta">@initialization</span> <span class="hljs-keyword">function</span> rxsts_poisson_init(priors)
+    q(F)  = priors[:F]
+    q(Q)  = priors[:Q]
+    μ(z)  = priors[:z0]
+    μ(z₁) = priors[:z0]
+ 
+<span class="hljs-keyword">end</span>
+
+X_input = [[temp] <span class="hljs-keyword">for</span> temp <span class="hljs-keyword">in</span> df_history.Max_Temp_F] 
+
+n_total_current = length(X_input)
+n_predict_current = <span class="hljs-built_in">Int</span>(round(n_total_current * <span class="hljs-number">0.05</span>))
+n_train_current   = n_total_current - n_predict_current
+
+y_poisson_in = [
+    round.(<span class="hljs-built_in">Int</span>, df_history.Taco_Demand_Index[<span class="hljs-number">1</span>:n_train_current] / <span class="hljs-number">5</span>) ; 
+    fill(<span class="hljs-literal">missing</span>, n_predict_current)
+]
+
+y_poisson_future = round.(<span class="hljs-built_in">Int</span>, df_history.Taco_Demand_Index[n_train_current+<span class="hljs-number">1</span>:<span class="hljs-keyword">end</span>] / <span class="hljs-number">5</span>) 
+
+results_poi = infer(
+    model = rxsts_poisson(H=H_vec, X=X_input, R=R, priors=priors),
+    data = (y = y_poisson_in,),
+    constraints = rxsts_poisson_constraints(),
+    meta = rxsts_poisson_meta(),
+    initialization = rxsts_poisson_init(priors),
+    returnvars = KeepLast(),
+    options = (limit_stack_depth = <span class="hljs-number">100</span>,),
+    iterations = <span class="hljs-number">15</span>, showprogress = <span class="hljs-literal">true</span>
+)
+</code></pre><pre><code class="nohighlight hljs">Inference results:
+  Posteriors       | available for (μ, F, z₂, Q, z, β, η, zprev, z₁)
+  Predictions      | available for (y)</code></pre><pre><code class="language-julia hljs">y_dists = results_poi.predictions[:y][<span class="hljs-keyword">end</span>]
+max_count = maximum(filter(!ismissing, y_poisson_in)) + <span class="hljs-number">20</span>  
+
+n_show_history = <span class="hljs-number">50</span> 
+time_range = max(<span class="hljs-number">1</span>, n_train_current - n_show_history):n_total_current
+
+pmf_matrix = zeros(max_count+<span class="hljs-number">1</span>, length(time_range))
+<span class="hljs-keyword">for</span> (i, t) <span class="hljs-keyword">in</span> enumerate(time_range)
+    dist = y_dists[t]  
+    <span class="hljs-keyword">for</span> k <span class="hljs-keyword">in</span> <span class="hljs-number">0</span>:max_count
+        pmf_matrix[k+<span class="hljs-number">1</span>, i] = pdf(dist, k)
+    <span class="hljs-keyword">end</span>
+<span class="hljs-keyword">end</span>
+
+y_actual = filter(!ismissing, y_poisson_in)
+
+p_pmf = heatmap(time_range, <span class="hljs-number">0</span>:max_count, pmf_matrix,
+    xlabel=<span class="hljs-string">&quot;Time Index&quot;</span>, ylabel=<span class="hljs-string">&quot;Demand Count&quot;</span>, 
+    title=<span class="hljs-string">&quot;Prediction PMF at Each Time Point&quot;</span>,
+    color=:viridis, colorbar_title=<span class="hljs-string">&quot;Probability&quot;</span>)
+
+scatter!(collect(<span class="hljs-number">1</span>:n_train_current)[<span class="hljs-keyword">end</span>-n_show_history:<span class="hljs-keyword">end</span>], y_actual[<span class="hljs-keyword">end</span>-n_show_history:<span class="hljs-keyword">end</span>], label=<span class="hljs-string">&quot;Training Data&quot;</span>, color=:orange, markersize=<span class="hljs-number">3</span>, alpha=<span class="hljs-number">0.8</span>)
+scatter!(collect(n_train_current+<span class="hljs-number">1</span>:n_total_current), y_poisson_future, label=<span class="hljs-string">&quot;Simulated future&quot;</span>, color=:red, markersize=<span class="hljs-number">3</span>, alpha=<span class="hljs-number">0.8</span>)
+vline!([n_train_current], label=<span class="hljs-string">&quot;Forecast Start&quot;</span>, linestyle=:dash, color=:white, lw=<span class="hljs-number">2</span>)
+display(p_pmf)
+</code></pre><p><img src="Bayesian Structured Time Series_17_1.png" alt/></p><pre><code class="language-julia hljs">time_stretch = <span class="hljs-number">10.0</span>
+prob_scale = <span class="hljs-number">10.0</span>
+y_pred_means = mean.(y_dists)
+
+n_train_show = <span class="hljs-number">30</span>
+train_start = max(<span class="hljs-number">1</span>, n_train_current - n_train_show)
+
+p_pred = plot(xlabel=<span class="hljs-string">&quot;Time Index&quot;</span>, ylabel=<span class="hljs-string">&quot;Demand&quot;</span>, 
+    title=<span class="hljs-string">&quot;Forecast: <span class="hljs-subst">$(n_predict_current)</span> Steps Ahead&quot;</span>,
+    size=(<span class="hljs-number">1400</span>, <span class="hljs-number">600</span>), legend=:topleft)
+
+
+scatter!(collect(<span class="hljs-number">1</span>:n_train_current)[<span class="hljs-keyword">end</span>-n_show_history:<span class="hljs-keyword">end</span>], y_actual[<span class="hljs-keyword">end</span>-n_show_history:<span class="hljs-keyword">end</span>], label=<span class="hljs-string">&quot;Training Data&quot;</span>, color=:blue, markersize=<span class="hljs-number">3</span>, alpha=<span class="hljs-number">1.0</span>)
+
+<span class="hljs-keyword">for</span> t <span class="hljs-keyword">in</span> n_train_current:n_total_current
+    dist = y_dists[t]
+    λ = mean(dist)
+    support = max(<span class="hljs-number">0</span>, floor(<span class="hljs-built_in">Int</span>, λ-<span class="hljs-number">3</span>*sqrt(λ))):ceil(<span class="hljs-built_in">Int</span>, λ+<span class="hljs-number">3</span>*sqrt(λ))
+    probs = pdf.(dist, support)
+    
+    <span class="hljs-keyword">for</span> (k, prob) <span class="hljs-keyword">in</span> zip(support, probs)
+        plot!([t - prob*prob_scale, t + prob*prob_scale], [k, k], 
+            lw=<span class="hljs-number">5</span>, alpha=<span class="hljs-number">0.4</span>, color=:green, label=<span class="hljs-string">&quot;&quot;</span>)
+    <span class="hljs-keyword">end</span>
+    
+ 
+<span class="hljs-keyword">end</span>
+scatter!(collect(n_train_current+<span class="hljs-number">1</span>:n_total_current), y_pred_means[n_train_current+<span class="hljs-number">1</span>:n_total_current], 
+color=:darkgreen, markersize=<span class="hljs-number">5</span>, label=<span class="hljs-string">&quot;Predictions&quot;</span>, alpha=<span class="hljs-number">0.8</span>)
+scatter!(collect(n_train_current+<span class="hljs-number">1</span>:n_total_current), y_poisson_future, color=:red, markersize=<span class="hljs-number">8</span>, 
+label=<span class="hljs-string">&quot;Simulated Future&quot;</span>, alpha=<span class="hljs-number">0.8</span>, markershape=:star5)
+
+
+vline!([n_train_current], label=<span class="hljs-string">&quot;Forecast Start&quot;</span>, linestyle=:dash, color=:black, lw=<span class="hljs-number">2</span>)
+display(p_pred)
+</code></pre><p><img src="Bayesian Structured Time Series_18_1.png" alt/></p><pre><code class="language-julia hljs">
+</code></pre><hr/><div class="admonition is-info" id="Contributing-baba9dc142ba7ccb"><header class="admonition-header">Contributing<a class="admonition-anchor" href="#Contributing-baba9dc142ba7ccb" title="Permalink"></a></header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><div class="admonition is-compat" id="Environment-ead41e814a894220"><header class="admonition-header">Environment<a class="admonition-anchor" href="#Environment-ead41e814a894220" title="Permalink"></a></header><div class="admonition-body"><p>This example was executed in a clean, isolated environment. Below are the exact package versions used:</p><p>For reproducibility:</p><ul><li>Use the same package versions when running locally</li><li>Report any issues with package compatibility</li></ul></div></div><pre><code class="nohighlight hljs">Status `/tmp/jl_BKMWxI/Project.toml`
+  [336ed68f] CSV v0.10.17
+  [a93c6f00] DataFrames v1.8.2
+  [31c24e10] Distributions v0.25.131
+  [91a5bcdd] Plots v1.41.7
+  [86711068] RxInfer v5.5.2
+  [860ef19b] StableRNGs v1.0.4
+  [10745b16] Statistics v1.11.5
+  [ade2ca70] Dates v1.11.0
+  [37e2e46d] LinearAlgebra v1.12.0
+  [9a3f8284] Random v1.11.0
+</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../autoregressive_active_inference/">« Autoregressive Active Inference</a><a class="docs-footer-nextpage" href="../chance_constraints/">Chance Constraints »</a><div class="flexbox-break"></div><p class="footer-message">Created in <a href="https://biaslab.github.io/">BIASlab</a>, maintained by <a href="https://github.com/ReactiveBayes">ReactiveBayes</a>, powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.19.0 on <span class="colophon-date" title="Thursday 3 September 2026 19:09">Thursday 3 September 2026</span>. Using Julia version 1.12.7.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

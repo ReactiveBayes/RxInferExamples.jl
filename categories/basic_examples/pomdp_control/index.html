@@ -1,214 +1,224 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Pomdp Control · RxInfer.jl Examples</title><meta name="title" content="Pomdp Control · RxInfer.jl Examples"/><meta property="og:title" content="Pomdp Control · RxInfer.jl Examples"/><meta property="twitter:title" content="Pomdp Control · RxInfer.jl Examples"/><meta name="description" content="A repository of examples and tutorials for RxInfer.jl, a Julia package for reactive message passing inference in probabilistic models."/><meta property="og:description" content="A repository of examples and tutorials for RxInfer.jl, a Julia package for reactive message passing inference in probabilistic models."/><meta property="twitter:description" content="A repository of examples and tutorials for RxInfer.jl, a Julia package for reactive message passing inference in probabilistic models."/><meta property="og:url" content="https://examples.rxinfer.ml/categories/basic_examples/pomdp_control/"/><meta property="twitter:url" content="https://examples.rxinfer.ml/categories/basic_examples/pomdp_control/"/><link rel="canonical" href="https://examples.rxinfer.ml/categories/basic_examples/pomdp_control/"/><script async src="https://www.googletagmanager.com/gtag/js?id=G-GMFX620VEP"></script><script>  window.dataLayer = window.dataLayer || [];
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Pomdp Control · RxInfer.jl Examples</title><meta name="title" content="Pomdp Control · RxInfer.jl Examples"/><meta property="og:title" content="Pomdp Control · RxInfer.jl Examples"/><meta property="twitter:title" content="Pomdp Control · RxInfer.jl Examples"/><meta name="description" content="POMDP Control with Reactive Inference with RxInfer.jl\nAn example demonstrating how to perform control in Partially Observable Markov Decision Processes (POMDPs) using reactive message passing and variational inference.\n\nCheck more examples and tutorials at https://examples.rxinfer.com\n"/><meta property="og:description" content="POMDP Control with Reactive Inference with RxInfer.jl\nAn example demonstrating how to perform control in Partially Observable Markov Decision Processes (POMDPs) using reactive message passing and variational inference.\n\nCheck more examples and tutorials at https://examples.rxinfer.com\n"/><meta property="twitter:description" content="POMDP Control with Reactive Inference with RxInfer.jl\nAn example demonstrating how to perform control in Partially Observable Markov Decision Processes (POMDPs) using reactive message passing and variational inference.\n\nCheck more examples and tutorials at https://examples.rxinfer.com\n"/><meta property="og:url" content="https://examples.rxinfer.com/categories/basic_examples/pomdp_control/"/><meta property="twitter:url" content="https://examples.rxinfer.com/categories/basic_examples/pomdp_control/"/><link rel="canonical" href="https://examples.rxinfer.com/categories/basic_examples/pomdp_control/"/><script async src="https://www.googletagmanager.com/gtag/js?id=G-GMFX620VEP"></script><script>  window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
   gtag('config', 'G-GMFX620VEP', {'page_path': location.pathname + location.search + location.hash});
-</script><script data-outdated-warner src="../../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../../assets/documenter.js"></script><script src="../../../search_index.js"></script><script src="../../../siteinfo.js"></script><script src="../../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../../assets/themeswap.js"></script><link href="../../../assets/theme.css" rel="stylesheet" type="text/css"/><link href="../../../assets/header.css" rel="stylesheet" type="text/css"/><script src="../../../assets/header.js"></script><script src="../../../assets/chat.js"></script><link href="../../../assets/favicon.ico" rel="icon" type="image/x-icon"/>
+</script><script data-outdated-warner src="../../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.63.2/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../../assets/documenter.js"></script><script src="../../../search_index.js"></script><script src="../../../siteinfo.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../../assets/themeswap.js"></script><link href="../../../assets/theme.css" rel="stylesheet" type="text/css"/><link href="../../../assets/header.css" rel="stylesheet" type="text/css"/><script src="../../../assets/header.js"></script><script src="../../../assets/chat.js"></script><link href="../../../assets/favicon.ico" rel="icon" type="image/x-icon"/>
     <meta property="og:title" content="POMDP Control with Reactive Inference - RxInfer Examples">
     <meta name="description" content="An example demonstrating how to perform control in Partially Observable Markov Decision Processes (POMDPs) using reactive message passing and variational inference.
 ">
     <meta property="og:description" content="An example demonstrating how to perform control in Partially Observable Markov Decision Processes (POMDPs) using reactive message passing and variational inference.
 ">
     <meta name="keywords" content="rxinfer, julia, bayesian inference, examples, probabilistic programming, message passing, probabilistic numerics, variational inference, belief propagation, basic examples, pomdp, control, structured inference">
-    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://examples.rxinfer.ml/sitemap.xml">
-    </head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../../"><img class="docs-light-only" src="../../../assets/logo.svg" alt="RxInfer.jl Examples logo"/><img class="docs-dark-only" src="../../../assets/logo-dark.svg" alt="RxInfer.jl Examples logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../../">RxInfer.jl Examples</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../../">Home</a></li><li><a class="tocitem" href="../../../how_to_contribute/">How to contribute</a></li><li><a class="tocitem" href="../../../autogenerated/list_of_examples/">List of Examples</a></li><li><span class="tocitem">Basic Examples</span><ul><li><a class="tocitem" href="../bayesian_binomial_regression/">Bayesian Binomial Regression</a></li><li><a class="tocitem" href="../bayesian_linear_regression/">Bayesian Linear Regression</a></li><li><a class="tocitem" href="../bayesian_multinomial_regression/">Bayesian Multinomial Regression</a></li><li><a class="tocitem" href="../coin_toss_model/">Coin Toss Model</a></li><li><a class="tocitem" href="../feature_functions_in_bayesian_regression/">Feature Functions In Bayesian Regression</a></li><li><a class="tocitem" href="../hidden_markov_model/">Hidden Markov Model</a></li><li><a class="tocitem" href="../kalman_filtering_and_smoothing/">Kalman Filtering And Smoothing</a></li><li class="is-active"><a class="tocitem" href>Pomdp Control</a><ul class="internal"><li class="toplevel"><a class="tocitem" href="#Environment-Setup"><span>Environment Setup</span></a></li><li><a class="tocitem" href="#Model-Setup"><span>Model Setup</span></a></li></ul></li><li><a class="tocitem" href="../predicting_bike_rental_demand/">Predicting Bike Rental Demand</a></li></ul></li><li><span class="tocitem">Advanced Examples</span><ul><li><a class="tocitem" href="../../advanced_examples/active_inference_mountain_car/">Active Inference Mountain Car</a></li><li><a class="tocitem" href="../../advanced_examples/advanced_tutorial/">Advanced Tutorial</a></li><li><a class="tocitem" href="../../advanced_examples/assessing_people_skills/">Assessing People Skills</a></li><li><a class="tocitem" href="../../advanced_examples/chance_constraints/">Chance Constraints</a></li><li><a class="tocitem" href="../../advanced_examples/conjugate-computational_variational_message_passing/">Conjugate-Computational Variational Message Passing</a></li><li><a class="tocitem" href="../../advanced_examples/drone_dynamics/">Drone Dynamics</a></li><li><a class="tocitem" href="../../advanced_examples/global_parameter_optimisation/">Global Parameter Optimisation</a></li><li><a class="tocitem" href="../../advanced_examples/gp_regression_by_ssm/">Gp Regression By Ssm</a></li><li><a class="tocitem" href="../../advanced_examples/infinite_data_stream/">Infinite Data Stream</a></li><li><a class="tocitem" href="../../advanced_examples/multi-agent_trajectory_planning/">Multi-Agent Trajectory Planning</a></li><li><a class="tocitem" href="../../advanced_examples/nonlinear_sensor_fusion/">Nonlinear Sensor Fusion</a></li><li><a class="tocitem" href="../../advanced_examples/robotic_arm/">Robotic Arm</a></li></ul></li><li><span class="tocitem">Problem Specific</span><ul><li><a class="tocitem" href="../../problem_specific/autoregressive_models/">Autoregressive Models</a></li><li><a class="tocitem" href="../../problem_specific/gamma_mixture/">Gamma Mixture</a></li><li><a class="tocitem" href="../../problem_specific/gaussian_mixture/">Gaussian Mixture</a></li><li><a class="tocitem" href="../../problem_specific/hierarchical_gaussian_filter/">Hierarchical Gaussian Filter</a></li><li><a class="tocitem" href="../../problem_specific/invertible_neural_network_tutorial/">Invertible Neural Network Tutorial</a></li><li><a class="tocitem" href="../../problem_specific/litter_model/">Litter Model</a></li><li><a class="tocitem" href="../../problem_specific/ode_parameter_estimation/">Ode Parameter Estimation</a></li><li><a class="tocitem" href="../../problem_specific/probit_model/">Probit Model</a></li><li><a class="tocitem" href="../../problem_specific/rts_vs_bifm_smoothing/">Rts Vs Bifm Smoothing</a></li><li><a class="tocitem" href="../../problem_specific/simple_nonlinear_node/">Simple Nonlinear Node</a></li><li><a class="tocitem" href="../../problem_specific/structural_dynamics_with_augmented_kalman_filter/">Structural Dynamics With Augmented Kalman Filter</a></li><li><a class="tocitem" href="../../problem_specific/universal_mixtures/">Universal Mixtures</a></li></ul></li><li><a class="tocitem" href="../../../how_build_works/">How we build the examples</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Basic Examples</a></li><li class="is-active"><a href>Pomdp Control</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Pomdp Control</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl/blob/main/docs/src/categories/basic_examples/pomdp_control/index.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><div class="admonition is-info"><header class="admonition-header">Contributing</header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><h1 id="POMDP-Control-with-Reactive-Inference"><a class="docs-heading-anchor" href="#POMDP-Control-with-Reactive-Inference">POMDP Control with Reactive Inference</a><a id="POMDP-Control-with-Reactive-Inference-1"></a><a class="docs-heading-anchor-permalink" href="#POMDP-Control-with-Reactive-Inference" title="Permalink"></a></h1><p>This notebook demonstrates how to perform control in Partially Observable Markov Decision Processes (POMDPs) using reactive message passing and variational inference in RxInfer.jl.</p><p>We will cover:</p><ol><li>Setting up a simple POMDP model</li><li>Defining the state transition and observation models</li><li>Implementing the control policy</li><li>Performing inference and control using message passing</li><li>Visualizing the results</li></ol><pre><code class="language-julia hljs">using RxInfer
-using Distributions
-using Plots
-using Random
-using ProgressMeter</code></pre><h1 id="Environment-Setup"><a class="docs-heading-anchor" href="#Environment-Setup">Environment Setup</a><a id="Environment-Setup-1"></a><a class="docs-heading-anchor-permalink" href="#Environment-Setup" title="Permalink"></a></h1><p>For this example, we will implement the Windy Gridworld environment using <code>RxEnvironments.jl</code>. The Windy Gridworld is a simple gridworld environment with deterministic transitions and observations. This code is adapted from the <a href="https://reactivebayes.github.io/RxEnvironments.jl/stable/lib/example_discrete_control_space_env/">RxEnvironments.jl documentation</a>, and a more elaborate explanation of can be found there. </p><p>The environment consists of:</p><ul><li>A grid with wind values for each column</li><li>An agent with a current position</li><li>A goal position to reach</li></ul><p>The agent can:</p><ul><li>Move in cardinal directions (one step at a time)</li><li>Observe its current position</li><li>Be affected by wind when moving</li></ul><p>The wind effect is applied after each movement, potentially pushing the agent upward by 0-2 positions depending on the column.</p><p>First we will define the environment and the agent.</p><pre><code class="language-julia hljs">using RxEnvironments
-using Plots
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://examples.rxinfer.com/sitemap.xml">
+    </head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../../"><img class="docs-light-only" src="../../../assets/logo.svg" alt="RxInfer.jl Examples logo"/><img class="docs-dark-only" src="../../../assets/logo-dark.svg" alt="RxInfer.jl Examples logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../../">RxInfer.jl Examples</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../../">Home</a></li><li><a class="tocitem" href="../../../how_to_contribute/">How to contribute</a></li><li><a class="tocitem" href="../../../autogenerated/list_of_examples/">List of Examples</a></li><li><span class="tocitem">Basic Examples</span><ul><li><a class="tocitem" href="../bayesian_binomial_regression/">Bayesian Binomial Regression</a></li><li><a class="tocitem" href="../bayesian_linear_regression/">Bayesian Linear Regression</a></li><li><a class="tocitem" href="../bayesian_multinomial_regression/">Bayesian Multinomial Regression</a></li><li><a class="tocitem" href="../bayesian_networks/">Bayesian Networks</a></li><li><a class="tocitem" href="../coin_toss_model/">Coin Toss Model</a></li><li><a class="tocitem" href="../contextual_bandits/">Contextual Bandits</a></li><li><a class="tocitem" href="../feature_functions_in_bayesian_regression/">Feature Functions In Bayesian Regression</a></li><li><a class="tocitem" href="../forgetting_factors_for_online_inference/">Forgetting Factors For Online Inference</a></li><li><a class="tocitem" href="../hidden_markov_model/">Hidden Markov Model</a></li><li><a class="tocitem" href="../incomplete_data/">Incomplete Data</a></li><li><a class="tocitem" href="../kalman_filtering_and_smoothing/">Kalman Filtering And Smoothing</a></li><li class="is-active"><a class="tocitem" href>Pomdp Control</a><ul class="internal"><li class="toplevel"><a class="tocitem" href="#Environment-Setup"><span>Environment Setup</span></a></li><li><a class="tocitem" href="#Model-Setup"><span>Model Setup</span></a></li></ul></li><li><a class="tocitem" href="../predicting_bike_rental_demand/">Predicting Bike Rental Demand</a></li><li><a class="tocitem" href="../t-maze_active_inference/">T-Maze Active Inference</a></li></ul></li><li><span class="tocitem">Advanced Examples</span><ul><li><a class="tocitem" href="../../advanced_examples/active_inference_mountain_car/">Active Inference Mountain Car</a></li><li><a class="tocitem" href="../../advanced_examples/assessing_people_skills/">Assessing People Skills</a></li><li><a class="tocitem" href="../../advanced_examples/autoregressive_active_inference/">Autoregressive Active Inference</a></li><li><a class="tocitem" href="../../advanced_examples/bayesian_structured_time_series/">Bayesian Structured Time Series</a></li><li><a class="tocitem" href="../../advanced_examples/chance_constraints/">Chance Constraints</a></li><li><a class="tocitem" href="../../advanced_examples/conjugate-computational_variational_message_passing/">Conjugate-Computational Variational Message Passing</a></li><li><a class="tocitem" href="../../advanced_examples/drone_dynamics/">Drone Dynamics</a></li><li><a class="tocitem" href="../../advanced_examples/efe_minimization_via_message_passing/">Efe Minimization Via Message Passing</a></li><li><a class="tocitem" href="../../advanced_examples/gp_regression_by_ssm/">Gp Regression By Ssm</a></li><li><a class="tocitem" href="../../advanced_examples/infinite_data_stream/">Infinite Data Stream</a></li><li><a class="tocitem" href="../../advanced_examples/integrating_neural_networks_with_flux.jl_and_lux.jl/">Integrating Neural Networks With Flux.Jl And Lux.Jl</a></li><li><a class="tocitem" href="../../advanced_examples/learning_dynamics_with_vaes/">Learning Dynamics With Vaes</a></li><li><a class="tocitem" href="../../advanced_examples/multi-agent_trajectory_planning/">Multi-Agent Trajectory Planning</a></li><li><a class="tocitem" href="../../advanced_examples/nonlinear_sensor_fusion/">Nonlinear Sensor Fusion</a></li><li><a class="tocitem" href="../../advanced_examples/parameter_optimisation_with_optim.jl/">Parameter Optimisation With Optim.Jl</a></li><li><a class="tocitem" href="../../advanced_examples/robotic_arm/">Robotic Arm</a></li><li><a class="tocitem" href="../../advanced_examples/solving_linear_systems_with_message_passing/">Solving Linear Systems With Message Passing</a></li></ul></li><li><span class="tocitem">Problem Specific</span><ul><li><a class="tocitem" href="../../problem_specific/autoregressive_models/">Autoregressive Models</a></li><li><a class="tocitem" href="../../problem_specific/gamma_mixture/">Gamma Mixture</a></li><li><a class="tocitem" href="../../problem_specific/gaussian_mixture/">Gaussian Mixture</a></li><li><a class="tocitem" href="../../problem_specific/hierarchical_gaussian_filter/">Hierarchical Gaussian Filter</a></li><li><a class="tocitem" href="../../problem_specific/invertible_neural_network_tutorial/">Invertible Neural Network Tutorial</a></li><li><a class="tocitem" href="../../problem_specific/ising_model/">Ising Model</a></li><li><a class="tocitem" href="../../problem_specific/litter_model/">Litter Model</a></li><li><a class="tocitem" href="../../problem_specific/ode_parameter_estimation/">Ode Parameter Estimation</a></li><li><a class="tocitem" href="../../problem_specific/probit_model/">Probit Model</a></li><li><a class="tocitem" href="../../problem_specific/rts_vs_bifm_smoothing/">Rts Vs Bifm Smoothing</a></li><li><a class="tocitem" href="../../problem_specific/simple_nonlinear_node/">Simple Nonlinear Node</a></li><li><a class="tocitem" href="../../problem_specific/structural_dynamics_with_augmented_kalman_filter/">Structural Dynamics With Augmented Kalman Filter</a></li><li><a class="tocitem" href="../../problem_specific/universal_mixtures/">Universal Mixtures</a></li></ul></li><li><span class="tocitem">Experimental Examples</span><ul><li><a class="tocitem" href="../../experimental_examples/bayesian_trust_learning/">Bayesian Trust Learning</a></li><li><a class="tocitem" href="../../experimental_examples/large_language_models/">Large Language Models</a></li><li><a class="tocitem" href="../../experimental_examples/latent_vector_autoregressive_model/">Latent Vector Autoregressive Model</a></li><li><a class="tocitem" href="../../experimental_examples/recurrent_switching_linear_dynamical_system/">Recurrent Switching Linear Dynamical System</a></li></ul></li><li><a class="tocitem" href="../../../how_build_works/">How we build the examples</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Basic Examples</a></li><li class="is-active"><a href>Pomdp Control</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Pomdp Control</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl" title="View source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><div class="admonition is-info" id="Contributing-baba9dc142ba7ccb"><header class="admonition-header">Contributing<a class="admonition-anchor" href="#Contributing-baba9dc142ba7ccb" title="Permalink"></a></header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><h1 id="POMDP-Control-with-Reactive-Inference"><a class="docs-heading-anchor" href="#POMDP-Control-with-Reactive-Inference">POMDP Control with Reactive Inference</a><a id="POMDP-Control-with-Reactive-Inference-1"></a><a class="docs-heading-anchor-permalink" href="#POMDP-Control-with-Reactive-Inference" title="Permalink"></a></h1><p>This notebook demonstrates how to perform control in Partially Observable Markov Decision Processes (POMDPs) using reactive message passing and variational inference in RxInfer.jl.</p><p>We will cover:</p><ol><li>Setting up a simple POMDP model</li><li>Defining the state transition and observation models</li><li>Implementing the control policy</li><li>Performing inference and control using message passing</li><li>Visualizing the results</li></ol><pre><code class="language-julia hljs"><span class="hljs-keyword">using</span> RxInfer
+<span class="hljs-keyword">using</span> Distributions
+<span class="hljs-keyword">using</span> Plots
+<span class="hljs-keyword">using</span> Random
+<span class="hljs-keyword">using</span> ProgressMeter
+</code></pre><h1 id="Environment-Setup"><a class="docs-heading-anchor" href="#Environment-Setup">Environment Setup</a><a id="Environment-Setup-1"></a><a class="docs-heading-anchor-permalink" href="#Environment-Setup" title="Permalink"></a></h1><p>For this example, we will implement the Windy Gridworld environment using <code>RxEnvironments.jl</code>. The Windy Gridworld is a simple gridworld environment with deterministic transitions and observations. This code is adapted from the <a href="https://reactivebayes.github.io/RxEnvironments.jl/stable/lib/example_discrete_control_space_env/">RxEnvironments.jl documentation</a>, and a more elaborate explanation of can be found there. </p><p>The environment consists of:</p><ul><li>A grid with wind values for each column</li><li>An agent with a current position</li><li>A goal position to reach</li></ul><p>The agent can:</p><ul><li>Move in cardinal directions (one step at a time)</li><li>Observe its current position</li><li>Be affected by wind when moving</li></ul><p>The wind effect is applied after each movement, potentially pushing the agent upward by 0-2 positions depending on the column.</p><p>First we will define the environment and the agent.</p><pre><code class="language-julia hljs"><span class="hljs-keyword">using</span> RxEnvironments
+<span class="hljs-keyword">using</span> Plots
 
-struct WindyGridWorld{N}
-    wind::NTuple{N,Int}
-    agents::Vector
-    goal::Tuple{Int,Int}
-end
+<span class="hljs-keyword">struct</span> WindyGridWorld{N}
+    wind::<span class="hljs-built_in">NTuple</span>{N,<span class="hljs-built_in">Int</span>}
+    agents::<span class="hljs-built_in">Vector</span>
+    goal::<span class="hljs-built_in">Tuple</span>{<span class="hljs-built_in">Int</span>,<span class="hljs-built_in">Int</span>}
+<span class="hljs-keyword">end</span>
 
-mutable struct WindyGridWorldAgent
-    position::Tuple{Int,Int}
-end</code></pre><pre><code class="language-julia hljs">
-RxEnvironments.update!(env::WindyGridWorld, dt) = nothing # The environment has no &quot;internal&quot; updating process over time
+<span class="hljs-keyword">mutable struct</span> WindyGridWorldAgent
+    position::<span class="hljs-built_in">Tuple</span>{<span class="hljs-built_in">Int</span>,<span class="hljs-built_in">Int</span>}
+<span class="hljs-keyword">end</span>
+</code></pre><pre><code class="language-julia hljs">
+RxEnvironments.update!(env::WindyGridWorld, dt) = <span class="hljs-literal">nothing</span> <span class="hljs-comment"># The environment has no &quot;internal&quot; updating process over time</span>
 
-function RxEnvironments.receive!(env::WindyGridWorld{N}, agent::WindyGridWorldAgent, action::Tuple{Int,Int}) where {N}
-    if action[1] != 0
-        @assert action[2] == 0 &quot;Only one of the two actions can be non-zero&quot;
-    elseif action[2] != 0
-        @assert action[1] == 0 &quot;Only one of the two actions can be non-zero&quot;
-    end
-    new_position = (agent.position[1] + action[1], agent.position[2] + action[2] + env.wind[agent.position[1]])
-    if all(elem -&gt; 0 &lt; elem &lt; N, new_position)
+<span class="hljs-keyword">function</span> RxEnvironments.receive!(env::WindyGridWorld{N}, agent::WindyGridWorldAgent, action::<span class="hljs-built_in">Tuple</span>{<span class="hljs-built_in">Int</span>,<span class="hljs-built_in">Int</span>}) <span class="hljs-keyword">where</span> {N}
+    <span class="hljs-keyword">if</span> action[<span class="hljs-number">1</span>] != <span class="hljs-number">0</span>
+        <span class="hljs-meta">@assert</span> action[<span class="hljs-number">2</span>] == <span class="hljs-number">0</span> <span class="hljs-string">&quot;Only one of the two actions can be non-zero&quot;</span>
+    <span class="hljs-keyword">elseif</span> action[<span class="hljs-number">2</span>] != <span class="hljs-number">0</span>
+        <span class="hljs-meta">@assert</span> action[<span class="hljs-number">1</span>] == <span class="hljs-number">0</span> <span class="hljs-string">&quot;Only one of the two actions can be non-zero&quot;</span>
+    <span class="hljs-keyword">end</span>
+    new_position = (agent.position[<span class="hljs-number">1</span>] + action[<span class="hljs-number">1</span>], agent.position[<span class="hljs-number">2</span>] + action[<span class="hljs-number">2</span>] + env.wind[agent.position[<span class="hljs-number">1</span>]])
+    <span class="hljs-keyword">if</span> all(elem -&gt; <span class="hljs-number">0</span> &lt; elem &lt; N, new_position)
         agent.position = new_position
-    end
-end
+    <span class="hljs-keyword">end</span>
+<span class="hljs-keyword">end</span>
 
-function RxEnvironments.what_to_send(env::WindyGridWorld, agent::WindyGridWorldAgent)
-    return agent.position
-end
+<span class="hljs-keyword">function</span> RxEnvironments.what_to_send(env::WindyGridWorld, agent::WindyGridWorldAgent)
+    <span class="hljs-keyword">return</span> agent.position
+<span class="hljs-keyword">end</span>
 
-function RxEnvironments.what_to_send(agent::WindyGridWorldAgent, env::WindyGridWorld)
-    return agent.position
-end
+<span class="hljs-keyword">function</span> RxEnvironments.what_to_send(agent::WindyGridWorldAgent, env::WindyGridWorld)
+    <span class="hljs-keyword">return</span> agent.position
+<span class="hljs-keyword">end</span>
 
-function RxEnvironments.add_to_state!(env::WindyGridWorld, agent::WindyGridWorldAgent)
+<span class="hljs-keyword">function</span> RxEnvironments.add_to_state!(env::WindyGridWorld, agent::WindyGridWorldAgent)
     push!(env.agents, agent)
-end
+<span class="hljs-keyword">end</span>
 
-function reset_env!(environment::RxEnvironments.RxEntity{&lt;:WindyGridWorld,T,S,A}) where {T,S,A}
+<span class="hljs-keyword">function</span> reset_env!(environment::RxEnvironments.RxEntity{&lt;:WindyGridWorld,T,S,A}) <span class="hljs-keyword">where</span> {T,S,A}
     env = environment.decorated
-    for agent in env.agents
-        agent.position = (1, 1)
-    end
-    for subscriber in RxEnvironments.subscribers(environment)
-        send!(subscriber, environment, (1, 1))
-    end
-end
+    <span class="hljs-keyword">for</span> agent <span class="hljs-keyword">in</span> env.agents
+        agent.position = (<span class="hljs-number">1</span>, <span class="hljs-number">1</span>)
+    <span class="hljs-keyword">end</span>
+    <span class="hljs-keyword">for</span> subscriber <span class="hljs-keyword">in</span> RxEnvironments.subscribers(environment)
+        send!(subscriber, environment, (<span class="hljs-number">1</span>, <span class="hljs-number">1</span>))
+    <span class="hljs-keyword">end</span>
+<span class="hljs-keyword">end</span>
 
-function plot_environment(environment::RxEnvironments.RxEntity{&lt;:WindyGridWorld,T,S,A}) where {T,S,A}
+<span class="hljs-keyword">function</span> plot_environment(environment::RxEnvironments.RxEntity{&lt;:WindyGridWorld,T,S,A}) <span class="hljs-keyword">where</span> {T,S,A}
     env = environment.decorated
-    p1 = scatter([env.goal[1]], [env.goal[2]], color=:blue, label=&quot;Goal&quot;, xlims=(0, 6), ylims=(0, 6))
-    for agent in env.agents
-        p1 = scatter!([agent.position[1]], [agent.position[2]], color=:red, label=&quot;Agent&quot;)
-    end
-    return p1
-end</code></pre><pre><code class="nohighlight hljs">plot_environment (generic function with 1 method)</code></pre><pre><code class="language-julia hljs">env = RxEnvironment(WindyGridWorld((0, 1, 1, 1, 0), [], (4, 3)))
-agent = add!(env, WindyGridWorldAgent((1, 1)))
-plot_environment(env)</code></pre><p><img src="POMDP Control_4_1.png" alt/></p><h2 id="Model-Setup"><a class="docs-heading-anchor" href="#Model-Setup">Model Setup</a><a id="Model-Setup-1"></a><a class="docs-heading-anchor-permalink" href="#Model-Setup" title="Permalink"></a></h2><p>First, we&#39;ll define our POMDP model structure. We will use the <code>DiscreteTransition</code> node in <code>RxInfer</code> to define the state transition model. The <code>DiscreteTransition</code> node is a special node that accepts any number of <code>Categorical</code> distributions as input, and outputs a <code>Categorical</code> distribution. This means that we can use it to define a state transition model that accepts the previous state and the control as <code>Categorical</code> random variables, but we can also use it to define our observation model! Furthermore, the <code>DiscreteTransition</code> node can be used both for parameter inference and for inference-as-planning, isn&#39;t that neat?</p><pre><code class="language-julia hljs">@model function pomdp_model(p_A, p_B, p_goal, p_control, previous_control, p_previous_state, current_y, future_y, T, m_A, m_B)
-    # Instantiate all model parameters with priors
+    p1 = scatter([env.goal[<span class="hljs-number">1</span>]], [env.goal[<span class="hljs-number">2</span>]], color=:blue, label=<span class="hljs-string">&quot;Goal&quot;</span>, xlims=(<span class="hljs-number">0</span>, <span class="hljs-number">6</span>), ylims=(<span class="hljs-number">0</span>, <span class="hljs-number">6</span>))
+    <span class="hljs-keyword">for</span> agent <span class="hljs-keyword">in</span> env.agents
+        p1 = scatter!([agent.position[<span class="hljs-number">1</span>]], [agent.position[<span class="hljs-number">2</span>]], color=:red, label=<span class="hljs-string">&quot;Agent&quot;</span>)
+    <span class="hljs-keyword">end</span>
+    <span class="hljs-keyword">return</span> p1
+<span class="hljs-keyword">end</span>
+</code></pre><pre><code class="nohighlight hljs">plot_environment (generic function with 1 method)</code></pre><pre><code class="language-julia hljs">env = RxEnvironment(WindyGridWorld((<span class="hljs-number">0</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">0</span>), [], (<span class="hljs-number">4</span>, <span class="hljs-number">3</span>)))
+agent = add!(env, WindyGridWorldAgent((<span class="hljs-number">1</span>, <span class="hljs-number">1</span>)))
+plot_environment(env)
+</code></pre><p><img src="POMDP Control_4_1.png" alt/></p><h2 id="Model-Setup"><a class="docs-heading-anchor" href="#Model-Setup">Model Setup</a><a id="Model-Setup-1"></a><a class="docs-heading-anchor-permalink" href="#Model-Setup" title="Permalink"></a></h2><p>First, we&#39;ll define our POMDP model structure. We will use the <code>DiscreteTransition</code> node in <code>RxInfer</code> to define the state transition model. The <code>DiscreteTransition</code> node is a special node that accepts any number of <code>Categorical</code> distributions as input, and outputs a <code>Categorical</code> distribution. This means that we can use it to define a state transition model that accepts the previous state and the control as <code>Categorical</code> random variables, but we can also use it to define our observation model! Furthermore, the <code>DiscreteTransition</code> node can be used both for parameter inference and for inference-as-planning, isn&#39;t that neat?</p><pre><code class="language-julia hljs"><span class="hljs-meta">@model</span> <span class="hljs-keyword">function</span> pomdp_model(p_A, p_B, p_goal, p_control, previous_control, p_previous_state, current_y, future_y, T, m_A, m_B)
+    <span class="hljs-comment"># Instantiate all model parameters with priors</span>
     A ~ p_A
     B ~ p_B
     previous_state ~ p_previous_state
     
-    # Paremeter inference
+    <span class="hljs-comment"># Paremeter inference</span>
     current_state ~ DiscreteTransition(previous_state, B, previous_control)
     current_y ~ DiscreteTransition(current_state, A)
 
     prev_state = current_state
-    # Inference-as-planning
-    for t in 1:T
+    <span class="hljs-comment"># Inference-as-planning</span>
+    <span class="hljs-keyword">for</span> t <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:T
         controls[t] ~ p_control
         s[t] ~ DiscreteTransition(prev_state, m_B, controls[t])
         future_y[t] ~ DiscreteTransition(s[t], m_A)
         prev_state = s[t]
-    end
-    # Goal prior initialization
-    s[end] ~ p_goal
-end</code></pre><p>Now, this model, because we use <code>A</code> and <code>B</code> for every timestep, contains loops, so we have to initialize the inference procedure properly. Furthermore, <code>RxInfer</code> does not support learning a joint probability distribution over the parameters and the states, so we have to supply the model with variational constraints that reflect this:</p><pre><code class="language-julia hljs">init = @initialization begin
-    q(A) = DirichletCollection(diageye(25) .+ 0.1)
-    q(B) = DirichletCollection(ones(25, 25, 4))
-end
+    <span class="hljs-keyword">end</span>
+    <span class="hljs-comment"># Goal prior initialization</span>
+    s[<span class="hljs-keyword">end</span>] ~ p_goal
+<span class="hljs-keyword">end</span>
+</code></pre><p>Now, this model, because we use <code>A</code> and <code>B</code> for every timestep, contains loops, so we have to initialize the inference procedure properly. Furthermore, <code>RxInfer</code> does not support learning a joint probability distribution over the parameters and the states, so we have to supply the model with variational constraints that reflect this:</p><pre><code class="language-julia hljs">init = <span class="hljs-meta">@initialization</span> <span class="hljs-keyword">begin</span>
+    q(A) = DirichletCollection(diageye(<span class="hljs-number">25</span>) .+ <span class="hljs-number">0.1</span>)
+    q(B) = DirichletCollection(ones(<span class="hljs-number">25</span>, <span class="hljs-number">25</span>, <span class="hljs-number">4</span>))
+<span class="hljs-keyword">end</span>
 
-constraints = @constraints begin
+constraints = <span class="hljs-meta">@constraints</span> <span class="hljs-keyword">begin</span>
     q(previous_state, previous_control, current_state, B) = q(previous_state, previous_control, current_state)q(B)
     q(current_state, current_y, A) = q(current_state, current_y)q(A)
     q(current_state, s, controls, B) = q(current_state, s, controls), q(B)
     q(s, future_y, A) = q(s, future_y), q(A)
-end</code></pre><pre><code class="nohighlight hljs">Constraints: 
+<span class="hljs-keyword">end</span>
+</code></pre><pre><code class="nohighlight hljs">Constraints: 
   q(previous_state, previous_control, current_state, B) = q(previous_state,
  previous_control, current_state)q(B)
   q(current_state, current_y, A) = q(current_state, current_y)q(A)
   q(current_state, s, controls, B) = q(current_state, s, controls)q(B)
-  q(s, future_y, A) = q(s, future_y)q(A)</code></pre><p>Now, in order to use this model, we have to define the priors for the model parameters. The WindyGridworld environment has a 5-by-5 grid, so we need to instantiate a prior 25-by-25 transition matrices for every control! That&#39;s quite a lot of parameters, but as we will see, <code>RxInfer</code> will handle this just fine. We will give our agent a control space of 4 actions, so we need to instantiate 4 transition matrices. Furthermore, we have to transform the output from the environment to a 1-in-25 index, and the controls from a 1-in-4 index to a direction tuple.</p><p>The prior on our observation model tells our model that the prior belief is to trust it&#39;s observations, but we might be able to deviate from this. However, in this example, the observation model is deterministic and has no noise, meaning that our agent won&#39;t have any reason to deviate from the prior.</p><pre><code class="language-julia hljs">p_A = DirichletCollection(diageye(25) .+ 0.1)
-p_B = DirichletCollection(ones(25, 25, 4))
+  q(s, future_y, A) = q(s, future_y)q(A)</code></pre><p>Now, in order to use this model, we have to define the priors for the model parameters. The WindyGridworld environment has a 5-by-5 grid, so we need to instantiate a prior 25-by-25 transition matrices for every control! That&#39;s quite a lot of parameters, but as we will see, <code>RxInfer</code> will handle this just fine. We will give our agent a control space of 4 actions, so we need to instantiate 4 transition matrices. Furthermore, we have to transform the output from the environment to a 1-in-25 index, and the controls from a 1-in-4 index to a direction tuple.</p><p>The prior on our observation model tells our model that the prior belief is to trust it&#39;s observations, but we might be able to deviate from this. However, in this example, the observation model is deterministic and has no noise, meaning that our agent won&#39;t have any reason to deviate from the prior.</p><pre><code class="language-julia hljs">p_A = DirichletCollection(diageye(<span class="hljs-number">25</span>) .+ <span class="hljs-number">0.1</span>)
+p_B = DirichletCollection(ones(<span class="hljs-number">25</span>, <span class="hljs-number">25</span>, <span class="hljs-number">4</span>))
 
-function grid_location_to_index(pos::Tuple{Int, Int})
-    return (pos[2] - 1) * 5 + pos[1]
-end
+<span class="hljs-keyword">function</span> grid_location_to_index(pos::<span class="hljs-built_in">Tuple</span>{<span class="hljs-built_in">Int</span>, <span class="hljs-built_in">Int</span>})
+    <span class="hljs-keyword">return</span> (pos[<span class="hljs-number">2</span>] - <span class="hljs-number">1</span>) * <span class="hljs-number">5</span> + pos[<span class="hljs-number">1</span>]
+<span class="hljs-keyword">end</span>
 
-function index_to_grid_location(index::Int)
-    return (index % 5, index ÷ 5 + 1,)
-end
+<span class="hljs-keyword">function</span> index_to_grid_location(index::<span class="hljs-built_in">Int</span>)
+    <span class="hljs-keyword">return</span> (index % <span class="hljs-number">5</span>, index ÷ <span class="hljs-number">5</span> + <span class="hljs-number">1</span>,)
+<span class="hljs-keyword">end</span>
 
-function index_to_one_hot(index::Int)
-    return [i == index ? 1.0 : 0.0 for i in 1:25]
-end
+<span class="hljs-keyword">function</span> index_to_one_hot(index::<span class="hljs-built_in">Int</span>)
+    <span class="hljs-keyword">return</span> [i == index ? <span class="hljs-number">1.0</span> : <span class="hljs-number">0.0</span> <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:<span class="hljs-number">25</span>]
+<span class="hljs-keyword">end</span>
 
-goal = Categorical(index_to_one_hot(grid_location_to_index((4, 3))))</code></pre><pre><code class="nohighlight hljs">Distributions.Categorical{Float64, Vector{Float64}}(
+goal = Categorical(index_to_one_hot(grid_location_to_index((<span class="hljs-number">4</span>, <span class="hljs-number">3</span>))))
+</code></pre><pre><code class="nohighlight hljs">Distributions.Categorical{Float64, Vector{Float64}}(
 support: Base.OneTo(25)
 p: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0  …  0.0, 0.0, 0.0, 0.0
 , 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-)</code></pre><p><code>RxEnvironments.jl</code> is a package that allows us to easily communicate between our agent and our environment. We can send actions to the environment, and the environment will automatically respond with the corresponding observations. In order to access these in our model, we can subscribe to the observations and then use the <code>data</code> function to access the last observation.</p><p>Now for our main control loop, we will use a receding horizon control strategy. We will first take an action, observe the environment, and then update our belief. We will then repeat this process for a horizon of 10 steps. In order to learn the parameters of our model, we will conduct this experiment 100 times. We can use the <code>infer</code> function from <code>RxInfer</code> to perform inference on our model.</p><pre><code class="language-julia hljs"># Number of times to run the experiment
-n_experiments = 100
-# Number of steps in each experiment
-T = 4
-observations = keep(Any)
-# Subscribe the agent to receive observations
+)</code></pre><p><code>RxEnvironments.jl</code> is a package that allows us to easily communicate between our agent and our environment. We can send actions to the environment, and the environment will automatically respond with the corresponding observations. In order to access these in our model, we can subscribe to the observations and then use the <code>data</code> function to access the last observation.</p><p>Now for our main control loop, we will use a receding horizon control strategy. We will first take an action, observe the environment, and then update our belief. We will then repeat this process for a horizon of 10 steps. In order to learn the parameters of our model, we will conduct this experiment 100 times. We can use the <code>infer</code> function from <code>RxInfer</code> to perform inference on our model.</p><pre><code class="language-julia hljs"><span class="hljs-comment"># Number of times to run the experiment</span>
+n_experiments = <span class="hljs-number">100</span>
+<span class="hljs-comment"># Number of steps in each experiment</span>
+T = <span class="hljs-number">4</span>
+observations = keep(<span class="hljs-built_in">Any</span>)
+<span class="hljs-comment"># Subscribe the agent to receive observations</span>
 RxEnvironments.subscribe_to_observations!(agent, observations)
 successes = []
 
 
-@showprogress for i in 1:n_experiments
-    # Reset environment to initial state and initialize state belief to starting position (1,1)
+<span class="hljs-meta">@showprogress</span> <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:n_experiments
+    <span class="hljs-comment"># Reset environment to initial state and initialize state belief to starting position (1,1)</span>
     reset_env!(env)
-    p_s = Categorical(index_to_one_hot(grid_location_to_index((1, 1))))
-    # Initialize previous action as &quot;down&quot;, as this is neutral from the starting position
-    policy = [Categorical([0.0, 0.0, 1.0, 0.0])]
-    prev_u = [0.0, 0.0, 1.0, 0.0]
-    # Run for T-1 steps in each experiment
-    for t in 1:T
+    p_s = Categorical(index_to_one_hot(grid_location_to_index((<span class="hljs-number">1</span>, <span class="hljs-number">1</span>))))
+    <span class="hljs-comment"># Initialize previous action as &quot;down&quot;, as this is neutral from the starting position</span>
+    policy = [Categorical([<span class="hljs-number">0.0</span>, <span class="hljs-number">0.0</span>, <span class="hljs-number">1.0</span>, <span class="hljs-number">0.0</span>])]
+    prev_u = [<span class="hljs-number">0.0</span>, <span class="hljs-number">0.0</span>, <span class="hljs-number">1.0</span>, <span class="hljs-number">0.0</span>]
+    <span class="hljs-comment"># Run for T-1 steps in each experiment</span>
+    <span class="hljs-keyword">for</span> t <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:T
 
-         # Convert policy to actual movement in environment
+         <span class="hljs-comment"># Convert policy to actual movement in environment</span>
          current_action = mode(first(policy))
-         if current_action == 1
-             send!(env, agent, (0, 1))  # Move up 
-             prev_u = [1.0, 0.0, 0.0, 0.0]
-         elseif current_action == 2
-             send!(env, agent, (1, 0))  # Move right
-             prev_u = [0.0, 1.0, 0.0, 0.0]
-         elseif current_action == 3
-             send!(env, agent, (0, -1))  # Move down
-             prev_u = [0.0, 0.0, 1.0, 0.0]
-         elseif current_action == 4
-             send!(env, agent, (-1, 0))  # Move left
-             prev_u = [0.0, 0.0, 0.0, 1.0]
-         end
+         <span class="hljs-keyword">if</span> current_action == <span class="hljs-number">1</span>
+             send!(env, agent, (<span class="hljs-number">0</span>, <span class="hljs-number">1</span>))  <span class="hljs-comment"># Move up </span>
+             prev_u = [<span class="hljs-number">1.0</span>, <span class="hljs-number">0.0</span>, <span class="hljs-number">0.0</span>, <span class="hljs-number">0.0</span>]
+         <span class="hljs-keyword">elseif</span> current_action == <span class="hljs-number">2</span>
+             send!(env, agent, (<span class="hljs-number">1</span>, <span class="hljs-number">0</span>))  <span class="hljs-comment"># Move right</span>
+             prev_u = [<span class="hljs-number">0.0</span>, <span class="hljs-number">1.0</span>, <span class="hljs-number">0.0</span>, <span class="hljs-number">0.0</span>]
+         <span class="hljs-keyword">elseif</span> current_action == <span class="hljs-number">3</span>
+             send!(env, agent, (<span class="hljs-number">0</span>, -<span class="hljs-number">1</span>))  <span class="hljs-comment"># Move down</span>
+             prev_u = [<span class="hljs-number">0.0</span>, <span class="hljs-number">0.0</span>, <span class="hljs-number">1.0</span>, <span class="hljs-number">0.0</span>]
+         <span class="hljs-keyword">elseif</span> current_action == <span class="hljs-number">4</span>
+             send!(env, agent, (-<span class="hljs-number">1</span>, <span class="hljs-number">0</span>))  <span class="hljs-comment"># Move left</span>
+             prev_u = [<span class="hljs-number">0.0</span>, <span class="hljs-number">0.0</span>, <span class="hljs-number">0.0</span>, <span class="hljs-number">1.0</span>]
+         <span class="hljs-keyword">end</span>
 
-        # Get last observation and convert to one-hot encoding
+        <span class="hljs-comment"># Get last observation and convert to one-hot encoding</span>
         last_observation = index_to_one_hot(grid_location_to_index(RxEnvironments.data(last(observations))))
         
-        # Perform inference using the POMDP model
+        <span class="hljs-comment"># Perform inference using the POMDP model</span>
         inference_result = infer(
             model = pomdp_model(
-                p_A = p_A,  # prior on observation model parameters
-                p_B = p_B,  # prior on transition model parameters
-                T = max(T - t, 1),  # remaining time steps
-                p_previous_state = p_s,  # posterior belief on previous state
-                p_goal = goal,  # prior on goal state
-                p_control = vague(Categorical, 4),  # prior over controls
+                p_A = p_A,  <span class="hljs-comment"># prior on observation model parameters</span>
+                p_B = p_B,  <span class="hljs-comment"># prior on transition model parameters</span>
+                T = max(T - t, <span class="hljs-number">1</span>),  <span class="hljs-comment"># remaining time steps</span>
+                p_previous_state = p_s,  <span class="hljs-comment"># posterior belief on previous state</span>
+                p_goal = goal,  <span class="hljs-comment"># prior on goal state</span>
+                p_control = vague(Categorical, <span class="hljs-number">4</span>),  <span class="hljs-comment"># prior over controls</span>
                 m_A = mean(p_A),
                 m_B = mean(p_B)
             ),
-            # Provide data for inference
+            <span class="hljs-comment"># Provide data for inference</span>
             data = (
-                previous_control = UnfactorizedData(prev_u),
-                current_y = UnfactorizedData(last_observation),
-                future_y = UnfactorizedData(fill(missing, max(T - t, 1)))
+                previous_control = prev_u,
+                current_y = last_observation,
+                future_y = UnfactorizedData(fill(<span class="hljs-literal">missing</span>, max(T - t, <span class="hljs-number">1</span>)))
             ),
             constraints = constraints,
             initialization = init,
-            iterations = 10
+            iterations = <span class="hljs-number">10</span>
         )
         
-        # Update beliefs based on inference results
-        p_s = last(inference_result.posteriors[:current_state])  # Update state belief
-        policy = last(inference_result.posteriors[:controls])  # Get policy
+        <span class="hljs-comment"># Update beliefs based on inference results</span>
+        p_s = last(inference_result.posteriors[:current_state])  <span class="hljs-comment"># Update state belief</span>
+        policy = last(inference_result.posteriors[:controls])  <span class="hljs-comment"># Get policy</span>
 
-        # Update model parameters globally for the entire notebook
-        global p_A = last(inference_result.posteriors[:A])  # Update observation model
-        global p_B = last(inference_result.posteriors[:B])  # Update transition model
+        <span class="hljs-comment"># Update model parameters globally for the entire notebook</span>
+        <span class="hljs-keyword">global</span> p_A = last(inference_result.posteriors[:A])  <span class="hljs-comment"># Update observation model</span>
+        <span class="hljs-keyword">global</span> p_B = last(inference_result.posteriors[:B])  <span class="hljs-comment"># Update transition model</span>
 
-        if RxEnvironments.data(last(observations)) == (4, 3)
-            break
-        end
-    end
-    if RxEnvironments.data(last(observations)) == (4, 3)
-        push!(successes, true)
-    else
-        push!(successes, false)
-    end
-end</code></pre><p>Now, in this example, we have used a trick: we supplied the mean of <code>p_A</code> and <code>p_B</code> to the model to do the predictions for the future in order to learn the controls. The real reason we did this is because we do not want messages from the future to influence the model parameters, instead only learning the model parameters from past data. This is a simple way to do this, but it is not the only way. We could have supplied the full distribution <code>p_A</code> and <code>p_B</code> to the model, and used <code>A</code> and <code>B</code> in the predictive step as well, but then we would need a separate way to make sure we do not use future messages to influence the model parameters.</p><pre><code class="language-julia hljs">mean(successes)</code></pre><pre><code class="nohighlight hljs">0.85</code></pre><p>We see that our agent is able to learn the optimal policy for this environment, and reaches the goal state in 85% of cases!</p><pre><code class="language-julia hljs">plot_environment(env)</code></pre><p><img src="POMDP Control_10_1.png" alt/></p><hr/><div class="admonition is-info"><header class="admonition-header">Contributing</header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><div class="admonition is-compat"><header class="admonition-header">Environment</header><div class="admonition-body"><p>This example was executed in a clean, isolated environment. Below are the exact package versions used:</p><p>For reproducibility:</p><ul><li>Use the same package versions when running locally</li><li>Report any issues with package compatibility</li></ul></div></div><pre><code class="nohighlight hljs">Status `~/work/RxInferExamples.jl/RxInferExamples.jl/docs/src/categories/basic_examples/pomdp_control/Project.toml`
-  [31c24e10] Distributions v0.25.117
-  [91a5bcdd] Plots v1.40.9
-  [92933f4c] ProgressMeter v1.10.2
+        <span class="hljs-keyword">if</span> RxEnvironments.data(last(observations)) == (<span class="hljs-number">4</span>, <span class="hljs-number">3</span>)
+            <span class="hljs-keyword">break</span>
+        <span class="hljs-keyword">end</span>
+    <span class="hljs-keyword">end</span>
+    <span class="hljs-keyword">if</span> RxEnvironments.data(last(observations)) == (<span class="hljs-number">4</span>, <span class="hljs-number">3</span>)
+        push!(successes, <span class="hljs-literal">true</span>)
+    <span class="hljs-keyword">else</span>
+        push!(successes, <span class="hljs-literal">false</span>)
+    <span class="hljs-keyword">end</span>
+<span class="hljs-keyword">end</span>
+</code></pre><p>Now, in this example, we have used a trick: we supplied the mean of <code>p_A</code> and <code>p_B</code> to the model to do the predictions for the future in order to learn the controls. The real reason we did this is because we do not want messages from the future to influence the model parameters, instead only learning the model parameters from past data. This is a simple way to do this, but it is not the only way. We could have supplied the full distribution <code>p_A</code> and <code>p_B</code> to the model, and used <code>A</code> and <code>B</code> in the predictive step as well, but then we would need a separate way to make sure we do not use future messages to influence the model parameters.</p><pre><code class="language-julia hljs">mean(successes)
+</code></pre><pre><code class="nohighlight hljs">0.85</code></pre><p>We see that our agent is able to learn the optimal policy for this environment, and reaches the goal state in 85% of cases!</p><pre><code class="language-julia hljs">plot_environment(env)
+</code></pre><p><img src="POMDP Control_10_1.png" alt/></p><hr/><div class="admonition is-info" id="Contributing-baba9dc142ba7ccb"><header class="admonition-header">Contributing<a class="admonition-anchor" href="#Contributing-baba9dc142ba7ccb" title="Permalink"></a></header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><div class="admonition is-compat" id="Environment-ead41e814a894220"><header class="admonition-header">Environment<a class="admonition-anchor" href="#Environment-ead41e814a894220" title="Permalink"></a></header><div class="admonition-body"><p>This example was executed in a clean, isolated environment. Below are the exact package versions used:</p><p>For reproducibility:</p><ul><li>Use the same package versions when running locally</li><li>Report any issues with package compatibility</li></ul></div></div><pre><code class="nohighlight hljs">Status `/tmp/jl_BKMWxI/Project.toml`
+  [31c24e10] Distributions v0.25.131
+  [91a5bcdd] Plots v1.41.7
+  [92933f4c] ProgressMeter v1.11.0
   [5ea003d0] RxEnvironments v0.2.15
-  [86711068] RxInfer v4.2.0
-</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../kalman_filtering_and_smoothing/">« Kalman Filtering And Smoothing</a><a class="docs-footer-nextpage" href="../predicting_bike_rental_demand/">Predicting Bike Rental Demand »</a><div class="flexbox-break"></div><p class="footer-message">Created in <a href="https://biaslab.github.io/">BIASlab</a>, maintained by <a href="https://github.com/ReactiveBayes">ReactiveBayes</a>, powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.8.1 on <span class="colophon-date" title="Friday 7 March 2025 13:50">Friday 7 March 2025</span>. Using Julia version 1.11.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+  [86711068] RxInfer v5.5.2
+</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../kalman_filtering_and_smoothing/">« Kalman Filtering And Smoothing</a><a class="docs-footer-nextpage" href="../predicting_bike_rental_demand/">Predicting Bike Rental Demand »</a><div class="flexbox-break"></div><p class="footer-message">Created in <a href="https://biaslab.github.io/">BIASlab</a>, maintained by <a href="https://github.com/ReactiveBayes">ReactiveBayes</a>, powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.19.0 on <span class="colophon-date" title="Thursday 3 September 2026 19:09">Thursday 3 September 2026</span>. Using Julia version 1.12.7.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

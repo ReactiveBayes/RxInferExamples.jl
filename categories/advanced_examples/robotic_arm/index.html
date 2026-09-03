@@ -1,74 +1,76 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Robotic Arm · RxInfer.jl Examples</title><meta name="title" content="Robotic Arm · RxInfer.jl Examples"/><meta property="og:title" content="Robotic Arm · RxInfer.jl Examples"/><meta property="twitter:title" content="Robotic Arm · RxInfer.jl Examples"/><meta name="description" content="A repository of examples and tutorials for RxInfer.jl, a Julia package for reactive message passing inference in probabilistic models."/><meta property="og:description" content="A repository of examples and tutorials for RxInfer.jl, a Julia package for reactive message passing inference in probabilistic models."/><meta property="twitter:description" content="A repository of examples and tutorials for RxInfer.jl, a Julia package for reactive message passing inference in probabilistic models."/><meta property="og:url" content="https://examples.rxinfer.ml/categories/advanced_examples/robotic_arm/"/><meta property="twitter:url" content="https://examples.rxinfer.ml/categories/advanced_examples/robotic_arm/"/><link rel="canonical" href="https://examples.rxinfer.ml/categories/advanced_examples/robotic_arm/"/><script async src="https://www.googletagmanager.com/gtag/js?id=G-GMFX620VEP"></script><script>  window.dataLayer = window.dataLayer || [];
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Robotic Arm · RxInfer.jl Examples</title><meta name="title" content="Robotic Arm · RxInfer.jl Examples"/><meta property="og:title" content="Robotic Arm · RxInfer.jl Examples"/><meta property="twitter:title" content="Robotic Arm · RxInfer.jl Examples"/><meta name="description" content="Robotic Arm with RxInfer.jl\nThis example explores how RxInfer.jl&#39;s automated inference can be applied to path planning for a robotic arm and demonstrates how probabilistic inference enables smooth and efficient motion planning. Ideal for those interested in robotics, Bayesian inference, and intelligent control systems.\n\nCheck more examples and tutorials at https://examples.rxinfer.com\n"/><meta property="og:description" content="Robotic Arm with RxInfer.jl\nThis example explores how RxInfer.jl&#39;s automated inference can be applied to path planning for a robotic arm and demonstrates how probabilistic inference enables smooth and efficient motion planning. Ideal for those interested in robotics, Bayesian inference, and intelligent control systems.\n\nCheck more examples and tutorials at https://examples.rxinfer.com\n"/><meta property="twitter:description" content="Robotic Arm with RxInfer.jl\nThis example explores how RxInfer.jl&#39;s automated inference can be applied to path planning for a robotic arm and demonstrates how probabilistic inference enables smooth and efficient motion planning. Ideal for those interested in robotics, Bayesian inference, and intelligent control systems.\n\nCheck more examples and tutorials at https://examples.rxinfer.com\n"/><meta property="og:url" content="https://examples.rxinfer.com/categories/advanced_examples/robotic_arm/"/><meta property="twitter:url" content="https://examples.rxinfer.com/categories/advanced_examples/robotic_arm/"/><link rel="canonical" href="https://examples.rxinfer.com/categories/advanced_examples/robotic_arm/"/><script async src="https://www.googletagmanager.com/gtag/js?id=G-GMFX620VEP"></script><script>  window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
   gtag('config', 'G-GMFX620VEP', {'page_path': location.pathname + location.search + location.hash});
-</script><script data-outdated-warner src="../../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../../assets/documenter.js"></script><script src="../../../search_index.js"></script><script src="../../../siteinfo.js"></script><script src="../../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../../assets/themeswap.js"></script><link href="../../../assets/theme.css" rel="stylesheet" type="text/css"/><link href="../../../assets/header.css" rel="stylesheet" type="text/css"/><script src="../../../assets/header.js"></script><script src="../../../assets/chat.js"></script><link href="../../../assets/favicon.ico" rel="icon" type="image/x-icon"/>
+</script><script data-outdated-warner src="../../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.63.2/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../../assets/documenter.js"></script><script src="../../../search_index.js"></script><script src="../../../siteinfo.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../../assets/themeswap.js"></script><link href="../../../assets/theme.css" rel="stylesheet" type="text/css"/><link href="../../../assets/header.css" rel="stylesheet" type="text/css"/><script src="../../../assets/header.js"></script><script src="../../../assets/chat.js"></script><link href="../../../assets/favicon.ico" rel="icon" type="image/x-icon"/>
     <meta property="og:title" content="Robotic Arm - RxInfer Examples">
     <meta name="description" content="This example explores how RxInfer.jl's automated inference can be applied to path planning for a robotic arm and demonstrates how probabilistic inference enables smooth and efficient motion planning. Ideal for those interested in robotics, Bayesian inference, and intelligent control systems.
 ">
     <meta property="og:description" content="This example explores how RxInfer.jl's automated inference can be applied to path planning for a robotic arm and demonstrates how probabilistic inference enables smooth and efficient motion planning. Ideal for those interested in robotics, Bayesian inference, and intelligent control systems.
 ">
     <meta name="keywords" content="rxinfer, julia, bayesian inference, examples, probabilistic programming, message passing, probabilistic numerics, variational inference, belief propagation, advanced examples, robotics, probabilistic inference, path planning, Bayesian methods">
-    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://examples.rxinfer.ml/sitemap.xml">
-    </head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../../"><img class="docs-light-only" src="../../../assets/logo.svg" alt="RxInfer.jl Examples logo"/><img class="docs-dark-only" src="../../../assets/logo-dark.svg" alt="RxInfer.jl Examples logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../../">RxInfer.jl Examples</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../../">Home</a></li><li><a class="tocitem" href="../../../how_to_contribute/">How to contribute</a></li><li><a class="tocitem" href="../../../autogenerated/list_of_examples/">List of Examples</a></li><li><span class="tocitem">Basic Examples</span><ul><li><a class="tocitem" href="../../basic_examples/bayesian_binomial_regression/">Bayesian Binomial Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_linear_regression/">Bayesian Linear Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_multinomial_regression/">Bayesian Multinomial Regression</a></li><li><a class="tocitem" href="../../basic_examples/coin_toss_model/">Coin Toss Model</a></li><li><a class="tocitem" href="../../basic_examples/feature_functions_in_bayesian_regression/">Feature Functions In Bayesian Regression</a></li><li><a class="tocitem" href="../../basic_examples/hidden_markov_model/">Hidden Markov Model</a></li><li><a class="tocitem" href="../../basic_examples/kalman_filtering_and_smoothing/">Kalman Filtering And Smoothing</a></li><li><a class="tocitem" href="../../basic_examples/pomdp_control/">Pomdp Control</a></li><li><a class="tocitem" href="../../basic_examples/predicting_bike_rental_demand/">Predicting Bike Rental Demand</a></li></ul></li><li><span class="tocitem">Advanced Examples</span><ul><li><a class="tocitem" href="../active_inference_mountain_car/">Active Inference Mountain Car</a></li><li><a class="tocitem" href="../advanced_tutorial/">Advanced Tutorial</a></li><li><a class="tocitem" href="../assessing_people_skills/">Assessing People Skills</a></li><li><a class="tocitem" href="../chance_constraints/">Chance Constraints</a></li><li><a class="tocitem" href="../conjugate-computational_variational_message_passing/">Conjugate-Computational Variational Message Passing</a></li><li><a class="tocitem" href="../drone_dynamics/">Drone Dynamics</a></li><li><a class="tocitem" href="../global_parameter_optimisation/">Global Parameter Optimisation</a></li><li><a class="tocitem" href="../gp_regression_by_ssm/">Gp Regression By Ssm</a></li><li><a class="tocitem" href="../infinite_data_stream/">Infinite Data Stream</a></li><li><a class="tocitem" href="../multi-agent_trajectory_planning/">Multi-Agent Trajectory Planning</a></li><li><a class="tocitem" href="../nonlinear_sensor_fusion/">Nonlinear Sensor Fusion</a></li><li class="is-active"><a class="tocitem" href>Robotic Arm</a><ul class="internal"><li><a class="tocitem" href="#Motion-Planning-of-Robotic-Arm-in-Joint-Space"><span>Motion Planning of Robotic Arm in Joint Space</span></a></li><li><a class="tocitem" href="#Defining-Structures"><span>Defining Structures</span></a></li><li><a class="tocitem" href="#Kinematics-and-Dynamics:-Working-Together"><span>Kinematics and Dynamics: Working Together</span></a></li><li><a class="tocitem" href="#Why-We-Need-All-Three"><span>Why We Need All Three</span></a></li><li><a class="tocitem" href="#Visualization-Functions"><span>Visualization Functions</span></a></li><li><a class="tocitem" href="#Model-specification"><span>Model specification</span></a></li><li><a class="tocitem" href="#Motion-Planning"><span>Motion Planning</span></a></li></ul></li></ul></li><li><span class="tocitem">Problem Specific</span><ul><li><a class="tocitem" href="../../problem_specific/autoregressive_models/">Autoregressive Models</a></li><li><a class="tocitem" href="../../problem_specific/gamma_mixture/">Gamma Mixture</a></li><li><a class="tocitem" href="../../problem_specific/gaussian_mixture/">Gaussian Mixture</a></li><li><a class="tocitem" href="../../problem_specific/hierarchical_gaussian_filter/">Hierarchical Gaussian Filter</a></li><li><a class="tocitem" href="../../problem_specific/invertible_neural_network_tutorial/">Invertible Neural Network Tutorial</a></li><li><a class="tocitem" href="../../problem_specific/litter_model/">Litter Model</a></li><li><a class="tocitem" href="../../problem_specific/ode_parameter_estimation/">Ode Parameter Estimation</a></li><li><a class="tocitem" href="../../problem_specific/probit_model/">Probit Model</a></li><li><a class="tocitem" href="../../problem_specific/rts_vs_bifm_smoothing/">Rts Vs Bifm Smoothing</a></li><li><a class="tocitem" href="../../problem_specific/simple_nonlinear_node/">Simple Nonlinear Node</a></li><li><a class="tocitem" href="../../problem_specific/structural_dynamics_with_augmented_kalman_filter/">Structural Dynamics With Augmented Kalman Filter</a></li><li><a class="tocitem" href="../../problem_specific/universal_mixtures/">Universal Mixtures</a></li></ul></li><li><a class="tocitem" href="../../../how_build_works/">How we build the examples</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Advanced Examples</a></li><li class="is-active"><a href>Robotic Arm</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Robotic Arm</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl/blob/main/docs/src/categories/advanced_examples/robotic_arm/index.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><div class="admonition is-info"><header class="admonition-header">Contributing</header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><h2 id="Motion-Planning-of-Robotic-Arm-in-Joint-Space"><a class="docs-heading-anchor" href="#Motion-Planning-of-Robotic-Arm-in-Joint-Space">Motion Planning of Robotic Arm in Joint Space</a><a id="Motion-Planning-of-Robotic-Arm-in-Joint-Space-1"></a><a class="docs-heading-anchor-permalink" href="#Motion-Planning-of-Robotic-Arm-in-Joint-Space" title="Permalink"></a></h2><p>This example demonstrates motion planning for a robotic arm using RxInfer. It&#39;s important to understand that the probabilistic inference for motion planning occurs in <strong>joint space</strong> rather than Cartesian space:</p><ul><li><p><strong>Joint Space</strong>: The space of all possible joint angles (θ₁, θ₂, θ₃, ...) of the robotic arm. Our inference model directly plans trajectories in this space, finding optimal joint angle sequences and the control torques needed to achieve them.</p></li><li><p><strong>Cartesian Space</strong>: The 3D space (x, y, z) where the end effector operates. While our targets are specified in Cartesian space, they are translated to joint space targets using inverse kinematics before planning begins.</p></li></ul><p>This approach has several advantages:</p><ol><li>It directly models the physical dynamics of the arm&#39;s joints</li><li>It respects the arm&#39;s natural degrees of freedom</li><li>It allows for more efficient inference in the space where control actually happens</li></ol><p>The workflow is:</p><ol><li>Specify target positions in Cartesian space (user-friendly)</li><li>Convert targets to joint angles using inverse kinematics</li><li>Use RxInfer to plan optimal trajectories between joint configurations</li><li>Visualize the resulting motion in Cartesian space using forward kinematics</li></ol><blockquote><p><strong>Note:</strong> These examples demonstrate the use of RxInfer for motion planning for a robotic arm. The animations show the inferred trajectories from probabilistic inference, rather than simulated executions. For more realistic simulations the model would need to be extended with a reactive environment that responds to the robotic arm&#39;s actions during plan execution. If you&#39;re interested in collaborating on a more realistic implementation, please open a <a href="https://github.com/orgs/ReactiveBayes/discussions">discussion</a> and let&#39;s work on it together!</p></blockquote><pre><code class="language-julia hljs">using RxInfer, LinearAlgebra, Plots</code></pre><p>The next couple of blocks are spent on defining the structures that form the foundation of our 3D robotic arm simulation. This is boring but important stuff, as we need to define the state and environment of our robotic arm before doing any inference.</p><h2 id="Defining-Structures"><a class="docs-heading-anchor" href="#Defining-Structures">Defining Structures</a><a id="Defining-Structures-1"></a><a class="docs-heading-anchor-permalink" href="#Defining-Structures" title="Permalink"></a></h2><p>The structures defined below form the foundation of our 3D robotic arm simulation:</p><ol><li><p><strong>Environment</strong>: Encapsulates physical properties of the world, such as gravity, that affect the arm&#39;s dynamics. This allows us to simulate different environmental conditions.</p></li><li><p><strong>RoboticArm3D{N}</strong>: Represents a robotic arm with N links in 3D space. The type parameter N ensures type safety and consistency across the codebase. Properties include:</p><ul><li>Physical dimensions (link lengths)</li><li>Mass distribution (important for dynamics calculations)</li><li>Torque limits (physical constraints of the motors)</li></ul><p>The parametric type allows for compile-time optimizations and type checking.</p></li><li><p><strong>ArmState3D</strong>: Captures the complete state of the arm at any moment, including:</p><ul><li>Joint angles (position)</li><li>Joint velocities (motion)</li></ul><p>This state representation is crucial for both forward dynamics (predicting motion) and inverse kinematics (planning motion) that we will define later.</p></li></ol><pre><code class="language-julia hljs">&quot;&quot;&quot;
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://examples.rxinfer.com/sitemap.xml">
+    </head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../../"><img class="docs-light-only" src="../../../assets/logo.svg" alt="RxInfer.jl Examples logo"/><img class="docs-dark-only" src="../../../assets/logo-dark.svg" alt="RxInfer.jl Examples logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../../">RxInfer.jl Examples</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../../">Home</a></li><li><a class="tocitem" href="../../../how_to_contribute/">How to contribute</a></li><li><a class="tocitem" href="../../../autogenerated/list_of_examples/">List of Examples</a></li><li><span class="tocitem">Basic Examples</span><ul><li><a class="tocitem" href="../../basic_examples/bayesian_binomial_regression/">Bayesian Binomial Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_linear_regression/">Bayesian Linear Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_multinomial_regression/">Bayesian Multinomial Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_networks/">Bayesian Networks</a></li><li><a class="tocitem" href="../../basic_examples/coin_toss_model/">Coin Toss Model</a></li><li><a class="tocitem" href="../../basic_examples/contextual_bandits/">Contextual Bandits</a></li><li><a class="tocitem" href="../../basic_examples/feature_functions_in_bayesian_regression/">Feature Functions In Bayesian Regression</a></li><li><a class="tocitem" href="../../basic_examples/forgetting_factors_for_online_inference/">Forgetting Factors For Online Inference</a></li><li><a class="tocitem" href="../../basic_examples/hidden_markov_model/">Hidden Markov Model</a></li><li><a class="tocitem" href="../../basic_examples/incomplete_data/">Incomplete Data</a></li><li><a class="tocitem" href="../../basic_examples/kalman_filtering_and_smoothing/">Kalman Filtering And Smoothing</a></li><li><a class="tocitem" href="../../basic_examples/pomdp_control/">Pomdp Control</a></li><li><a class="tocitem" href="../../basic_examples/predicting_bike_rental_demand/">Predicting Bike Rental Demand</a></li><li><a class="tocitem" href="../../basic_examples/t-maze_active_inference/">T-Maze Active Inference</a></li></ul></li><li><span class="tocitem">Advanced Examples</span><ul><li><a class="tocitem" href="../active_inference_mountain_car/">Active Inference Mountain Car</a></li><li><a class="tocitem" href="../assessing_people_skills/">Assessing People Skills</a></li><li><a class="tocitem" href="../autoregressive_active_inference/">Autoregressive Active Inference</a></li><li><a class="tocitem" href="../bayesian_structured_time_series/">Bayesian Structured Time Series</a></li><li><a class="tocitem" href="../chance_constraints/">Chance Constraints</a></li><li><a class="tocitem" href="../conjugate-computational_variational_message_passing/">Conjugate-Computational Variational Message Passing</a></li><li><a class="tocitem" href="../drone_dynamics/">Drone Dynamics</a></li><li><a class="tocitem" href="../efe_minimization_via_message_passing/">Efe Minimization Via Message Passing</a></li><li><a class="tocitem" href="../gp_regression_by_ssm/">Gp Regression By Ssm</a></li><li><a class="tocitem" href="../infinite_data_stream/">Infinite Data Stream</a></li><li><a class="tocitem" href="../integrating_neural_networks_with_flux.jl_and_lux.jl/">Integrating Neural Networks With Flux.Jl And Lux.Jl</a></li><li><a class="tocitem" href="../learning_dynamics_with_vaes/">Learning Dynamics With Vaes</a></li><li><a class="tocitem" href="../multi-agent_trajectory_planning/">Multi-Agent Trajectory Planning</a></li><li><a class="tocitem" href="../nonlinear_sensor_fusion/">Nonlinear Sensor Fusion</a></li><li><a class="tocitem" href="../parameter_optimisation_with_optim.jl/">Parameter Optimisation With Optim.Jl</a></li><li class="is-active"><a class="tocitem" href>Robotic Arm</a><ul class="internal"><li><a class="tocitem" href="#Motion-Planning-of-Robotic-Arm-in-Joint-Space"><span>Motion Planning of Robotic Arm in Joint Space</span></a></li><li><a class="tocitem" href="#Defining-Structures"><span>Defining Structures</span></a></li><li><a class="tocitem" href="#Kinematics-and-Dynamics:-Working-Together"><span>Kinematics and Dynamics: Working Together</span></a></li><li><a class="tocitem" href="#Why-We-Need-All-Three"><span>Why We Need All Three</span></a></li><li><a class="tocitem" href="#Visualization-Functions"><span>Visualization Functions</span></a></li><li><a class="tocitem" href="#Model-specification"><span>Model specification</span></a></li><li><a class="tocitem" href="#Motion-Planning"><span>Motion Planning</span></a></li></ul></li><li><a class="tocitem" href="../solving_linear_systems_with_message_passing/">Solving Linear Systems With Message Passing</a></li></ul></li><li><span class="tocitem">Problem Specific</span><ul><li><a class="tocitem" href="../../problem_specific/autoregressive_models/">Autoregressive Models</a></li><li><a class="tocitem" href="../../problem_specific/gamma_mixture/">Gamma Mixture</a></li><li><a class="tocitem" href="../../problem_specific/gaussian_mixture/">Gaussian Mixture</a></li><li><a class="tocitem" href="../../problem_specific/hierarchical_gaussian_filter/">Hierarchical Gaussian Filter</a></li><li><a class="tocitem" href="../../problem_specific/invertible_neural_network_tutorial/">Invertible Neural Network Tutorial</a></li><li><a class="tocitem" href="../../problem_specific/ising_model/">Ising Model</a></li><li><a class="tocitem" href="../../problem_specific/litter_model/">Litter Model</a></li><li><a class="tocitem" href="../../problem_specific/ode_parameter_estimation/">Ode Parameter Estimation</a></li><li><a class="tocitem" href="../../problem_specific/probit_model/">Probit Model</a></li><li><a class="tocitem" href="../../problem_specific/rts_vs_bifm_smoothing/">Rts Vs Bifm Smoothing</a></li><li><a class="tocitem" href="../../problem_specific/simple_nonlinear_node/">Simple Nonlinear Node</a></li><li><a class="tocitem" href="../../problem_specific/structural_dynamics_with_augmented_kalman_filter/">Structural Dynamics With Augmented Kalman Filter</a></li><li><a class="tocitem" href="../../problem_specific/universal_mixtures/">Universal Mixtures</a></li></ul></li><li><span class="tocitem">Experimental Examples</span><ul><li><a class="tocitem" href="../../experimental_examples/bayesian_trust_learning/">Bayesian Trust Learning</a></li><li><a class="tocitem" href="../../experimental_examples/large_language_models/">Large Language Models</a></li><li><a class="tocitem" href="../../experimental_examples/latent_vector_autoregressive_model/">Latent Vector Autoregressive Model</a></li><li><a class="tocitem" href="../../experimental_examples/recurrent_switching_linear_dynamical_system/">Recurrent Switching Linear Dynamical System</a></li></ul></li><li><a class="tocitem" href="../../../how_build_works/">How we build the examples</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Advanced Examples</a></li><li class="is-active"><a href>Robotic Arm</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Robotic Arm</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl" title="View source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><div class="admonition is-info" id="Contributing-baba9dc142ba7ccb"><header class="admonition-header">Contributing<a class="admonition-anchor" href="#Contributing-baba9dc142ba7ccb" title="Permalink"></a></header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><h2 id="Motion-Planning-of-Robotic-Arm-in-Joint-Space"><a class="docs-heading-anchor" href="#Motion-Planning-of-Robotic-Arm-in-Joint-Space">Motion Planning of Robotic Arm in Joint Space</a><a id="Motion-Planning-of-Robotic-Arm-in-Joint-Space-1"></a><a class="docs-heading-anchor-permalink" href="#Motion-Planning-of-Robotic-Arm-in-Joint-Space" title="Permalink"></a></h2><p>This example demonstrates motion planning for a robotic arm using RxInfer. It&#39;s important to understand that the probabilistic inference for motion planning occurs in <strong>joint space</strong> rather than Cartesian space:</p><ul><li><p><strong>Joint Space</strong>: The space of all possible joint angles (θ₁, θ₂, θ₃, ...) of the robotic arm. Our inference model directly plans trajectories in this space, finding optimal joint angle sequences and the control torques needed to achieve them.</p></li><li><p><strong>Cartesian Space</strong>: The 3D space (x, y, z) where the end effector operates. While our targets are specified in Cartesian space, they are translated to joint space targets using inverse kinematics before planning begins.</p></li></ul><p>This approach has several advantages:</p><ol><li>It directly models the physical dynamics of the arm&#39;s joints</li><li>It respects the arm&#39;s natural degrees of freedom</li><li>It allows for more efficient inference in the space where control actually happens</li></ol><p>The workflow is:</p><ol><li>Specify target positions in Cartesian space (user-friendly)</li><li>Convert targets to joint angles using inverse kinematics</li><li>Use RxInfer to plan optimal trajectories between joint configurations</li><li>Visualize the resulting motion in Cartesian space using forward kinematics</li></ol><blockquote><p><strong>Note:</strong> These examples demonstrate the use of RxInfer for motion planning for a robotic arm. The animations show the inferred trajectories from probabilistic inference, rather than simulated executions. For more realistic simulations the model would need to be extended with a reactive environment that responds to the robotic arm&#39;s actions during plan execution. If you&#39;re interested in collaborating on a more realistic implementation, please open a <a href="https://github.com/orgs/ReactiveBayes/discussions">discussion</a> and let&#39;s work on it together!</p></blockquote><pre><code class="language-julia hljs"><span class="hljs-keyword">using</span> RxInfer, LinearAlgebra, Plots
+</code></pre><p>The next couple of blocks are spent on defining the structures that form the foundation of our 3D robotic arm simulation. This is boring but important stuff, as we need to define the state and environment of our robotic arm before doing any inference.</p><h2 id="Defining-Structures"><a class="docs-heading-anchor" href="#Defining-Structures">Defining Structures</a><a id="Defining-Structures-1"></a><a class="docs-heading-anchor-permalink" href="#Defining-Structures" title="Permalink"></a></h2><p>The structures defined below form the foundation of our 3D robotic arm simulation:</p><ol><li><p><strong>Environment</strong>: Encapsulates physical properties of the world, such as gravity, that affect the arm&#39;s dynamics. This allows us to simulate different environmental conditions.</p></li><li><p><strong>RoboticArm3D{N}</strong>: Represents a robotic arm with N links in 3D space. The type parameter N ensures type safety and consistency across the codebase. Properties include:</p><ul><li>Physical dimensions (link lengths)</li><li>Mass distribution (important for dynamics calculations)</li><li>Torque limits (physical constraints of the motors)</li></ul><p>The parametric type allows for compile-time optimizations and type checking.</p></li><li><p><strong>ArmState3D</strong>: Captures the complete state of the arm at any moment, including:</p><ul><li>Joint angles (position)</li><li>Joint velocities (motion)</li></ul><p>This state representation is crucial for both forward dynamics (predicting motion) and inverse kinematics (planning motion) that we will define later.</p></li></ol><pre><code class="language-julia hljs"><span class="hljs-string">&quot;&quot;&quot;
     Environment(; gravitational_constant::Float64 = 9.81)
 
 Structure containing environmental properties.
-&quot;&quot;&quot;
-Base.@kwdef struct Environment
-    gravitational_constant::Float64 = 9.81
-end
+&quot;&quot;&quot;</span>
+Base.<span class="hljs-meta">@kwdef</span> <span class="hljs-keyword">struct</span> Environment
+    gravitational_constant::<span class="hljs-built_in">Float64</span> = <span class="hljs-number">9.81</span>
+<span class="hljs-keyword">end</span>
 get_gravity(env::Environment) = env.gravitational_constant
 
-&quot;&quot;&quot;
+<span class="hljs-string">&quot;&quot;&quot;
 RoboticArm3D(num_links, link_lengths, link_masses, joint_torque_limits)
 
 Structure containing properties of a 3D robotic arm.
-&quot;&quot;&quot;
-Base.@kwdef struct RoboticArm3D{N}
-    num_links::Int64 = N                    # Number of links in the arm
-    link_lengths::Vector{Float64}           # Length of each link
-    link_masses::Vector{Float64}            # Mass of each link
-    joint_torque_limits::Vector{Float64}    # Maximum torque for each joint
+&quot;&quot;&quot;</span>
+Base.<span class="hljs-meta">@kwdef</span> <span class="hljs-keyword">struct</span> RoboticArm3D{N}
+    num_links::<span class="hljs-built_in">Int64</span> = N                    <span class="hljs-comment"># Number of links in the arm</span>
+    link_lengths::<span class="hljs-built_in">Vector</span>{<span class="hljs-built_in">Float64</span>}           <span class="hljs-comment"># Length of each link</span>
+    link_masses::<span class="hljs-built_in">Vector</span>{<span class="hljs-built_in">Float64</span>}            <span class="hljs-comment"># Mass of each link</span>
+    joint_torque_limits::<span class="hljs-built_in">Vector</span>{<span class="hljs-built_in">Float64</span>}    <span class="hljs-comment"># Maximum torque for each joint</span>
     
-    function RoboticArm3D{N}(num_links, link_lengths, link_masses, joint_torque_limits) where {N}
-        @assert num_links == N &quot;Number of links must match type parameter&quot;
-        @assert length(link_lengths) == N &quot;Length of link_lengths must match number of links&quot;
-        @assert length(link_masses) == N &quot;Length of link_masses must match number of links&quot;
-        @assert length(joint_torque_limits) == 2*N &quot;Length of joint_torque_limits must match 2*number of links (2 DOF per joint)&quot;
+    <span class="hljs-keyword">function</span> RoboticArm3D{N}(num_links, link_lengths, link_masses, joint_torque_limits) <span class="hljs-keyword">where</span> {N}
+        <span class="hljs-meta">@assert</span> num_links == N <span class="hljs-string">&quot;Number of links must match type parameter&quot;</span>
+        <span class="hljs-meta">@assert</span> length(link_lengths) == N <span class="hljs-string">&quot;Length of link_lengths must match number of links&quot;</span>
+        <span class="hljs-meta">@assert</span> length(link_masses) == N <span class="hljs-string">&quot;Length of link_masses must match number of links&quot;</span>
+        <span class="hljs-meta">@assert</span> length(joint_torque_limits) == <span class="hljs-number">2</span>*N <span class="hljs-string">&quot;Length of joint_torque_limits must match 2*number of links (2 DOF per joint)&quot;</span>
         new{N}(num_links, link_lengths, link_masses, joint_torque_limits)
-    end
-end
+    <span class="hljs-keyword">end</span>
+<span class="hljs-keyword">end</span>
 
-# Constructor that infers N from the number of links
-function RoboticArm3D(;
-    num_links::Int64,
-    link_lengths::Vector{Float64},
-    link_masses::Vector{Float64},
-    joint_torque_limits::Vector{Float64}
+<span class="hljs-comment"># Constructor that infers N from the number of links</span>
+<span class="hljs-keyword">function</span> RoboticArm3D(;
+    num_links::<span class="hljs-built_in">Int64</span>,
+    link_lengths::<span class="hljs-built_in">Vector</span>{<span class="hljs-built_in">Float64</span>},
+    link_masses::<span class="hljs-built_in">Vector</span>{<span class="hljs-built_in">Float64</span>},
+    joint_torque_limits::<span class="hljs-built_in">Vector</span>{<span class="hljs-built_in">Float64</span>}
 )
     RoboticArm3D{num_links}(num_links, link_lengths, link_masses, joint_torque_limits)
-end
+<span class="hljs-keyword">end</span>
 
-function get_properties(arm::RoboticArm3D{N}) where {N}
-    return (arm.num_links, arm.link_lengths, arm.link_masses, arm.joint_torque_limits)
-end
+<span class="hljs-keyword">function</span> get_properties(arm::RoboticArm3D{N}) <span class="hljs-keyword">where</span> {N}
+    <span class="hljs-keyword">return</span> (arm.num_links, arm.link_lengths, arm.link_masses, arm.joint_torque_limits)
+<span class="hljs-keyword">end</span>
 
-&quot;&quot;&quot;
+<span class="hljs-string">&quot;&quot;&quot;
 ArmState3D(joint_angles, joint_velocities)
 
 Structure representing the state of a 3D robotic arm.
 Each joint has 2 angles (pitch and yaw).
-&quot;&quot;&quot;
-struct ArmState3D
-    joint_angles::Vector{Float64}      # Angles of each joint (2 per joint: pitch, yaw)
-    joint_velocities::Vector{Float64}  # Angular velocities of each joint
-end
+&quot;&quot;&quot;</span>
+<span class="hljs-keyword">struct</span> ArmState3D
+    joint_angles::<span class="hljs-built_in">Vector</span>{<span class="hljs-built_in">Float64</span>}      <span class="hljs-comment"># Angles of each joint (2 per joint: pitch, yaw)</span>
+    joint_velocities::<span class="hljs-built_in">Vector</span>{<span class="hljs-built_in">Float64</span>}  <span class="hljs-comment"># Angular velocities of each joint</span>
+<span class="hljs-keyword">end</span>
 
-function get_state(state::ArmState3D)
-    return (state.joint_angles, state.joint_velocities)
-end</code></pre><pre><code class="nohighlight hljs">get_state (generic function with 1 method)</code></pre><h2 id="Kinematics-and-Dynamics:-Working-Together"><a class="docs-heading-anchor" href="#Kinematics-and-Dynamics:-Working-Together">Kinematics and Dynamics: Working Together</a><a id="Kinematics-and-Dynamics:-Working-Together-1"></a><a class="docs-heading-anchor-permalink" href="#Kinematics-and-Dynamics:-Working-Together" title="Permalink"></a></h2><p>Robotic arm control requires three complementary mathematical tools:</p><h3 id="1.-Forward-Kinematics"><a class="docs-heading-anchor" href="#1.-Forward-Kinematics">1. Forward Kinematics</a><a id="1.-Forward-Kinematics-1"></a><a class="docs-heading-anchor-permalink" href="#1.-Forward-Kinematics" title="Permalink"></a></h3><ul><li><strong>Purpose</strong>: Maps joint angles to end effector position in Cartesian space</li><li><strong>Input</strong>: Joint angles (θ₁, θ₂, θ₃, ...)</li><li><strong>Output</strong>: End effector position (x, y, z)</li><li><strong>Use cases</strong>: Visualization, collision detection, workspace analysis</li><li><strong>Mathematical nature</strong>: Pure geometric transformation (no physics)</li></ul><h3 id="2.-Inverse-Kinematics"><a class="docs-heading-anchor" href="#2.-Inverse-Kinematics">2. Inverse Kinematics</a><a id="2.-Inverse-Kinematics-1"></a><a class="docs-heading-anchor-permalink" href="#2.-Inverse-Kinematics" title="Permalink"></a></h3><ul><li><strong>Purpose</strong>: Maps desired end effector position to required joint angles</li><li><strong>Input</strong>: Target position (x, y, z)</li><li><strong>Output</strong>: Joint angles (θ₁, θ₂, θ₃, ...) that achieve this position</li><li><strong>Use cases</strong>: Goal specification, target translation, user interface</li><li><strong>Mathematical nature</strong>: Solving geometric equations (often multiple solutions)</li></ul><h3 id="3.-State-Transition-(Dynamics)"><a class="docs-heading-anchor" href="#3.-State-Transition-(Dynamics)">3. State Transition (Dynamics)</a><a id="3.-State-Transition-(Dynamics)-1"></a><a class="docs-heading-anchor-permalink" href="#3.-State-Transition-(Dynamics)" title="Permalink"></a></h3><ul><li><strong>Purpose</strong>: Models how the arm&#39;s state evolves over time when forces/torques are applied</li><li><strong>Input</strong>: Current state (angles, velocities) and control inputs (torques)</li><li><strong>Output</strong>: Next state after a time step</li><li><strong>Use cases</strong>: Realistic motion simulation, control design, trajectory optimization</li><li><strong>Mathematical nature</strong>: Physics-based differential equations (F=ma, τ=Iα)</li></ul><h2 id="Why-We-Need-All-Three"><a class="docs-heading-anchor" href="#Why-We-Need-All-Three">Why We Need All Three</a><a id="Why-We-Need-All-Three-1"></a><a class="docs-heading-anchor-permalink" href="#Why-We-Need-All-Three" title="Permalink"></a></h2><p>These components work together in a complete robotic arm system:</p><ol><li><strong>Goal Translation</strong>: Inverse kinematics translates task-space goals (x,y,z positions) into joint-space goals (angles)</li><li><strong>Motion Generation</strong>: State transition models how to apply torques to move between joint configurations</li><li><strong>Feedback</strong>: Forward kinematics verifies the actual position achieved</li></ol><p>The inference process (probabilistic planning) uses these components to determine optimal control policies:</p><ul><li>It uses the state transition to predict how controls affect future states</li><li>It uses inverse kinematics to define the target joint configuration</li><li>It uses forward kinematics to evaluate progress toward the goal</li></ul><p>Without inverse kinematics, we couldn&#39;t translate Cartesian targets into joint angles. Without state transition, we couldn&#39;t model realistic physical motion with inertia, gravity, etc. Without forward kinematics, we couldn&#39;t visualize the arm or verify its position.</p><pre><code class="language-julia hljs">&quot;&quot;&quot;
+<span class="hljs-keyword">function</span> get_state(state::ArmState3D)
+    <span class="hljs-keyword">return</span> (state.joint_angles, state.joint_velocities)
+<span class="hljs-keyword">end</span>
+</code></pre><pre><code class="nohighlight hljs">get_state (generic function with 1 method)</code></pre><h2 id="Kinematics-and-Dynamics:-Working-Together"><a class="docs-heading-anchor" href="#Kinematics-and-Dynamics:-Working-Together">Kinematics and Dynamics: Working Together</a><a id="Kinematics-and-Dynamics:-Working-Together-1"></a><a class="docs-heading-anchor-permalink" href="#Kinematics-and-Dynamics:-Working-Together" title="Permalink"></a></h2><p>Robotic arm control requires three complementary mathematical tools:</p><h3 id="1.-Forward-Kinematics"><a class="docs-heading-anchor" href="#1.-Forward-Kinematics">1. Forward Kinematics</a><a id="1.-Forward-Kinematics-1"></a><a class="docs-heading-anchor-permalink" href="#1.-Forward-Kinematics" title="Permalink"></a></h3><ul><li><strong>Purpose</strong>: Maps joint angles to end effector position in Cartesian space</li><li><strong>Input</strong>: Joint angles (θ₁, θ₂, θ₃, ...)</li><li><strong>Output</strong>: End effector position (x, y, z)</li><li><strong>Use cases</strong>: Visualization, collision detection, workspace analysis</li><li><strong>Mathematical nature</strong>: Pure geometric transformation (no physics)</li></ul><h3 id="2.-Inverse-Kinematics"><a class="docs-heading-anchor" href="#2.-Inverse-Kinematics">2. Inverse Kinematics</a><a id="2.-Inverse-Kinematics-1"></a><a class="docs-heading-anchor-permalink" href="#2.-Inverse-Kinematics" title="Permalink"></a></h3><ul><li><strong>Purpose</strong>: Maps desired end effector position to required joint angles</li><li><strong>Input</strong>: Target position (x, y, z)</li><li><strong>Output</strong>: Joint angles (θ₁, θ₂, θ₃, ...) that achieve this position</li><li><strong>Use cases</strong>: Goal specification, target translation, user interface</li><li><strong>Mathematical nature</strong>: Solving geometric equations (often multiple solutions)</li></ul><h3 id="3.-State-Transition-(Dynamics)"><a class="docs-heading-anchor" href="#3.-State-Transition-(Dynamics)">3. State Transition (Dynamics)</a><a id="3.-State-Transition-(Dynamics)-1"></a><a class="docs-heading-anchor-permalink" href="#3.-State-Transition-(Dynamics)" title="Permalink"></a></h3><ul><li><strong>Purpose</strong>: Models how the arm&#39;s state evolves over time when forces/torques are applied</li><li><strong>Input</strong>: Current state (angles, velocities) and control inputs (torques)</li><li><strong>Output</strong>: Next state after a time step</li><li><strong>Use cases</strong>: Realistic motion simulation, control design, trajectory optimization</li><li><strong>Mathematical nature</strong>: Physics-based differential equations (F=ma, τ=Iα)</li></ul><h2 id="Why-We-Need-All-Three"><a class="docs-heading-anchor" href="#Why-We-Need-All-Three">Why We Need All Three</a><a id="Why-We-Need-All-Three-1"></a><a class="docs-heading-anchor-permalink" href="#Why-We-Need-All-Three" title="Permalink"></a></h2><p>These components work together in a complete robotic arm system:</p><ol><li><strong>Goal Translation</strong>: Inverse kinematics translates task-space goals (x,y,z positions) into joint-space goals (angles)</li><li><strong>Motion Generation</strong>: State transition models how to apply torques to move between joint configurations</li><li><strong>Feedback</strong>: Forward kinematics verifies the actual position achieved</li></ol><p>The inference process (probabilistic planning) uses these components to determine optimal control policies:</p><ul><li>It uses the state transition to predict how controls affect future states</li><li>It uses inverse kinematics to define the target joint configuration</li><li>It uses forward kinematics to evaluate progress toward the goal</li></ul><p>Without inverse kinematics, we couldn&#39;t translate Cartesian targets into joint angles. Without state transition, we couldn&#39;t model realistic physical motion with inertia, gravity, etc. Without forward kinematics, we couldn&#39;t visualize the arm or verify its position.</p><pre><code class="language-julia hljs"><span class="hljs-string">&quot;&quot;&quot;
     forward_kinematics_3d(arm, joint_angles)
 
 A direct geometric approach to forward kinematics for a 2-link arm.
@@ -76,570 +78,574 @@ Angles are interpreted as:
 - joint_angles[1]: yaw angle of the first joint (rotation around Z axis)
 - joint_angles[2]: pitch angle of the first joint (rotation around new Y axis)
 - joint_angles[3]: bend angle of the second joint (in the local XZ plane)
-&quot;&quot;&quot;
-function forward_kinematics_3d(arm::RoboticArm3D{2}, joint_angles::Vector{Float64})
-    # Extract arm lengths
+&quot;&quot;&quot;</span>
+<span class="hljs-keyword">function</span> forward_kinematics_3d(arm::RoboticArm3D{<span class="hljs-number">2</span>}, joint_angles::<span class="hljs-built_in">Vector</span>{<span class="hljs-built_in">Float64</span>})
+    <span class="hljs-comment"># Extract arm lengths</span>
     l1, l2 = arm.link_lengths
     
-    # Extract angles
-    yaw = joint_angles[1]    # Base rotation around Z
-    pitch = joint_angles[2]  # Shoulder pitch
-    bend = joint_angles[3]   # Elbow bend
+    <span class="hljs-comment"># Extract angles</span>
+    yaw = joint_angles[<span class="hljs-number">1</span>]    <span class="hljs-comment"># Base rotation around Z</span>
+    pitch = joint_angles[<span class="hljs-number">2</span>]  <span class="hljs-comment"># Shoulder pitch</span>
+    bend = joint_angles[<span class="hljs-number">3</span>]   <span class="hljs-comment"># Elbow bend</span>
     
-    # Initialize positions
-    positions = zeros(Float64, 3, 3)  # Base, shoulder, elbow
+    <span class="hljs-comment"># Initialize positions</span>
+    positions = zeros(<span class="hljs-built_in">Float64</span>, <span class="hljs-number">3</span>, <span class="hljs-number">3</span>)  <span class="hljs-comment"># Base, shoulder, elbow</span>
     
-    # Base position
-    positions[:, 1] = [0.0, 0.0, 0.0]
+    <span class="hljs-comment"># Base position</span>
+    positions[:, <span class="hljs-number">1</span>] = [<span class="hljs-number">0.0</span>, <span class="hljs-number">0.0</span>, <span class="hljs-number">0.0</span>]
     
-    # First, calculate the shoulder position after yaw and pitch
-    # The first link points in direction [cos(yaw)*cos(pitch), sin(yaw)*cos(pitch), sin(pitch)]
+    <span class="hljs-comment"># First, calculate the shoulder position after yaw and pitch</span>
+    <span class="hljs-comment"># The first link points in direction [cos(yaw)*cos(pitch), sin(yaw)*cos(pitch), sin(pitch)]</span>
     shoulder_dir = [cos(yaw)*cos(pitch), sin(yaw)*cos(pitch), sin(pitch)]
-    positions[:, 2] = positions[:, 1] + l1 * shoulder_dir
+    positions[:, <span class="hljs-number">2</span>] = positions[:, <span class="hljs-number">1</span>] + l1 * shoulder_dir
     
-    # For the elbow, we need to bend in the plane perpendicular to the yaw rotation
-    # Create a coordinate system at the shoulder
-    z_axis = shoulder_dir  # Direction of first link
-    y_axis = [-sin(yaw), cos(yaw), 0.0]  # Perpendicular to xz-plane
-    x_axis = cross(y_axis, z_axis)  # Complete right-handed system
+    <span class="hljs-comment"># For the elbow, we need to bend in the plane perpendicular to the yaw rotation</span>
+    <span class="hljs-comment"># Create a coordinate system at the shoulder</span>
+    z_axis = shoulder_dir  <span class="hljs-comment"># Direction of first link</span>
+    y_axis = [-sin(yaw), cos(yaw), <span class="hljs-number">0.0</span>]  <span class="hljs-comment"># Perpendicular to xz-plane</span>
+    x_axis = cross(y_axis, z_axis)  <span class="hljs-comment"># Complete right-handed system</span>
     
-    # Calculate direction of second link after bend
+    <span class="hljs-comment"># Calculate direction of second link after bend</span>
     elbow_dir = cos(bend) * z_axis + sin(bend) * x_axis
-    positions[:, 3] = positions[:, 2] + l2 * elbow_dir
+    positions[:, <span class="hljs-number">3</span>] = positions[:, <span class="hljs-number">2</span>] + l2 * elbow_dir
     
-    return positions
-end
+    <span class="hljs-keyword">return</span> positions
+<span class="hljs-keyword">end</span>
 
-&quot;&quot;&quot;
+<span class="hljs-string">&quot;&quot;&quot;
     inverse_kinematics_3d(arm, target_position)
 
 A direct geometric inverse kinematics solver for a 2-link arm.
-&quot;&quot;&quot;
-function inverse_kinematics_3d(arm::RoboticArm3D{2}, target_position)
-    # Extract arm lengths
+&quot;&quot;&quot;</span>
+<span class="hljs-keyword">function</span> inverse_kinematics_3d(arm::RoboticArm3D{<span class="hljs-number">2</span>}, target_position)
+    <span class="hljs-comment"># Extract arm lengths</span>
     l1, l2 = arm.link_lengths
     
-    # Extract target coordinates
+    <span class="hljs-comment"># Extract target coordinates</span>
     x, y, z = target_position
     
-    # Calculate distance to target
+    <span class="hljs-comment"># Calculate distance to target</span>
     dist = norm(target_position)
     
-    # Special case: if target is exactly at origin or too close to it
-    if dist &lt; 0.1
-        # Return a safe default position slightly away from the origin
-        return [0.0, 0.3, 0.3, 0.0]  # Small angles that position arm in a safe configuration
-    end
+    <span class="hljs-comment"># Special case: if target is exactly at origin or too close to it</span>
+    <span class="hljs-keyword">if</span> dist &lt; <span class="hljs-number">0.1</span>
+        <span class="hljs-comment"># Return a safe default position slightly away from the origin</span>
+        <span class="hljs-keyword">return</span> [<span class="hljs-number">0.0</span>, <span class="hljs-number">0.3</span>, <span class="hljs-number">0.3</span>, <span class="hljs-number">0.0</span>]  <span class="hljs-comment"># Small angles that position arm in a safe configuration</span>
+    <span class="hljs-keyword">end</span>
     
-    # Check if target is reachable
-    if dist &gt; l1 + l2
-        @warn &quot;Target is out of reach, using closest possible solution&quot;
-        # Scale target to be at maximum reach
-        scale_factor = (l1 + l2 * 0.99) / dist
+    <span class="hljs-comment"># Check if target is reachable</span>
+    <span class="hljs-keyword">if</span> dist &gt; l1 + l2
+        <span class="hljs-meta">@warn</span> <span class="hljs-string">&quot;Target is out of reach, using closest possible solution&quot;</span>
+        <span class="hljs-comment"># Scale target to be at maximum reach</span>
+        scale_factor = (l1 + l2 * <span class="hljs-number">0.99</span>) / dist
         x *= scale_factor
         y *= scale_factor
         z *= scale_factor
-        # Recalculate distance
+        <span class="hljs-comment"># Recalculate distance</span>
         dist = norm([x, y, z])
-    elseif dist &lt; abs(l1 - l2) + 0.05  # Added small margin to prevent numerical issues
-        @warn &quot;Target is too close, using closest possible solution&quot;
-        # Scale target to minimum reach
-        scale_factor = (abs(l1 - l2) * 1.05) / dist  # Increased margin
+    <span class="hljs-keyword">elseif</span> dist &lt; abs(l1 - l2) + <span class="hljs-number">0.05</span>  <span class="hljs-comment"># Added small margin to prevent numerical issues</span>
+        <span class="hljs-meta">@warn</span> <span class="hljs-string">&quot;Target is too close, using closest possible solution&quot;</span>
+        <span class="hljs-comment"># Scale target to minimum reach</span>
+        scale_factor = (abs(l1 - l2) * <span class="hljs-number">1.05</span>) / dist  <span class="hljs-comment"># Increased margin</span>
         x *= scale_factor
         y *= scale_factor
         z *= scale_factor
-        # Recalculate distance
+        <span class="hljs-comment"># Recalculate distance</span>
         dist = norm([x, y, z])
-    end
+    <span class="hljs-keyword">end</span>
     
-    # Calculate yaw angle (rotation in the XY plane)
-    # Handle the case where both x and y are close to zero
-    if abs(x) &lt; 1e-6 &amp;&amp; abs(y) &lt; 1e-6
-        yaw = 0.0  # Default yaw when target is directly above/below
-    else
+    <span class="hljs-comment"># Calculate yaw angle (rotation in the XY plane)</span>
+    <span class="hljs-comment"># Handle the case where both x and y are close to zero</span>
+    <span class="hljs-keyword">if</span> abs(x) &lt; <span class="hljs-number">1e-6</span> &amp;&amp; abs(y) &lt; <span class="hljs-number">1e-6</span>
+        yaw = <span class="hljs-number">0.0</span>  <span class="hljs-comment"># Default yaw when target is directly above/below</span>
+    <span class="hljs-keyword">else</span>
         yaw = atan(y, x)
-    end
+    <span class="hljs-keyword">end</span>
     
-    # Project the target onto the plane defined by the yaw angle
-    # This gives us the radial distance in the direction of the yaw
-    r = sqrt(x^2 + y^2)
+    <span class="hljs-comment"># Project the target onto the plane defined by the yaw angle</span>
+    <span class="hljs-comment"># This gives us the radial distance in the direction of the yaw</span>
+    r = sqrt(x^<span class="hljs-number">2</span> + y^<span class="hljs-number">2</span>)
     
-    # Now we have a 2D problem in the RZ plane (where R is the radial distance)
-    # Apply the law of cosines to find the elbow angle
-    cos_elbow = (r^2 + z^2 - l1^2 - l2^2) / (2 * l1 * l2)
-    # Ensure the value is within valid range for acos
-    cos_elbow = clamp(cos_elbow, -1.0, 1.0)
+    <span class="hljs-comment"># Now we have a 2D problem in the RZ plane (where R is the radial distance)</span>
+    <span class="hljs-comment"># Apply the law of cosines to find the elbow angle</span>
+    cos_elbow = (r^<span class="hljs-number">2</span> + z^<span class="hljs-number">2</span> - l1^<span class="hljs-number">2</span> - l2^<span class="hljs-number">2</span>) / (<span class="hljs-number">2</span> * l1 * l2)
+    <span class="hljs-comment"># Ensure the value is within valid range for acos</span>
+    cos_elbow = clamp(cos_elbow, -<span class="hljs-number">1.0</span>, <span class="hljs-number">1.0</span>)
     elbow = acos(cos_elbow)
     
-    # Find the angle between the first link and the line to the target
-    # Handle case where r is very small
-    if r &lt; 1e-6
-        if z &gt;= 0
-            # Target is directly above, point straight up
-            pitch = π/2
-        else
-            # Target is directly below, point straight down
-            pitch = -π/2
-        end
-    else
-        cos_alpha = (l1^2 + r^2 + z^2 - l2^2) / (2 * l1 * sqrt(r^2 + z^2))
-        cos_alpha = clamp(cos_alpha, -1.0, 1.0)
+    <span class="hljs-comment"># Find the angle between the first link and the line to the target</span>
+    <span class="hljs-comment"># Handle case where r is very small</span>
+    <span class="hljs-keyword">if</span> r &lt; <span class="hljs-number">1e-6</span>
+        <span class="hljs-keyword">if</span> z &gt;= <span class="hljs-number">0</span>
+            <span class="hljs-comment"># Target is directly above, point straight up</span>
+            pitch = <span class="hljs-literal">π</span>/<span class="hljs-number">2</span>
+        <span class="hljs-keyword">else</span>
+            <span class="hljs-comment"># Target is directly below, point straight down</span>
+            pitch = -<span class="hljs-literal">π</span>/<span class="hljs-number">2</span>
+        <span class="hljs-keyword">end</span>
+    <span class="hljs-keyword">else</span>
+        cos_alpha = (l1^<span class="hljs-number">2</span> + r^<span class="hljs-number">2</span> + z^<span class="hljs-number">2</span> - l2^<span class="hljs-number">2</span>) / (<span class="hljs-number">2</span> * l1 * sqrt(r^<span class="hljs-number">2</span> + z^<span class="hljs-number">2</span>))
+        cos_alpha = clamp(cos_alpha, -<span class="hljs-number">1.0</span>, <span class="hljs-number">1.0</span>)
         alpha = acos(cos_alpha)
         
-        # Calculate pitch angle (elevation from XY plane)
-        # It&#39;s the sum of the angle to the target and alpha
+        <span class="hljs-comment"># Calculate pitch angle (elevation from XY plane)</span>
+        <span class="hljs-comment"># It&#x27;s the sum of the angle to the target and alpha</span>
         pitch = atan(z, r) + alpha
-    end
+    <span class="hljs-keyword">end</span>
     
-    # Return the joint angles: [yaw, pitch, elbow]
-    return [yaw, pitch, elbow, 0.0]
-end
+    <span class="hljs-comment"># Return the joint angles: [yaw, pitch, elbow]</span>
+    <span class="hljs-keyword">return</span> [yaw, pitch, elbow, <span class="hljs-number">0.0</span>]
+<span class="hljs-keyword">end</span>
 
-&quot;&quot;&quot;
+<span class="hljs-string">&quot;&quot;&quot;
     state_transition_3d(state, action, arm, environment, dt)
 
 State transition function for the 3D robotic arm, modeling the physics of motion.
-&quot;&quot;&quot;
-function state_transition_3d(state, action, arm, environment, dt)
-    # Extract state components (angles and velocities)
-    n = length(state) ÷ 2
-    θ = state[1:n]
-    ω = state[n+1:end]
+&quot;&quot;&quot;</span>
+<span class="hljs-keyword">function</span> state_transition_3d(state, action, arm, environment, dt)
+    <span class="hljs-comment"># Extract state components (angles and velocities)</span>
+    n = length(state) ÷ <span class="hljs-number">2</span>
+    θ = state[<span class="hljs-number">1</span>:n]
+    ω = state[n+<span class="hljs-number">1</span>:<span class="hljs-keyword">end</span>]
     
-    # Extract physical parameters
+    <span class="hljs-comment"># Extract physical parameters</span>
     g = get_gravity(environment)
     num_links, link_lengths, link_masses, _ = get_properties(arm)
     
-    # Initialize next state with current values
+    <span class="hljs-comment"># Initialize next state with current values</span>
     θ_next = copy(θ)
     ω_next = copy(ω)
     
-    # Apply simple physics for each joint
-    for i in 1:n
-        # Calculate acceleration: torque = I*α, so α = torque/I
-        # Using a simplified moment of inertia model
-        joint_idx = (i + 1) ÷ 2  # Convert to link index (1-indexed)
-        moment_of_inertia = link_masses[min(joint_idx, num_links)] * (link_lengths[min(joint_idx, num_links)]^2) / 3.0
+    <span class="hljs-comment"># Apply simple physics for each joint</span>
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:n
+        <span class="hljs-comment"># Calculate acceleration: torque = I*α, so α = torque/I</span>
+        <span class="hljs-comment"># Using a simplified moment of inertia model</span>
+        joint_idx = (i + <span class="hljs-number">1</span>) ÷ <span class="hljs-number">2</span>  <span class="hljs-comment"># Convert to link index (1-indexed)</span>
+        moment_of_inertia = link_masses[min(joint_idx, num_links)] * (link_lengths[min(joint_idx, num_links)]^<span class="hljs-number">2</span>) / <span class="hljs-number">3.0</span>
         
-        # Net torque = control torque - friction
-        # Gravity compensation is already in the action
-        friction = 0.1 * ω[i]
+        <span class="hljs-comment"># Net torque = control torque - friction</span>
+        <span class="hljs-comment"># Gravity compensation is already in the action</span>
+        friction = <span class="hljs-number">0.1</span> * ω[i]
         net_torque = action[i] - friction
         
-        # Calculate angular acceleration
+        <span class="hljs-comment"># Calculate angular acceleration</span>
         α = net_torque / moment_of_inertia
         
-        # Update velocity and position using basic Euler integration
+        <span class="hljs-comment"># Update velocity and position using basic Euler integration</span>
         ω_next[i] = ω[i] + α * dt
         θ_next[i] = θ[i] + ω_next[i] * dt
-    end
+    <span class="hljs-keyword">end</span>
     
-    # Combine angles and velocities
-    return vcat(θ_next, ω_next)
-end</code></pre><pre><code class="nohighlight hljs">Main.anonymous.state_transition_3d</code></pre><h2 id="Visualization-Functions"><a class="docs-heading-anchor" href="#Visualization-Functions">Visualization Functions</a><a id="Visualization-Functions-1"></a><a class="docs-heading-anchor-permalink" href="#Visualization-Functions" title="Permalink"></a></h2><p>This is the most boring part, but it&#39;s necessary to visualize the arm and its motion. This is where forward kinematics and inverse kinematics become handy.</p><pre><code class="language-julia hljs">function plot_arm_3d!(p, arm::RoboticArm3D{2}, joint_angles; color=:black)
-    # Calculate positions using the kinematics
+    <span class="hljs-comment"># Combine angles and velocities</span>
+    <span class="hljs-keyword">return</span> vcat(θ_next, ω_next)
+<span class="hljs-keyword">end</span>
+</code></pre><pre><code class="nohighlight hljs">Main.var&quot;##WeaveSandBox#277&quot;.state_transition_3d</code></pre><h2 id="Visualization-Functions"><a class="docs-heading-anchor" href="#Visualization-Functions">Visualization Functions</a><a id="Visualization-Functions-1"></a><a class="docs-heading-anchor-permalink" href="#Visualization-Functions" title="Permalink"></a></h2><p>This is the most boring part, but it&#39;s necessary to visualize the arm and its motion. This is where forward kinematics and inverse kinematics become handy.</p><pre><code class="language-julia hljs"><span class="hljs-keyword">function</span> plot_arm_3d!(p, arm::RoboticArm3D{<span class="hljs-number">2</span>}, joint_angles; color=:black)
+    <span class="hljs-comment"># Calculate positions using the kinematics</span>
     positions = forward_kinematics_3d(arm, joint_angles)
     
-    # Add a more substantial base platform
-    θ = range(0, 2π, length=30)
-    base_radius = 0.25
-    base_height = 0.05
+    <span class="hljs-comment"># Add a more substantial base platform</span>
+    θ = range(<span class="hljs-number">0</span>, <span class="hljs-number">2</span><span class="hljs-literal">π</span>, length=<span class="hljs-number">30</span>)
+    base_radius = <span class="hljs-number">0.25</span>
+    base_height = <span class="hljs-number">0.05</span>
     
-    # Base platform - top circle
+    <span class="hljs-comment"># Base platform - top circle</span>
     base_x = base_radius .* cos.(θ)
     base_y = base_radius .* sin.(θ)
     base_z = zeros(length(θ)) .+ base_height
-    plot!(p, base_x, base_y, base_z, linewidth=2, color=:darkgray, 
-          fill=true, fillcolor=:darkgray, fillalpha=0.7, label=false)
+    plot!(p, base_x, base_y, base_z, linewidth=<span class="hljs-number">2</span>, color=:darkgray, 
+          fill=<span class="hljs-literal">true</span>, fillcolor=:darkgray, fillalpha=<span class="hljs-number">0.7</span>, label=<span class="hljs-literal">false</span>)
     
-    # Base platform - bottom circle
+    <span class="hljs-comment"># Base platform - bottom circle</span>
     base_x_bottom = base_radius .* cos.(θ)
     base_y_bottom = base_radius .* sin.(θ)
     base_z_bottom = zeros(length(θ))
-    plot!(p, base_x_bottom, base_y_bottom, base_z_bottom, linewidth=2, color=:darkgray, 
-          fill=true, fillcolor=:darkgray, fillalpha=0.5, label=false)
+    plot!(p, base_x_bottom, base_y_bottom, base_z_bottom, linewidth=<span class="hljs-number">2</span>, color=:darkgray, 
+          fill=<span class="hljs-literal">true</span>, fillcolor=:darkgray, fillalpha=<span class="hljs-number">0.5</span>, label=<span class="hljs-literal">false</span>)
     
-    # Connect top and bottom circles to create cylinder
-    for i in 1:length(θ)
+    <span class="hljs-comment"># Connect top and bottom circles to create cylinder</span>
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:length(θ)
         plot!(p, [base_x[i], base_x[i]], [base_y[i], base_y[i]], [base_z[i], base_z_bottom[i]],
-              linewidth=1, color=:darkgray, label=false)
-    end
+              linewidth=<span class="hljs-number">1</span>, color=:darkgray, label=<span class="hljs-literal">false</span>)
+    <span class="hljs-keyword">end</span>
     
-    # Plot each link of the arm with improved appearance
-    # Link 1: Base to shoulder - create a tapered cylinder effect
-    num_segments = 8
-    for i in 1:num_segments
-        t1 = (i-1)/num_segments
+    <span class="hljs-comment"># Plot each link of the arm with improved appearance</span>
+    <span class="hljs-comment"># Link 1: Base to shoulder - create a tapered cylinder effect</span>
+    num_segments = <span class="hljs-number">8</span>
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:num_segments
+        t1 = (i-<span class="hljs-number">1</span>)/num_segments
         t2 = i/num_segments
         
-        # Interpolate positions
-        x1 = positions[1, 1] * (1-t1) + positions[1, 2] * t1
-        y1 = positions[2, 1] * (1-t1) + positions[2, 2] * t1
-        z1 = positions[3, 1] * (1-t1) + positions[3, 2] * t1
+        <span class="hljs-comment"># Interpolate positions</span>
+        x1 = positions[<span class="hljs-number">1</span>, <span class="hljs-number">1</span>] * (<span class="hljs-number">1</span>-t1) + positions[<span class="hljs-number">1</span>, <span class="hljs-number">2</span>] * t1
+        y1 = positions[<span class="hljs-number">2</span>, <span class="hljs-number">1</span>] * (<span class="hljs-number">1</span>-t1) + positions[<span class="hljs-number">2</span>, <span class="hljs-number">2</span>] * t1
+        z1 = positions[<span class="hljs-number">3</span>, <span class="hljs-number">1</span>] * (<span class="hljs-number">1</span>-t1) + positions[<span class="hljs-number">3</span>, <span class="hljs-number">2</span>] * t1
         
-        x2 = positions[1, 1] * (1-t2) + positions[1, 2] * t2
-        y2 = positions[2, 1] * (1-t2) + positions[2, 2] * t2
-        z2 = positions[3, 1] * (1-t2) + positions[3, 2] * t2
+        x2 = positions[<span class="hljs-number">1</span>, <span class="hljs-number">1</span>] * (<span class="hljs-number">1</span>-t2) + positions[<span class="hljs-number">1</span>, <span class="hljs-number">2</span>] * t2
+        y2 = positions[<span class="hljs-number">2</span>, <span class="hljs-number">1</span>] * (<span class="hljs-number">1</span>-t2) + positions[<span class="hljs-number">2</span>, <span class="hljs-number">2</span>] * t2
+        z2 = positions[<span class="hljs-number">3</span>, <span class="hljs-number">1</span>] * (<span class="hljs-number">1</span>-t2) + positions[<span class="hljs-number">3</span>, <span class="hljs-number">2</span>] * t2
         
-        # Taper the width from thick to thin
-        width1 = 10 - (i-1) * 0.5
-        width2 = 10 - i * 0.5
+        <span class="hljs-comment"># Taper the width from thick to thin</span>
+        width1 = <span class="hljs-number">10</span> - (i-<span class="hljs-number">1</span>) * <span class="hljs-number">0.5</span>
+        width2 = <span class="hljs-number">10</span> - i * <span class="hljs-number">0.5</span>
         
-        # Gradient color from dark to light blue
-        color1 = RGB(0.1, 0.3 + t1*0.3, 0.6 + t1*0.3)
-        color2 = RGB(0.1, 0.3 + t2*0.3, 0.6 + t2*0.3)
+        <span class="hljs-comment"># Gradient color from dark to light blue</span>
+        color1 = RGB(<span class="hljs-number">0.1</span>, <span class="hljs-number">0.3</span> + t1*<span class="hljs-number">0.3</span>, <span class="hljs-number">0.6</span> + t1*<span class="hljs-number">0.3</span>)
+        color2 = RGB(<span class="hljs-number">0.1</span>, <span class="hljs-number">0.3</span> + t2*<span class="hljs-number">0.3</span>, <span class="hljs-number">0.6</span> + t2*<span class="hljs-number">0.3</span>)
         
-        # Draw segment
+        <span class="hljs-comment"># Draw segment</span>
         plot!(p, [x1, x2], [y1, y2], [z1, z2],
-              linewidth=width1, color=color1, label=false,
-              seriestype=:path3d, alpha=0.9)
-    end
+              linewidth=width1, color=color1, label=<span class="hljs-literal">false</span>,
+              seriestype=:path3d, alpha=<span class="hljs-number">0.9</span>)
+    <span class="hljs-keyword">end</span>
     
-    # Link 2: Shoulder to end effector - create a tapered cylinder effect
-    for i in 1:num_segments
-        t1 = (i-1)/num_segments
+    <span class="hljs-comment"># Link 2: Shoulder to end effector - create a tapered cylinder effect</span>
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:num_segments
+        t1 = (i-<span class="hljs-number">1</span>)/num_segments
         t2 = i/num_segments
         
-        # Interpolate positions
-        x1 = positions[1, 2] * (1-t1) + positions[1, 3] * t1
-        y1 = positions[2, 2] * (1-t1) + positions[2, 3] * t1
-        z1 = positions[3, 2] * (1-t1) + positions[3, 3] * t1
+        <span class="hljs-comment"># Interpolate positions</span>
+        x1 = positions[<span class="hljs-number">1</span>, <span class="hljs-number">2</span>] * (<span class="hljs-number">1</span>-t1) + positions[<span class="hljs-number">1</span>, <span class="hljs-number">3</span>] * t1
+        y1 = positions[<span class="hljs-number">2</span>, <span class="hljs-number">2</span>] * (<span class="hljs-number">1</span>-t1) + positions[<span class="hljs-number">2</span>, <span class="hljs-number">3</span>] * t1
+        z1 = positions[<span class="hljs-number">3</span>, <span class="hljs-number">2</span>] * (<span class="hljs-number">1</span>-t1) + positions[<span class="hljs-number">3</span>, <span class="hljs-number">3</span>] * t1
         
-        x2 = positions[1, 2] * (1-t2) + positions[1, 3] * t2
-        y2 = positions[2, 2] * (1-t2) + positions[2, 3] * t2
-        z2 = positions[3, 2] * (1-t2) + positions[3, 3] * t2
+        x2 = positions[<span class="hljs-number">1</span>, <span class="hljs-number">2</span>] * (<span class="hljs-number">1</span>-t2) + positions[<span class="hljs-number">1</span>, <span class="hljs-number">3</span>] * t2
+        y2 = positions[<span class="hljs-number">2</span>, <span class="hljs-number">2</span>] * (<span class="hljs-number">1</span>-t2) + positions[<span class="hljs-number">2</span>, <span class="hljs-number">3</span>] * t2
+        z2 = positions[<span class="hljs-number">3</span>, <span class="hljs-number">2</span>] * (<span class="hljs-number">1</span>-t2) + positions[<span class="hljs-number">3</span>, <span class="hljs-number">3</span>] * t2
         
-        # Taper the width from thick to thin
-        width1 = 8 - (i-1) * 0.5
-        width2 = 8 - i * 0.5
+        <span class="hljs-comment"># Taper the width from thick to thin</span>
+        width1 = <span class="hljs-number">8</span> - (i-<span class="hljs-number">1</span>) * <span class="hljs-number">0.5</span>
+        width2 = <span class="hljs-number">8</span> - i * <span class="hljs-number">0.5</span>
         
-        # Gradient color from medium to light blue
-        color1 = RGB(0.1, 0.4 + t1*0.4, 0.7 + t1*0.2)
-        color2 = RGB(0.1, 0.4 + t2*0.4, 0.7 + t2*0.2)
+        <span class="hljs-comment"># Gradient color from medium to light blue</span>
+        color1 = RGB(<span class="hljs-number">0.1</span>, <span class="hljs-number">0.4</span> + t1*<span class="hljs-number">0.4</span>, <span class="hljs-number">0.7</span> + t1*<span class="hljs-number">0.2</span>)
+        color2 = RGB(<span class="hljs-number">0.1</span>, <span class="hljs-number">0.4</span> + t2*<span class="hljs-number">0.4</span>, <span class="hljs-number">0.7</span> + t2*<span class="hljs-number">0.2</span>)
         
-        # Draw segment
+        <span class="hljs-comment"># Draw segment</span>
         plot!(p, [x1, x2], [y1, y2], [z1, z2],
-              linewidth=width1, color=color1, label=false,
-              seriestype=:path3d, alpha=0.9)
-    end
+              linewidth=width1, color=color1, label=<span class="hljs-literal">false</span>,
+              seriestype=:path3d, alpha=<span class="hljs-number">0.9</span>)
+    <span class="hljs-keyword">end</span>
     
-    # Add joint spheres with metallic appearance
-    # Base joint
-    scatter!(p, [positions[1, 1]], [positions[2, 1]], [positions[3, 1]],
-            markersize=12, color=:darkgray, markerstrokewidth=1, 
-            markerstrokecolor=:black, label=false)
+    <span class="hljs-comment"># Add joint spheres with metallic appearance</span>
+    <span class="hljs-comment"># Base joint</span>
+    scatter!(p, [positions[<span class="hljs-number">1</span>, <span class="hljs-number">1</span>]], [positions[<span class="hljs-number">2</span>, <span class="hljs-number">1</span>]], [positions[<span class="hljs-number">3</span>, <span class="hljs-number">1</span>]],
+            markersize=<span class="hljs-number">12</span>, color=:darkgray, markerstrokewidth=<span class="hljs-number">1</span>, 
+            markerstrokecolor=:black, label=<span class="hljs-literal">false</span>)
     
-    # Middle joint (shoulder) with highlight effect
-    scatter!(p, [positions[1, 2]], [positions[2, 2]], [positions[3, 2]],
-            markersize=10, color=:silver, markerstrokewidth=1, 
-            markerstrokecolor=:black, label=false)
-    # Add highlight to middle joint
-    scatter!(p, [positions[1, 2] + 0.02], [positions[2, 2] + 0.02], [positions[3, 2] + 0.02],
-            markersize=3, color=:white, markerstrokewidth=0, 
-            label=false)
+    <span class="hljs-comment"># Middle joint (shoulder) with highlight effect</span>
+    scatter!(p, [positions[<span class="hljs-number">1</span>, <span class="hljs-number">2</span>]], [positions[<span class="hljs-number">2</span>, <span class="hljs-number">2</span>]], [positions[<span class="hljs-number">3</span>, <span class="hljs-number">2</span>]],
+            markersize=<span class="hljs-number">10</span>, color=:silver, markerstrokewidth=<span class="hljs-number">1</span>, 
+            markerstrokecolor=:black, label=<span class="hljs-literal">false</span>)
+    <span class="hljs-comment"># Add highlight to middle joint</span>
+    scatter!(p, [positions[<span class="hljs-number">1</span>, <span class="hljs-number">2</span>] + <span class="hljs-number">0.02</span>], [positions[<span class="hljs-number">2</span>, <span class="hljs-number">2</span>] + <span class="hljs-number">0.02</span>], [positions[<span class="hljs-number">3</span>, <span class="hljs-number">2</span>] + <span class="hljs-number">0.02</span>],
+            markersize=<span class="hljs-number">3</span>, color=:white, markerstrokewidth=<span class="hljs-number">0</span>, 
+            label=<span class="hljs-literal">false</span>)
     
-    # Plot end effector with a more interesting shape
-    # Main part
-    scatter!(p, [positions[1, 3]], [positions[2, 3]], [positions[3, 3]],
-            markersize=12, markershape=:diamond, color=:crimson, 
-            markerstrokewidth=1, markerstrokecolor=:black, label=&quot;End Effector&quot;)
+    <span class="hljs-comment"># Plot end effector with a more interesting shape</span>
+    <span class="hljs-comment"># Main part</span>
+    scatter!(p, [positions[<span class="hljs-number">1</span>, <span class="hljs-number">3</span>]], [positions[<span class="hljs-number">2</span>, <span class="hljs-number">3</span>]], [positions[<span class="hljs-number">3</span>, <span class="hljs-number">3</span>]],
+            markersize=<span class="hljs-number">12</span>, markershape=:diamond, color=:crimson, 
+            markerstrokewidth=<span class="hljs-number">1</span>, markerstrokecolor=:black, label=<span class="hljs-string">&quot;End Effector&quot;</span>)
     
-    # Add &quot;gripper&quot; effect to end effector
-    gripper_length = 0.1
-    gripper_angle1 = atan(positions[2, 3] - positions[2, 2], positions[1, 3] - positions[1, 2])
-    gripper_angle2 = gripper_angle1 + π/2
+    <span class="hljs-comment"># Add &quot;gripper&quot; effect to end effector</span>
+    gripper_length = <span class="hljs-number">0.1</span>
+    gripper_angle1 = atan(positions[<span class="hljs-number">2</span>, <span class="hljs-number">3</span>] - positions[<span class="hljs-number">2</span>, <span class="hljs-number">2</span>], positions[<span class="hljs-number">1</span>, <span class="hljs-number">3</span>] - positions[<span class="hljs-number">1</span>, <span class="hljs-number">2</span>])
+    gripper_angle2 = gripper_angle1 + <span class="hljs-literal">π</span>/<span class="hljs-number">2</span>
     
-    # Gripper part 1
-    plot!(p, [positions[1, 3], positions[1, 3] + gripper_length * cos(gripper_angle1 + π/4)],
-          [positions[2, 3], positions[2, 3] + gripper_length * sin(gripper_angle1 + π/4)],
-          [positions[3, 3], positions[3, 3]],
-          linewidth=3, color=:crimson, label=false)
+    <span class="hljs-comment"># Gripper part 1</span>
+    plot!(p, [positions[<span class="hljs-number">1</span>, <span class="hljs-number">3</span>], positions[<span class="hljs-number">1</span>, <span class="hljs-number">3</span>] + gripper_length * cos(gripper_angle1 + <span class="hljs-literal">π</span>/<span class="hljs-number">4</span>)],
+          [positions[<span class="hljs-number">2</span>, <span class="hljs-number">3</span>], positions[<span class="hljs-number">2</span>, <span class="hljs-number">3</span>] + gripper_length * sin(gripper_angle1 + <span class="hljs-literal">π</span>/<span class="hljs-number">4</span>)],
+          [positions[<span class="hljs-number">3</span>, <span class="hljs-number">3</span>], positions[<span class="hljs-number">3</span>, <span class="hljs-number">3</span>]],
+          linewidth=<span class="hljs-number">3</span>, color=:crimson, label=<span class="hljs-literal">false</span>)
     
-    # Gripper part 2
-    plot!(p, [positions[1, 3], positions[1, 3] + gripper_length * cos(gripper_angle1 - π/4)],
-          [positions[2, 3], positions[2, 3] + gripper_length * sin(gripper_angle1 - π/4)],
-          [positions[3, 3], positions[3, 3]],
-          linewidth=3, color=:crimson, label=false)
+    <span class="hljs-comment"># Gripper part 2</span>
+    plot!(p, [positions[<span class="hljs-number">1</span>, <span class="hljs-number">3</span>], positions[<span class="hljs-number">1</span>, <span class="hljs-number">3</span>] + gripper_length * cos(gripper_angle1 - <span class="hljs-literal">π</span>/<span class="hljs-number">4</span>)],
+          [positions[<span class="hljs-number">2</span>, <span class="hljs-number">3</span>], positions[<span class="hljs-number">2</span>, <span class="hljs-number">3</span>] + gripper_length * sin(gripper_angle1 - <span class="hljs-literal">π</span>/<span class="hljs-number">4</span>)],
+          [positions[<span class="hljs-number">3</span>, <span class="hljs-number">3</span>], positions[<span class="hljs-number">3</span>, <span class="hljs-number">3</span>]],
+          linewidth=<span class="hljs-number">3</span>, color=:crimson, label=<span class="hljs-literal">false</span>)
     
-    return p
-end
+    <span class="hljs-keyword">return</span> p
+<span class="hljs-keyword">end</span>
 
-function visualize_arm_and_target(arm::RoboticArm3D{N}, joint_angles, target_position) where {N}
-    # Calculate positions using forward kinematics
+<span class="hljs-keyword">function</span> visualize_arm_and_target(arm::RoboticArm3D{N}, joint_angles, target_position) <span class="hljs-keyword">where</span> {N}
+    <span class="hljs-comment"># Calculate positions using forward kinematics</span>
     positions = forward_kinematics_3d(arm, joint_angles)
     
-    # Create plot
+    <span class="hljs-comment"># Create plot</span>
     p = plot(
-        title=&quot;3D Robotic Arm Visualization&quot;,
-        xlabel=&quot;X&quot;, ylabel=&quot;Y&quot;, zlabel=&quot;Z&quot;,
-        xlim=(-2, 2), ylim=(-2, 2), zlim=(-2, 2),
+        title=<span class="hljs-string">&quot;3D Robotic Arm Visualization&quot;</span>,
+        xlabel=<span class="hljs-string">&quot;X&quot;</span>, ylabel=<span class="hljs-string">&quot;Y&quot;</span>, zlabel=<span class="hljs-string">&quot;Z&quot;</span>,
+        xlim=(-<span class="hljs-number">2</span>, <span class="hljs-number">2</span>), ylim=(-<span class="hljs-number">2</span>, <span class="hljs-number">2</span>), zlim=(-<span class="hljs-number">2</span>, <span class="hljs-number">2</span>),
         aspect_ratio=:equal,
         legend=:topright
     )
     
-    # Plot the arm
-    for i in 1:arm.num_links
-        plot!(p, [positions[1, i], positions[1, i+1]], 
-              [positions[2, i], positions[2, i+1]],
-              [positions[3, i], positions[3, i+1]],
-              linewidth=3, color=:blue, label=(i==1 ? &quot;Arm&quot; : false))
+    <span class="hljs-comment"># Plot the arm</span>
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:arm.num_links
+        plot!(p, [positions[<span class="hljs-number">1</span>, i], positions[<span class="hljs-number">1</span>, i+<span class="hljs-number">1</span>]], 
+              [positions[<span class="hljs-number">2</span>, i], positions[<span class="hljs-number">2</span>, i+<span class="hljs-number">1</span>]],
+              [positions[<span class="hljs-number">3</span>, i], positions[<span class="hljs-number">3</span>, i+<span class="hljs-number">1</span>]],
+              linewidth=<span class="hljs-number">3</span>, color=:blue, label=(i==<span class="hljs-number">1</span> ? <span class="hljs-string">&quot;Arm&quot;</span> : <span class="hljs-literal">false</span>))
         
-        scatter!(p, [positions[1, i]], [positions[2, i]], [positions[3, i]],
-                markersize=5, color=:black, label=(i==1 ? &quot;Joints&quot; : false))
-    end
+        scatter!(p, [positions[<span class="hljs-number">1</span>, i]], [positions[<span class="hljs-number">2</span>, i]], [positions[<span class="hljs-number">3</span>, i]],
+                markersize=<span class="hljs-number">5</span>, color=:black, label=(i==<span class="hljs-number">1</span> ? <span class="hljs-string">&quot;Joints&quot;</span> : <span class="hljs-literal">false</span>))
+    <span class="hljs-keyword">end</span>
     
-    # Plot end effector
-    scatter!(p, [positions[1, end]], [positions[2, end]], [positions[3, end]],
-            markersize=6, color=:red, label=&quot;End Effector&quot;)
+    <span class="hljs-comment"># Plot end effector</span>
+    scatter!(p, [positions[<span class="hljs-number">1</span>, <span class="hljs-keyword">end</span>]], [positions[<span class="hljs-number">2</span>, <span class="hljs-keyword">end</span>]], [positions[<span class="hljs-number">3</span>, <span class="hljs-keyword">end</span>]],
+            markersize=<span class="hljs-number">6</span>, color=:red, label=<span class="hljs-string">&quot;End Effector&quot;</span>)
     
-    # Plot target
-    scatter!(p, [target_position[1]], [target_position[2]], [target_position[3]],
-            markersize=6, markershape=:star, color=:green, label=&quot;Target&quot;)
+    <span class="hljs-comment"># Plot target</span>
+    scatter!(p, [target_position[<span class="hljs-number">1</span>]], [target_position[<span class="hljs-number">2</span>]], [target_position[<span class="hljs-number">3</span>]],
+            markersize=<span class="hljs-number">6</span>, markershape=:star, color=:green, label=<span class="hljs-string">&quot;Target&quot;</span>)
     
-    # Plot base
-    scatter!(p, [0], [0], [0], markersize=8, color=:black, label=&quot;Base&quot;)
+    <span class="hljs-comment"># Plot base</span>
+    scatter!(p, [<span class="hljs-number">0</span>], [<span class="hljs-number">0</span>], [<span class="hljs-number">0</span>], markersize=<span class="hljs-number">8</span>, color=:black, label=<span class="hljs-string">&quot;Base&quot;</span>)
     
-    # Calculate error
-    error = norm(positions[:, end] - target_position)
-    annotate!(p, 0, 0, 2, text(&quot;Error: $(round(error, digits=4))&quot;, 10, :black))
+    <span class="hljs-comment"># Calculate error</span>
+    error = norm(positions[:, <span class="hljs-keyword">end</span>] - target_position)
+    annotate!(p, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">2</span>, text(<span class="hljs-string">&quot;Error: <span class="hljs-subst">$(round(error, digits=<span class="hljs-number">4</span>)</span>)&quot;</span>, <span class="hljs-number">10</span>, :black))
     
-    return p, positions, error
-end
+    <span class="hljs-keyword">return</span> p, positions, error
+<span class="hljs-keyword">end</span>
 
-&quot;&quot;&quot;
+<span class="hljs-string">&quot;&quot;&quot;
     animate_sequential_targets_3d(arm, all_states, all_targets)
 
-Animate the arm&#39;s motion through a sequence of targets.
-&quot;&quot;&quot;
-function animate_sequential_targets_3d(arm::RoboticArm3D{N}, all_states::Vector, all_targets::Vector) where {N}
+Animate the arm&#x27;s motion through a sequence of targets.
+&quot;&quot;&quot;</span>
+<span class="hljs-keyword">function</span> animate_sequential_targets_3d(arm::RoboticArm3D{N}, all_states::<span class="hljs-built_in">Vector</span>, all_targets::<span class="hljs-built_in">Vector</span>) <span class="hljs-keyword">where</span> {N}
     num_targets = length(all_targets)
     
-    # Combine all trajectory segments into one continuous path
+    <span class="hljs-comment"># Combine all trajectory segments into one continuous path</span>
     combined_states = hcat(all_states...)
-    total_frames = size(combined_states, 2)
+    total_frames = size(combined_states, <span class="hljs-number">2</span>)
     
-    # Calculate the frame indices where we reach each target
-    target_reached_frames = zeros(Int, num_targets)
-    frame_count = 0
-    for i in 1:num_targets
-        frame_count += size(all_states[i], 2)
+    <span class="hljs-comment"># Calculate the frame indices where we reach each target</span>
+    target_reached_frames = zeros(<span class="hljs-built_in">Int</span>, num_targets)
+    frame_count = <span class="hljs-number">0</span>
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:num_targets
+        frame_count += size(all_states[i], <span class="hljs-number">2</span>)
         target_reached_frames[i] = frame_count
-    end
+    <span class="hljs-keyword">end</span>
     
-    animation = @animate for k in 1:total_frames
-        # Determine which target we&#39;re currently moving towards
-        current_target_idx = 1
-        for i in 1:num_targets
-            if k &lt;= target_reached_frames[i]
+    animation = <span class="hljs-meta">@animate</span> <span class="hljs-keyword">for</span> k <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:total_frames
+        <span class="hljs-comment"># Determine which target we&#x27;re currently moving towards</span>
+        current_target_idx = <span class="hljs-number">1</span>
+        <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:num_targets
+            <span class="hljs-keyword">if</span> k &lt;= target_reached_frames[i]
                 current_target_idx = i
-                break
-            end
-        end
+                <span class="hljs-keyword">break</span>
+            <span class="hljs-keyword">end</span>
+        <span class="hljs-keyword">end</span>
         
-        # Get the current joint angles
+        <span class="hljs-comment"># Get the current joint angles</span>
         joint_angles = combined_states[:, k]
         
-        # Calculate camera angle that slowly rotates for better 3D perception
-        camera_angle_x = 30 + 20*sin(k/total_frames*2π)
-        camera_angle_y = 20 + 10*cos(k/total_frames*2π)
+        <span class="hljs-comment"># Calculate camera angle that slowly rotates for better 3D perception</span>
+        camera_angle_x = <span class="hljs-number">30</span> + <span class="hljs-number">20</span>*sin(k/total_frames*<span class="hljs-number">2</span><span class="hljs-literal">π</span>)
+        camera_angle_y = <span class="hljs-number">20</span> + <span class="hljs-number">10</span>*cos(k/total_frames*<span class="hljs-number">2</span><span class="hljs-literal">π</span>)
         
-        # Calculate the current end effector position using the kinematics
+        <span class="hljs-comment"># Calculate the current end effector position using the kinematics</span>
         positions = forward_kinematics_3d(arm, joint_angles)
-        current_pos = positions[:, 3]
+        current_pos = positions[:, <span class="hljs-number">3</span>]
         
-        # Calculate distance to current target
+        <span class="hljs-comment"># Calculate distance to current target</span>
         distance = norm(current_pos - all_targets[current_target_idx])
         
-        # Calculate overall progress
+        <span class="hljs-comment"># Calculate overall progress</span>
         overall_progress = k / total_frames
         
-        # Create a 3D plot with improved styling
+        <span class="hljs-comment"># Create a 3D plot with improved styling</span>
         p = plot(
-            xlabel=&quot;X&quot;, ylabel=&quot;Y&quot;, zlabel=&quot;Z&quot;,
-            xlim=(-2, 2), ylim=(-2, 2), zlim=(0, 2),
-            title=&quot;Target: $current_target_idx/$num_targets | Progress: $(round(Int, overall_progress*100))% | Distance: $(round(distance, digits=2))&quot;,
-            legend=:topright, size=(900, 700),
+            xlabel=<span class="hljs-string">&quot;X&quot;</span>, ylabel=<span class="hljs-string">&quot;Y&quot;</span>, zlabel=<span class="hljs-string">&quot;Z&quot;</span>,
+            xlim=(-<span class="hljs-number">2</span>, <span class="hljs-number">2</span>), ylim=(-<span class="hljs-number">2</span>, <span class="hljs-number">2</span>), zlim=(<span class="hljs-number">0</span>, <span class="hljs-number">2</span>),
+            title=<span class="hljs-string">&quot;Target: <span class="hljs-variable">$current_target_idx</span>/<span class="hljs-variable">$num_targets</span> | Progress: <span class="hljs-subst">$(round(<span class="hljs-built_in">Int</span>, overall_progress*<span class="hljs-number">100</span>)</span>)% | Distance: <span class="hljs-subst">$(round(distance, digits=<span class="hljs-number">2</span>)</span>)&quot;</span>,
+            legend=:topright, size=(<span class="hljs-number">900</span>, <span class="hljs-number">700</span>),
             camera=(camera_angle_x, camera_angle_y),
-            grid=false,  # Remove grid for cleaner look
+            grid=<span class="hljs-literal">false</span>,  <span class="hljs-comment"># Remove grid for cleaner look</span>
             aspect_ratio=:equal,
             background_color=:white,
             foreground_color=:black,
-            guidefontsize=10,
-            titlefontsize=12
+            guidefontsize=<span class="hljs-number">10</span>,
+            titlefontsize=<span class="hljs-number">12</span>
         )
         
-        # Add a more interesting ground plane with grid pattern
-        x_grid = range(-2, 2, length=20)
-        y_grid = range(-2, 2, length=20)
+        <span class="hljs-comment"># Add a more interesting ground plane with grid pattern</span>
+        x_grid = range(-<span class="hljs-number">2</span>, <span class="hljs-number">2</span>, length=<span class="hljs-number">20</span>)
+        y_grid = range(-<span class="hljs-number">2</span>, <span class="hljs-number">2</span>, length=<span class="hljs-number">20</span>)
         z_grid = zeros(length(x_grid), length(y_grid))
-        surface!(p, x_grid, y_grid, z_grid, color=:aliceblue, alpha=0.2, label=false)
+        surface!(p, x_grid, y_grid, z_grid, color=:aliceblue, alpha=<span class="hljs-number">0.2</span>, label=<span class="hljs-literal">false</span>)
         
-        # Add grid lines on the ground for better depth perception
-        for x in range(-2, 2, step=0.5)
-            plot!(p, [x, x], [-2, 2], [0.01, 0.01], color=:lightgray, linewidth=1, label=false, alpha=0.3)
-        end
-        for y in range(-2, 2, step=0.5)
-            plot!(p, [-2, 2], [y, y], [0.01, 0.01], color=:lightgray, linewidth=1, label=false, alpha=0.3)
-        end
+        <span class="hljs-comment"># Add grid lines on the ground for better depth perception</span>
+        <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> range(-<span class="hljs-number">2</span>, <span class="hljs-number">2</span>, step=<span class="hljs-number">0.5</span>)
+            plot!(p, [x, x], [-<span class="hljs-number">2</span>, <span class="hljs-number">2</span>], [<span class="hljs-number">0.01</span>, <span class="hljs-number">0.01</span>], color=:lightgray, linewidth=<span class="hljs-number">1</span>, label=<span class="hljs-literal">false</span>, alpha=<span class="hljs-number">0.3</span>)
+        <span class="hljs-keyword">end</span>
+        <span class="hljs-keyword">for</span> y <span class="hljs-keyword">in</span> range(-<span class="hljs-number">2</span>, <span class="hljs-number">2</span>, step=<span class="hljs-number">0.5</span>)
+            plot!(p, [-<span class="hljs-number">2</span>, <span class="hljs-number">2</span>], [y, y], [<span class="hljs-number">0.01</span>, <span class="hljs-number">0.01</span>], color=:lightgray, linewidth=<span class="hljs-number">1</span>, label=<span class="hljs-literal">false</span>, alpha=<span class="hljs-number">0.3</span>)
+        <span class="hljs-keyword">end</span>
         
-        # Plot targets with improved styling
-        for (i, target) in enumerate(all_targets)
-            if i &lt; current_target_idx
-                # Completed targets - we&#39;ve already reached these
-                scatter!(p, [target[1]], [target[2]], [target[3]],
-                        markersize=8, color=:darkgreen, markershape=:circle, 
-                        label=(i==1 ? &quot;Completed&quot; : false))
+        <span class="hljs-comment"># Plot targets with improved styling</span>
+        <span class="hljs-keyword">for</span> (i, target) <span class="hljs-keyword">in</span> enumerate(all_targets)
+            <span class="hljs-keyword">if</span> i &lt; current_target_idx
+                <span class="hljs-comment"># Completed targets - we&#x27;ve already reached these</span>
+                scatter!(p, [target[<span class="hljs-number">1</span>]], [target[<span class="hljs-number">2</span>]], [target[<span class="hljs-number">3</span>]],
+                        markersize=<span class="hljs-number">8</span>, color=:darkgreen, markershape=:circle, 
+                        label=(i==<span class="hljs-number">1</span> ? <span class="hljs-string">&quot;Completed&quot;</span> : <span class="hljs-literal">false</span>))
                 
-                # Add a small vertical line connecting target to ground
-                plot!(p, [target[1], target[1]], [target[2], target[2]], [0, target[3]],
-                      linewidth=1, color=:darkgreen, linestyle=:dash, alpha=0.3, label=false)
-            elseif i == current_target_idx
-                # Current target with a glowing effect
-                scatter!(p, [target[1]], [target[2]], [target[3]],
-                        markersize=12, color=:green, markershape=:star, 
-                        label=&quot;Current&quot;)
+                <span class="hljs-comment"># Add a small vertical line connecting target to ground</span>
+                plot!(p, [target[<span class="hljs-number">1</span>], target[<span class="hljs-number">1</span>]], [target[<span class="hljs-number">2</span>], target[<span class="hljs-number">2</span>]], [<span class="hljs-number">0</span>, target[<span class="hljs-number">3</span>]],
+                      linewidth=<span class="hljs-number">1</span>, color=:darkgreen, linestyle=:dash, alpha=<span class="hljs-number">0.3</span>, label=<span class="hljs-literal">false</span>)
+            <span class="hljs-keyword">elseif</span> i == current_target_idx
+                <span class="hljs-comment"># Current target with a glowing effect</span>
+                scatter!(p, [target[<span class="hljs-number">1</span>]], [target[<span class="hljs-number">2</span>]], [target[<span class="hljs-number">3</span>]],
+                        markersize=<span class="hljs-number">12</span>, color=:green, markershape=:star, 
+                        label=<span class="hljs-string">&quot;Current&quot;</span>)
                 
-                # Add a pulsing effect based on frame number
-                pulse_size = 6 + 3*sin(k/10)
-                scatter!(p, [target[1]], [target[2]], [target[3]],
+                <span class="hljs-comment"># Add a pulsing effect based on frame number</span>
+                pulse_size = <span class="hljs-number">6</span> + <span class="hljs-number">3</span>*sin(k/<span class="hljs-number">10</span>)
+                scatter!(p, [target[<span class="hljs-number">1</span>]], [target[<span class="hljs-number">2</span>]], [target[<span class="hljs-number">3</span>]],
                         markersize=pulse_size, color=:green, markershape=:circle, 
-                        alpha=0.3, label=false)
+                        alpha=<span class="hljs-number">0.3</span>, label=<span class="hljs-literal">false</span>)
                 
-                # Add a vertical line connecting target to ground
-                plot!(p, [target[1], target[1]], [target[2], target[2]], [0, target[3]],
-                      linewidth=1, color=:green, linestyle=:dash, alpha=0.5, label=false)
-            elseif i == current_target_idx + 1
-                # Only show the next target
-                scatter!(p, [target[1]], [target[2]], [target[3]],
-                        markersize=8, color=:gray, markershape=:star, 
-                        label=&quot;Next&quot;)
+                <span class="hljs-comment"># Add a vertical line connecting target to ground</span>
+                plot!(p, [target[<span class="hljs-number">1</span>], target[<span class="hljs-number">1</span>]], [target[<span class="hljs-number">2</span>], target[<span class="hljs-number">2</span>]], [<span class="hljs-number">0</span>, target[<span class="hljs-number">3</span>]],
+                      linewidth=<span class="hljs-number">1</span>, color=:green, linestyle=:dash, alpha=<span class="hljs-number">0.5</span>, label=<span class="hljs-literal">false</span>)
+            <span class="hljs-keyword">elseif</span> i == current_target_idx + <span class="hljs-number">1</span>
+                <span class="hljs-comment"># Only show the next target</span>
+                scatter!(p, [target[<span class="hljs-number">1</span>]], [target[<span class="hljs-number">2</span>]], [target[<span class="hljs-number">3</span>]],
+                        markersize=<span class="hljs-number">8</span>, color=:gray, markershape=:star, 
+                        label=<span class="hljs-string">&quot;Next&quot;</span>)
                 
-                # Add a faint vertical line
-                plot!(p, [target[1], target[1]], [target[2], target[2]], [0, target[3]],
-                      linewidth=1, color=:gray, linestyle=:dash, alpha=0.2, label=false)
-            end
-        end
+                <span class="hljs-comment"># Add a faint vertical line</span>
+                plot!(p, [target[<span class="hljs-number">1</span>], target[<span class="hljs-number">1</span>]], [target[<span class="hljs-number">2</span>], target[<span class="hljs-number">2</span>]], [<span class="hljs-number">0</span>, target[<span class="hljs-number">3</span>]],
+                      linewidth=<span class="hljs-number">1</span>, color=:gray, linestyle=:dash, alpha=<span class="hljs-number">0.2</span>, label=<span class="hljs-literal">false</span>)
+            <span class="hljs-keyword">end</span>
+        <span class="hljs-keyword">end</span>
         
-        # Add a trail of the end effector&#39;s path
-        if k &gt; 1
-            # Get positions from previous frames to create a trail
-            trail_length = min(k-1, 15)  # Shorter trail for less clutter
-            trail_indices = max(1, k-trail_length):k-1
+        <span class="hljs-comment"># Add a trail of the end effector&#x27;s path</span>
+        <span class="hljs-keyword">if</span> k &gt; <span class="hljs-number">1</span>
+            <span class="hljs-comment"># Get positions from previous frames to create a trail</span>
+            trail_length = min(k-<span class="hljs-number">1</span>, <span class="hljs-number">15</span>)  <span class="hljs-comment"># Shorter trail for less clutter</span>
+            trail_indices = max(<span class="hljs-number">1</span>, k-trail_length):k-<span class="hljs-number">1</span>
             
-            # Extract end effector positions for each frame in the trail
+            <span class="hljs-comment"># Extract end effector positions for each frame in the trail</span>
             trail_positions = []
-            for idx in trail_indices
+            <span class="hljs-keyword">for</span> idx <span class="hljs-keyword">in</span> trail_indices
                 trail_joint_angles = combined_states[:, idx]
-                trail_pos = forward_kinematics_3d(arm, trail_joint_angles)[:, 3]
+                trail_pos = forward_kinematics_3d(arm, trail_joint_angles)[:, <span class="hljs-number">3</span>]
                 push!(trail_positions, trail_pos)
-            end
+            <span class="hljs-keyword">end</span>
             
-            # Extract coordinates for the trail
-            trail_x = [pos[1] for pos in trail_positions]
-            trail_y = [pos[2] for pos in trail_positions]
-            trail_z = [pos[3] for pos in trail_positions]
+            <span class="hljs-comment"># Extract coordinates for the trail</span>
+            trail_x = [pos[<span class="hljs-number">1</span>] <span class="hljs-keyword">for</span> pos <span class="hljs-keyword">in</span> trail_positions]
+            trail_y = [pos[<span class="hljs-number">2</span>] <span class="hljs-keyword">for</span> pos <span class="hljs-keyword">in</span> trail_positions]
+            trail_z = [pos[<span class="hljs-number">3</span>] <span class="hljs-keyword">for</span> pos <span class="hljs-keyword">in</span> trail_positions]
             
-            # Plot the trail with a gradient effect
-            if length(trail_x) &gt; 1
-                for i in 1:length(trail_x)-1
-                    # Gradient color from orange to transparent
-                    alpha_val = 0.2 + 0.7 * i / length(trail_x)
-                    plot!(p, [trail_x[i], trail_x[i+1]], 
-                          [trail_y[i], trail_y[i+1]],
-                          [trail_z[i], trail_z[i+1]],
-                          linewidth=2 + i/3, color=:orange, linestyle=:solid, 
-                          label=false, alpha=alpha_val)
-                end
-            end
-        end
+            <span class="hljs-comment"># Plot the trail with a gradient effect</span>
+            <span class="hljs-keyword">if</span> length(trail_x) &gt; <span class="hljs-number">1</span>
+                <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:length(trail_x)-<span class="hljs-number">1</span>
+                    <span class="hljs-comment"># Gradient color from orange to transparent</span>
+                    alpha_val = <span class="hljs-number">0.2</span> + <span class="hljs-number">0.7</span> * i / length(trail_x)
+                    plot!(p, [trail_x[i], trail_x[i+<span class="hljs-number">1</span>]], 
+                          [trail_y[i], trail_y[i+<span class="hljs-number">1</span>]],
+                          [trail_z[i], trail_z[i+<span class="hljs-number">1</span>]],
+                          linewidth=<span class="hljs-number">2</span> + i/<span class="hljs-number">3</span>, color=:orange, linestyle=:solid, 
+                          label=<span class="hljs-literal">false</span>, alpha=alpha_val)
+                <span class="hljs-keyword">end</span>
+            <span class="hljs-keyword">end</span>
+        <span class="hljs-keyword">end</span>
         
-        # For visual reference, add a shadow of the arm on the XZ plane
-        for i in 1:size(positions, 2)-1
-            plot!(p, [positions[1, i], positions[1, i+1]], 
-                  [0, 0],  # Fix Y coordinate to 0 (XZ plane)
-                  [positions[3, i], positions[3, i+1]],
-                  linewidth=2, color=:gray, linestyle=:dash, 
-                  label=(i==1 ? &quot;Shadow&quot; : false), opacity=0.3)
-        end
+        <span class="hljs-comment"># For visual reference, add a shadow of the arm on the XZ plane</span>
+        <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:size(positions, <span class="hljs-number">2</span>)-<span class="hljs-number">1</span>
+            plot!(p, [positions[<span class="hljs-number">1</span>, i], positions[<span class="hljs-number">1</span>, i+<span class="hljs-number">1</span>]], 
+                  [<span class="hljs-number">0</span>, <span class="hljs-number">0</span>],  <span class="hljs-comment"># Fix Y coordinate to 0 (XZ plane)</span>
+                  [positions[<span class="hljs-number">3</span>, i], positions[<span class="hljs-number">3</span>, i+<span class="hljs-number">1</span>]],
+                  linewidth=<span class="hljs-number">2</span>, color=:gray, linestyle=:dash, 
+                  label=(i==<span class="hljs-number">1</span> ? <span class="hljs-string">&quot;Shadow&quot;</span> : <span class="hljs-literal">false</span>), opacity=<span class="hljs-number">0.3</span>)
+        <span class="hljs-keyword">end</span>
         
-        # Plot the arm with enhanced appearance
+        <span class="hljs-comment"># Plot the arm with enhanced appearance</span>
         plot_arm_3d!(p, arm, joint_angles)
-    end
+    <span class="hljs-keyword">end</span>
     
-    gif(animation, &quot;sequential_targets_3d.gif&quot;, fps=15, show_msg = false)
-    return nothing
-end</code></pre><pre><code class="nohighlight hljs">Main.anonymous.animate_sequential_targets_3d</code></pre><h2 id="Model-specification"><a class="docs-heading-anchor" href="#Model-specification">Model specification</a><a id="Model-specification-1"></a><a class="docs-heading-anchor-permalink" href="#Model-specification" title="Permalink"></a></h2><pre><code class="language-julia hljs">@model function robotic_arm_3d_model(arm, environment, initial_state, goal, horizon, dt)
-    # Extract properties
+    gif(animation, <span class="hljs-string">&quot;sequential_targets_3d.gif&quot;</span>, fps=<span class="hljs-number">15</span>, show_msg = <span class="hljs-literal">false</span>)
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">nothing</span>
+<span class="hljs-keyword">end</span>
+</code></pre><pre><code class="nohighlight hljs">Main.var&quot;##WeaveSandBox#277&quot;.animate_sequential_targets_3d</code></pre><h2 id="Model-specification"><a class="docs-heading-anchor" href="#Model-specification">Model specification</a><a id="Model-specification-1"></a><a class="docs-heading-anchor-permalink" href="#Model-specification" title="Permalink"></a></h2><pre><code class="language-julia hljs"><span class="hljs-meta">@model</span> <span class="hljs-keyword">function</span> robotic_arm_3d_model(arm, environment, initial_state, goal, horizon, dt)
+    <span class="hljs-comment"># Extract properties</span>
     g = get_gravity(environment)
     num_links, _, link_masses, _ = get_properties(arm)
     
-    # Initial state prior
-    s[1] ~ MvNormal(mean = initial_state, covariance = 1e-5 * I)
+    <span class="hljs-comment"># Initial state prior</span>
+    s[<span class="hljs-number">1</span>] ~ MvNormal(mean = initial_state, covariance = <span class="hljs-number">1e-5</span> * I)
     
-    for i in 1:horizon
-        # Prior on torques - compensate for gravity at each joint
-        # For 3D arm: first joint (yaw) not affected by gravity, 
-        # pitch joints affected based on angle
-        gravity_compensation = zeros(2*num_links)
-        for j in 1:num_links
-            if j &gt; 1  # Skip first joint (base yaw)
-                gravity_compensation[2*j-1] = link_masses[j] * g * 0.5  # Pitch compensation
-            end
-        end
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:horizon
+        <span class="hljs-comment"># Prior on torques - compensate for gravity at each joint</span>
+        <span class="hljs-comment"># For 3D arm: first joint (yaw) not affected by gravity, </span>
+        <span class="hljs-comment"># pitch joints affected based on angle</span>
+        gravity_compensation = zeros(<span class="hljs-number">2</span>*num_links)
+        <span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:num_links
+            <span class="hljs-keyword">if</span> j &gt; <span class="hljs-number">1</span>  <span class="hljs-comment"># Skip first joint (base yaw)</span>
+                gravity_compensation[<span class="hljs-number">2</span>*j-<span class="hljs-number">1</span>] = link_masses[j] * g * <span class="hljs-number">0.5</span>  <span class="hljs-comment"># Pitch compensation</span>
+            <span class="hljs-keyword">end</span>
+        <span class="hljs-keyword">end</span>
         
-        u[i] ~ MvNormal(μ = gravity_compensation, Σ = diageye(2*num_links))
+        u[i] ~ MvNormal(μ = gravity_compensation, Σ = diageye(<span class="hljs-number">2</span>*num_links))
         
-        # State transition
-        s[i + 1] ~ MvNormal(
+        <span class="hljs-comment"># State transition</span>
+        s[i + <span class="hljs-number">1</span>] ~ MvNormal(
             μ = state_transition_3d(s[i], u[i], arm, environment, dt),
-            Σ = 1e-10 * I
+            Σ = <span class="hljs-number">1e-10</span> * I
         )
-    end
+    <span class="hljs-keyword">end</span>
     
-    # Final state constraint
-    s[end] ~ MvNormal(mean = goal, covariance = 1e-5 * diageye(4*num_links))
-end
+    <span class="hljs-comment"># Final state constraint</span>
+    s[<span class="hljs-keyword">end</span>] ~ MvNormal(mean = goal, covariance = <span class="hljs-number">1e-5</span> * diageye(<span class="hljs-number">4</span>*num_links))
+<span class="hljs-keyword">end</span>
 
 
-@meta function robotic_arm_meta()
-    # Approximate the state transition
+<span class="hljs-meta">@meta</span> <span class="hljs-keyword">function</span> robotic_arm_meta()
+    <span class="hljs-comment"># Approximate the state transition</span>
     state_transition_3d() -&gt; Unscented()
-end</code></pre><pre><code class="nohighlight hljs">robotic_arm_meta (generic function with 1 method)</code></pre><h3 id="Integration-Possibilities"><a class="docs-heading-anchor" href="#Integration-Possibilities">Integration Possibilities</a><a id="Integration-Possibilities-1"></a><a class="docs-heading-anchor-permalink" href="#Integration-Possibilities" title="Permalink"></a></h3><p>While this example keeps kinematics separate from the probabilistic model, it&#39;s theoretically possible to integrate them directly:</p><ol><li><strong>Embedded Forward Kinematics</strong>: The model could include forward kinematics as part of its structure, allowing direct optimization in Cartesian space</li><li><strong>Embedded Inverse Kinematics</strong>: The inference process could solve inverse kinematics simultaneously with trajectory optimization</li></ol><p>For example, we could define a model that directly optimizes for reaching a Cartesian target:</p><pre><code class="language-julia hljs">@model function direct_cartesian_model(arm, environment, initial_state, target_position, horizon, dt)
-    # Initial state prior
-    s[1] ~ MvNormal(mean = initial_state, covariance = 1e-5 * I)
+<span class="hljs-keyword">end</span>
+</code></pre><pre><code class="nohighlight hljs">robotic_arm_meta (generic function with 1 method)</code></pre><h3 id="Integration-Possibilities"><a class="docs-heading-anchor" href="#Integration-Possibilities">Integration Possibilities</a><a id="Integration-Possibilities-1"></a><a class="docs-heading-anchor-permalink" href="#Integration-Possibilities" title="Permalink"></a></h3><p>While this example keeps kinematics separate from the probabilistic model, it&#39;s theoretically possible to integrate them directly:</p><ol><li><strong>Embedded Forward Kinematics</strong>: The model could include forward kinematics as part of its structure, allowing direct optimization in Cartesian space</li><li><strong>Embedded Inverse Kinematics</strong>: The inference process could solve inverse kinematics simultaneously with trajectory optimization</li></ol><p>For example, we could define a model that directly optimizes for reaching a Cartesian target:</p><pre><code class="language-julia hljs"><span class="hljs-meta">@model</span> <span class="hljs-keyword">function</span> direct_cartesian_model(arm, environment, initial_state, target_position, horizon, dt)
+    <span class="hljs-comment"># Initial state prior</span>
+    s[<span class="hljs-number">1</span>] ~ MvNormal(mean = initial_state, covariance = <span class="hljs-number">1e-5</span> * I)
     
-    for i in 1:horizon
-        # Control priors
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:horizon
+        <span class="hljs-comment"># Control priors</span>
         u[i] ~ MvNormal(μ = zeros(num_controls), Σ = diageye(num_controls))
         
-        # State transition
-        s[i + 1] ~ MvNormal(
+        <span class="hljs-comment"># State transition</span>
+        s[i + <span class="hljs-number">1</span>] ~ MvNormal(
             μ = state_transition(s[i], u[i], arm, environment, dt),
-            Σ = 1e-10 * I
+            Σ = <span class="hljs-number">1e-10</span> * I
         )
         
-        # Calculate end effector position using forward kinematics
-        ee_pos[i] := forward_kinematics(arm, s[i][1:num_joints])
-    end
+        <span class="hljs-comment"># Calculate end effector position using forward kinematics</span>
+        ee_pos[i] := forward_kinematics(arm, s[i][<span class="hljs-number">1</span>:num_joints])
+    <span class="hljs-keyword">end</span>
     
-    # Final position constraint directly in Cartesian space
-    ee_pos[horizon] ~ MvNormal(mean = target_position, covariance = 1e-5 * I)
-end</code></pre><p>This approach would eliminate the need for separate inverse kinematics calculations but would make the inference problem more complex. For clarity and computational efficiency, this example keeps these components separate.</p><h2 id="Motion-Planning"><a class="docs-heading-anchor" href="#Motion-Planning">Motion Planning</a><a id="Motion-Planning-1"></a><a class="docs-heading-anchor-permalink" href="#Motion-Planning" title="Permalink"></a></h2><pre><code class="language-julia hljs">&quot;&quot;&quot;
+    <span class="hljs-comment"># Final position constraint directly in Cartesian space</span>
+    ee_pos[horizon] ~ MvNormal(mean = target_position, covariance = <span class="hljs-number">1e-5</span> * I)
+<span class="hljs-keyword">end</span>
+</code></pre><p>This approach would eliminate the need for separate inverse kinematics calculations but would make the inference problem more complex. For clarity and computational efficiency, this example keeps these components separate.</p><h2 id="Motion-Planning"><a class="docs-heading-anchor" href="#Motion-Planning">Motion Planning</a><a id="Motion-Planning-1"></a><a class="docs-heading-anchor-permalink" href="#Motion-Planning" title="Permalink"></a></h2><pre><code class="language-julia hljs"><span class="hljs-string">&quot;&quot;&quot;
     move_to_target_3d(arm, env, start, target_position, horizon, dt)
 
 Plan motion to reach a target position in 3D space using the RxInfer model.
-&quot;&quot;&quot;
-function move_to_target_3d(arm::RoboticArm3D{N}, env::Environment, start::ArmState3D, target_position, horizon, dt) where {N}
-    # Convert ArmState3D to state vector
+&quot;&quot;&quot;</span>
+<span class="hljs-keyword">function</span> move_to_target_3d(arm::RoboticArm3D{N}, env::Environment, start::ArmState3D, target_position, horizon, dt) <span class="hljs-keyword">where</span> {N}
+    <span class="hljs-comment"># Convert ArmState3D to state vector</span>
     initial_state = vcat(start.joint_angles, start.joint_velocities)
     
-    # Calculate target joint angles that would reach the target position
+    <span class="hljs-comment"># Calculate target joint angles that would reach the target position</span>
     target_joint_angles = inverse_kinematics_3d(arm, target_position)
     
-    # Create goal state (target angles and zero velocities)
+    <span class="hljs-comment"># Create goal state (target angles and zero velocities)</span>
     goal_state = vcat(target_joint_angles, zeros(length(target_joint_angles)))
         
-    # Create and run the inference using the correct API structure
+    <span class="hljs-comment"># Create and run the inference using the correct API structure</span>
     results = infer(
         model = robotic_arm_3d_model(
             arm = arm,
@@ -655,98 +661,100 @@ function move_to_target_3d(arm::RoboticArm3D{N}, env::Environment, start::ArmSta
         returnvars = (s = KeepLast(), u = KeepLast())
     )
     
-    # Extract trajectories - FIXED to handle MvNormalWeightedMeanPrecision
+    <span class="hljs-comment"># Extract trajectories - FIXED to handle MvNormalWeightedMeanPrecision</span>
     states_distributions = results.posteriors[:s]
     controls_distributions = results.posteriors[:u]
     
-    # Extract means from the distributions
-    states = [mean(dist) for dist in states_distributions]
-    controls = [mean(dist) for dist in controls_distributions]
+    <span class="hljs-comment"># Extract means from the distributions</span>
+    states = [mean(dist) <span class="hljs-keyword">for</span> dist <span class="hljs-keyword">in</span> states_distributions]
+    controls = [mean(dist) <span class="hljs-keyword">for</span> dist <span class="hljs-keyword">in</span> controls_distributions]
     
-    # Convert to joint angles and velocities
-    n = length(states[1]) ÷ 2
-    joint_angles = [state[1:n] for state in states]
-    joint_velocities = [state[n+1:end] for state in states]
+    <span class="hljs-comment"># Convert to joint angles and velocities</span>
+    n = length(states[<span class="hljs-number">1</span>]) ÷ <span class="hljs-number">2</span>
+    joint_angles = [state[<span class="hljs-number">1</span>:n] <span class="hljs-keyword">for</span> state <span class="hljs-keyword">in</span> states]
+    joint_velocities = [state[n+<span class="hljs-number">1</span>:<span class="hljs-keyword">end</span>] <span class="hljs-keyword">for</span> state <span class="hljs-keyword">in</span> states]
     
-    return joint_angles, joint_velocities, controls
-end
+    <span class="hljs-keyword">return</span> joint_angles, joint_velocities, controls
+<span class="hljs-keyword">end</span>
 
 
 
-&quot;&quot;&quot;
+<span class="hljs-string">&quot;&quot;&quot;
     run_3d_example()
 
 Run a complete example of 3D motion planning for a robotic arm.
-&quot;&quot;&quot;
-function run_3d_example()
-    # Create a 2-link 3D robotic arm
-    arm = RoboticArm3D{2}(
-        num_links = 2,                      # 2-link arm
-        link_lengths = [1.0, 0.8],          # Lengths of links
-        link_masses = [0.5, 0.3],           # Masses of links
-        joint_torque_limits = [5.0, 5.0, 3.0, 3.0]  # Maximum torques (2 per joint)
+&quot;&quot;&quot;</span>
+<span class="hljs-keyword">function</span> run_3d_example()
+    <span class="hljs-comment"># Create a 2-link 3D robotic arm</span>
+    arm = RoboticArm3D{<span class="hljs-number">2</span>}(
+        num_links = <span class="hljs-number">2</span>,                      <span class="hljs-comment"># 2-link arm</span>
+        link_lengths = [<span class="hljs-number">1.0</span>, <span class="hljs-number">0.8</span>],          <span class="hljs-comment"># Lengths of links</span>
+        link_masses = [<span class="hljs-number">0.5</span>, <span class="hljs-number">0.3</span>],           <span class="hljs-comment"># Masses of links</span>
+        joint_torque_limits = [<span class="hljs-number">5.0</span>, <span class="hljs-number">5.0</span>, <span class="hljs-number">3.0</span>, <span class="hljs-number">3.0</span>]  <span class="hljs-comment"># Maximum torques (2 per joint)</span>
     )
     
-    # Create an environment
-    env = Environment(gravitational_constant = 9.81)
+    <span class="hljs-comment"># Create an environment</span>
+    env = Environment(gravitational_constant = <span class="hljs-number">9.81</span>)
     
-    # Define an expanded sequence of targets with more points
-    # Avoid the origin (0,0,0) which causes issues
+    <span class="hljs-comment"># Define an expanded sequence of targets with more points</span>
+    <span class="hljs-comment"># Avoid the origin (0,0,0) which causes issues</span>
     targets = [
-        [1.5, 0.0, 0.3],     # Forward
-        [1.0, 1.0, 0.5],     # Forward-right and up
-        [0.0, 1.5, 0.3],     # Right
-        [-0.5, 1.0, 0.0],    # Back-right and down
-        [-1.0, 0.5, 0.8],    # Back and up
-        [-1.0, -0.5, 0.4],   # Back-left and mid-height
-        [-0.5, -1.0, 0.0],   # Back-left and down
-        [0.0, -1.5, 0.3],    # Left
-        [0.8, -0.8, 0.3],    # Forward-left
-        [0.5, 0.0, 1.5],     # Forward and up
-        [0.2, 0.2, 0.3]      # Near home position but not at origin
+        [<span class="hljs-number">1.5</span>, <span class="hljs-number">0.0</span>, <span class="hljs-number">0.3</span>],     <span class="hljs-comment"># Forward</span>
+        [<span class="hljs-number">1.0</span>, <span class="hljs-number">1.0</span>, <span class="hljs-number">0.5</span>],     <span class="hljs-comment"># Forward-right and up</span>
+        [<span class="hljs-number">0.0</span>, <span class="hljs-number">1.5</span>, <span class="hljs-number">0.3</span>],     <span class="hljs-comment"># Right</span>
+        [-<span class="hljs-number">0.5</span>, <span class="hljs-number">1.0</span>, <span class="hljs-number">0.0</span>],    <span class="hljs-comment"># Back-right and down</span>
+        [-<span class="hljs-number">1.0</span>, <span class="hljs-number">0.5</span>, <span class="hljs-number">0.8</span>],    <span class="hljs-comment"># Back and up</span>
+        [-<span class="hljs-number">1.0</span>, -<span class="hljs-number">0.5</span>, <span class="hljs-number">0.4</span>],   <span class="hljs-comment"># Back-left and mid-height</span>
+        [-<span class="hljs-number">0.5</span>, -<span class="hljs-number">1.0</span>, <span class="hljs-number">0.0</span>],   <span class="hljs-comment"># Back-left and down</span>
+        [<span class="hljs-number">0.0</span>, -<span class="hljs-number">1.5</span>, <span class="hljs-number">0.3</span>],    <span class="hljs-comment"># Left</span>
+        [<span class="hljs-number">0.8</span>, -<span class="hljs-number">0.8</span>, <span class="hljs-number">0.3</span>],    <span class="hljs-comment"># Forward-left</span>
+        [<span class="hljs-number">0.5</span>, <span class="hljs-number">0.0</span>, <span class="hljs-number">1.5</span>],     <span class="hljs-comment"># Forward and up</span>
+        [<span class="hljs-number">0.2</span>, <span class="hljs-number">0.2</span>, <span class="hljs-number">0.3</span>]      <span class="hljs-comment"># Near home position but not at origin</span>
     ]
     
-    # Parameters for motion planning
-    horizon = 10   # Keep horizon at 10 as requested
-    dt = 0.1       # Time step
+    <span class="hljs-comment"># Parameters for motion planning</span>
+    horizon = <span class="hljs-number">10</span>   <span class="hljs-comment"># Keep horizon at 10 as requested</span>
+    dt = <span class="hljs-number">0.1</span>       <span class="hljs-comment"># Time step</span>
     
-    # Initialize the arm state (all zeros)
+    <span class="hljs-comment"># Initialize the arm state (all zeros)</span>
     initial_state = ArmState3D(
-        [0.0, 0.3, 0.3, 0.0],  # Start with a slight bend rather than all zeros
-        zeros(4)               # Joint velocities
+        [<span class="hljs-number">0.0</span>, <span class="hljs-number">0.3</span>, <span class="hljs-number">0.3</span>, <span class="hljs-number">0.0</span>],  <span class="hljs-comment"># Start with a slight bend rather than all zeros</span>
+        zeros(<span class="hljs-number">4</span>)               <span class="hljs-comment"># Joint velocities</span>
     )
     
-    # Store the states, controls, and targets for later visualization
+    <span class="hljs-comment"># Store the states, controls, and targets for later visualization</span>
     all_states = []
     all_controls = []
     current_state = initial_state
     
-    # Plan motion for each target
-    for (i, target) in enumerate(targets)
-        println(&quot;\nPlanning motion to target $i: $target&quot;)
+    <span class="hljs-comment"># Plan motion for each target</span>
+    <span class="hljs-keyword">for</span> (i, target) <span class="hljs-keyword">in</span> enumerate(targets)
+        println(<span class="hljs-string">&quot;\nPlanning motion to target <span class="hljs-variable">$i</span>: <span class="hljs-variable">$target</span>&quot;</span>)
         
-        # Plan motion to the target
+        <span class="hljs-comment"># Plan motion to the target</span>
         θ_trajectory, ω_trajectory, u_trajectory = move_to_target_3d(arm, env, current_state, target, horizon, dt)
         
-        # Combine all states into a single matrix for visualization
+        <span class="hljs-comment"># Combine all states into a single matrix for visualization</span>
         states_matrix = hcat(θ_trajectory...)
         
-        # Update the current state for the next target
+        <span class="hljs-comment"># Update the current state for the next target</span>
         current_state = ArmState3D(
-            θ_trajectory[end],
-            ω_trajectory[end]
+            θ_trajectory[<span class="hljs-keyword">end</span>],
+            ω_trajectory[<span class="hljs-keyword">end</span>]
         )
         
-        # Store the results
+        <span class="hljs-comment"># Store the results</span>
         push!(all_states, states_matrix)
         push!(all_controls, hcat(u_trajectory...))
-    end
+    <span class="hljs-keyword">end</span>
     
-    # Animate the motion through all targets
+    <span class="hljs-comment"># Animate the motion through all targets</span>
     animation = animate_sequential_targets_3d(arm, all_states, targets)
     
-    return arm, all_states, targets, all_controls
-end</code></pre><pre><code class="nohighlight hljs">Main.anonymous.run_3d_example</code></pre><pre><code class="language-julia hljs">arm, states, targets, controls = run_3d_example();</code></pre><pre><code class="nohighlight hljs">Planning motion to target 1: [1.5, 0.0, 0.3]
+    <span class="hljs-keyword">return</span> arm, all_states, targets, all_controls
+<span class="hljs-keyword">end</span>
+</code></pre><pre><code class="nohighlight hljs">Main.var&quot;##WeaveSandBox#277&quot;.run_3d_example</code></pre><pre><code class="language-julia hljs">arm, states, targets, controls = run_3d_example();
+</code></pre><pre><code class="nohighlight hljs">Planning motion to target 1: [1.5, 0.0, 0.3]
 
 Planning motion to target 2: [1.0, 1.0, 0.5]
 
@@ -766,8 +774,8 @@ Planning motion to target 9: [0.8, -0.8, 0.3]
 
 Planning motion to target 10: [0.5, 0.0, 1.5]
 
-Planning motion to target 11: [0.2, 0.2, 0.3]</code></pre><p><img src="sequential_targets_3d.gif" alt/></p><hr/><div class="admonition is-info"><header class="admonition-header">Contributing</header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><div class="admonition is-compat"><header class="admonition-header">Environment</header><div class="admonition-body"><p>This example was executed in a clean, isolated environment. Below are the exact package versions used:</p><p>For reproducibility:</p><ul><li>Use the same package versions when running locally</li><li>Report any issues with package compatibility</li></ul></div></div><pre><code class="nohighlight hljs">Status `~/work/RxInferExamples.jl/RxInferExamples.jl/docs/src/categories/advanced_examples/robotic_arm/Project.toml`
-  [91a5bcdd] Plots v1.40.9
-  [86711068] RxInfer v4.2.0
-  [90137ffa] StaticArrays v1.9.13
-</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../nonlinear_sensor_fusion/">« Nonlinear Sensor Fusion</a><a class="docs-footer-nextpage" href="../../problem_specific/autoregressive_models/">Autoregressive Models »</a><div class="flexbox-break"></div><p class="footer-message">Created in <a href="https://biaslab.github.io/">BIASlab</a>, maintained by <a href="https://github.com/ReactiveBayes">ReactiveBayes</a>, powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.8.1 on <span class="colophon-date" title="Friday 7 March 2025 13:50">Friday 7 March 2025</span>. Using Julia version 1.11.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+Planning motion to target 11: [0.2, 0.2, 0.3]</code></pre><p><img src="sequential_targets_3d.gif" alt/></p><hr/><div class="admonition is-info" id="Contributing-baba9dc142ba7ccb"><header class="admonition-header">Contributing<a class="admonition-anchor" href="#Contributing-baba9dc142ba7ccb" title="Permalink"></a></header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><div class="admonition is-compat" id="Environment-ead41e814a894220"><header class="admonition-header">Environment<a class="admonition-anchor" href="#Environment-ead41e814a894220" title="Permalink"></a></header><div class="admonition-body"><p>This example was executed in a clean, isolated environment. Below are the exact package versions used:</p><p>For reproducibility:</p><ul><li>Use the same package versions when running locally</li><li>Report any issues with package compatibility</li></ul></div></div><pre><code class="nohighlight hljs">Status `/tmp/jl_BKMWxI/Project.toml`
+  [91a5bcdd] Plots v1.41.7
+  [86711068] RxInfer v5.5.2
+  [90137ffa] StaticArrays v1.9.20
+</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../parameter_optimisation_with_optim.jl/">« Parameter Optimisation With Optim.Jl</a><a class="docs-footer-nextpage" href="../solving_linear_systems_with_message_passing/">Solving Linear Systems With Message Passing »</a><div class="flexbox-break"></div><p class="footer-message">Created in <a href="https://biaslab.github.io/">BIASlab</a>, maintained by <a href="https://github.com/ReactiveBayes">ReactiveBayes</a>, powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.19.0 on <span class="colophon-date" title="Thursday 3 September 2026 19:09">Thursday 3 September 2026</span>. Using Julia version 1.12.7.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

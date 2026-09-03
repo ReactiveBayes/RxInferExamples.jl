@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Bayesian Networks · RxInfer.jl Examples</title><meta name="title" content="Bayesian Networks · RxInfer.jl Examples"/><meta property="og:title" content="Bayesian Networks · RxInfer.jl Examples"/><meta property="twitter:title" content="Bayesian Networks · RxInfer.jl Examples"/><meta name="description" content="Bayesian Networks: The Sprinkler Model with RxInfer.jl\n    An introductory tutorial to Bayesian Networks with RxInfer using the classic sprinkler model.\n    Learn how to construct and perform inference in a simple Bayesian network given conditional probability tables.\n    The example demonstrates core concepts like conditional independence, belief propagation, and evidence-based inference.\n\nCheck more examples and tutorials at https://examples.rxinfer.com\n"/><meta property="og:description" content="Bayesian Networks: The Sprinkler Model with RxInfer.jl\n    An introductory tutorial to Bayesian Networks with RxInfer using the classic sprinkler model.\n    Learn how to construct and perform inference in a simple Bayesian network given conditional probability tables.\n    The example demonstrates core concepts like conditional independence, belief propagation, and evidence-based inference.\n\nCheck more examples and tutorials at https://examples.rxinfer.com\n"/><meta property="twitter:description" content="Bayesian Networks: The Sprinkler Model with RxInfer.jl\n    An introductory tutorial to Bayesian Networks with RxInfer using the classic sprinkler model.\n    Learn how to construct and perform inference in a simple Bayesian network given conditional probability tables.\n    The example demonstrates core concepts like conditional independence, belief propagation, and evidence-based inference.\n\nCheck more examples and tutorials at https://examples.rxinfer.com\n"/><meta property="og:url" content="https://examples.rxinfer.com/categories/basic_examples/bayesian_networks/"/><meta property="twitter:url" content="https://examples.rxinfer.com/categories/basic_examples/bayesian_networks/"/><link rel="canonical" href="https://examples.rxinfer.com/categories/basic_examples/bayesian_networks/"/><script async src="https://www.googletagmanager.com/gtag/js?id=G-GMFX620VEP"></script><script>  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-GMFX620VEP', {'page_path': location.pathname + location.search + location.hash});
+</script><script data-outdated-warner src="../../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.63.2/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../../assets/documenter.js"></script><script src="../../../search_index.js"></script><script src="../../../siteinfo.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../../assets/themeswap.js"></script><link href="../../../assets/theme.css" rel="stylesheet" type="text/css"/><link href="../../../assets/header.css" rel="stylesheet" type="text/css"/><script src="../../../assets/header.js"></script><script src="../../../assets/chat.js"></script><link href="../../../assets/favicon.ico" rel="icon" type="image/x-icon"/>
+    <meta property="og:title" content="Bayesian Networks: The Sprinkler Model - RxInfer Examples">
+    <meta name="description" content="    An introductory tutorial to Bayesian Networks with RxInfer using the classic sprinkler model.
+    Learn how to construct and perform inference in a simple Bayesian network given conditional probability tables.
+    The example demonstrates core concepts like conditional independence, belief propagation, and evidence-based inference.
+">
+    <meta property="og:description" content="    An introductory tutorial to Bayesian Networks with RxInfer using the classic sprinkler model.
+    Learn how to construct and perform inference in a simple Bayesian network given conditional probability tables.
+    The example demonstrates core concepts like conditional independence, belief propagation, and evidence-based inference.
+">
+    <meta name="keywords" content="rxinfer, julia, bayesian inference, examples, probabilistic programming, message passing, probabilistic numerics, variational inference, belief propagation, basic examples, bayesian networks, discrete bayesian networks, sprinkler model, conditional probability">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://examples.rxinfer.com/sitemap.xml">
+    </head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../../"><img class="docs-light-only" src="../../../assets/logo.svg" alt="RxInfer.jl Examples logo"/><img class="docs-dark-only" src="../../../assets/logo-dark.svg" alt="RxInfer.jl Examples logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../../">RxInfer.jl Examples</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../../">Home</a></li><li><a class="tocitem" href="../../../how_to_contribute/">How to contribute</a></li><li><a class="tocitem" href="../../../autogenerated/list_of_examples/">List of Examples</a></li><li><span class="tocitem">Basic Examples</span><ul><li><a class="tocitem" href="../bayesian_binomial_regression/">Bayesian Binomial Regression</a></li><li><a class="tocitem" href="../bayesian_linear_regression/">Bayesian Linear Regression</a></li><li><a class="tocitem" href="../bayesian_multinomial_regression/">Bayesian Multinomial Regression</a></li><li class="is-active"><a class="tocitem" href>Bayesian Networks</a><ul class="internal"><li class="toplevel"><a class="tocitem" href="#Extending-the-model"><span>Extending the model</span></a></li><li class="toplevel"><a class="tocitem" href="#Learning-the-CPTs"><span>Learning the CPTs</span></a></li></ul></li><li><a class="tocitem" href="../coin_toss_model/">Coin Toss Model</a></li><li><a class="tocitem" href="../contextual_bandits/">Contextual Bandits</a></li><li><a class="tocitem" href="../feature_functions_in_bayesian_regression/">Feature Functions In Bayesian Regression</a></li><li><a class="tocitem" href="../forgetting_factors_for_online_inference/">Forgetting Factors For Online Inference</a></li><li><a class="tocitem" href="../hidden_markov_model/">Hidden Markov Model</a></li><li><a class="tocitem" href="../incomplete_data/">Incomplete Data</a></li><li><a class="tocitem" href="../kalman_filtering_and_smoothing/">Kalman Filtering And Smoothing</a></li><li><a class="tocitem" href="../pomdp_control/">Pomdp Control</a></li><li><a class="tocitem" href="../predicting_bike_rental_demand/">Predicting Bike Rental Demand</a></li><li><a class="tocitem" href="../t-maze_active_inference/">T-Maze Active Inference</a></li></ul></li><li><span class="tocitem">Advanced Examples</span><ul><li><a class="tocitem" href="../../advanced_examples/active_inference_mountain_car/">Active Inference Mountain Car</a></li><li><a class="tocitem" href="../../advanced_examples/assessing_people_skills/">Assessing People Skills</a></li><li><a class="tocitem" href="../../advanced_examples/autoregressive_active_inference/">Autoregressive Active Inference</a></li><li><a class="tocitem" href="../../advanced_examples/bayesian_structured_time_series/">Bayesian Structured Time Series</a></li><li><a class="tocitem" href="../../advanced_examples/chance_constraints/">Chance Constraints</a></li><li><a class="tocitem" href="../../advanced_examples/conjugate-computational_variational_message_passing/">Conjugate-Computational Variational Message Passing</a></li><li><a class="tocitem" href="../../advanced_examples/drone_dynamics/">Drone Dynamics</a></li><li><a class="tocitem" href="../../advanced_examples/efe_minimization_via_message_passing/">Efe Minimization Via Message Passing</a></li><li><a class="tocitem" href="../../advanced_examples/gp_regression_by_ssm/">Gp Regression By Ssm</a></li><li><a class="tocitem" href="../../advanced_examples/infinite_data_stream/">Infinite Data Stream</a></li><li><a class="tocitem" href="../../advanced_examples/integrating_neural_networks_with_flux.jl_and_lux.jl/">Integrating Neural Networks With Flux.Jl And Lux.Jl</a></li><li><a class="tocitem" href="../../advanced_examples/learning_dynamics_with_vaes/">Learning Dynamics With Vaes</a></li><li><a class="tocitem" href="../../advanced_examples/multi-agent_trajectory_planning/">Multi-Agent Trajectory Planning</a></li><li><a class="tocitem" href="../../advanced_examples/nonlinear_sensor_fusion/">Nonlinear Sensor Fusion</a></li><li><a class="tocitem" href="../../advanced_examples/parameter_optimisation_with_optim.jl/">Parameter Optimisation With Optim.Jl</a></li><li><a class="tocitem" href="../../advanced_examples/robotic_arm/">Robotic Arm</a></li><li><a class="tocitem" href="../../advanced_examples/solving_linear_systems_with_message_passing/">Solving Linear Systems With Message Passing</a></li></ul></li><li><span class="tocitem">Problem Specific</span><ul><li><a class="tocitem" href="../../problem_specific/autoregressive_models/">Autoregressive Models</a></li><li><a class="tocitem" href="../../problem_specific/gamma_mixture/">Gamma Mixture</a></li><li><a class="tocitem" href="../../problem_specific/gaussian_mixture/">Gaussian Mixture</a></li><li><a class="tocitem" href="../../problem_specific/hierarchical_gaussian_filter/">Hierarchical Gaussian Filter</a></li><li><a class="tocitem" href="../../problem_specific/invertible_neural_network_tutorial/">Invertible Neural Network Tutorial</a></li><li><a class="tocitem" href="../../problem_specific/ising_model/">Ising Model</a></li><li><a class="tocitem" href="../../problem_specific/litter_model/">Litter Model</a></li><li><a class="tocitem" href="../../problem_specific/ode_parameter_estimation/">Ode Parameter Estimation</a></li><li><a class="tocitem" href="../../problem_specific/probit_model/">Probit Model</a></li><li><a class="tocitem" href="../../problem_specific/rts_vs_bifm_smoothing/">Rts Vs Bifm Smoothing</a></li><li><a class="tocitem" href="../../problem_specific/simple_nonlinear_node/">Simple Nonlinear Node</a></li><li><a class="tocitem" href="../../problem_specific/structural_dynamics_with_augmented_kalman_filter/">Structural Dynamics With Augmented Kalman Filter</a></li><li><a class="tocitem" href="../../problem_specific/universal_mixtures/">Universal Mixtures</a></li></ul></li><li><span class="tocitem">Experimental Examples</span><ul><li><a class="tocitem" href="../../experimental_examples/bayesian_trust_learning/">Bayesian Trust Learning</a></li><li><a class="tocitem" href="../../experimental_examples/large_language_models/">Large Language Models</a></li><li><a class="tocitem" href="../../experimental_examples/latent_vector_autoregressive_model/">Latent Vector Autoregressive Model</a></li><li><a class="tocitem" href="../../experimental_examples/recurrent_switching_linear_dynamical_system/">Recurrent Switching Linear Dynamical System</a></li></ul></li><li><a class="tocitem" href="../../../how_build_works/">How we build the examples</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Basic Examples</a></li><li class="is-active"><a href>Bayesian Networks</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Bayesian Networks</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl" title="View source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><div class="admonition is-info" id="Contributing-baba9dc142ba7ccb"><header class="admonition-header">Contributing<a class="admonition-anchor" href="#Contributing-baba9dc142ba7ccb" title="Permalink"></a></header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><h1 id="Bayesian-Networks:-The-Sprinkler-Model"><a class="docs-heading-anchor" href="#Bayesian-Networks:-The-Sprinkler-Model">Bayesian Networks: The Sprinkler Model</a><a id="Bayesian-Networks:-The-Sprinkler-Model-1"></a><a class="docs-heading-anchor-permalink" href="#Bayesian-Networks:-The-Sprinkler-Model" title="Permalink"></a></h1><p>In this tutorial, we&#39;ll explore how to build and perform inference in Bayesian networks using RxInfer. Bayesian networks are probabilistic graphical models that represent conditional dependencies between random variables through directed acyclic graphs. We&#39;ll use the <code>DiscreteTransition</code> node type to encode conditional probability tables (CPTs) that define how each variable depends on its parents in the network. Through a classic sprinkler example, we&#39;ll demonstrate how to construct these networks and perform probabilistic inference to answer queries about the model.</p><pre><code class="language-julia hljs"><span class="hljs-keyword">using</span> RxInfer, Plots, GraphViz
+</code></pre><p>This example implements a classic Bayesian network known as the sprinkler model. The model represents causal relationships between:</p><ul><li>Whether it is cloudy (clouded)</li><li>Whether it is raining (rain) </li><li>Whether the sprinkler is on (sprinkler)</li><li>Whether the grass is wet (wet_grass)</li></ul><p>The relationships are:</p><ul><li>Cloudy weather influences both rain and sprinkler usage</li><li>Both rain and sprinkler usage affect whether the grass is wet</li></ul><p>We&#39;ll use this model to demonstrate inference under different scenarios and evidence.</p><p>The bayesian network for the sprinkler model is shown below:</p><p><img src="sprinklermodel.jpg" alt="Sprinkler model diagram showing the relationships between clouded, rain, sprinkler and wet_grass nodes"/></p><p>Let&#39;s translate this into an RxInfer model. We&#39;ll start by putting a <code>Categorial</code> prior on the clouded variable, and we&#39;ll use <code>DiscreteTransition</code> nodes to encode the CPTs for the rain and sprinkler variables, which depend on the clouded variable. Denote that we denote a binary probability distribution as a vector of two probabilities, where the first probability is the probability of the event not occurring and the second probability is the probability of the event occurring.</p><pre><code class="language-julia hljs"><span class="hljs-meta">@model</span> <span class="hljs-keyword">function</span> sprinkler_model(wet_grass)
+    clouded ~ Categorical([<span class="hljs-number">0.5</span>, <span class="hljs-number">0.5</span>]) <span class="hljs-comment"># Probability of cloudy being false or true</span>
+    rain ~ DiscreteTransition(clouded, [<span class="hljs-number">0.8</span> <span class="hljs-number">0.2</span>; <span class="hljs-number">0.2</span> <span class="hljs-number">0.8</span>])
+    sprinkler ~ DiscreteTransition(clouded, [<span class="hljs-number">0.5</span> <span class="hljs-number">0.9</span>; <span class="hljs-number">0.5</span> <span class="hljs-number">0.1</span>])
+    wet_grass ~ DiscreteTransition(sprinkler, [<span class="hljs-number">1.0</span> <span class="hljs-number">0.1</span>; <span class="hljs-number">0.0</span> <span class="hljs-number">0.9</span>;;; <span class="hljs-number">0.1</span> <span class="hljs-number">0.01</span>; <span class="hljs-number">0.9</span> <span class="hljs-number">0.99</span>], rain)
+<span class="hljs-keyword">end</span>
+</code></pre><p>Optionally, let&#39;s inspect the model structure that RxInfer creates using the GraphViz package:</p><pre><code class="language-julia hljs">model_generator = sprinkler_model() | (wet_grass = [ <span class="hljs-number">1.0</span>, <span class="hljs-number">0.0</span> ], )
+model_to_plot   = RxInfer.getmodel(RxInfer.create_model(model_generator))
+GraphViz.load(model_to_plot, strategy = :simple)
+</code></pre><p><img src="Bayesian Networks_3_1.svg" alt/></p><p>Because we have a loop in the resulting factor graph, we have to initialize messages to run the loopy belief propagation algorithm. We&#39;ll initialize the messages for the <code>sprinkler</code> variable to be uniform. Afterwards, we can run the inference with the <code>infer</code> function from <code>RxInfer</code>. Furthermore, we can specify the number of iterations to run the loopy belief propagation algorithm, and we can query the <code>free_energy</code> to monitor the convergence of the algorithm.</p><pre><code class="language-julia hljs">initialization = <span class="hljs-meta">@initialization</span> <span class="hljs-keyword">begin</span>
+    μ(sprinkler) = Categorical([<span class="hljs-number">0.5</span>, <span class="hljs-number">0.5</span>])
+<span class="hljs-keyword">end</span>
+
+data = (wet_grass = [<span class="hljs-number">1.0</span>, <span class="hljs-number">0.0</span>],) <span class="hljs-comment"># Grass is dry</span>
+
+result = infer(model=sprinkler_model(), data=data, iterations=<span class="hljs-number">10</span>, initialization=initialization)
+</code></pre><pre><code class="nohighlight hljs">Inference results:
+  Posteriors       | available for (rain, sprinkler, clouded)</code></pre><p>Now, let&#39;s inspect the posterior probabilities for the clouded, rain, and sprinkler variables:</p><pre><code class="language-julia hljs">p1 = bar(last(result.posteriors[:clouded]).p,
+    xticks=(<span class="hljs-number">1</span>:<span class="hljs-number">2</span>, [<span class="hljs-string">&quot;Not Clouded&quot;</span>, <span class="hljs-string">&quot;Clouded&quot;</span>]),
+    ylabel=<span class="hljs-string">&quot;Probability&quot;</span>,
+    title=<span class="hljs-string">&quot;Posterior Probability of Clouded Variable&quot;</span>,
+    titlefontsize=<span class="hljs-number">10</span>,
+    legend=<span class="hljs-literal">false</span>)
+
+p2 = bar(last(result.posteriors[:rain]).p,
+    xticks=(<span class="hljs-number">1</span>:<span class="hljs-number">2</span>, [<span class="hljs-string">&quot;No Rain&quot;</span>, <span class="hljs-string">&quot;Rain&quot;</span>]),
+    ylabel=<span class="hljs-string">&quot;Probability&quot;</span>, 
+    title=<span class="hljs-string">&quot;Posterior Probability of Rain Variable&quot;</span>,
+    titlefontsize=<span class="hljs-number">10</span>,
+    legend=<span class="hljs-literal">false</span>)
+
+p3 = bar(last(result.posteriors[:sprinkler]).p,
+    xticks=(<span class="hljs-number">1</span>:<span class="hljs-number">2</span>, [<span class="hljs-string">&quot;Off&quot;</span>, <span class="hljs-string">&quot;On&quot;</span>]),
+    ylabel=<span class="hljs-string">&quot;Probability&quot;</span>,
+    title=<span class="hljs-string">&quot;Posterior Probability of Sprinkler Variable&quot;</span>, 
+    titlefontsize=<span class="hljs-number">10</span>,
+    legend=<span class="hljs-literal">false</span>)
+
+plot(p1, p2, p3, layout=(<span class="hljs-number">1</span>,<span class="hljs-number">3</span>), size=(<span class="hljs-number">900</span>,<span class="hljs-number">300</span>))
+</code></pre><p><img src="Bayesian Networks_5_1.png" alt/></p><p>Looks like, when the grass is dry, it is less likely to be cloudy, less likely to rain and the sprinkler is probably off. Let&#39;s look at what happens when we observe wet grass:</p><pre><code class="language-julia hljs">result = infer(model=sprinkler_model(), data=(wet_grass=[<span class="hljs-number">0.0</span>, <span class="hljs-number">1.0</span>],), iterations=<span class="hljs-number">10</span>, initialization=initialization)
+p1 = bar(last(result.posteriors[:clouded]).p,
+    xticks=(<span class="hljs-number">1</span>:<span class="hljs-number">2</span>, [<span class="hljs-string">&quot;Not Clouded&quot;</span>, <span class="hljs-string">&quot;Clouded&quot;</span>]),
+    ylabel=<span class="hljs-string">&quot;Probability&quot;</span>,
+    title=<span class="hljs-string">&quot;Posterior Probability of Clouded Variable&quot;</span>,
+    titlefontsize=<span class="hljs-number">10</span>,
+    legend=<span class="hljs-literal">false</span>)
+
+p2 = bar(last(result.posteriors[:rain]).p,
+    xticks=(<span class="hljs-number">1</span>:<span class="hljs-number">2</span>, [<span class="hljs-string">&quot;No Rain&quot;</span>, <span class="hljs-string">&quot;Rain&quot;</span>]),
+    ylabel=<span class="hljs-string">&quot;Probability&quot;</span>, 
+    title=<span class="hljs-string">&quot;Posterior Probability of Rain Variable&quot;</span>,
+    titlefontsize=<span class="hljs-number">10</span>,
+    legend=<span class="hljs-literal">false</span>)
+
+p3 = bar(last(result.posteriors[:sprinkler]).p,
+    xticks=(<span class="hljs-number">1</span>:<span class="hljs-number">2</span>, [<span class="hljs-string">&quot;Off&quot;</span>, <span class="hljs-string">&quot;On&quot;</span>]),
+    ylabel=<span class="hljs-string">&quot;Probability&quot;</span>,
+    title=<span class="hljs-string">&quot;Posterior Probability of Sprinkler Variable&quot;</span>, 
+    titlefontsize=<span class="hljs-number">10</span>,
+    legend=<span class="hljs-literal">false</span>)
+
+plot(p1, p2, p3, layout=(<span class="hljs-number">1</span>,<span class="hljs-number">3</span>), size=(<span class="hljs-number">900</span>,<span class="hljs-number">300</span>))
+</code></pre><p><img src="Bayesian Networks_6_1.png" alt/></p><p>Perfect! When the grass is wet, it is more likely to be cloudy, more likely to rain and the sprinkler is more likely to be on. However, this model only allows observations on the grass being wet, and not on the sprinkler being on or off. Let&#39;s extend the model to also observe the sprinkler and rain variables:</p><h1 id="Extending-the-model"><a class="docs-heading-anchor" href="#Extending-the-model">Extending the model</a><a id="Extending-the-model-1"></a><a class="docs-heading-anchor-permalink" href="#Extending-the-model" title="Permalink"></a></h1><p>We will now also accept observations on the sprinkler, rain  and clouded variables, which means that we will have to add the variables to the model signature and denote how this data is generated. We know that these datapoints are the same as the hidden variables they are conditioned on, so we can use a <code>DiscreteTransition</code> node to encode this identity relationship between the data and the hidden variables.</p><pre><code class="language-julia hljs"><span class="hljs-meta">@model</span> <span class="hljs-keyword">function</span> sprinkler_model(wet_grass_data, sprinkler_data, rain_data, clouded_data)
+    clouded ~ Categorical([<span class="hljs-number">0.5</span>, <span class="hljs-number">0.5</span>]) <span class="hljs-comment"># Probability of cloudy being false or true</span>
+    clouded_data ~ DiscreteTransition(clouded, diageye(<span class="hljs-number">2</span>))  
+    rain ~ DiscreteTransition(clouded, [<span class="hljs-number">0.8</span> <span class="hljs-number">0.2</span>; <span class="hljs-number">0.2</span> <span class="hljs-number">0.8</span>])
+    rain_data ~ DiscreteTransition(rain, diageye(<span class="hljs-number">2</span>))
+    sprinkler ~ DiscreteTransition(clouded, [<span class="hljs-number">0.5</span> <span class="hljs-number">0.9</span>; <span class="hljs-number">0.5</span> <span class="hljs-number">0.1</span>])
+    sprinkler_data ~ DiscreteTransition(sprinkler, diageye(<span class="hljs-number">2</span>))
+    wet_grass ~ DiscreteTransition(sprinkler, [<span class="hljs-number">1.0</span> <span class="hljs-number">0.1</span>; <span class="hljs-number">0.0</span> <span class="hljs-number">0.9</span>;;; <span class="hljs-number">0.1</span> <span class="hljs-number">0.01</span>; <span class="hljs-number">0.9</span> <span class="hljs-number">0.99</span>], rain)
+    wet_grass_data ~ DiscreteTransition(wet_grass, diageye(<span class="hljs-number">2</span>))
+<span class="hljs-keyword">end</span>
+</code></pre><p>Now, we can run the inference with the extended model, where we pass in the data for the observations we have, and pass <code>missing</code> for the observations we don&#39;t have. What happens, for example, if we observe the grass being wet and the sprinkler being on?</p><pre><code class="language-julia hljs">result = infer(model=sprinkler_model(), data=(wet_grass_data=[<span class="hljs-number">0.0</span>, <span class="hljs-number">1.0</span>], sprinkler_data=[<span class="hljs-number">0.0</span>, <span class="hljs-number">1.0</span>], rain_data=<span class="hljs-literal">missing</span>, clouded_data=<span class="hljs-literal">missing</span>), iterations=<span class="hljs-number">10</span>, initialization=initialization)
+</code></pre><pre><code class="nohighlight hljs">Inference results:
+  Posteriors       | available for (rain, sprinkler, wet_grass, clouded)
+  Predictions      | available for (rain_data, clouded_data)</code></pre><p>Perfect! When the grass is wet and the sprinkler is on, it is less likely to rain, and therefore less likely to be cloudy. What happens to the grass when we observe rain and the sprinkler is off?</p><pre><code class="language-julia hljs">result = infer(model=sprinkler_model(), data=(wet_grass_data=<span class="hljs-literal">missing</span>, sprinkler_data=[<span class="hljs-number">1.0</span>, <span class="hljs-number">0.0</span>], rain_data=[<span class="hljs-number">0.0</span>, <span class="hljs-number">1.0</span>], clouded_data=<span class="hljs-literal">missing</span>), iterations=<span class="hljs-number">10</span>, initialization=initialization)
+
+
+p1 = bar(last(result.posteriors[:rain]).p,
+    xticks=(<span class="hljs-number">1</span>:<span class="hljs-number">2</span>, [<span class="hljs-string">&quot;No&quot;</span>, <span class="hljs-string">&quot;Yes&quot;</span>]),
+    ylabel=<span class="hljs-string">&quot;Probability&quot;</span>, 
+    title=<span class="hljs-string">&quot;Posterior Probability of Rain Variable&quot;</span>,
+    titlefontsize=<span class="hljs-number">8</span>,
+    legend=<span class="hljs-literal">false</span>)
+
+p2 = bar(last(result.posteriors[:clouded]).p,
+    xticks=(<span class="hljs-number">1</span>:<span class="hljs-number">2</span>, [<span class="hljs-string">&quot;No&quot;</span>, <span class="hljs-string">&quot;Yes&quot;</span>]),
+    ylabel=<span class="hljs-string">&quot;Probability&quot;</span>,
+    title=<span class="hljs-string">&quot;Posterior Probability of Clouded Variable&quot;</span>,
+    titlefontsize=<span class="hljs-number">8</span>,
+    legend=<span class="hljs-literal">false</span>)
+
+p3 = bar(last(result.posteriors[:sprinkler]).p,
+    xticks=(<span class="hljs-number">1</span>:<span class="hljs-number">2</span>, [<span class="hljs-string">&quot;Off&quot;</span>, <span class="hljs-string">&quot;On&quot;</span>]),
+    ylabel=<span class="hljs-string">&quot;Probability&quot;</span>,
+    title=<span class="hljs-string">&quot;Posterior Probability of Sprinkler Variable&quot;</span>, 
+    titlefontsize=<span class="hljs-number">8</span>,
+    legend=<span class="hljs-literal">false</span>)
+
+p4 = bar(last(result.posteriors[:wet_grass]).p,
+    xticks=(<span class="hljs-number">1</span>:<span class="hljs-number">2</span>, [<span class="hljs-string">&quot;No&quot;</span>, <span class="hljs-string">&quot;Yes&quot;</span>]),
+    ylabel=<span class="hljs-string">&quot;Probability&quot;</span>,
+    title=<span class="hljs-string">&quot;Posterior Probability of Wet Grass Variable&quot;</span>,
+    titlefontsize=<span class="hljs-number">8</span>,
+    legend=<span class="hljs-literal">false</span>)
+
+plot(p1, p2, p3, p4, layout=(<span class="hljs-number">1</span>,<span class="hljs-number">4</span>), size=(<span class="hljs-number">1200</span>,<span class="hljs-number">300</span>))
+</code></pre><p><img src="Bayesian Networks_9_1.png" alt/></p><p>Finally, what happens if we observe the grass being wet and the sky being blue?</p><pre><code class="language-julia hljs">result = infer(model=sprinkler_model(), data=(wet_grass_data=[<span class="hljs-number">0.0</span>, <span class="hljs-number">1.0</span>], sprinkler_data=<span class="hljs-literal">missing</span>, rain_data=<span class="hljs-literal">missing</span>, clouded_data=[<span class="hljs-number">1.0</span>, <span class="hljs-number">0.0</span>]), iterations=<span class="hljs-number">10</span>, initialization=initialization)
+
+
+p1 = bar(last(result.posteriors[:rain]).p,
+    xticks=(<span class="hljs-number">1</span>:<span class="hljs-number">2</span>, [<span class="hljs-string">&quot;No&quot;</span>, <span class="hljs-string">&quot;Yes&quot;</span>]),
+    ylabel=<span class="hljs-string">&quot;Probability&quot;</span>, 
+    title=<span class="hljs-string">&quot;Posterior Probability of Rain Variable&quot;</span>,
+    titlefontsize=<span class="hljs-number">8</span>,
+    legend=<span class="hljs-literal">false</span>)
+
+p2 = bar(last(result.posteriors[:clouded]).p,
+    xticks=(<span class="hljs-number">1</span>:<span class="hljs-number">2</span>, [<span class="hljs-string">&quot;No&quot;</span>, <span class="hljs-string">&quot;Yes&quot;</span>]),
+    ylabel=<span class="hljs-string">&quot;Probability&quot;</span>,
+    title=<span class="hljs-string">&quot;Posterior Probability of Clouded Variable&quot;</span>,
+    titlefontsize=<span class="hljs-number">8</span>,
+    legend=<span class="hljs-literal">false</span>)
+
+p3 = bar(last(result.posteriors[:sprinkler]).p,
+    xticks=(<span class="hljs-number">1</span>:<span class="hljs-number">2</span>, [<span class="hljs-string">&quot;Off&quot;</span>, <span class="hljs-string">&quot;On&quot;</span>]),
+    ylabel=<span class="hljs-string">&quot;Probability&quot;</span>,
+    title=<span class="hljs-string">&quot;Posterior Probability of Sprinkler Variable&quot;</span>, 
+    titlefontsize=<span class="hljs-number">8</span>,
+    legend=<span class="hljs-literal">false</span>)
+
+p4 = bar(last(result.posteriors[:wet_grass]).p,
+    xticks=(<span class="hljs-number">1</span>:<span class="hljs-number">2</span>, [<span class="hljs-string">&quot;No&quot;</span>, <span class="hljs-string">&quot;Yes&quot;</span>]),
+    ylabel=<span class="hljs-string">&quot;Probability&quot;</span>,
+    title=<span class="hljs-string">&quot;Posterior Probability of Wet Grass Variable&quot;</span>,
+    titlefontsize=<span class="hljs-number">8</span>,
+    legend=<span class="hljs-literal">false</span>)
+
+plot(p1, p2, p3, p4, layout=(<span class="hljs-number">1</span>,<span class="hljs-number">4</span>), size=(<span class="hljs-number">1200</span>,<span class="hljs-number">300</span>))
+</code></pre><p><img src="Bayesian Networks_10_1.png" alt/></p><h1 id="Learning-the-CPTs"><a class="docs-heading-anchor" href="#Learning-the-CPTs">Learning the CPTs</a><a id="Learning-the-CPTs-1"></a><a class="docs-heading-anchor-permalink" href="#Learning-the-CPTs" title="Permalink"></a></h1><p>We can also use <code>RxInfer</code> to learn the CPT&#39;s when we have data available, for this, let&#39;s generate some data</p><pre><code class="language-julia hljs"><span class="hljs-comment"># Generate synthetic data from the true model</span>
+n_samples = <span class="hljs-number">10000</span>
+
+<span class="hljs-comment"># Initialize arrays to store the samples</span>
+clouded_samples = zeros(<span class="hljs-built_in">Int</span>, n_samples)
+rain_samples = zeros(<span class="hljs-built_in">Int</span>, n_samples)
+sprinkler_samples = zeros(<span class="hljs-built_in">Int</span>, n_samples) 
+wet_grass_samples = zeros(<span class="hljs-built_in">Int</span>, n_samples)
+
+<span class="hljs-comment"># Sample from the model</span>
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:n_samples
+    <span class="hljs-comment"># Sample clouded (prior)</span>
+    clouded_samples[i] = rand() &lt; <span class="hljs-number">0.5</span> ? <span class="hljs-number">1</span> : <span class="hljs-number">2</span>
+    
+    <span class="hljs-comment"># Sample rain (depends on clouded)</span>
+    rain_prob = clouded_samples[i] == <span class="hljs-number">1</span> ? <span class="hljs-number">0.2</span> : <span class="hljs-number">0.8</span>
+    rain_samples[i] = rand() &gt; rain_prob ? <span class="hljs-number">1</span> : <span class="hljs-number">2</span>
+    
+    <span class="hljs-comment"># Sample sprinkler (depends on clouded)</span>
+    sprinkler_prob = clouded_samples[i] == <span class="hljs-number">1</span> ? <span class="hljs-number">0.5</span> : <span class="hljs-number">0.1</span>
+    sprinkler_samples[i] = rand() &gt; sprinkler_prob ? <span class="hljs-number">1</span> : <span class="hljs-number">2</span>
+    
+    <span class="hljs-comment"># Sample wet grass (depends on rain and sprinkler)</span>
+    <span class="hljs-keyword">if</span> rain_samples[i] == <span class="hljs-number">2</span> &amp;&amp; sprinkler_samples[i] == <span class="hljs-number">2</span>
+        wet_prob = <span class="hljs-number">0.99</span>
+    <span class="hljs-keyword">elseif</span> rain_samples[i] == <span class="hljs-number">2</span>
+        wet_prob = <span class="hljs-number">0.9</span>
+    <span class="hljs-keyword">elseif</span> sprinkler_samples[i] == <span class="hljs-number">2</span>
+        wet_prob = <span class="hljs-number">0.9</span>
+    <span class="hljs-keyword">else</span>
+        wet_prob = <span class="hljs-number">0.0</span>
+    <span class="hljs-keyword">end</span>
+    wet_grass_samples[i] = rand() &lt; wet_prob ? <span class="hljs-number">2</span> : <span class="hljs-number">1</span>
+<span class="hljs-keyword">end</span>
+<span class="hljs-comment"># Convert to one-hot encoding</span>
+clouded_data = [[i == s ? <span class="hljs-number">1.0</span> : <span class="hljs-number">0.0</span> <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:<span class="hljs-number">2</span>] <span class="hljs-keyword">for</span> s <span class="hljs-keyword">in</span> clouded_samples]
+rain_data = [[i == s ? <span class="hljs-number">1.0</span> : <span class="hljs-number">0.0</span> <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:<span class="hljs-number">2</span>] <span class="hljs-keyword">for</span> s <span class="hljs-keyword">in</span> rain_samples]
+sprinkler_data = [[i == s ? <span class="hljs-number">1.0</span> : <span class="hljs-number">0.0</span> <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:<span class="hljs-number">2</span>] <span class="hljs-keyword">for</span> s <span class="hljs-keyword">in</span> sprinkler_samples]
+wet_grass_data = [[i == s ? <span class="hljs-number">1.0</span> : <span class="hljs-number">0.0</span> <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:<span class="hljs-number">2</span>] <span class="hljs-keyword">for</span> s <span class="hljs-keyword">in</span> wet_grass_samples];
+</code></pre><p>The model now becomes a little bit more complex, as we have to put a prior on the CPT&#39;s, and we have to materialze the model for every datapoint we have. Luckily, in <code>RxInfer</code>, we can make a submodel and reuse it for every datapoint. We can put a <code>DirichletCollection</code> prior on the CPT&#39;s, as it is the conjugate prior of the CPT&#39;s. Because we cannot do belief propagation with a <code>DirichletCollection</code> prior, we have to introduce variational constraints to introduce an Expectation Maximization-style schema. This can be done with the <code>@constraints</code> macro. Furthermore, we can use the <code>@initialization</code> macro to initialize the variational distributions and kickstart the inference procedure.</p><pre><code class="language-julia hljs"><span class="hljs-meta">@model</span> <span class="hljs-keyword">function</span> sprinkler_model(clouded_data, rain_data, sprinkler_data, wet_grass_data, cpt_cloud_rain, cpt_cloud_sprinkler, cpt_sprinkler_rain_wet_grass)
+    clouded ~ Categorical([<span class="hljs-number">0.5</span>, <span class="hljs-number">0.5</span>]) <span class="hljs-comment"># Probability of cloudy being false or true</span>
+    clouded_data ~ DiscreteTransition(clouded, diageye(<span class="hljs-number">2</span>))
+    rain ~ DiscreteTransition(clouded, cpt_cloud_rain)
+    rain_data ~ DiscreteTransition(rain, diageye(<span class="hljs-number">2</span>))
+    sprinkler ~ DiscreteTransition(clouded, cpt_cloud_sprinkler)
+    sprinkler_data ~ DiscreteTransition(sprinkler, diageye(<span class="hljs-number">2</span>))
+    wet_grass ~ DiscreteTransition(sprinkler, cpt_sprinkler_rain_wet_grass, rain)
+    wet_grass_data ~ DiscreteTransition(wet_grass, diageye(<span class="hljs-number">2</span>))
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-meta">@model</span> <span class="hljs-keyword">function</span> learn_sprinkler_model(clouded_data, rain_data, sprinkler_data, wet_grass_data)
+    cpt_cloud_rain ~ DirichletCollection(ones(<span class="hljs-number">2</span>, <span class="hljs-number">2</span>))
+    cpt_cloud_sprinkler ~ DirichletCollection(ones(<span class="hljs-number">2</span>, <span class="hljs-number">2</span>))
+    cpt_sprinkler_rain_wet_grass ~ DirichletCollection(ones(<span class="hljs-number">2</span>, <span class="hljs-number">2</span>, <span class="hljs-number">2</span>))
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>:length(clouded_data)
+        wet_grass_data[i] ~ sprinkler_model(clouded_data = clouded_data[i], rain_data = rain_data[i], sprinkler_data = sprinkler_data[i], cpt_cloud_rain = cpt_cloud_rain, cpt_cloud_sprinkler = cpt_cloud_sprinkler, cpt_sprinkler_rain_wet_grass = cpt_sprinkler_rain_wet_grass)
+    <span class="hljs-keyword">end</span>
+<span class="hljs-keyword">end</span>
+</code></pre><pre><code class="language-julia hljs">initialization = <span class="hljs-meta">@initialization</span> <span class="hljs-keyword">begin</span>
+    q(cpt_cloud_rain) = DirichletCollection(ones(<span class="hljs-number">2</span>, <span class="hljs-number">2</span>))
+    q(cpt_cloud_sprinkler) = DirichletCollection(ones(<span class="hljs-number">2</span>, <span class="hljs-number">2</span>))
+    q(cpt_sprinkler_rain_wet_grass) = DirichletCollection(ones(<span class="hljs-number">2</span>, <span class="hljs-number">2</span>, <span class="hljs-number">2</span>))
+    <span class="hljs-keyword">for</span> init <span class="hljs-keyword">in</span> sprinkler_model
+        μ(sprinkler) = Categorical([<span class="hljs-number">0.5</span>, <span class="hljs-number">0.5</span>])
+    <span class="hljs-keyword">end</span>
+<span class="hljs-keyword">end</span>
+
+constraints = <span class="hljs-meta">@constraints</span> <span class="hljs-keyword">begin</span>
+    <span class="hljs-keyword">for</span> q <span class="hljs-keyword">in</span> sprinkler_model
+        q(cpt_cloud_rain, clouded, rain) = q(clouded,rain)q(cpt_cloud_rain)
+        q(cpt_cloud_sprinkler, clouded, sprinkler) = q(clouded,sprinkler)q(cpt_cloud_sprinkler)
+        q(cpt_sprinkler_rain_wet_grass, sprinkler, rain, wet_grass) = q(sprinkler,rain,wet_grass)q(cpt_sprinkler_rain_wet_grass)
+    <span class="hljs-keyword">end</span>
+<span class="hljs-keyword">end</span>
+
+result = infer(model=learn_sprinkler_model(), 
+            data=(clouded_data=clouded_data, rain_data=rain_data, sprinkler_data=sprinkler_data, wet_grass_data=wet_grass_data), 
+            constraints=constraints, 
+            initialization=initialization, 
+            iterations=<span class="hljs-number">5</span>, 
+            showprogress=<span class="hljs-literal">true</span>,
+            options=(limit_stack_depth=<span class="hljs-number">500</span>,))
+</code></pre><pre><code class="nohighlight hljs">Inference results:
+  Posteriors       | available for (cpt_cloud_sprinkler, cpt_cloud_rain, cp
+t_sprinkler_rain_wet_grass)</code></pre><p>Wow! That was fast! Let&#39;s inspect the learned CPT&#39;s:</p><pre><code class="language-julia hljs"><span class="hljs-keyword">using</span> Plots
+
+<span class="hljs-comment"># Plot CPT for cloud -&gt; rain</span>
+cloud_rain = mean(last(result.posteriors[:cpt_cloud_rain]))
+p1 = heatmap(cloud_rain, 
+        title=<span class="hljs-string">&quot;P(Rain | Cloudy)&quot;</span>, 
+        xlabel=<span class="hljs-string">&quot;Cloudy&quot;</span>, 
+        ylabel=<span class="hljs-string">&quot;Rain&quot;</span>,
+        xticks=(<span class="hljs-number">1</span>:<span class="hljs-number">2</span>, [<span class="hljs-string">&quot;False&quot;</span>, <span class="hljs-string">&quot;True&quot;</span>]),
+        yticks=(<span class="hljs-number">1</span>:<span class="hljs-number">2</span>, [<span class="hljs-string">&quot;False&quot;</span>, <span class="hljs-string">&quot;True&quot;</span>]),
+        xrotation=<span class="hljs-number">45</span>,
+        left_margin=<span class="hljs-number">10</span>Plots.mm,
+        bottom_margin=<span class="hljs-number">10</span>Plots.mm)
+
+<span class="hljs-comment"># Plot CPT for cloud -&gt; sprinkler</span>
+cloud_sprinkler = mean(last(result.posteriors[:cpt_cloud_sprinkler]))
+p2 = heatmap(cloud_sprinkler,
+        title=<span class="hljs-string">&quot;P(Sprinkler | Cloudy)&quot;</span>,
+        xlabel=<span class="hljs-string">&quot;Cloudy&quot;</span>,
+        ylabel=<span class="hljs-string">&quot;Sprinkler&quot;</span>, <span class="hljs-comment"># Remove y-label since it&#x27;s shown in p1</span>
+        xticks=(<span class="hljs-number">1</span>:<span class="hljs-number">2</span>, [<span class="hljs-string">&quot;False&quot;</span>, <span class="hljs-string">&quot;True&quot;</span>]),
+        yticks=(<span class="hljs-number">1</span>:<span class="hljs-number">2</span>, [<span class="hljs-string">&quot;False&quot;</span>, <span class="hljs-string">&quot;True&quot;</span>]),
+        xrotation=<span class="hljs-number">45</span>,
+        bottom_margin=<span class="hljs-number">10</span>Plots.mm)
+
+<span class="hljs-comment"># Plot CPT for sprinkler,rain -&gt; wet grass</span>
+sprinkler_rain_wet = mean(last(result.posteriors[:cpt_sprinkler_rain_wet_grass]))
+p3 = heatmap(sprinkler_rain_wet[:,:,<span class="hljs-number">1</span>],
+        title=<span class="hljs-string">&quot;P(Wet Grass=False | Sprinkler,Rain)&quot;</span>,
+        xlabel=<span class="hljs-string">&quot;Rain&quot;</span>,
+        ylabel=<span class="hljs-string">&quot;Sprinkler&quot;</span>, <span class="hljs-comment"># Remove y-label since it&#x27;s shown in p1</span>
+        xticks=(<span class="hljs-number">1</span>:<span class="hljs-number">2</span>, [<span class="hljs-string">&quot;False&quot;</span>, <span class="hljs-string">&quot;True&quot;</span>]),
+        yticks=(<span class="hljs-number">1</span>:<span class="hljs-number">2</span>, [<span class="hljs-string">&quot;False&quot;</span>, <span class="hljs-string">&quot;True&quot;</span>]),
+        xrotation=<span class="hljs-number">45</span>,
+        bottom_margin=<span class="hljs-number">10</span>Plots.mm)
+p4 = heatmap(sprinkler_rain_wet[:,:,<span class="hljs-number">2</span>],
+        title=<span class="hljs-string">&quot;P(Wet Grass=True | Sprinkler,Rain)&quot;</span>, 
+        xlabel=<span class="hljs-string">&quot;Rain&quot;</span>,
+        ylabel=<span class="hljs-string">&quot;Sprinkler&quot;</span>, <span class="hljs-comment"># Remove y-label since it&#x27;s shown in p1</span>
+        xticks=(<span class="hljs-number">1</span>:<span class="hljs-number">2</span>, [<span class="hljs-string">&quot;False&quot;</span>, <span class="hljs-string">&quot;True&quot;</span>]),
+        yticks=(<span class="hljs-number">1</span>:<span class="hljs-number">2</span>, [<span class="hljs-string">&quot;False&quot;</span>, <span class="hljs-string">&quot;True&quot;</span>]),
+        xrotation=<span class="hljs-number">45</span>,
+        bottom_margin=<span class="hljs-number">15</span>Plots.mm)
+
+plot(p1, p2, p3, p4, layout=(<span class="hljs-number">1</span>,<span class="hljs-number">4</span>), size=(<span class="hljs-number">1700</span>,<span class="hljs-number">305</span>))
+</code></pre><p><img src="Bayesian Networks_14_1.png" alt/></p><p>This concludes our tutorial on Bayesian networks. We have seen how to build and perform inference in Bayesian networks using RxInfer. We have also seen how to learn the CPT&#39;s when we have data available. As we have seen, RxInfer is able to learn posterior distributions even when some of the data is missing, what do you think will happen if we pass missing data to our model that learns the CPT&#39;s?</p><hr/><div class="admonition is-info" id="Contributing-baba9dc142ba7ccb"><header class="admonition-header">Contributing<a class="admonition-anchor" href="#Contributing-baba9dc142ba7ccb" title="Permalink"></a></header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><div class="admonition is-compat" id="Environment-ead41e814a894220"><header class="admonition-header">Environment<a class="admonition-anchor" href="#Environment-ead41e814a894220" title="Permalink"></a></header><div class="admonition-body"><p>This example was executed in a clean, isolated environment. Below are the exact package versions used:</p><p>For reproducibility:</p><ul><li>Use the same package versions when running locally</li><li>Report any issues with package compatibility</li></ul></div></div><pre><code class="nohighlight hljs">Status `/tmp/jl_BKMWxI/Project.toml`
+  [f526b714] GraphViz v0.2.0
+  [91a5bcdd] Plots v1.41.7
+  [86711068] RxInfer v5.5.2
+</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../bayesian_multinomial_regression/">« Bayesian Multinomial Regression</a><a class="docs-footer-nextpage" href="../coin_toss_model/">Coin Toss Model »</a><div class="flexbox-break"></div><p class="footer-message">Created in <a href="https://biaslab.github.io/">BIASlab</a>, maintained by <a href="https://github.com/ReactiveBayes">ReactiveBayes</a>, powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.19.0 on <span class="colophon-date" title="Thursday 3 September 2026 19:09">Thursday 3 September 2026</span>. Using Julia version 1.12.7.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

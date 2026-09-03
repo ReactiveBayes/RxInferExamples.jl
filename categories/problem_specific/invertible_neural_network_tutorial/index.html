@@ -1,36 +1,41 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Invertible Neural Network Tutorial · RxInfer.jl Examples</title><meta name="title" content="Invertible Neural Network Tutorial · RxInfer.jl Examples"/><meta property="og:title" content="Invertible Neural Network Tutorial · RxInfer.jl Examples"/><meta property="twitter:title" content="Invertible Neural Network Tutorial · RxInfer.jl Examples"/><meta name="description" content="A repository of examples and tutorials for RxInfer.jl, a Julia package for reactive message passing inference in probabilistic models."/><meta property="og:description" content="A repository of examples and tutorials for RxInfer.jl, a Julia package for reactive message passing inference in probabilistic models."/><meta property="twitter:description" content="A repository of examples and tutorials for RxInfer.jl, a Julia package for reactive message passing inference in probabilistic models."/><meta property="og:url" content="https://examples.rxinfer.ml/categories/problem_specific/invertible_neural_network_tutorial/"/><meta property="twitter:url" content="https://examples.rxinfer.ml/categories/problem_specific/invertible_neural_network_tutorial/"/><link rel="canonical" href="https://examples.rxinfer.ml/categories/problem_specific/invertible_neural_network_tutorial/"/><script async src="https://www.googletagmanager.com/gtag/js?id=G-GMFX620VEP"></script><script>  window.dataLayer = window.dataLayer || [];
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Invertible Neural Network Tutorial · RxInfer.jl Examples</title><meta name="title" content="Invertible Neural Network Tutorial · RxInfer.jl Examples"/><meta property="og:title" content="Invertible Neural Network Tutorial · RxInfer.jl Examples"/><meta property="twitter:title" content="Invertible Neural Network Tutorial · RxInfer.jl Examples"/><meta name="description" content="Invertible neural networks: a tutorial with RxInfer.jl\nAn example of variational Bayesian Inference with invertible neural networks. Reference: Bart van Erp, Hybrid Inference with Invertible Neural Networks in Factor Graphs.\n\nCheck more examples and tutorials at https://examples.rxinfer.com\n"/><meta property="og:description" content="Invertible neural networks: a tutorial with RxInfer.jl\nAn example of variational Bayesian Inference with invertible neural networks. Reference: Bart van Erp, Hybrid Inference with Invertible Neural Networks in Factor Graphs.\n\nCheck more examples and tutorials at https://examples.rxinfer.com\n"/><meta property="twitter:description" content="Invertible neural networks: a tutorial with RxInfer.jl\nAn example of variational Bayesian Inference with invertible neural networks. Reference: Bart van Erp, Hybrid Inference with Invertible Neural Networks in Factor Graphs.\n\nCheck more examples and tutorials at https://examples.rxinfer.com\n"/><meta property="og:url" content="https://examples.rxinfer.com/categories/problem_specific/invertible_neural_network_tutorial/"/><meta property="twitter:url" content="https://examples.rxinfer.com/categories/problem_specific/invertible_neural_network_tutorial/"/><link rel="canonical" href="https://examples.rxinfer.com/categories/problem_specific/invertible_neural_network_tutorial/"/><script async src="https://www.googletagmanager.com/gtag/js?id=G-GMFX620VEP"></script><script>  window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
   gtag('config', 'G-GMFX620VEP', {'page_path': location.pathname + location.search + location.hash});
-</script><script data-outdated-warner src="../../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../../assets/documenter.js"></script><script src="../../../search_index.js"></script><script src="../../../siteinfo.js"></script><script src="../../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../../assets/themeswap.js"></script><link href="../../../assets/theme.css" rel="stylesheet" type="text/css"/><link href="../../../assets/header.css" rel="stylesheet" type="text/css"/><script src="../../../assets/header.js"></script><script src="../../../assets/chat.js"></script><link href="../../../assets/favicon.ico" rel="icon" type="image/x-icon"/>
+</script><script data-outdated-warner src="../../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.63.2/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../../assets/documenter.js"></script><script src="../../../search_index.js"></script><script src="../../../siteinfo.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../../assets/themeswap.js"></script><link href="../../../assets/theme.css" rel="stylesheet" type="text/css"/><link href="../../../assets/header.css" rel="stylesheet" type="text/css"/><script src="../../../assets/header.js"></script><script src="../../../assets/chat.js"></script><link href="../../../assets/favicon.ico" rel="icon" type="image/x-icon"/>
     <meta property="og:title" content="Invertible neural networks: a tutorial - RxInfer Examples">
     <meta name="description" content="An example of variational Bayesian Inference with invertible neural networks. Reference: Bart van Erp, Hybrid Inference with Invertible Neural Networks in Factor Graphs.
 ">
     <meta property="og:description" content="An example of variational Bayesian Inference with invertible neural networks. Reference: Bart van Erp, Hybrid Inference with Invertible Neural Networks in Factor Graphs.
 ">
     <meta name="keywords" content="rxinfer, julia, bayesian inference, examples, probabilistic programming, message passing, probabilistic numerics, variational inference, belief propagation, problem specific, neural networks, invertible networks, hybrid inference">
-    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://examples.rxinfer.ml/sitemap.xml">
-    </head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../../"><img class="docs-light-only" src="../../../assets/logo.svg" alt="RxInfer.jl Examples logo"/><img class="docs-dark-only" src="../../../assets/logo-dark.svg" alt="RxInfer.jl Examples logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../../">RxInfer.jl Examples</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../../">Home</a></li><li><a class="tocitem" href="../../../how_to_contribute/">How to contribute</a></li><li><a class="tocitem" href="../../../autogenerated/list_of_examples/">List of Examples</a></li><li><span class="tocitem">Basic Examples</span><ul><li><a class="tocitem" href="../../basic_examples/bayesian_binomial_regression/">Bayesian Binomial Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_linear_regression/">Bayesian Linear Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_multinomial_regression/">Bayesian Multinomial Regression</a></li><li><a class="tocitem" href="../../basic_examples/coin_toss_model/">Coin Toss Model</a></li><li><a class="tocitem" href="../../basic_examples/feature_functions_in_bayesian_regression/">Feature Functions In Bayesian Regression</a></li><li><a class="tocitem" href="../../basic_examples/hidden_markov_model/">Hidden Markov Model</a></li><li><a class="tocitem" href="../../basic_examples/kalman_filtering_and_smoothing/">Kalman Filtering And Smoothing</a></li><li><a class="tocitem" href="../../basic_examples/pomdp_control/">Pomdp Control</a></li><li><a class="tocitem" href="../../basic_examples/predicting_bike_rental_demand/">Predicting Bike Rental Demand</a></li></ul></li><li><span class="tocitem">Advanced Examples</span><ul><li><a class="tocitem" href="../../advanced_examples/active_inference_mountain_car/">Active Inference Mountain Car</a></li><li><a class="tocitem" href="../../advanced_examples/advanced_tutorial/">Advanced Tutorial</a></li><li><a class="tocitem" href="../../advanced_examples/assessing_people_skills/">Assessing People Skills</a></li><li><a class="tocitem" href="../../advanced_examples/chance_constraints/">Chance Constraints</a></li><li><a class="tocitem" href="../../advanced_examples/conjugate-computational_variational_message_passing/">Conjugate-Computational Variational Message Passing</a></li><li><a class="tocitem" href="../../advanced_examples/drone_dynamics/">Drone Dynamics</a></li><li><a class="tocitem" href="../../advanced_examples/global_parameter_optimisation/">Global Parameter Optimisation</a></li><li><a class="tocitem" href="../../advanced_examples/gp_regression_by_ssm/">Gp Regression By Ssm</a></li><li><a class="tocitem" href="../../advanced_examples/infinite_data_stream/">Infinite Data Stream</a></li><li><a class="tocitem" href="../../advanced_examples/multi-agent_trajectory_planning/">Multi-Agent Trajectory Planning</a></li><li><a class="tocitem" href="../../advanced_examples/nonlinear_sensor_fusion/">Nonlinear Sensor Fusion</a></li><li><a class="tocitem" href="../../advanced_examples/robotic_arm/">Robotic Arm</a></li></ul></li><li><span class="tocitem">Problem Specific</span><ul><li><a class="tocitem" href="../autoregressive_models/">Autoregressive Models</a></li><li><a class="tocitem" href="../gamma_mixture/">Gamma Mixture</a></li><li><a class="tocitem" href="../gaussian_mixture/">Gaussian Mixture</a></li><li><a class="tocitem" href="../hierarchical_gaussian_filter/">Hierarchical Gaussian Filter</a></li><li class="is-active"><a class="tocitem" href>Invertible Neural Network Tutorial</a><ul class="internal"><li><a class="tocitem" href="#Introduction"><span>Introduction</span></a></li><li><a class="tocitem" href="#Model-specification"><span>Model specification</span></a></li><li><a class="tocitem" href="#Model-compilation"><span>Model compilation</span></a></li><li><a class="tocitem" href="#Probabilistic-inference"><span>Probabilistic inference</span></a></li><li><a class="tocitem" href="#Parameter-estimation"><span>Parameter estimation</span></a></li></ul></li><li><a class="tocitem" href="../litter_model/">Litter Model</a></li><li><a class="tocitem" href="../ode_parameter_estimation/">Ode Parameter Estimation</a></li><li><a class="tocitem" href="../probit_model/">Probit Model</a></li><li><a class="tocitem" href="../rts_vs_bifm_smoothing/">Rts Vs Bifm Smoothing</a></li><li><a class="tocitem" href="../simple_nonlinear_node/">Simple Nonlinear Node</a></li><li><a class="tocitem" href="../structural_dynamics_with_augmented_kalman_filter/">Structural Dynamics With Augmented Kalman Filter</a></li><li><a class="tocitem" href="../universal_mixtures/">Universal Mixtures</a></li></ul></li><li><a class="tocitem" href="../../../how_build_works/">How we build the examples</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Problem Specific</a></li><li class="is-active"><a href>Invertible Neural Network Tutorial</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Invertible Neural Network Tutorial</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl/blob/main/docs/src/categories/problem_specific/invertible_neural_network_tutorial/index.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><div class="admonition is-info"><header class="admonition-header">Contributing</header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><h1 id="Invertible-neural-networks:-a-tutorial"><a class="docs-heading-anchor" href="#Invertible-neural-networks:-a-tutorial">Invertible neural networks: a tutorial</a><a id="Invertible-neural-networks:-a-tutorial-1"></a><a class="docs-heading-anchor-permalink" href="#Invertible-neural-networks:-a-tutorial" title="Permalink"></a></h1><p><em>Table of contents</em></p><ol><li><a href="#Introduction">Introduction</a></li><li><a href="#Model-specification">Model specification</a></li><li><a href="#Model-compilation">Model compilation</a></li><li><a href="#Probabilistic-inference">Probabilistic inference</a></li><li><a href="#Parameter-estimation">Parameter estimation</a></li></ol><h2 id="Introduction"><a class="docs-heading-anchor" href="#Introduction">Introduction</a><a id="Introduction-1"></a><a class="docs-heading-anchor-permalink" href="#Introduction" title="Permalink"></a></h2><h3 id="Load-required-packages"><a class="docs-heading-anchor" href="#Load-required-packages">Load required packages</a><a id="Load-required-packages-1"></a><a class="docs-heading-anchor-permalink" href="#Load-required-packages" title="Permalink"></a></h3><p>Before we can start, we need to import some packages:</p><pre><code class="language-julia hljs">using RxInfer
-using Random
-using StableRNGs
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://examples.rxinfer.com/sitemap.xml">
+    </head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../../"><img class="docs-light-only" src="../../../assets/logo.svg" alt="RxInfer.jl Examples logo"/><img class="docs-dark-only" src="../../../assets/logo-dark.svg" alt="RxInfer.jl Examples logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../../">RxInfer.jl Examples</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../../">Home</a></li><li><a class="tocitem" href="../../../how_to_contribute/">How to contribute</a></li><li><a class="tocitem" href="../../../autogenerated/list_of_examples/">List of Examples</a></li><li><span class="tocitem">Basic Examples</span><ul><li><a class="tocitem" href="../../basic_examples/bayesian_binomial_regression/">Bayesian Binomial Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_linear_regression/">Bayesian Linear Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_multinomial_regression/">Bayesian Multinomial Regression</a></li><li><a class="tocitem" href="../../basic_examples/bayesian_networks/">Bayesian Networks</a></li><li><a class="tocitem" href="../../basic_examples/coin_toss_model/">Coin Toss Model</a></li><li><a class="tocitem" href="../../basic_examples/contextual_bandits/">Contextual Bandits</a></li><li><a class="tocitem" href="../../basic_examples/feature_functions_in_bayesian_regression/">Feature Functions In Bayesian Regression</a></li><li><a class="tocitem" href="../../basic_examples/forgetting_factors_for_online_inference/">Forgetting Factors For Online Inference</a></li><li><a class="tocitem" href="../../basic_examples/hidden_markov_model/">Hidden Markov Model</a></li><li><a class="tocitem" href="../../basic_examples/incomplete_data/">Incomplete Data</a></li><li><a class="tocitem" href="../../basic_examples/kalman_filtering_and_smoothing/">Kalman Filtering And Smoothing</a></li><li><a class="tocitem" href="../../basic_examples/pomdp_control/">Pomdp Control</a></li><li><a class="tocitem" href="../../basic_examples/predicting_bike_rental_demand/">Predicting Bike Rental Demand</a></li><li><a class="tocitem" href="../../basic_examples/t-maze_active_inference/">T-Maze Active Inference</a></li></ul></li><li><span class="tocitem">Advanced Examples</span><ul><li><a class="tocitem" href="../../advanced_examples/active_inference_mountain_car/">Active Inference Mountain Car</a></li><li><a class="tocitem" href="../../advanced_examples/assessing_people_skills/">Assessing People Skills</a></li><li><a class="tocitem" href="../../advanced_examples/autoregressive_active_inference/">Autoregressive Active Inference</a></li><li><a class="tocitem" href="../../advanced_examples/bayesian_structured_time_series/">Bayesian Structured Time Series</a></li><li><a class="tocitem" href="../../advanced_examples/chance_constraints/">Chance Constraints</a></li><li><a class="tocitem" href="../../advanced_examples/conjugate-computational_variational_message_passing/">Conjugate-Computational Variational Message Passing</a></li><li><a class="tocitem" href="../../advanced_examples/drone_dynamics/">Drone Dynamics</a></li><li><a class="tocitem" href="../../advanced_examples/efe_minimization_via_message_passing/">Efe Minimization Via Message Passing</a></li><li><a class="tocitem" href="../../advanced_examples/gp_regression_by_ssm/">Gp Regression By Ssm</a></li><li><a class="tocitem" href="../../advanced_examples/infinite_data_stream/">Infinite Data Stream</a></li><li><a class="tocitem" href="../../advanced_examples/integrating_neural_networks_with_flux.jl_and_lux.jl/">Integrating Neural Networks With Flux.Jl And Lux.Jl</a></li><li><a class="tocitem" href="../../advanced_examples/learning_dynamics_with_vaes/">Learning Dynamics With Vaes</a></li><li><a class="tocitem" href="../../advanced_examples/multi-agent_trajectory_planning/">Multi-Agent Trajectory Planning</a></li><li><a class="tocitem" href="../../advanced_examples/nonlinear_sensor_fusion/">Nonlinear Sensor Fusion</a></li><li><a class="tocitem" href="../../advanced_examples/parameter_optimisation_with_optim.jl/">Parameter Optimisation With Optim.Jl</a></li><li><a class="tocitem" href="../../advanced_examples/robotic_arm/">Robotic Arm</a></li><li><a class="tocitem" href="../../advanced_examples/solving_linear_systems_with_message_passing/">Solving Linear Systems With Message Passing</a></li></ul></li><li><span class="tocitem">Problem Specific</span><ul><li><a class="tocitem" href="../autoregressive_models/">Autoregressive Models</a></li><li><a class="tocitem" href="../gamma_mixture/">Gamma Mixture</a></li><li><a class="tocitem" href="../gaussian_mixture/">Gaussian Mixture</a></li><li><a class="tocitem" href="../hierarchical_gaussian_filter/">Hierarchical Gaussian Filter</a></li><li class="is-active"><a class="tocitem" href>Invertible Neural Network Tutorial</a><ul class="internal"><li><a class="tocitem" href="#Introduction"><span>Introduction</span></a></li><li><a class="tocitem" href="#Model-specification"><span>Model specification</span></a></li><li><a class="tocitem" href="#Model-compilation"><span>Model compilation</span></a></li><li><a class="tocitem" href="#Probabilistic-inference"><span>Probabilistic inference</span></a></li><li><a class="tocitem" href="#Parameter-estimation"><span>Parameter estimation</span></a></li></ul></li><li><a class="tocitem" href="../ising_model/">Ising Model</a></li><li><a class="tocitem" href="../litter_model/">Litter Model</a></li><li><a class="tocitem" href="../ode_parameter_estimation/">Ode Parameter Estimation</a></li><li><a class="tocitem" href="../probit_model/">Probit Model</a></li><li><a class="tocitem" href="../rts_vs_bifm_smoothing/">Rts Vs Bifm Smoothing</a></li><li><a class="tocitem" href="../simple_nonlinear_node/">Simple Nonlinear Node</a></li><li><a class="tocitem" href="../structural_dynamics_with_augmented_kalman_filter/">Structural Dynamics With Augmented Kalman Filter</a></li><li><a class="tocitem" href="../universal_mixtures/">Universal Mixtures</a></li></ul></li><li><span class="tocitem">Experimental Examples</span><ul><li><a class="tocitem" href="../../experimental_examples/bayesian_trust_learning/">Bayesian Trust Learning</a></li><li><a class="tocitem" href="../../experimental_examples/large_language_models/">Large Language Models</a></li><li><a class="tocitem" href="../../experimental_examples/latent_vector_autoregressive_model/">Latent Vector Autoregressive Model</a></li><li><a class="tocitem" href="../../experimental_examples/recurrent_switching_linear_dynamical_system/">Recurrent Switching Linear Dynamical System</a></li></ul></li><li><a class="tocitem" href="../../../how_build_works/">How we build the examples</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Problem Specific</a></li><li class="is-active"><a href>Invertible Neural Network Tutorial</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Invertible Neural Network Tutorial</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/ReactiveBayes/RxInferExamples.jl" title="View source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><div class="admonition is-info" id="Contributing-baba9dc142ba7ccb"><header class="admonition-header">Contributing<a class="admonition-anchor" href="#Contributing-baba9dc142ba7ccb" title="Permalink"></a></header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><h1 id="Invertible-neural-networks:-a-tutorial"><a class="docs-heading-anchor" href="#Invertible-neural-networks:-a-tutorial">Invertible neural networks: a tutorial</a><a id="Invertible-neural-networks:-a-tutorial-1"></a><a class="docs-heading-anchor-permalink" href="#Invertible-neural-networks:-a-tutorial" title="Permalink"></a></h1><p><em>Table of contents</em></p><ol><li><a href="#Introduction">Introduction</a></li><li><a href="#Model-specification">Model specification</a></li><li><a href="#Model-compilation">Model compilation</a></li><li><a href="#Probabilistic-inference">Probabilistic inference</a></li><li><a href="#Parameter-estimation">Parameter estimation</a></li></ol><h2 id="Introduction"><a class="docs-heading-anchor" href="#Introduction">Introduction</a><a id="Introduction-1"></a><a class="docs-heading-anchor-permalink" href="#Introduction" title="Permalink"></a></h2><h3 id="Load-required-packages"><a class="docs-heading-anchor" href="#Load-required-packages">Load required packages</a><a id="Load-required-packages-1"></a><a class="docs-heading-anchor-permalink" href="#Load-required-packages" title="Permalink"></a></h3><p>Before we can start, we need to import some packages:</p><pre><code class="language-julia hljs"><span class="hljs-keyword">using</span> RxInfer
+<span class="hljs-keyword">using</span> Random
+<span class="hljs-keyword">using</span> StableRNGs
 
-using ReactiveMP        # ReactiveMP is included in RxInfer, but we explicitly use some of its functionality
-using LinearAlgebra     # only used for some matrix specifics
-using Plots             # only used for visualisation
-using Distributions     # only used for sampling from multivariate distributions
-using Optim             # only used for parameter optimisation</code></pre><h2 id="Model-specification"><a class="docs-heading-anchor" href="#Model-specification">Model specification</a><a id="Model-specification-1"></a><a class="docs-heading-anchor-permalink" href="#Model-specification" title="Permalink"></a></h2><p>Specifying an invertible neural network model is easy. The general recipe looks like follows: <code>model = FlowModel(input_dim, (layer1(options), layer2(options), ...))</code>. Here the first argument corresponds to the input dimension of the model and the second argument is a tuple of layers. An example model can be defined as </p><pre><code class="language-julia hljs">model = FlowModel(2,
+<span class="hljs-keyword">using</span> ReactiveMP        <span class="hljs-comment"># ReactiveMP is included in RxInfer, but we explicitly use some of its functionality</span>
+<span class="hljs-keyword">using</span> LinearAlgebra     <span class="hljs-comment"># only used for some matrix specifics</span>
+<span class="hljs-keyword">using</span> Plots             <span class="hljs-comment"># only used for visualisation</span>
+<span class="hljs-keyword">using</span> Distributions     <span class="hljs-comment"># only used for sampling from multivariate distributions</span>
+<span class="hljs-keyword">using</span> Optim             <span class="hljs-comment"># only used for parameter optimisation</span>
+<span class="hljs-keyword">using</span> ADTypes           <span class="hljs-comment"># only used to specify the automatic differentiation backend for Optim</span>
+<span class="hljs-keyword">using</span> ForwardDiff       <span class="hljs-comment"># only used for automatic differentiation in the parameter optimisation</span>
+</code></pre><h2 id="Model-specification"><a class="docs-heading-anchor" href="#Model-specification">Model specification</a><a id="Model-specification-1"></a><a class="docs-heading-anchor-permalink" href="#Model-specification" title="Permalink"></a></h2><p>Specifying an invertible neural network model is easy. The general recipe looks like follows: <code>model = FlowModel(input_dim, (layer1(options), layer2(options), ...))</code>. Here the first argument corresponds to the input dimension of the model and the second argument is a tuple of layers. An example model can be defined as </p><pre><code class="language-julia hljs">model = FlowModel(<span class="hljs-number">2</span>,
     (
         AdditiveCouplingLayer(PlanarFlow()),
-        AdditiveCouplingLayer(PlanarFlow(); permute=false)
+        AdditiveCouplingLayer(PlanarFlow(); permute=<span class="hljs-literal">false</span>)
     )
-);</code></pre><p>Alternatively, the <code>input_dim</code> can also be passed as an <code>InputLayer</code> layer as </p><pre><code class="language-julia hljs">model = FlowModel(
+);
+</code></pre><p>Alternatively, the <code>input_dim</code> can also be passed as an <code>InputLayer</code> layer as </p><pre><code class="language-julia hljs">model = FlowModel(
     (
-        InputLayer(2),
+        InputLayer(<span class="hljs-number">2</span>),
         AdditiveCouplingLayer(PlanarFlow()),
-        AdditiveCouplingLayer(PlanarFlow(); permute=false)
+        AdditiveCouplingLayer(PlanarFlow(); permute=<span class="hljs-literal">false</span>)
     )
-);</code></pre><p>In the above <code>AdditiveCouplingLayer</code> layers the input <span>${\bf{x}} = [x_1, x_2, \ldots, x_N]$</span> is partitioned into chunks of unit length. These partitions are additively coupled to an output <span>${\bf{y}} = [y_1, y_2, \ldots, y_N]$</span> as </p><p class="math-container">\[\begin{aligned}
+);
+</code></pre><p>In the above <code>AdditiveCouplingLayer</code> layers the input <span>${\bf{x}} = [x_1, x_2, \ldots, x_N]$</span> is partitioned into chunks of unit length. These partitions are additively coupled to an output <span>${\bf{y}} = [y_1, y_2, \ldots, y_N]$</span> as </p><p class="math-container">\[\begin{aligned}
     y_1 &amp;= x_1 \\
     y_2 &amp;= x_2 + f_1(x_1) \\
     \vdots \\
@@ -42,27 +47,31 @@ using Optim             # only used for parameter optimisation</code></pre><h2 i
     x_N &amp;= y_N - f_{N-1}(x_{N-1})
 \end{aligned}\]</p><p class="math-container">\[f_n\]</p><p>is an arbitrarily complex function, here chosen to be a <code>PlanarFlow</code>, but this can be interchanged for any function or neural network. The <code>permute</code> keyword argument (which defaults to <code>true</code>) specifies whether the output of this layer should be randomly permuted or shuffled. This makes sure that the first element is also transformed in consecutive layers.</p><p>A permutation layer can also be added by itself as a <code>PermutationLayer</code> layer with a custom permutation matrix if desired.</p><pre><code class="language-julia hljs">model = FlowModel(
     (
-        InputLayer(2),
-        AdditiveCouplingLayer(PlanarFlow(); permute=false),
-        PermutationLayer(PermutationMatrix(2)),
-        AdditiveCouplingLayer(PlanarFlow(); permute=false)
+        InputLayer(<span class="hljs-number">2</span>),
+        AdditiveCouplingLayer(PlanarFlow(); permute=<span class="hljs-literal">false</span>),
+        PermutationLayer(PermutationMatrix(<span class="hljs-number">2</span>)),
+        AdditiveCouplingLayer(PlanarFlow(); permute=<span class="hljs-literal">false</span>)
     )
-);</code></pre><h2 id="Model-compilation"><a class="docs-heading-anchor" href="#Model-compilation">Model compilation</a><a id="Model-compilation-1"></a><a class="docs-heading-anchor-permalink" href="#Model-compilation" title="Permalink"></a></h2><p>In the current models, the layers are setup to work with the passed input dimension. This means that the function <span>$f_n$</span> is repeated <code>input_dim-1</code> times for each of the partitions. Furthermore the permutation layers are set up with proper permutation matrices. If we print the model we get</p><pre><code class="language-julia hljs">model</code></pre><pre><code class="nohighlight hljs">ReactiveMP.FlowModel{3, Tuple{ReactiveMP.AdditiveCouplingLayerEmpty{Tuple{R
+);
+</code></pre><h2 id="Model-compilation"><a class="docs-heading-anchor" href="#Model-compilation">Model compilation</a><a id="Model-compilation-1"></a><a class="docs-heading-anchor-permalink" href="#Model-compilation" title="Permalink"></a></h2><p>In the current models, the layers are setup to work with the passed input dimension. This means that the function <span>$f_n$</span> is repeated <code>input_dim-1</code> times for each of the partitions. Furthermore the permutation layers are set up with proper permutation matrices. If we print the model we get</p><pre><code class="language-julia hljs">model
+</code></pre><pre><code class="nohighlight hljs">ReactiveMP.FlowModel{3, Tuple{ReactiveMP.AdditiveCouplingLayerEmpty{Tuple{R
 eactiveMP.PlanarFlowEmpty{1}}}, ReactiveMP.PermutationLayer{Int64}, Reactiv
 eMP.AdditiveCouplingLayerEmpty{Tuple{ReactiveMP.PlanarFlowEmpty{1}}}}}(2, (
 ReactiveMP.AdditiveCouplingLayerEmpty{Tuple{ReactiveMP.PlanarFlowEmpty{1}}}
 (2, (ReactiveMP.PlanarFlowEmpty{1}(),), 1), ReactiveMP.PermutationLayer{Int
 64}(2, [0 1; 1 0]), ReactiveMP.AdditiveCouplingLayerEmpty{Tuple{ReactiveMP.
-PlanarFlowEmpty{1}}}(2, (ReactiveMP.PlanarFlowEmpty{1}(),), 1)))</code></pre><p>The text below describes the terms above. Please note the distinction in typing and elements, i.e. <code>FlowModel{types}(elements)</code>:</p><ul><li><code>FlowModel</code> - specifies that we are dealing with a flow model.</li><li><code>3</code> - Number of layers.</li><li><code>Tuple{AdditiveCouplingLayerEmpty{...},PermutationLayer{Int64},AdditiveCouplingLayerEmpty{...}}</code> - tuple of layer types.</li><li><code>Tuple{ReactiveMP.PlanarFlowEmpty{1},ReactiveMP.PlanarFlowEmpty{1}}</code> - tuple of functions <span>$f_n$</span>.</li><li><code>PermutationLayer{Int64}(2, [0 1; 1 0])</code> - permutation layer with input dimension 2 and permutation matrix <code>[0 1; 1 0]</code>.</li></ul><p>From inspection we can see that the <code>AdditiveCouplingLayerEmpty</code> and <code>PlanarFlowEmpty</code> objects are different than before. They are initialized for the correct dimension, but they do not have any parameters registered to them. This is by design to allow for separating the model specification from potential optimization procedures. Before we perform inference in this model, the parameters should be initialized. We can randomly initialize the parameters as</p><pre><code class="language-julia hljs">compiled_model = compile(model)</code></pre><pre><code class="nohighlight hljs">ReactiveMP.CompiledFlowModel{3, Tuple{ReactiveMP.AdditiveCouplingLayer{Tupl
+PlanarFlowEmpty{1}}}(2, (ReactiveMP.PlanarFlowEmpty{1}(),), 1)))</code></pre><p>The text below describes the terms above. Please note the distinction in typing and elements, i.e. <code>FlowModel{types}(elements)</code>:</p><ul><li><code>FlowModel</code> - specifies that we are dealing with a flow model.</li><li><code>3</code> - Number of layers.</li><li><code>Tuple{AdditiveCouplingLayerEmpty{...},PermutationLayer{Int64},AdditiveCouplingLayerEmpty{...}}</code> - tuple of layer types.</li><li><code>Tuple{ReactiveMP.PlanarFlowEmpty{1},ReactiveMP.PlanarFlowEmpty{1}}</code> - tuple of functions <span>$f_n$</span>.</li><li><code>PermutationLayer{Int64}(2, [0 1; 1 0])</code> - permutation layer with input dimension 2 and permutation matrix <code>[0 1; 1 0]</code>.</li></ul><p>From inspection we can see that the <code>AdditiveCouplingLayerEmpty</code> and <code>PlanarFlowEmpty</code> objects are different than before. They are initialized for the correct dimension, but they do not have any parameters registered to them. This is by design to allow for separating the model specification from potential optimization procedures. Before we perform inference in this model, the parameters should be initialized. We can randomly initialize the parameters as</p><pre><code class="language-julia hljs">compiled_model = compile(model)
+</code></pre><pre><code class="nohighlight hljs">ReactiveMP.CompiledFlowModel{3, Tuple{ReactiveMP.AdditiveCouplingLayer{Tupl
 e{ReactiveMP.PlanarFlow{Float64, Float64}}}, ReactiveMP.PermutationLayer{In
 t64}, ReactiveMP.AdditiveCouplingLayer{Tuple{ReactiveMP.PlanarFlow{Float64,
  Float64}}}}}(2, (ReactiveMP.AdditiveCouplingLayer{Tuple{ReactiveMP.PlanarF
-low{Float64, Float64}}}(2, (ReactiveMP.PlanarFlow{Float64, Float64}(0.90034
-71948047783, -0.7599184059109225, 0.0038441640370240463),), 1), ReactiveMP.
-PermutationLayer{Int64}(2, [0 1; 1 0]), ReactiveMP.AdditiveCouplingLayer{Tu
-ple{ReactiveMP.PlanarFlow{Float64, Float64}}}(2, (ReactiveMP.PlanarFlow{Flo
-at64, Float64}(-0.39913131905279925, -0.6569490065153973, -0.08759672253233
-154),), 1)))</code></pre><p>Now we can see that random parameters have been assigned to the individual functions inside of our model. Alternatively if we would like to pass our own parameters, then this is also possible. You can easily find the required number of parameters using the <code>nr_params(model)</code> function.</p><pre><code class="language-julia hljs">compiled_model = compile(model, randn(StableRNG(321), nr_params(model)))</code></pre><pre><code class="nohighlight hljs">ReactiveMP.CompiledFlowModel{3, Tuple{ReactiveMP.AdditiveCouplingLayer{Tupl
+low{Float64, Float64}}}(2, (ReactiveMP.PlanarFlow{Float64, Float64}(-0.9483
+163996458246, 0.13693684408544807, -0.331635364252898),), 1), ReactiveMP.Pe
+rmutationLayer{Int64}(2, [0 1; 1 0]), ReactiveMP.AdditiveCouplingLayer{Tupl
+e{ReactiveMP.PlanarFlow{Float64, Float64}}}(2, (ReactiveMP.PlanarFlow{Float
+64, Float64}(1.3263437688178232, -0.013551734968478838, -1.0581364910016915
+),), 1)))</code></pre><p>Now we can see that random parameters have been assigned to the individual functions inside of our model. Alternatively if we would like to pass our own parameters, then this is also possible. You can easily find the required number of parameters using the <code>nr_params(model)</code> function.</p><pre><code class="language-julia hljs">compiled_model = compile(model, randn(StableRNG(<span class="hljs-number">321</span>), nr_params(model)))
+</code></pre><pre><code class="nohighlight hljs">ReactiveMP.CompiledFlowModel{3, Tuple{ReactiveMP.AdditiveCouplingLayer{Tupl
 e{ReactiveMP.PlanarFlow{Float64, Float64}}}, ReactiveMP.PermutationLayer{In
 t64}, ReactiveMP.AdditiveCouplingLayer{Tuple{ReactiveMP.PlanarFlow{Float64,
  Float64}}}}}(2, (ReactiveMP.AdditiveCouplingLayer{Tuple{ReactiveMP.PlanarF
@@ -71,72 +80,75 @@ low{Float64, Float64}}}(2, (ReactiveMP.PlanarFlow{Float64, Float64}(0.72964
 rmutationLayer{Int64}(2, [0 1; 1 0]), ReactiveMP.AdditiveCouplingLayer{Tupl
 e{ReactiveMP.PlanarFlow{Float64, Float64}}}(2, (ReactiveMP.PlanarFlow{Float
 64, Float64}(0.3490911082645933, -0.8184067956921087, -1.4578214732352386),
-), 1)))</code></pre><h2 id="Probabilistic-inference"><a class="docs-heading-anchor" href="#Probabilistic-inference">Probabilistic inference</a><a id="Probabilistic-inference-1"></a><a class="docs-heading-anchor-permalink" href="#Probabilistic-inference" title="Permalink"></a></h2><p>We can perform inference in our compiled model through standard usage of <code>RxInfer</code> and its underlying <code>ReactiveMP</code> inference engine. Let&#39;s first generate some random 2D data which has been sampled from a standard normal distribution and is consecutively passed through an invertible neural network. Using the <code>forward(model, data)</code> function we can propagate data in the forward direction.</p><pre><code class="language-julia hljs">function generate_data(nr_samples::Int64, model::CompiledFlowModel; seed = 123)
+), 1)))</code></pre><h2 id="Probabilistic-inference"><a class="docs-heading-anchor" href="#Probabilistic-inference">Probabilistic inference</a><a id="Probabilistic-inference-1"></a><a class="docs-heading-anchor-permalink" href="#Probabilistic-inference" title="Permalink"></a></h2><p>We can perform inference in our compiled model through standard usage of <code>RxInfer</code> and its underlying <code>ReactiveMP</code> inference engine. Let&#39;s first generate some random 2D data which has been sampled from a standard normal distribution and is consecutively passed through an invertible neural network. Using the <code>forward(model, data)</code> function we can propagate data in the forward direction.</p><pre><code class="language-julia hljs"><span class="hljs-keyword">function</span> generate_data(nr_samples::<span class="hljs-built_in">Int64</span>, model::CompiledFlowModel; seed = <span class="hljs-number">123</span>)
 
     rng = StableRNG(seed)
     
-    # specify latent sampling distribution
-    dist = MvNormal([1.5, 0.5], I)
+    <span class="hljs-comment"># specify latent sampling distribution</span>
+    dist = MvNormal([<span class="hljs-number">1.5</span>, <span class="hljs-number">0.5</span>], I)
 
-    # sample from the latent distribution
+    <span class="hljs-comment"># sample from the latent distribution</span>
     x = rand(rng, dist, nr_samples)
 
-    # transform data
-    y = zeros(Float64, size(x))
-    for k = 1:nr_samples
+    <span class="hljs-comment"># transform data</span>
+    y = zeros(<span class="hljs-built_in">Float64</span>, size(x))
+    <span class="hljs-keyword">for</span> k = <span class="hljs-number">1</span>:nr_samples
         y[:,k] .= ReactiveMP.forward(model, x[:,k])
-    end
+    <span class="hljs-keyword">end</span>
 
-    # return data
-    return y, x
+    <span class="hljs-comment"># return data</span>
+    <span class="hljs-keyword">return</span> y, x
 
-end;</code></pre><pre><code class="language-julia hljs"># generate data
-y, x = generate_data(1000, compiled_model)
+<span class="hljs-keyword">end</span>;
+</code></pre><pre><code class="language-julia hljs"><span class="hljs-comment"># generate data</span>
+y, x = generate_data(<span class="hljs-number">1000</span>, compiled_model)
 
-# plot generated data
-p1 = scatter(x[1,:], x[2,:], alpha=0.3, title=&quot;Original data&quot;, size=(800,400))
-p2 = scatter(y[1,:], y[2,:], alpha=0.3, title=&quot;Transformed data&quot;, size=(800,400))
-plot(p1, p2, legend = false)</code></pre><p><img src="Invertible Neural Network Tutorial_9_1.png" alt/></p><p>The probabilistic model for doing inference can be described as </p><pre><code class="language-julia hljs">@model function invertible_neural_network(y)
+<span class="hljs-comment"># plot generated data</span>
+p1 = scatter(x[<span class="hljs-number">1</span>,:], x[<span class="hljs-number">2</span>,:], alpha=<span class="hljs-number">0.3</span>, title=<span class="hljs-string">&quot;Original data&quot;</span>, size=(<span class="hljs-number">800</span>,<span class="hljs-number">400</span>))
+p2 = scatter(y[<span class="hljs-number">1</span>,:], y[<span class="hljs-number">2</span>,:], alpha=<span class="hljs-number">0.3</span>, title=<span class="hljs-string">&quot;Transformed data&quot;</span>, size=(<span class="hljs-number">800</span>,<span class="hljs-number">400</span>))
+plot(p1, p2, legend = <span class="hljs-literal">false</span>)
+</code></pre><p><img src="Invertible Neural Network Tutorial_9_1.png" alt/></p><p>The probabilistic model for doing inference can be described as </p><pre><code class="language-julia hljs"><span class="hljs-meta">@model</span> <span class="hljs-keyword">function</span> invertible_neural_network(y)
 
-    # specify prior
-    z_μ ~ MvNormalMeanCovariance(zeros(2), huge*diagm(ones(2)))
-    z_Λ ~ Wishart(2.0, tiny*diagm(ones(2)))
+    <span class="hljs-comment"># specify prior</span>
+    z_μ ~ MvNormalMeanCovariance(zeros(<span class="hljs-number">2</span>), huge*diagm(ones(<span class="hljs-number">2</span>)))
+    z_Λ ~ Wishart(<span class="hljs-number">2.0</span>, tiny*diagm(ones(<span class="hljs-number">2</span>)))
 
-    # specify observations
-    for k in eachindex(y)
+    <span class="hljs-comment"># specify observations</span>
+    <span class="hljs-keyword">for</span> k <span class="hljs-keyword">in</span> eachindex(y)
 
-        # specify latent state
+        <span class="hljs-comment"># specify latent state</span>
         x[k] ~ MvNormalMeanPrecision(z_μ, z_Λ)
 
-        # specify transformed latent value
+        <span class="hljs-comment"># specify transformed latent value</span>
         y_lat[k] ~ Flow(x[k])
 
-        # specify observations
-        y[k] ~ MvNormalMeanCovariance(y_lat[k], tiny*diagm(ones(2)))
+        <span class="hljs-comment"># specify observations</span>
+        y[k] ~ MvNormalMeanCovariance(y_lat[k], tiny*diagm(ones(<span class="hljs-number">2</span>)))
 
-    end
+    <span class="hljs-keyword">end</span>
 
-end;</code></pre><p>Here the model is passed inside a meta data object of the flow node. Inference then resorts to</p><pre><code class="language-julia hljs">observations = [y[:,k] for k=1:size(y,2)]
+<span class="hljs-keyword">end</span>;
+</code></pre><p>Here the model is passed inside a meta data object of the flow node. Inference then resorts to</p><pre><code class="language-julia hljs">observations = [y[:,k] <span class="hljs-keyword">for</span> k=<span class="hljs-number">1</span>:size(y,<span class="hljs-number">2</span>)]
 
 fmodel         = invertible_neural_network()
 data           = (y = observations, )
-initialization = @initialization begin 
-    q(z_μ) = MvNormalMeanCovariance(zeros(2), huge*diagm(ones(2)))
-    q(z_Λ) = Wishart(2.0, tiny*diagm(ones(2)))
-end
+initialization = <span class="hljs-meta">@initialization</span> <span class="hljs-keyword">begin</span> 
+    q(z_μ) = MvNormalMeanCovariance(zeros(<span class="hljs-number">2</span>), huge*diagm(ones(<span class="hljs-number">2</span>)))
+    q(z_Λ) = Wishart(<span class="hljs-number">2.0</span>, tiny*diagm(ones(<span class="hljs-number">2</span>)))
+<span class="hljs-keyword">end</span>
 returnvars     = (z_μ = KeepLast(), z_Λ = KeepLast(), x = KeepLast(), y_lat = KeepLast())
 
-constraints = @constraints begin
+constraints = <span class="hljs-meta">@constraints</span> <span class="hljs-keyword">begin</span>
     q(z_μ, x, z_Λ) = q(z_μ)q(z_Λ)q(x)
-end
+<span class="hljs-keyword">end</span>
 
-@meta function fmeta(model)
-    compiled_model = compile(model, randn(StableRNG(321), nr_params(model)))
-    Flow(y_lat, x) -&gt; FlowMeta(compiled_model) # defaults to FlowMeta(compiled_model; approximation=Linearization()). 
-                                               # other approximation methods can be e.g. FlowMeta(compiled_model; approximation=Unscented(input_dim))
-end
+<span class="hljs-meta">@meta</span> <span class="hljs-keyword">function</span> fmeta(model)
+    compiled_model = compile(model, randn(StableRNG(<span class="hljs-number">321</span>), nr_params(model)))
+    Flow(y_lat, x) -&gt; FlowMeta(compiled_model) <span class="hljs-comment"># defaults to FlowMeta(compiled_model; approximation=Linearization()). </span>
+                                               <span class="hljs-comment"># other approximation methods can be e.g. FlowMeta(compiled_model; approximation=Unscented(input_dim))</span>
+<span class="hljs-keyword">end</span>
 
-# First execution is slow due to Julia&#39;s initial compilation 
+<span class="hljs-comment"># First execution is slow due to Julia&#x27;s initial compilation </span>
 result = infer(
     model          = fmodel, 
     data           = data,
@@ -144,158 +156,175 @@ result = infer(
     meta           = fmeta(model),
     initialization = initialization,
     returnvars     = returnvars,
-    free_energy    = true,
-    iterations     = 10, 
-    showprogress   = false
-)</code></pre><pre><code class="nohighlight hljs">Inference results:
+    free_energy    = <span class="hljs-literal">true</span>,
+    iterations     = <span class="hljs-number">10</span>, 
+    showprogress   = <span class="hljs-literal">false</span>
+)
+</code></pre><pre><code class="nohighlight hljs">Inference results:
   Posteriors       | available for (z_μ, z_Λ, y_lat, x)
   Free Energy:     | Real[29485.3, 23762.9, 23570.6, 23570.6, 23570.6, 2357
 0.6, 23570.6, 23570.6, 23570.6, 23570.6]</code></pre><pre><code class="language-julia hljs">fe_flow = result.free_energy
 zμ_flow = result.posteriors[:z_μ]
 zΛ_flow = result.posteriors[:z_Λ]
 x_flow  = result.posteriors[:x]
-y_flow  = result.posteriors[:y_lat];</code></pre><p>As we can see, the variational free energy decreases inside of our model.</p><pre><code class="language-julia hljs">plot(1:10, fe_flow/size(y,2), xlabel=&quot;iteration&quot;, ylabel=&quot;normalized variational free energy [nats/sample]&quot;, legend=false)</code></pre><p><img src="Invertible Neural Network Tutorial_13_1.png" alt/></p><p>If we plot a random noisy observation and its approximated transformed uncertainty we obtain:</p><pre><code class="language-julia hljs"># pick a random observation
-id = rand(StableRNG(321), 1:size(y,2))
-rand_observation = MvNormal(y[:,id], 5e-1*diagm(ones(2)))
-warped_observation = MvNormal(ReactiveMP.backward(compiled_model, y[:,id]), ReactiveMP.inv_jacobian(compiled_model, y[:,id])*5e-1*diagm(ones(2))*ReactiveMP.inv_jacobian(compiled_model, y[:,id])&#39;);
+y_flow  = result.posteriors[:y_lat];
+</code></pre><p>As we can see, the variational free energy decreases inside of our model.</p><pre><code class="language-julia hljs">plot(<span class="hljs-number">1</span>:<span class="hljs-number">10</span>, fe_flow/size(y,<span class="hljs-number">2</span>), xlabel=<span class="hljs-string">&quot;iteration&quot;</span>, ylabel=<span class="hljs-string">&quot;normalized variational free energy [nats/sample]&quot;</span>, legend=<span class="hljs-literal">false</span>)
+</code></pre><p><img src="Invertible Neural Network Tutorial_13_1.png" alt/></p><p>If we plot a random noisy observation and its approximated transformed uncertainty we obtain:</p><pre><code class="language-julia hljs"><span class="hljs-comment"># pick a random observation</span>
+id = rand(StableRNG(<span class="hljs-number">321</span>), <span class="hljs-number">1</span>:size(y,<span class="hljs-number">2</span>))
+rand_observation = MvNormal(y[:,id], <span class="hljs-number">5e-1</span>*diagm(ones(<span class="hljs-number">2</span>)))
+warped_observation = MvNormal(ReactiveMP.backward(compiled_model, y[:,id]), ReactiveMP.inv_jacobian(compiled_model, y[:,id])*<span class="hljs-number">5e-1</span>*diagm(ones(<span class="hljs-number">2</span>))*ReactiveMP.inv_jacobian(compiled_model, y[:,id])&#x27;);
 
-p1 = scatter(x[1,:], x[2,:], alpha=0.1, title=&quot;Latent distribution&quot;, size=(1200,500), label=&quot;generated data&quot;)
-contour!(-5:0.1:5, -5:0.1:5, (x, y) -&gt; pdf(MvNormal([1.5, 0.5], I), [x, y]), c=:viridis, colorbar=false, linewidth=2)
-scatter!([mean(zμ_flow)[1]], [mean(zμ_flow)[2]], color=&quot;red&quot;, markershape=:x, markersize=5, label=&quot;inferred mean&quot;)
-contour!(-5:0.01:5, -5:0.01:5, (x, y) -&gt; pdf(warped_observation, [x, y]), colors=&quot;red&quot;, levels=1, linewidth=2, colorbar=false)
-scatter!([mean(warped_observation)[1]], [mean(warped_observation)[2]], color=&quot;red&quot;, label=&quot;transformed noisy observation&quot;)
-p2 = scatter(y[1,:], y[2,:], alpha=0.1, label=&quot;generated data&quot;)
-scatter!([ReactiveMP.forward(compiled_model, mean(zμ_flow))[1]], [ReactiveMP.forward(compiled_model, mean(zμ_flow))[2]], color=&quot;red&quot;, marker=:x, label=&quot;inferred mean&quot;)
-contour!(-10:0.1:10, -10:0.1:10, (x, y) -&gt; pdf(MvNormal([1.5, 0.5], I), ReactiveMP.backward(compiled_model, [x, y])), c=:viridis, colorbar=false, linewidth=2)
-contour!(-10:0.1:10, -10:0.1:10, (x, y) -&gt; pdf(rand_observation, [x, y]), colors=&quot;red&quot;, levels=1, linewidth=2, label=&quot;random noisy observation&quot;, colorba=false)
-scatter!([mean(rand_observation)[1]], [mean(rand_observation)[2]], color=&quot;red&quot;, label=&quot;random noisy observation&quot;)
-plot(p1, p2, legend = true)</code></pre><p><img src="Invertible Neural Network Tutorial_14_1.png" alt/></p><h2 id="Parameter-estimation"><a class="docs-heading-anchor" href="#Parameter-estimation">Parameter estimation</a><a id="Parameter-estimation-1"></a><a class="docs-heading-anchor-permalink" href="#Parameter-estimation" title="Permalink"></a></h2><p>The flow model is often used to learn unknown probabilistic mappings. Here we will demonstrate it as follows for a binary classification task with the following data:</p><pre><code class="language-julia hljs">function generate_data(nr_samples::Int64; seed = 123)
+p1 = scatter(x[<span class="hljs-number">1</span>,:], x[<span class="hljs-number">2</span>,:], alpha=<span class="hljs-number">0.1</span>, title=<span class="hljs-string">&quot;Latent distribution&quot;</span>, size=(<span class="hljs-number">1200</span>,<span class="hljs-number">500</span>), label=<span class="hljs-string">&quot;generated data&quot;</span>)
+contour!(-<span class="hljs-number">5</span>:<span class="hljs-number">0.1</span>:<span class="hljs-number">5</span>, -<span class="hljs-number">5</span>:<span class="hljs-number">0.1</span>:<span class="hljs-number">5</span>, (x, y) -&gt; pdf(MvNormal([<span class="hljs-number">1.5</span>, <span class="hljs-number">0.5</span>], I), [x, y]), c=:viridis, colorbar=<span class="hljs-literal">false</span>, linewidth=<span class="hljs-number">2</span>)
+scatter!([mean(zμ_flow)[<span class="hljs-number">1</span>]], [mean(zμ_flow)[<span class="hljs-number">2</span>]], color=<span class="hljs-string">&quot;red&quot;</span>, markershape=:x, markersize=<span class="hljs-number">5</span>, label=<span class="hljs-string">&quot;inferred mean&quot;</span>)
+contour!(-<span class="hljs-number">5</span>:<span class="hljs-number">0.01</span>:<span class="hljs-number">5</span>, -<span class="hljs-number">5</span>:<span class="hljs-number">0.01</span>:<span class="hljs-number">5</span>, (x, y) -&gt; pdf(warped_observation, [x, y]), colors=<span class="hljs-string">&quot;red&quot;</span>, levels=<span class="hljs-number">1</span>, linewidth=<span class="hljs-number">2</span>, colorbar=<span class="hljs-literal">false</span>)
+scatter!([mean(warped_observation)[<span class="hljs-number">1</span>]], [mean(warped_observation)[<span class="hljs-number">2</span>]], color=<span class="hljs-string">&quot;red&quot;</span>, label=<span class="hljs-string">&quot;transformed noisy observation&quot;</span>)
+p2 = scatter(y[<span class="hljs-number">1</span>,:], y[<span class="hljs-number">2</span>,:], alpha=<span class="hljs-number">0.1</span>, label=<span class="hljs-string">&quot;generated data&quot;</span>)
+scatter!([ReactiveMP.forward(compiled_model, mean(zμ_flow))[<span class="hljs-number">1</span>]], [ReactiveMP.forward(compiled_model, mean(zμ_flow))[<span class="hljs-number">2</span>]], color=<span class="hljs-string">&quot;red&quot;</span>, marker=:x, label=<span class="hljs-string">&quot;inferred mean&quot;</span>)
+contour!(-<span class="hljs-number">10</span>:<span class="hljs-number">0.1</span>:<span class="hljs-number">10</span>, -<span class="hljs-number">10</span>:<span class="hljs-number">0.1</span>:<span class="hljs-number">10</span>, (x, y) -&gt; pdf(MvNormal([<span class="hljs-number">1.5</span>, <span class="hljs-number">0.5</span>], I), ReactiveMP.backward(compiled_model, [x, y])), c=:viridis, colorbar=<span class="hljs-literal">false</span>, linewidth=<span class="hljs-number">2</span>)
+contour!(-<span class="hljs-number">10</span>:<span class="hljs-number">0.1</span>:<span class="hljs-number">10</span>, -<span class="hljs-number">10</span>:<span class="hljs-number">0.1</span>:<span class="hljs-number">10</span>, (x, y) -&gt; pdf(rand_observation, [x, y]), colors=<span class="hljs-string">&quot;red&quot;</span>, levels=<span class="hljs-number">1</span>, linewidth=<span class="hljs-number">2</span>, label=<span class="hljs-string">&quot;random noisy observation&quot;</span>, colorba=<span class="hljs-literal">false</span>)
+scatter!([mean(rand_observation)[<span class="hljs-number">1</span>]], [mean(rand_observation)[<span class="hljs-number">2</span>]], color=<span class="hljs-string">&quot;red&quot;</span>, label=<span class="hljs-string">&quot;random noisy observation&quot;</span>)
+plot(p1, p2, legend = <span class="hljs-literal">true</span>)
+</code></pre><p><img src="Invertible Neural Network Tutorial_14_1.png" alt/></p><h2 id="Parameter-estimation"><a class="docs-heading-anchor" href="#Parameter-estimation">Parameter estimation</a><a id="Parameter-estimation-1"></a><a class="docs-heading-anchor-permalink" href="#Parameter-estimation" title="Permalink"></a></h2><p>The flow model is often used to learn unknown probabilistic mappings. Here we will demonstrate it as follows for a binary classification task with the following data:</p><pre><code class="language-julia hljs"><span class="hljs-keyword">function</span> generate_data(nr_samples::<span class="hljs-built_in">Int64</span>; seed = <span class="hljs-number">123</span>)
     
     rng = StableRNG(seed)
 
-    # sample weights
-    w = rand(rng, nr_samples, 2)
+    <span class="hljs-comment"># sample weights</span>
+    w = rand(rng, nr_samples, <span class="hljs-number">2</span>)
 
-    # sample appraisal
-    y = zeros(Float64, nr_samples)
-    for k = 1:nr_samples
-        y[k] = 1.0*(w[k,1] &gt; 0.5)*(w[k,2] &lt; 0.5)
-    end
+    <span class="hljs-comment"># sample appraisal</span>
+    y = zeros(<span class="hljs-built_in">Float64</span>, nr_samples)
+    <span class="hljs-keyword">for</span> k = <span class="hljs-number">1</span>:nr_samples
+        y[k] = <span class="hljs-number">1.0</span>*(w[k,<span class="hljs-number">1</span>] &gt; <span class="hljs-number">0.5</span>)*(w[k,<span class="hljs-number">2</span>] &lt; <span class="hljs-number">0.5</span>)
+    <span class="hljs-keyword">end</span>
 
-    # return data
-    return y, w
+    <span class="hljs-comment"># return data</span>
+    <span class="hljs-keyword">return</span> y, w
 
-end;</code></pre><pre><code class="language-julia hljs">data_y, data_x = generate_data(50);
-scatter(data_x[:,1], data_x[:,2], marker_z=data_y, xlabel=&quot;w1&quot;, ylabel=&quot;w2&quot;, colorbar=false, legend=false)</code></pre><p><img src="Invertible Neural Network Tutorial_16_1.png" alt/></p><p>We will then specify a possible model as</p><pre><code class="language-julia hljs"># specify flow model
-model = FlowModel(2,
+<span class="hljs-keyword">end</span>;
+</code></pre><pre><code class="language-julia hljs">data_y, data_x = generate_data(<span class="hljs-number">50</span>);
+scatter(data_x[:,<span class="hljs-number">1</span>], data_x[:,<span class="hljs-number">2</span>], marker_z=data_y, xlabel=<span class="hljs-string">&quot;w1&quot;</span>, ylabel=<span class="hljs-string">&quot;w2&quot;</span>, colorbar=<span class="hljs-literal">false</span>, legend=<span class="hljs-literal">false</span>)
+</code></pre><p><img src="Invertible Neural Network Tutorial_16_1.png" alt/></p><p>We will then specify a possible model as</p><pre><code class="language-julia hljs"><span class="hljs-comment"># specify flow model</span>
+model = FlowModel(<span class="hljs-number">2</span>,
     (
-        AdditiveCouplingLayer(PlanarFlow()), # defaults to AdditiveCouplingLayer(PlanarFlow(); permute=true)
+        AdditiveCouplingLayer(PlanarFlow()), <span class="hljs-comment"># defaults to AdditiveCouplingLayer(PlanarFlow(); permute=true)</span>
         AdditiveCouplingLayer(PlanarFlow()),
         AdditiveCouplingLayer(PlanarFlow()),
-        AdditiveCouplingLayer(PlanarFlow(); permute=false)
+        AdditiveCouplingLayer(PlanarFlow(); permute=<span class="hljs-literal">false</span>)
     )
-);</code></pre><p>The corresponding probabilistic model for the binary classification task can be created as</p><pre><code class="language-julia hljs">@model function invertible_neural_network_classifier(x, y)
+);
+</code></pre><p>The corresponding probabilistic model for the binary classification task can be created as</p><pre><code class="language-julia hljs"><span class="hljs-meta">@model</span> <span class="hljs-keyword">function</span> invertible_neural_network_classifier(x, y)
 
-    # specify observations
-    for k in eachindex(x)
+    <span class="hljs-comment"># specify observations</span>
+    <span class="hljs-keyword">for</span> k <span class="hljs-keyword">in</span> eachindex(x)
 
-        # specify latent state
-        x_lat[k] ~ MvNormalMeanPrecision(x[k], 1e3*diagm(ones(2)))
+        <span class="hljs-comment"># specify latent state</span>
+        x_lat[k] ~ MvNormalMeanPrecision(x[k], <span class="hljs-number">1e3</span>*diagm(ones(<span class="hljs-number">2</span>)))
 
-        # specify transformed latent value
+        <span class="hljs-comment"># specify transformed latent value</span>
         y_lat1[k] ~ Flow(x_lat[k])
-        y_lat2[k] ~ dot(y_lat1[k], [1, 1])
+        y_lat2[k] ~ dot(y_lat1[k], [<span class="hljs-number">1</span>, <span class="hljs-number">1</span>])
 
-        # specify observations
-        y[k] ~ Probit(y_lat2[k]) # default: where { pipeline = RequireMessage(in = NormalMeanPrecision(0, 1.0)) }
+        <span class="hljs-comment"># specify observations</span>
+        y[k] ~ Probit(y_lat2[k]) <span class="hljs-comment"># default: where { pipeline = RequireMessage(in = NormalMeanPrecision(0, 1.0)) }</span>
 
-    end
+    <span class="hljs-keyword">end</span>
 
-end;</code></pre><pre><code class="language-julia hljs">fcmodel       = invertible_neural_network_classifier()
-data          = (y = data_y, x = [data_x[k,:] for k=1:size(data_x,1)], )
+<span class="hljs-keyword">end</span>;
+</code></pre><pre><code class="language-julia hljs">fcmodel       = invertible_neural_network_classifier()
+data          = (y = data_y, x = [data_x[k,:] <span class="hljs-keyword">for</span> k=<span class="hljs-number">1</span>:size(data_x,<span class="hljs-number">1</span>)], )
 
-@meta function fmeta(model, params)
+<span class="hljs-meta">@meta</span> <span class="hljs-keyword">function</span> fmeta(model, params)
     compiled_model = compile(model, params)
     Flow(y_lat1, x_lat) -&gt; FlowMeta(compiled_model)
-end</code></pre><pre><code class="nohighlight hljs">fmeta (generic function with 2 methods)</code></pre><p>Here we see that the compilation occurs inside of our probabilistic model. As a result we can pass parameters (and a model) to this function which we wish to opmize for some criterium, such as the variational free energy. Inference can be described as</p><p>For the optimization procedure, we will simplify our inference loop, such that it only accepts parameters as an argument (which is wishes to optimize) and outputs a performance metric.</p><pre><code class="language-julia hljs">function f(params)
-    Random.seed!(123) # Flow uses random permutation matrices, which is not good for the optimisation procedure
+<span class="hljs-keyword">end</span>
+</code></pre><pre><code class="nohighlight hljs">fmeta (generic function with 2 methods)</code></pre><p>Here we see that the compilation occurs inside of our probabilistic model. As a result we can pass parameters (and a model) to this function which we wish to opmize for some criterium, such as the variational free energy. Inference can be described as</p><p>For the optimization procedure, we will simplify our inference loop, such that it only accepts parameters as an argument (which is wishes to optimize) and outputs a performance metric.</p><pre><code class="language-julia hljs"><span class="hljs-keyword">function</span> f(params)
+    Random.seed!(<span class="hljs-number">123</span>) <span class="hljs-comment"># Flow uses random permutation matrices, which is not good for the optimisation procedure</span>
     result = infer(
         model                   = fcmodel, 
         data                    = data,
         meta                    = fmeta(model, params),
-        free_energy             = true,
-        free_energy_diagnostics = nothing, # Free Energy can be set to NaN due to optimization procedure
-        iterations              = 10, 
-        showprogress            = false
+        free_energy             = <span class="hljs-literal">true</span>,
+        free_energy_diagnostics = <span class="hljs-literal">nothing</span>, <span class="hljs-comment"># Free Energy can be set to NaN due to optimization procedure</span>
+        iterations              = <span class="hljs-number">10</span>, 
+        showprogress            = <span class="hljs-literal">false</span>
     );
     
-    result.free_energy[end]
-end;</code></pre><p>Optimization can be performed using the <code>Optim</code> package. Alternatively, other (custom) optimizers can be implemented, such as:</p><pre><code class="language-julia hljs">res = optimize(f, randn(StableRNG(42), nr_params(model)), GradientDescent(), Optim.Options(store_trace = true, show_trace = true, show_every = 50), autodiff=:forward)</code></pre><ul><li>uses finitediff and is slower/less accurate.</li></ul><p><em>or</em></p><pre><code class="language-julia hljs"># create gradient function
+    result.free_energy[<span class="hljs-keyword">end</span>]
+<span class="hljs-keyword">end</span>;
+</code></pre><p>Optimization can be performed using the <code>Optim</code> package. Since Optim v2 the automatic differentiation backend is specified with an <code>ADTypes</code> object (e.g. <code>AutoForwardDiff()</code>) instead of a symbol. Alternatively, other (custom) optimizers can be implemented, such as:</p><pre><code class="language-julia hljs">res = optimize(f, randn(StableRNG(<span class="hljs-number">42</span>), nr_params(model)), GradientDescent(), Optim.Options(store_trace = <span class="hljs-literal">true</span>, show_trace = <span class="hljs-literal">true</span>, show_every = <span class="hljs-number">50</span>))
+</code></pre><ul><li>uses finitediff and is slower/less accurate.</li></ul><p><em>or</em></p><pre><code class="language-julia hljs"><span class="hljs-comment"># create gradient function</span>
 g = (x) -&gt; ForwardDiff.gradient(f, x);
 
-# specify initial params
+<span class="hljs-comment"># specify initial params</span>
 params = randn(nr_params(model))
 
-# create custom optimizer (here Adam)
-optimizer = Adam(params; λ=1e-1)
+<span class="hljs-comment"># create custom optimizer (here Adam)</span>
+optimizer = Adam(params; λ=<span class="hljs-number">1e-1</span>)
 
-# allocate space for gradient
+<span class="hljs-comment"># allocate space for gradient</span>
 ∇ = zeros(nr_params(model))
 
-# perform optimization
-for it = 1:10000
+<span class="hljs-comment"># perform optimization</span>
+<span class="hljs-keyword">for</span> it = <span class="hljs-number">1</span>:<span class="hljs-number">10000</span>
 
-    # backward pass
+    <span class="hljs-comment"># backward pass</span>
     ∇ .= ForwardDiff.gradient(f, optimizer.x)
 
-    # gradient update
+    <span class="hljs-comment"># gradient update</span>
     ReactiveMP.update!(optimizer, ∇)
 
-end
-</code></pre><pre><code class="language-julia hljs">res = optimize(f, randn(StableRNG(42), nr_params(model)), GradientDescent(), Optim.Options(f_tol = 1e-3, store_trace = true, show_trace = true, show_every = 100), autodiff=:forward)</code></pre><pre><code class="nohighlight hljs">Iter     Function value   Gradient norm 
-     0     5.888958e+02     8.943663e+02
- * time: 0.027489900588989258
-   100     1.059823e+01     4.118858e+00
- * time: 13.424142837524414
+<span class="hljs-keyword">end</span>
+
+</code></pre><pre><code class="language-julia hljs">res = optimize(f, randn(StableRNG(<span class="hljs-number">42</span>), nr_params(model)), GradientDescent(), Optim.Options(f_reltol = <span class="hljs-number">1e-3</span>, store_trace = <span class="hljs-literal">true</span>, show_trace = <span class="hljs-literal">true</span>, show_every = <span class="hljs-number">100</span>), autodiff=AutoForwardDiff())
+</code></pre><pre><code class="nohighlight hljs">Iter     Function value   Gradient norm 
+     0     5.927695e+02     8.826085e+02
+ * time: 0.03711986541748047
  * Status: success
 
  * Candidate solution
-    Final objective value:     9.902797e+00
+    Final objective value:     2.593591e+01
 
  * Found with
     Algorithm:     Gradient Descent
 
  * Convergence measures
-    |x - x&#39;|               = 1.23e-03 ≰ 0.0e+00
-    |x - x&#39;|/|x&#39;|          = 5.83e-04 ≰ 0.0e+00
-    |f(x) - f(x&#39;)|         = 9.64e-03 ≰ 0.0e+00
-    |f(x) - f(x&#39;)|/|f(x&#39;)| = 9.73e-04 ≤ 1.0e-03
-    |g(x)|                 = 2.21e+00 ≰ 1.0e-08
+    |x - x&#39;|               = 2.78e-17 ≰ 0.0e+00
+    |x - x&#39;|/|x&#39;|          = 1.39e-17 ≰ 0.0e+00
+    |f(x) - f(x&#39;)|         = 5.68e-14 ≰ 0.0e+00
+    |f(x) - f(x&#39;)|/|f(x&#39;)| = 2.19e-15 ≤ 1.0e-03
+    |g(x)|                 = 7.13e+00 ≰ 1.0e-08
 
  * Work counters
-    Seconds run:   16  (vs limit Inf)
-    Iterations:    116
-    f(x) calls:    312
-    ∇f(x) calls:   312</code></pre><p>optimization results are then given as</p><pre><code class="language-julia hljs">params = Optim.minimizer(res)
+    Seconds run:   22  (vs limit Inf)
+    Iterations:    11
+    f(x) calls:    232
+    ∇f(x) calls:   232
+    ∇f(x)ᵀv calls: 0</code></pre><p>optimization results are then given as</p><pre><code class="language-julia hljs">params = Optim.minimizer(res)
 inferred_model = compile(model, params)
-trans_data_x_1 = hcat(map((x) -&gt; ReactiveMP.forward(inferred_model, x), [data_x[k,:] for k=1:size(data_x,1)])...)&#39;
-trans_data_x_2 = map((x) -&gt; dot([1, 1], x), [trans_data_x_1[k,:] for k=1:size(data_x,1)])
-trans_data_x_2_split = [trans_data_x_2[data_y .== 1.0], trans_data_x_2[data_y .== 0.0]]
-p1 = scatter(data_x[:,1], data_x[:,2], marker_z = data_y, size=(1200,400), c=:viridis, colorbar=false, title=&quot;original data&quot;)
-p2 = scatter(trans_data_x_1[:,1], trans_data_x_1[:,2], marker_z = data_y, c=:viridis, size=(1200,400), colorbar=false, title=&quot;|&gt; warp&quot;)
-p3 = histogram(trans_data_x_2_split; stacked=true, bins=50, size=(1200,400), title=&quot;|&gt; dot&quot;)
-plot(p1, p2, p3, layout=(1,3), legend=false)</code></pre><p><img src="Invertible Neural Network Tutorial_22_1.png" alt/></p><pre><code class="language-julia hljs">using StatsFuns: normcdf
-p1 = scatter(data_x[:,1], data_x[:,2], marker_z = data_y, title=&quot;original labels&quot;, xlabel=&quot;weight 1&quot;, ylabel=&quot;weight 2&quot;, size=(1200,400), c=:viridis)
-p2 = scatter(data_x[:,1], data_x[:,2], marker_z = normcdf.(trans_data_x_2), title=&quot;predicted labels&quot;, xlabel=&quot;weight 1&quot;, ylabel=&quot;weight 2&quot;, size=(1200,400), c=:viridis)
-p3 = contour(0:0.01:1, 0:0.01:1, (x, y) -&gt; normcdf(dot([1,1], ReactiveMP.forward(inferred_model, [x,y]))), title=&quot;Classification map&quot;, xlabel=&quot;weight 1&quot;, ylabel=&quot;weight 2&quot;, size=(1200,400), c=:viridis)
-plot(p1, p2, p3, layout=(1,3), legend=false)</code></pre><p><img src="Invertible Neural Network Tutorial_23_1.png" alt/></p><hr/><div class="admonition is-info"><header class="admonition-header">Contributing</header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><div class="admonition is-compat"><header class="admonition-header">Environment</header><div class="admonition-body"><p>This example was executed in a clean, isolated environment. Below are the exact package versions used:</p><p>For reproducibility:</p><ul><li>Use the same package versions when running locally</li><li>Report any issues with package compatibility</li></ul></div></div><pre><code class="nohighlight hljs">Status `~/work/RxInferExamples.jl/RxInferExamples.jl/docs/src/categories/problem_specific/invertible_neural_network_tutorial/Project.toml`
-  [31c24e10] Distributions v0.25.117
-  [429524aa] Optim v1.11.0
-  [91a5bcdd] Plots v1.40.9
-  [a194aa59] ReactiveMP v5.2.1
-  [86711068] RxInfer v4.2.0
-  [860ef19b] StableRNGs v1.0.2
-  [4c63d2b9] StatsFuns v1.3.2
-  [37e2e46d] LinearAlgebra v1.11.0
+trans_data_x_1 = hcat(map((x) -&gt; ReactiveMP.forward(inferred_model, x), [data_x[k,:] <span class="hljs-keyword">for</span> k=<span class="hljs-number">1</span>:size(data_x,<span class="hljs-number">1</span>)])...)&#x27;
+trans_data_x_2 = map((x) -&gt; dot([<span class="hljs-number">1</span>, <span class="hljs-number">1</span>], x), [trans_data_x_1[k,:] <span class="hljs-keyword">for</span> k=<span class="hljs-number">1</span>:size(data_x,<span class="hljs-number">1</span>)])
+trans_data_x_2_split = [trans_data_x_2[data_y .== <span class="hljs-number">1.0</span>], trans_data_x_2[data_y .== <span class="hljs-number">0.0</span>]]
+p1 = scatter(data_x[:,<span class="hljs-number">1</span>], data_x[:,<span class="hljs-number">2</span>], marker_z = data_y, size=(<span class="hljs-number">1200</span>,<span class="hljs-number">400</span>), c=:viridis, colorbar=<span class="hljs-literal">false</span>, title=<span class="hljs-string">&quot;original data&quot;</span>)
+p2 = scatter(trans_data_x_1[:,<span class="hljs-number">1</span>], trans_data_x_1[:,<span class="hljs-number">2</span>], marker_z = data_y, c=:viridis, size=(<span class="hljs-number">1200</span>,<span class="hljs-number">400</span>), colorbar=<span class="hljs-literal">false</span>, title=<span class="hljs-string">&quot;|&gt; warp&quot;</span>)
+p3 = histogram(trans_data_x_2_split; stacked=<span class="hljs-literal">true</span>, bins=<span class="hljs-number">50</span>, size=(<span class="hljs-number">1200</span>,<span class="hljs-number">400</span>), title=<span class="hljs-string">&quot;|&gt; dot&quot;</span>)
+plot(p1, p2, p3, layout=(<span class="hljs-number">1</span>,<span class="hljs-number">3</span>), legend=<span class="hljs-literal">false</span>)
+</code></pre><p><img src="Invertible Neural Network Tutorial_22_1.png" alt/></p><pre><code class="language-julia hljs"><span class="hljs-keyword">using</span> StatsFuns: normcdf
+p1 = scatter(data_x[:,<span class="hljs-number">1</span>], data_x[:,<span class="hljs-number">2</span>], marker_z = data_y, title=<span class="hljs-string">&quot;original labels&quot;</span>, xlabel=<span class="hljs-string">&quot;weight 1&quot;</span>, ylabel=<span class="hljs-string">&quot;weight 2&quot;</span>, size=(<span class="hljs-number">1200</span>,<span class="hljs-number">400</span>), c=:viridis)
+p2 = scatter(data_x[:,<span class="hljs-number">1</span>], data_x[:,<span class="hljs-number">2</span>], marker_z = normcdf.(trans_data_x_2), title=<span class="hljs-string">&quot;predicted labels&quot;</span>, xlabel=<span class="hljs-string">&quot;weight 1&quot;</span>, ylabel=<span class="hljs-string">&quot;weight 2&quot;</span>, size=(<span class="hljs-number">1200</span>,<span class="hljs-number">400</span>), c=:viridis)
+p3 = contour(<span class="hljs-number">0</span>:<span class="hljs-number">0.01</span>:<span class="hljs-number">1</span>, <span class="hljs-number">0</span>:<span class="hljs-number">0.01</span>:<span class="hljs-number">1</span>, (x, y) -&gt; normcdf(dot([<span class="hljs-number">1</span>,<span class="hljs-number">1</span>], ReactiveMP.forward(inferred_model, [x,y]))), title=<span class="hljs-string">&quot;Classification map&quot;</span>, xlabel=<span class="hljs-string">&quot;weight 1&quot;</span>, ylabel=<span class="hljs-string">&quot;weight 2&quot;</span>, size=(<span class="hljs-number">1200</span>,<span class="hljs-number">400</span>), c=:viridis)
+plot(p1, p2, p3, layout=(<span class="hljs-number">1</span>,<span class="hljs-number">3</span>), legend=<span class="hljs-literal">false</span>)
+</code></pre><p><img src="Invertible Neural Network Tutorial_23_1.png" alt/></p><hr/><div class="admonition is-info" id="Contributing-baba9dc142ba7ccb"><header class="admonition-header">Contributing<a class="admonition-anchor" href="#Contributing-baba9dc142ba7ccb" title="Permalink"></a></header><div class="admonition-body"><p>This example was automatically generated from a Jupyter notebook in the <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">RxInferExamples.jl</a> repository.</p><p>We welcome and encourage contributions! You can help by:</p><ul><li>Improving this example</li><li>Creating new examples </li><li>Reporting issues or bugs</li><li>Suggesting enhancements</li></ul><p>Visit our <a href="https://github.com/ReactiveBayes/RxInferExamples.jl">GitHub repository</a> to get started. Together we can make <a href="https://github.com/ReactiveBayes/RxInfer.jl">RxInfer.jl</a> even better! 💪</p></div></div><hr/><div class="admonition is-compat" id="Environment-ead41e814a894220"><header class="admonition-header">Environment<a class="admonition-anchor" href="#Environment-ead41e814a894220" title="Permalink"></a></header><div class="admonition-body"><p>This example was executed in a clean, isolated environment. Below are the exact package versions used:</p><p>For reproducibility:</p><ul><li>Use the same package versions when running locally</li><li>Report any issues with package compatibility</li></ul></div></div><pre><code class="nohighlight hljs">Status `/tmp/jl_BKMWxI/Project.toml`
+  [47edcb42] ADTypes v1.24.0
+  [31c24e10] Distributions v0.25.131
+⌅ [f6369f11] ForwardDiff v0.10.39
+  [429524aa] Optim v2.3.1
+  [91a5bcdd] Plots v1.41.7
+  [a194aa59] ReactiveMP v6.5.0
+  [86711068] RxInfer v5.5.2
+  [860ef19b] StableRNGs v1.0.4
+⌅ [4c63d2b9] StatsFuns v1.5.2
+  [37e2e46d] LinearAlgebra v1.12.0
   [9a3f8284] Random v1.11.0
-</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../hierarchical_gaussian_filter/">« Hierarchical Gaussian Filter</a><a class="docs-footer-nextpage" href="../litter_model/">Litter Model »</a><div class="flexbox-break"></div><p class="footer-message">Created in <a href="https://biaslab.github.io/">BIASlab</a>, maintained by <a href="https://github.com/ReactiveBayes">ReactiveBayes</a>, powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.8.1 on <span class="colophon-date" title="Friday 7 March 2025 13:50">Friday 7 March 2025</span>. Using Julia version 1.11.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated`
+</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../hierarchical_gaussian_filter/">« Hierarchical Gaussian Filter</a><a class="docs-footer-nextpage" href="../ising_model/">Ising Model »</a><div class="flexbox-break"></div><p class="footer-message">Created in <a href="https://biaslab.github.io/">BIASlab</a>, maintained by <a href="https://github.com/ReactiveBayes">ReactiveBayes</a>, powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.19.0 on <span class="colophon-date" title="Thursday 3 September 2026 19:09">Thursday 3 September 2026</span>. Using Julia version 1.12.7.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
