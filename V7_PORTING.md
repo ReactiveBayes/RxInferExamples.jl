@@ -1,5 +1,9 @@
 # Porting the examples to ReactiveMP v7
 
+> [!WARNING]
+> **Delete this file before merging this branch.** It tracks the port while ReactiveMP v7 and
+> RxInfer's `refactor/reactivemp-v7` are unregistered, and it does not belong on `main`.
+
 This branch runs the examples on ReactiveMP v7 and RxInfer's branch `refactor/reactivemp-v7`
 (RxInfer 6.0.0-DEV), which are not registered yet. To build them, prepare one environment with
 every example's dependencies, and with RxInfer, ReactiveMP and ReactiveMP's rule packages
