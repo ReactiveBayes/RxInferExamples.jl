@@ -16,6 +16,8 @@ function parse_commandline()
         help = "Use cached results for notebooks"
         "--rxinfer-path"
         help = "Path to RxInfer.jl repository (overrides default ../RxInfer.jl)"
+        "--environment"
+        help = "Build the examples in this existing environment instead of a temporary one (it must hold every example's dependencies)"
         "--strict-env"
         action = :store_true
         help = "Fail if required environment variables are missing (use for CI)"
@@ -38,6 +40,12 @@ const USE_DEV = ARGS["use-dev"]
 const USE_CACHE = ARGS["use-cache"]
 const STRICT_ENV = ARGS["strict-env"]
 const CUSTOM_RXINFER_PATH = get(ARGS, "rxinfer-path", nothing)
+const CUSTOM_ENVIRONMENT = get(ARGS, "environment", nothing)
+
+if !isnothing(CUSTOM_ENVIRONMENT) && USE_DEV
+    @error "--environment and --use-dev are exclusive: develop RxInfer in the given environment instead"
+    exit(-1)
+end
 
 const RXINFER_PATH = if USE_DEV
     # Try to find local RxInfer development version
@@ -504,50 +512,55 @@ let prioritized = Set(filter(has_build_priority, notebook_files))
 end
 
 notebook_directories = map(f -> joinpath(@__DIR__, dirname(f)), notebook_files)
-temporary_environment = mktempdir(cleanup=true)
-# We start with the current environment
-temporary_environment_dependencies = Pkg.project().dependencies
+if !isnothing(CUSTOM_ENVIRONMENT)
+    temporary_environment = abspath(CUSTOM_ENVIRONMENT)
+    @info "Using the given environment at $temporary_environment"
+else
+    temporary_environment = mktempdir(cleanup=true)
+    # We start with the current environment
+    temporary_environment_dependencies = Pkg.project().dependencies
 
-@info """
-Creating temporary environment to run examples from at $temporary_environment.
-The environment will be deleted automatically after the process exits.
-"""
-for notebook_directory in notebook_directories
-    new_dependencies = Pkg.activate(notebook_directory) do
-        Pkg.project().dependencies
-    end
-    merge!(
-        temporary_environment_dependencies,
-        new_dependencies
-    )
-end
-
-Pkg.activate(temporary_environment) do
-    Pkg.add(collect(keys(temporary_environment_dependencies)))
-    Pkg.update()
-    Pkg.precompile()
-end
-
-if !isnothing(RXINFER_PATH)
-    Pkg.activate(temporary_environment) do
-        @info "Adding development version of RxInfer to the temporary environment"
-        Pkg.develop(path = RXINFER_PATH)
-
-        # Developing a package does not inherit path dependencies from its Manifest.
-        # Honor RxInfer's local ReactiveMP checkout when one is recorded there.
-        rxinfer_manifest_path = joinpath(RXINFER_PATH, "Manifest.toml")
-        if isfile(rxinfer_manifest_path)
-            rxinfer_manifest = Pkg.TOML.parsefile(rxinfer_manifest_path)
-            reactivemp_entries = get(get(rxinfer_manifest, "deps", Dict()), "ReactiveMP", [])
-            if length(reactivemp_entries) == 1 && haskey(only(reactivemp_entries), "path")
-                reactivemp_path = normpath(RXINFER_PATH, only(reactivemp_entries)["path"])
-                @info "Adding ReactiveMP used by the development version of RxInfer" reactivemp_path
-                Pkg.develop(path = reactivemp_path)
-            end
+    @info """
+    Creating temporary environment to run examples from at $temporary_environment.
+    The environment will be deleted automatically after the process exits.
+    """
+    for notebook_directory in notebook_directories
+        new_dependencies = Pkg.activate(notebook_directory) do
+            Pkg.project().dependencies
         end
+        merge!(
+            temporary_environment_dependencies,
+            new_dependencies
+        )
+    end
 
+    Pkg.activate(temporary_environment) do
+        Pkg.add(collect(keys(temporary_environment_dependencies)))
         Pkg.update()
         Pkg.precompile()
+    end
+
+    if !isnothing(RXINFER_PATH)
+        Pkg.activate(temporary_environment) do
+            @info "Adding development version of RxInfer to the temporary environment"
+            Pkg.develop(path = RXINFER_PATH)
+
+            # Developing a package does not inherit path dependencies from its Manifest.
+            # Honor RxInfer's local ReactiveMP checkout when one is recorded there.
+            rxinfer_manifest_path = joinpath(RXINFER_PATH, "Manifest.toml")
+            if isfile(rxinfer_manifest_path)
+                rxinfer_manifest = Pkg.TOML.parsefile(rxinfer_manifest_path)
+                reactivemp_entries = get(get(rxinfer_manifest, "deps", Dict()), "ReactiveMP", [])
+                if length(reactivemp_entries) == 1 && haskey(only(reactivemp_entries), "path")
+                    reactivemp_path = normpath(RXINFER_PATH, only(reactivemp_entries)["path"])
+                    @info "Adding ReactiveMP used by the development version of RxInfer" reactivemp_path
+                    Pkg.develop(path = reactivemp_path)
+                end
+            end
+
+            Pkg.update()
+            Pkg.precompile()
+        end
     end
 end
 
