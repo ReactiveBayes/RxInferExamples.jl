@@ -14,8 +14,8 @@ make examples-env ENVIRONMENT=/path/to/that/environment
 ```
 
 Checked on Julia 1.13.0, 2026-09-30, against the same notebooks on RxInfer 5.5.2 and
-ReactiveMP 6.6.0, where all 47 buildable notebooks pass (Large Language Models needs
-`OPENAI_KEY` and is skipped).
+ReactiveMP 6.6.0, where all 47 buildable notebooks pass (Large Language Models needed
+`OPENAI_KEY` and was skipped).
 
 ## Status
 
@@ -23,9 +23,9 @@ ReactiveMP 6.6.0, where all 47 buildable notebooks pass (Large Language Models n
 |---|---|
 | **Unchanged, pass** (14) | Coin Toss Model, Feature Functions in Bayesian Regression, Forgetting Factors for Online Inference, Kalman filtering and smoothing, Drone Dynamics, GP Regression by SSM, Infinite Data Stream, Integrating Neural Networks with Flux.jl and Lux.jl, Parameter Optimisation with Optim.jl, Robotic Arm, Gamma Mixture, Gaussian Mixture, Litter Model, Structural Dynamics with Augmented Kalman Filter |
 | **Ported, pass** (33) | Active Inference Mountain car, Assessing People Skills, Bayesian Structured Time Series, Chance Constraints, Conjugate-Computational Variational Message Passing, Multi-agent Trajectory Planning, Nonlinear Sensor Fusion, Solving Linear Systems with Message Passing, Bayesian Binomial Regression, Bayesian Linear Regression, Bayesian Multinomial Regression, Bayesian Networks, Contextual Bandits, Hidden Markov Model, Incomplete Data, POMDP Control, Predicting Bike Rental Demand, Bayesian Trust Learning, Latent Vector Autoregressive Model, Autoregressive Models, Hierarchical Gaussian Filter, Invertible Neural Network Tutorial, Ising Model, ODE Parameter Estimation, Probit Model, RTS vs BIFM Smoothing, Simple Nonlinear Node, Universal Mixtures, Learning Dynamics with VAEs, EFE Minimization via Message Passing, T-Maze Active Inference, Autoregressive Active Inference, Recurrent Switching Linear Dynamical System |
-| **Ported, checked offline** (1) | Large Language Models: it calls the OpenAI API, so builds skip it; ported and run end to end with canned API responses. |
+| **Replaced** (1) | Large Language Models called the OpenAI API, whose key is gone, so no build ran it. It is replaced by Sentiment Clustering with a Custom Text Node (Basic Examples), which needs no API and passes in every build. |
 
-All 48 notebooks are ported. Every ported notebook's results were compared with v6's. They are identical, or differ where
+All 48 notebooks are ported, one of them replaced. Every ported notebook's results were compared with v6's. They are identical, or differ where
 ReactiveMP v7 changed a rule on purpose (its migration guide, *Behaviour that changed*), as each
 commit on this branch says. Porting found four problems in v7, all fixed with tests in
 ReactiveMP and RxInfer: a stale free-energy term in loopy graphs, `DiscreteTransition` with one
@@ -68,24 +68,18 @@ the owner about, and lists what ReactiveMP could add to make the port simpler (P
 **Risk:** MLDatasets downloads MNIST during the build; this was not a v7 issue, and the v6 build
 passed.
 
-## 2. Large Language Models (S)
+## 2. Large Language Models (S): replaced
 
-| v6 | v7 |
-|---|---|
-| `@node LLMPrior Stochastic [(b, aliases = [belief]), (c, aliases = [context]), (t, aliases = [task])]` | `@define_factor_node(node = LLMPrior, type = Stochastic, interfaces = [(:b, aliases = [:belief]), (:c, aliases = [:context]), (:t, aliases = [:task])])` |
-| `@node LLMObservation …` | the same, `[:out, (:b, …), (:t, …)]` |
-| `@rule LLMPrior(:b, Marginalisation) (q_c::PointMass{<:String}, q_t::PointMass{<:String})` | `@define_message_update_rule(node = LLMPrior, target = :b, args = (q[:c]::PointMass{<:String}, q[:t]::PointMass{<:String}), body = (args) -> …)` |
-| `@rule LLMObservation(:b, …)` | the same |
-| `import ReactiveMP: rule_nm_switch_k, softmax!` | delete: neither is used, and v7 has neither |
-| `NormalMixture(switch, m, p)` with `MeanField()` | unchanged; v7's NormalMixture declares `factorisation = :meanfield` itself |
+The notebook called the OpenAI API, and the key it needed is no longer available, so it is
+removed, with the `OPENAI_KEY` secret in `CI.yml`. Its port, run end to end with canned API
+responses, collapsed every text into one cluster on v7. The new example, Sentiment Clustering
+with a Custom Text Node, teaches the same things without a network: a custom node whose rule
+turns a `PointMass{String}` observation into a Gaussian likelihood, its average energy, and a
+`NormalMixture` that clusters the texts.
 
-- The rules call the OpenAI API, so they are not pure. Declare `pure = false` on both, so the
-  opt-in purity audit tells the truth.
-
-**Stop-and-ask:** none, only an owner question. The notebook is skipped in every build (`env_required
-= ["OPENAI_KEY"]`), so no build verifies it. Should it gain a canned-response path, keyed on the
-env var, so that CI checks the graph and the rules without the network?
-**ReactiveMP changes:** none.
+**ReactiveMP changes:** one. The free energy asked a point mass holding a `String` for its
+number type, `zero(String)`; the entropy of a point mass with no number type is now `-∞` in
+`Float64`, so a custom node's observation can be any object.
 
 ## 3. EFE Minimization via Message Passing (M)
 
