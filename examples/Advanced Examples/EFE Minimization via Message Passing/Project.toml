@@ -1,4 +1,5 @@
 [deps]
+DiscreteTransitionMessagePassingRules = "039b7295-e235-4523-a933-c224bd9a7e58"
 Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 LinearCombinations = "67be3549-475c-46bf-8928-de3404d670d9"
