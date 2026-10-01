@@ -22,17 +22,26 @@ ReactiveMP 6.6.0, where all 47 buildable notebooks pass (Large Language Models n
 | Status | Notebooks |
 |---|---|
 | **Unchanged, pass** (14) | Coin Toss Model, Feature Functions in Bayesian Regression, Forgetting Factors for Online Inference, Kalman filtering and smoothing, Drone Dynamics, GP Regression by SSM, Infinite Data Stream, Integrating Neural Networks with Flux.jl and Lux.jl, Parameter Optimisation with Optim.jl, Robotic Arm, Gamma Mixture, Gaussian Mixture, Litter Model, Structural Dynamics with Augmented Kalman Filter |
-| **Ported, pass** (28) | Active Inference Mountain car, Assessing People Skills, Bayesian Structured Time Series, Chance Constraints, Conjugate-Computational Variational Message Passing, Multi-agent Trajectory Planning, Nonlinear Sensor Fusion, Solving Linear Systems with Message Passing, Bayesian Binomial Regression, Bayesian Linear Regression, Bayesian Multinomial Regression, Bayesian Networks, Contextual Bandits, Hidden Markov Model, Incomplete Data, POMDP Control, Predicting Bike Rental Demand, Bayesian Trust Learning, Latent Vector Autoregressive Model, Autoregressive Models, Hierarchical Gaussian Filter, Invertible Neural Network Tutorial, Ising Model, ODE Parameter Estimation, Probit Model, RTS vs BIFM Smoothing, Simple Nonlinear Node, Universal Mixtures |
-| **Need their owners** (6) | Learning Dynamics with VAEs, Large Language Models, EFE Minimization via Message Passing, T-Maze Active Inference, Autoregressive Active Inference, Recurrent Switching Linear Dynamical System. Plans below. |
+| **Ported, pass** (33) | Active Inference Mountain car, Assessing People Skills, Bayesian Structured Time Series, Chance Constraints, Conjugate-Computational Variational Message Passing, Multi-agent Trajectory Planning, Nonlinear Sensor Fusion, Solving Linear Systems with Message Passing, Bayesian Binomial Regression, Bayesian Linear Regression, Bayesian Multinomial Regression, Bayesian Networks, Contextual Bandits, Hidden Markov Model, Incomplete Data, POMDP Control, Predicting Bike Rental Demand, Bayesian Trust Learning, Latent Vector Autoregressive Model, Autoregressive Models, Hierarchical Gaussian Filter, Invertible Neural Network Tutorial, Ising Model, ODE Parameter Estimation, Probit Model, RTS vs BIFM Smoothing, Simple Nonlinear Node, Universal Mixtures, Learning Dynamics with VAEs, EFE Minimization via Message Passing, T-Maze Active Inference, Autoregressive Active Inference, Recurrent Switching Linear Dynamical System |
+| **Ported, checked offline** (1) | Large Language Models: it calls the OpenAI API, so builds skip it; ported and run end to end with canned API responses. |
 
-Every ported notebook's results were compared with v6's. They are identical, or differ where
+All 48 notebooks are ported. Every ported notebook's results were compared with v6's. They are identical, or differ where
 ReactiveMP v7 changed a rule on purpose (its migration guide, *Behaviour that changed*), as each
 commit on this branch says. Porting found four problems in v7, all fixed with tests in
 ReactiveMP and RxInfer: a stale free-energy term in loopy graphs, `DiscreteTransition` with one
 control, v6's per-node initial message (now `where { initial_messages = … }`), and the error for
-a function node named by its type.
+a function node named by its type. Porting the last six found one more: when a rule fires. Its
+marginal inputs were relaxed without bound while all initial, so a mixture with initialised
+marginals made tens of thousands of rule calls before its first observation; they now relax once,
+and on every value computed from data (ReactiveMP's migration guide, *Behaviour that changed*).
+Bayesian Multinomial Regression's prior precision was singular (a Wishart with 3 degrees of
+freedom in 39 dimensions), which made its build fail at random, on v6 as well; it is full rank now.
 
-## Plans for the six notebooks that need their owners
+The plans below were followed, with two corrections: a joint over `out`, `in` and a group `T` of
+one member is keyed `(:out, :in, :T)`, not `(:out, :in, (:T, 1))` (a rule for the latter never
+runs), and MultinomialPolya's start is `where { initial_messages = (ψ = …,) }`, not `μ(u)`.
+
+## Plans for the last six notebooks (done)
 
 Each maps every v6 construct to its v7 counterpart, marks what the migration guide says to ask
 the owner about, and lists what ReactiveMP could add to make the port simpler (P1–P8, at the end).
