@@ -31,7 +31,11 @@ Drone Dynamics, Kalman filtering and smoothing and Robotic Arm name their algori
 and Bayesian Linear Regression write their `@initialization` Gammas with keywords,
 `Gamma(shape = …, scale = …)`, which RxInfer otherwise warns about; Parameter Optimisation passes
 Optim's `f_reltol` and `g_abstol` instead of the deprecated `f_tol` and `g_tol`. The Mountain car
-example's `failed.txt`, a stray build report, is gone.
+example's `failed.txt`, a stray build report, is gone. Nonlinear Sensor Fusion's linearised
+inference tracks WALL-E as its unscented one does, since ReactiveMP's `smoothRTS` no longer inverts
+the singular forward covariance a linearisation of three distances gives (it was off by about
+1 130 m, as on v6, with 602 FastCholesky warnings); its text no longer calls the linearisation a
+failure.
 
 All 48 notebooks are ported, one of them replaced. Every ported notebook's results were compared with v6's. They are identical, or differ where
 ReactiveMP v7 changed a rule on purpose (its migration guide, *Behaviour that changed*), as each
