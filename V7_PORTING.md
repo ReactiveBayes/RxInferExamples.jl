@@ -21,9 +21,17 @@ ReactiveMP 6.6.0, where all 47 buildable notebooks pass (Large Language Models n
 
 | Status | Notebooks |
 |---|---|
-| **Unchanged, pass** (14) | Coin Toss Model, Feature Functions in Bayesian Regression, Forgetting Factors for Online Inference, Kalman filtering and smoothing, Drone Dynamics, GP Regression by SSM, Infinite Data Stream, Integrating Neural Networks with Flux.jl and Lux.jl, Parameter Optimisation with Optim.jl, Robotic Arm, Gamma Mixture, Gaussian Mixture, Litter Model, Structural Dynamics with Augmented Kalman Filter |
-| **Ported, pass** (33) | Active Inference Mountain car, Assessing People Skills, Bayesian Structured Time Series, Chance Constraints, Conjugate-Computational Variational Message Passing, Multi-agent Trajectory Planning, Nonlinear Sensor Fusion, Solving Linear Systems with Message Passing, Bayesian Binomial Regression, Bayesian Linear Regression, Bayesian Multinomial Regression, Bayesian Networks, Contextual Bandits, Hidden Markov Model, Incomplete Data, POMDP Control, Predicting Bike Rental Demand, Bayesian Trust Learning, Latent Vector Autoregressive Model, Autoregressive Models, Hierarchical Gaussian Filter, Invertible Neural Network Tutorial, Ising Model, ODE Parameter Estimation, Probit Model, RTS vs BIFM Smoothing, Simple Nonlinear Node, Universal Mixtures, Learning Dynamics with VAEs, EFE Minimization via Message Passing, T-Maze Active Inference, Autoregressive Active Inference, Recurrent Switching Linear Dynamical System |
+| **Unchanged, pass** (10) | Coin Toss Model, Feature Functions in Bayesian Regression, Forgetting Factors for Online Inference, GP Regression by SSM, Infinite Data Stream, Integrating Neural Networks with Flux.jl and Lux.jl, Gamma Mixture, Gaussian Mixture, Litter Model, Structural Dynamics with Augmented Kalman Filter |
+| **Ported, pass** (37) | Kalman filtering and smoothing, Drone Dynamics, Parameter Optimisation with Optim.jl, Robotic Arm, Active Inference Mountain car, Assessing People Skills, Bayesian Structured Time Series, Chance Constraints, Conjugate-Computational Variational Message Passing, Multi-agent Trajectory Planning, Nonlinear Sensor Fusion, Solving Linear Systems with Message Passing, Bayesian Binomial Regression, Bayesian Linear Regression, Bayesian Multinomial Regression, Bayesian Networks, Contextual Bandits, Hidden Markov Model, Incomplete Data, POMDP Control, Predicting Bike Rental Demand, Bayesian Trust Learning, Latent Vector Autoregressive Model, Autoregressive Models, Hierarchical Gaussian Filter, Invertible Neural Network Tutorial, Ising Model, ODE Parameter Estimation, Probit Model, RTS vs BIFM Smoothing, Simple Nonlinear Node, Universal Mixtures, Learning Dynamics with VAEs, EFE Minimization via Message Passing, T-Maze Active Inference, Autoregressive Active Inference, Recurrent Switching Linear Dynamical System |
 | **Replaced** (1) | Large Language Models called the OpenAI API, whose key is gone, so no build ran it. It is replaced by Sentiment Clustering with a Custom Text Node (Basic Examples), which needs no API and passes in every build. |
+
+Four notebooks that ran unchanged were ported on 2026-10-02 so that they build without warnings:
+Drone Dynamics, Kalman filtering and smoothing and Robotic Arm name their algorithm with
+`@algorithm` and `algorithm = …` instead of the deprecated `@meta` and `meta = …`; Kalman filtering
+and Bayesian Linear Regression write their `@initialization` Gammas with keywords,
+`Gamma(shape = …, scale = …)`, which RxInfer otherwise warns about; Parameter Optimisation passes
+Optim's `f_reltol` and `g_abstol` instead of the deprecated `f_tol` and `g_tol`. The Mountain car
+example's `failed.txt`, a stray build report, is gone.
 
 All 48 notebooks are ported, one of them replaced. Every ported notebook's results were compared with v6's. They are identical, or differ where
 ReactiveMP v7 changed a rule on purpose (its migration guide, *Behaviour that changed*), as each
