@@ -98,3 +98,20 @@ second), then per step:
 
 It builds only on EnzymeAD/Reactant.jl#2170 (Julia 1.12, `JULIAUP_CHANNEL=1.12 make examples-env …`), with
 the PR branches above developed; CPU only here, no GPU backend on macOS.
+
+## Recreating the environment
+
+Every piece is on a pushed branch:
+
+| Package | Branch |
+|---|---|
+| RxInfer | `experiment/reactant-support` (`refactor/reactivemp-v7` with #701 and #702) |
+| FastCholesky | merge `static-arrays-tolerance` (#38) and `reactant-extension` (#39); they conflict only in `Project.toml`'s version (take 1.5.0) and `docs/src/index.md` (keep both sections) |
+| GraphPPL | `traced-arguments` (#334) |
+| BayesBase | `pointmass-number-elements` (#65) |
+| Reactant | `pull/2170/head`, on Julia 1.12 (its base predates Reactant's Julia 1.13 support) |
+
+Develop these, ReactiveMP and its `lib/*MessagePassingRules*` packages by path into one environment, with
+ExponentialFamily and BayesBase otherwise from the registry, then build with
+`JULIAUP_CHANNEL=1.12 make examples-env ENVIRONMENT=<env> FILTER="Reactant"`. The StaticArrays example
+needs only FastCholesky #38 on RxInfer's v7 branch, on Julia 1.13.
