@@ -1,0 +1,731 @@
+diff --git a/src/distributions/dirichlet_collection.jl b/src/distributions/dirichlet_collection.jl
+index b24ec29..6646a97 100644
+--- a/src/distributions/dirichlet_collection.jl
++++ b/src/distributions/dirichlet_collection.jl
+@@ -12,7 +12,7 @@ using LinearAlgebra, Random
+ using BlockArrays: BlockDiagonal
+ 
+ """
+-    DirichletCollection{T <: Real, N, A <: AbstractArray{T, N}} <: Distribution{ArrayLikeVariate{N}, Continuous}
++    DirichletCollection{T <: Number, N, A <: AbstractArray{T, N}} <: Distribution{ArrayLikeVariate{N}, Continuous}
+ 
+ A collection of independent Dirichlet distributions, where `T` is the element type of the tensor `A`. The distribution generalizes the Dirichlet distribution to handle multiple sets of parameters organized in a tensor structure. This distribution collects multiple independent Dirichlet distributions into a single efficient interface. The Dirichlet counts for the independent Dirichlet distributions are stored along the first dimension of `a`. This distribution can be used as a conjugate prior to a Categorical distribution with mulitple switch cases (such as a discrete state-transition with controls).  
+ 
+@@ -23,7 +23,7 @@ A collection of independent Dirichlet distributions, where `T` is the element ty
+ 
+ The distribution models multiple independent Dirichlet distributions organized in a tensor structure, where each slice `a[:,i,j,...]` represents the parameters of an independent Dirichlet distribution.
+ """
+-struct DirichletCollection{T <: Real, N, A <: AbstractArray{T, N}} <: Distribution{ArrayLikeVariate{N}, Continuous}
++struct DirichletCollection{T <: Number, N, A <: AbstractArray{T, N}} <: Distribution{ArrayLikeVariate{N}, Continuous}
+     α::A
+     α0::A
+     lmnB::A
+diff --git a/src/distributions/gamma_family/gamma_shape_rate.jl b/src/distributions/gamma_family/gamma_shape_rate.jl
+index eefb7e1..d0fa213 100644
+--- a/src/distributions/gamma_family/gamma_shape_rate.jl
++++ b/src/distributions/gamma_family/gamma_shape_rate.jl
+@@ -6,7 +6,7 @@ import StatsFuns: log2π
+ import Random: rand
+ 
+ """
+-    GammaShapeRate{T <: Real}
++    GammaShapeRate{T <: Number}
+ 
+ A univariate gamma distribution parametrized by its shape `a` and rate `b`.
+ 
+@@ -14,14 +14,14 @@ A univariate gamma distribution parametrized by its shape `a` and rate `b`.
+ - `a`: The shape parameter of the gamma distribution. It should be a positive real number.
+ - `b`: The rate parameter of the gamma distribution. It should be a positive real number.
+ """
+-struct GammaShapeRate{T <: Real} <: ContinuousUnivariateDistribution
++struct GammaShapeRate{T <: Number} <: ContinuousUnivariateDistribution
+     a::T
+     b::T
+ end
+ 
+-GammaShapeRate(a::Real, b::Real)       = GammaShapeRate(promote(a, b)...)
++GammaShapeRate(a::Number, b::Number)       = GammaShapeRate(promote(a, b)...)
+ GammaShapeRate(a::Integer, b::Integer) = GammaShapeRate(float(a), float(b))
+-GammaShapeRate(a::Real)                = GammaShapeRate(a, one(a))
++GammaShapeRate(a::Number)                = GammaShapeRate(a, one(a))
+ GammaShapeRate()                       = GammaShapeRate(1.0, 1.0)
+ 
+ Distributions.@distr_support GammaShapeRate 0 Inf
+@@ -66,7 +66,7 @@ end
+ 
+ Base.eltype(::GammaShapeRate{T}) where {T} = T
+ 
+-Base.convert(::Type{GammaShapeRate{T}}, a::Real, b::Real) where {T <: Real} =
++Base.convert(::Type{GammaShapeRate{T}}, a::Number, b::Number) where {T <: Number} =
+     GammaShapeRate(convert(T, a), convert(T, b))
+ 
+ BayesBase.vague(::Type{<:GammaShapeRate}) = GammaShapeRate(1.0, tiny)
+diff --git a/src/distributions/matrix_normal_wishart.jl b/src/distributions/matrix_normal_wishart.jl
+index bad7f1a..c084f07 100644
+--- a/src/distributions/matrix_normal_wishart.jl
++++ b/src/distributions/matrix_normal_wishart.jl
+@@ -67,7 +67,7 @@ vector since it cannot be recovered uniquely from its length.
+ The pdf follows the definition in the Book of Statistical Proofs (https://statproofbook.github.io/D/nw):
+   MNW(X,Y | M,U,V,ν) = MN(X | M, U, Y⁻¹) W(Y | V, ν)
+ """
+-struct MatrixNormalWishart{T, TM <: AbstractMatrix{T}, TU <: AbstractMatrix{T}, TV <: AbstractMatrix{T}, N <: Real} <:
++struct MatrixNormalWishart{T, TM <: AbstractMatrix{T}, TU <: AbstractMatrix{T}, TV <: AbstractMatrix{T}, N <: Number} <:
+        ContinuousMultivariateMatrixvariateDistribution
+     M::TM
+     U::TU
+@@ -79,7 +79,7 @@ struct MatrixNormalWishart{T, TM <: AbstractMatrix{T}, TU <: AbstractMatrix{T},
+         U::TU,
+         V::TV,
+         ν::N
+-    ) where {T, TM <: AbstractMatrix{T}, TU <: AbstractMatrix{T}, TV <: AbstractMatrix{T}, N <: Real}
++    ) where {T, TM <: AbstractMatrix{T}, TU <: AbstractMatrix{T}, TV <: AbstractMatrix{T}, N <: Number}
+         new{T, TM, TU, TV, N}(M, U, V, ν)
+     end
+ 
+@@ -88,7 +88,7 @@ struct MatrixNormalWishart{T, TM <: AbstractMatrix{T}, TU <: AbstractMatrix{T},
+         U::TU,
+         V::TV,
+         ν::N
+-    ) where {T1, T2, T3, TM <: AbstractMatrix{T1}, TU <: AbstractMatrix{T2}, TV <: AbstractMatrix{T3}, N <: Real}
++    ) where {T1, T2, T3, TM <: AbstractMatrix{T1}, TU <: AbstractMatrix{T2}, TV <: AbstractMatrix{T3}, N <: Number}
+         T = promote_type(T1, T2, T3)
+         M_new = convert(AbstractMatrix{T}, M)
+         U_new = convert(AbstractMatrix{T}, U)
+diff --git a/src/distributions/mv_normal_gamma.jl b/src/distributions/mv_normal_gamma.jl
+index 6117b8d..7aa1e43 100644
+--- a/src/distributions/mv_normal_gamma.jl
++++ b/src/distributions/mv_normal_gamma.jl
+@@ -6,7 +6,7 @@ using LinearAlgebra
+ using DomainSets
+ 
+ """
+-    MvNormalGamma{T, M <: AbstractVector{T}, L <: AbstractMatrix{T}, A <: Real, B <: Real} <: ContinuousMultivariateDistribution
++    MvNormalGamma{T, M <: AbstractVector{T}, L <: AbstractMatrix{T}, A <: Number, B <: Number} <: ContinuousMultivariateDistribution
+ 
+ A multivariate normal-gamma distribution. This is the joint distribution of a multivariate
+ normal random vector `x` with mean `μ` and precision `τΛ`, and a gamma-distributed scalar
+@@ -26,7 +26,7 @@ recovers `NormalGamma` exactly.
+ - `α::A`: The shape parameter of the gamma distribution.
+ - `β::B`: The rate parameter of the gamma distribution.
+ """
+-struct MvNormalGamma{T, M <: AbstractVector{T}, L <: AbstractMatrix{T}, A <: Real, B <: Real} <:
++struct MvNormalGamma{T, M <: AbstractVector{T}, L <: AbstractMatrix{T}, A <: Number, B <: Number} <:
+        ContinuousMultivariateDistribution
+     μ::M
+     Λ::L
+@@ -38,7 +38,7 @@ struct MvNormalGamma{T, M <: AbstractVector{T}, L <: AbstractMatrix{T}, A <: Rea
+         Λ::L,
+         α::A,
+         β::B
+-    ) where {T, M <: AbstractVector{T}, L <: AbstractMatrix{T}, A <: Real, B <: Real}
++    ) where {T, M <: AbstractVector{T}, L <: AbstractMatrix{T}, A <: Number, B <: Number}
+         new{T, M, L, A, B}(μ, Λ, α, β)
+     end
+ 
+@@ -47,7 +47,7 @@ struct MvNormalGamma{T, M <: AbstractVector{T}, L <: AbstractMatrix{T}, A <: Rea
+         Λ::L,
+         α::A,
+         β::B
+-    ) where {T1, T2, M <: AbstractVector{T1}, L <: AbstractMatrix{T2}, A <: Real, B <: Real}
++    ) where {T1, T2, M <: AbstractVector{T1}, L <: AbstractMatrix{T2}, A <: Number, B <: Number}
+         T = promote_type(T1, T2)
+         μ_new = convert(AbstractVector{T}, μ)
+         Λ_new = convert(AbstractMatrix{T}, Λ)
+diff --git a/src/distributions/mv_normal_wishart.jl b/src/distributions/mv_normal_wishart.jl
+index c6abc49..4ec8181 100644
+--- a/src/distributions/mv_normal_wishart.jl
++++ b/src/distributions/mv_normal_wishart.jl
+@@ -4,7 +4,7 @@ import StatsFuns: logmvgamma
+ using Random
+ 
+ """
+-    MvNormalWishart{T, M <: AbstractArray{T}, V <: AbstractMatrix{T}, K <: Real, N <: Real} <: ContinuousMatrixDistribution
++    MvNormalWishart{T, M <: AbstractArray{T}, V <: AbstractMatrix{T}, K <: Number, N <: Number} <: ContinuousMatrixDistribution
+ 
+ A multivariate normal-Wishart distribution, where `T` is the element type of the arrays `M` and matrices `V`, and `K` and `N` are real numbers. This distribution is a joint distribution of a multivariate normal random variable with mean `μ` and a Wishart-distributed random matrix with scale matrix `Ψ`, degrees of freedom `ν`, and the scalar `κ` as a scaling parameter.
+ 
+@@ -14,7 +14,7 @@ A multivariate normal-Wishart distribution, where `T` is the element type of the
+ - `κ::K`: The scaling parameter of the Wishart distribution.
+ - `ν::N`: The degrees of freedom of the Wishart distribution
+ """
+-struct MvNormalWishart{T, M <: AbstractArray{T}, V <: AbstractMatrix{T}, K <: Real, N <: Real} <:
++struct MvNormalWishart{T, M <: AbstractArray{T}, V <: AbstractMatrix{T}, K <: Number, N <: Number} <:
+        ContinuousMultivariateMatrixvariateDistribution
+     μ::M
+     Ψ::V
+@@ -26,7 +26,7 @@ struct MvNormalWishart{T, M <: AbstractArray{T}, V <: AbstractMatrix{T}, K <: Re
+         Ψ::V,
+         κ::K,
+         ν::N
+-    ) where {T, M <: AbstractArray{T}, V <: AbstractMatrix{T}, K <: Real, N <: Real}
++    ) where {T, M <: AbstractArray{T}, V <: AbstractMatrix{T}, K <: Number, N <: Number}
+         new{T, M, V, K, N}(μ, Ψ, κ, ν)
+     end
+ 
+@@ -35,7 +35,7 @@ struct MvNormalWishart{T, M <: AbstractArray{T}, V <: AbstractMatrix{T}, K <: Re
+         Ψ::V,
+         κ::K,
+         ν::N
+-    ) where {T1, T2, M <: AbstractArray{T1}, V <: AbstractMatrix{T2}, K <: Real, N <: Real}
++    ) where {T1, T2, M <: AbstractArray{T1}, V <: AbstractMatrix{T2}, K <: Number, N <: Number}
+         T = promote_type(T1, T2)
+         μ_new = convert(AbstractArray{T}, μ)
+         Ψ_new = convert(AbstractMatrix{T}, Ψ)
+diff --git a/src/distributions/normal_family/mv_normal_mean_covariance.jl b/src/distributions/normal_family/mv_normal_mean_covariance.jl
+index dcb05fc..8bdbb17 100644
+--- a/src/distributions/normal_family/mv_normal_mean_covariance.jl
++++ b/src/distributions/normal_family/mv_normal_mean_covariance.jl
+@@ -5,7 +5,7 @@ import LinearAlgebra: diag, Diagonal, dot
+ import Base: ndims, precision, length, size, prod
+ 
+ """
+-    MvNormalMeanCovariance{T <: Real, M <: AbstractVector{T}, P <: AbstractMatrix{T}} <: AbstractMvNormal
++    MvNormalMeanCovariance{T <: Number, M <: AbstractVector{T}, P <: AbstractMatrix{T}} <: AbstractMvNormal
+ 
+ A multivariate normal distribution with mean `μ` and covariance matrix `Σ`, where `T` is the element type of the vectors `M` and matrices `P`.
+ 
+@@ -13,12 +13,12 @@ A multivariate normal distribution with mean `μ` and covariance matrix `Σ`, wh
+ - `μ::M`: The mean vector of the multivariate normal distribution.
+ - `Σ::P`: The covariance matrix of the multivariate normal distribution
+ """
+-struct MvNormalMeanCovariance{T <: Real, M <: AbstractVector{T}, P <: AbstractMatrix{T}} <: AbstractMvNormal
++struct MvNormalMeanCovariance{T <: Number, M <: AbstractVector{T}, P <: AbstractMatrix{T}} <: AbstractMvNormal
+     μ::M
+     Σ::P
+ end
+ 
+-function MvNormalMeanCovariance(μ::AbstractVector{<:Real}, Σ::AbstractMatrix{<:Real})
++function MvNormalMeanCovariance(μ::AbstractVector{<:Number}, Σ::AbstractMatrix{<:Number})
+     T = promote_type(eltype(μ), eltype(Σ))
+     return MvNormalMeanCovariance(convert(AbstractArray{T}, μ), convert(AbstractArray{T}, Σ))
+ end
+@@ -86,7 +86,7 @@ Base.size(dist::MvNormalMeanCovariance)            = (length(dist),)
+ 
+ Base.convert(::Type{<:MvNormalMeanCovariance}, μ::AbstractVector, Σ::AbstractMatrix) = MvNormalMeanCovariance(μ, Σ)
+ 
+-function Base.convert(::Type{<:MvNormalMeanCovariance{T}}, μ::AbstractVector, Σ::AbstractMatrix) where {T <: Real}
++function Base.convert(::Type{<:MvNormalMeanCovariance{T}}, μ::AbstractVector, Σ::AbstractMatrix) where {T <: Number}
+     return MvNormalMeanCovariance(convert(AbstractArray{T}, μ), convert(AbstractArray{T}, Σ))
+ end
+ 
+diff --git a/src/distributions/normal_family/mv_normal_mean_precision.jl b/src/distributions/normal_family/mv_normal_mean_precision.jl
+index 6d5c8ef..ea1885b 100644
+--- a/src/distributions/normal_family/mv_normal_mean_precision.jl
++++ b/src/distributions/normal_family/mv_normal_mean_precision.jl
+@@ -5,7 +5,7 @@ import LinearAlgebra: diag, Diagonal, dot
+ import Base: ndims, precision, length, size, prod
+ 
+ """
+-    MvNormalMeanPrecision{T <: Real, M <: AbstractVector{T}, P <: AbstractMatrix{T}} <: AbstractMvNormal
++    MvNormalMeanPrecision{T <: Number, M <: AbstractVector{T}, P <: AbstractMatrix{T}} <: AbstractMvNormal
+ 
+ A multivariate normal distribution with mean `μ` and precision matrix `Λ`, where `T` is the element type of the vectors `M` and matrices `P`.
+ 
+@@ -13,12 +13,12 @@ A multivariate normal distribution with mean `μ` and precision matrix `Λ`, whe
+ - `μ::M`: The mean vector of the multivariate normal distribution.
+ - `Λ::P`: The precision matrix (inverse of the covariance matrix) of the multivariate normal distribution.
+ """
+-struct MvNormalMeanPrecision{T <: Real, M <: AbstractVector{T}, P <: AbstractMatrix{T}} <: AbstractMvNormal
++struct MvNormalMeanPrecision{T <: Number, M <: AbstractVector{T}, P <: AbstractMatrix{T}} <: AbstractMvNormal
+     μ::M
+     Λ::P
+ end
+ 
+-function MvNormalMeanPrecision(μ::AbstractVector{<:Real}, Λ::AbstractMatrix{<:Real})
++function MvNormalMeanPrecision(μ::AbstractVector{<:Number}, Λ::AbstractMatrix{<:Number})
+     T = promote_type(eltype(μ), eltype(Λ))
+     return MvNormalMeanPrecision(convert(AbstractArray{T}, μ), convert(AbstractArray{T}, Λ))
+ end
+@@ -76,7 +76,7 @@ Base.size(dist::MvNormalMeanPrecision)            = (length(dist),)
+ 
+ Base.convert(::Type{<:MvNormalMeanPrecision}, μ::AbstractVector, Λ::AbstractMatrix) = MvNormalMeanPrecision(μ, Λ)
+ 
+-function Base.convert(::Type{<:MvNormalMeanPrecision{T}}, μ::AbstractVector, Λ::AbstractMatrix) where {T <: Real}
++function Base.convert(::Type{<:MvNormalMeanPrecision{T}}, μ::AbstractVector, Λ::AbstractMatrix) where {T <: Number}
+     MvNormalMeanPrecision(convert(AbstractArray{T}, μ), convert(AbstractArray{T}, Λ))
+ end
+ 
+diff --git a/src/distributions/normal_family/mv_normal_mean_scale_matrix_precision.jl b/src/distributions/normal_family/mv_normal_mean_scale_matrix_precision.jl
+index 1a6c4ed..40c2b5a 100644
+--- a/src/distributions/normal_family/mv_normal_mean_scale_matrix_precision.jl
++++ b/src/distributions/normal_family/mv_normal_mean_scale_matrix_precision.jl
+@@ -24,7 +24,7 @@ end
+ 
+ BayesBase.vague(::Type{<:MvNormalMeanScaleMatrixPrecision}, dims...) = vague(MvNormalMeanPrecision, dims...)
+ 
+-function MvNormalMeanScaleMatrixPrecision(μ::AbstractVector{<:Real}, γ::Real, G::AbstractMatrix{<:Real})
++function MvNormalMeanScaleMatrixPrecision(μ::AbstractVector{<:Number}, γ::Number, G::AbstractMatrix{<:Number})
+     @assert size(G, 1) == size(G, 2) "G must be square"
+     @assert γ > 0.0 "γ must be positive"
+     @assert isposdef(Symmetric(G)) "G must be SPD"
+@@ -35,7 +35,7 @@ function MvNormalMeanScaleMatrixPrecision(μ::AbstractVector{<:Real}, γ::Real,
+     return MvNormalMeanPrecision(μc, γc * Gc)
+ end
+ 
+-function MvNormalMeanScaleMatrixPrecision(μ::AbstractVector{<:Integer}, γ::Real, G::AbstractMatrix{<:Integer})
++function MvNormalMeanScaleMatrixPrecision(μ::AbstractVector{<:Integer}, γ::Number, G::AbstractMatrix{<:Integer})
+     @assert size(G, 1) == size(G, 2) "G must be square"
+     @assert γ > 0.0 "γ must be positive"
+     @assert isposdef(Symmetric(G)) "G must be SPD"
+diff --git a/src/distributions/normal_family/mv_normal_mean_scale_precision.jl b/src/distributions/normal_family/mv_normal_mean_scale_precision.jl
+index 8b5412b..5b5f64a 100644
+--- a/src/distributions/normal_family/mv_normal_mean_scale_precision.jl
++++ b/src/distributions/normal_family/mv_normal_mean_scale_precision.jl
+@@ -5,7 +5,7 @@ import LinearAlgebra: diag, Diagonal, dot
+ import Base: ndims, precision, length, size, prod
+ 
+ """
+-    MvNormalMeanScalePrecision{T <: Real, M <: AbstractVector{T}} <: AbstractMvNormal
++    MvNormalMeanScalePrecision{T <: Number, M <: AbstractVector{T}} <: AbstractMvNormal
+ 
+ A multivariate normal distribution with mean `μ` and scale parameter `γ` that scales the identity precision matrix.
+ 
+@@ -21,17 +21,17 @@ A multivariate normal distribution with mean `μ` and scale parameter `γ` that
+ The precision matrix of this distribution is `γ * I`, where `I` is the identity matrix.
+ The covariance matrix is the inverse of the precision matrix, i.e., `(1/γ) * I`.
+ """
+-struct MvNormalMeanScalePrecision{T <: Real, M <: AbstractVector{T}} <: AbstractMvNormal
++struct MvNormalMeanScalePrecision{T <: Number, M <: AbstractVector{T}} <: AbstractMvNormal
+     μ::M
+     γ::T
+ end
+ 
+-function MvNormalMeanScalePrecision(μ::AbstractVector{<:Real}, γ::Real)
++function MvNormalMeanScalePrecision(μ::AbstractVector{<:Number}, γ::Number)
+     T = promote_type(eltype(μ), eltype(γ))
+     return MvNormalMeanScalePrecision(convert(AbstractArray{T}, μ), convert(T, γ))
+ end
+ 
+-function MvNormalMeanScalePrecision(μ::AbstractVector{<:Integer}, γ::Real)
++function MvNormalMeanScalePrecision(μ::AbstractVector{<:Integer}, γ::Number)
+     return MvNormalMeanScalePrecision(float.(μ), float(γ))
+ end
+ 
+@@ -97,7 +97,7 @@ end
+ function Base.convert(
+     ::Type{MvNormalMeanScalePrecision{T, M}},
+     dist::MvNormalMeanScalePrecision
+-) where {T <: Real, M <: AbstractArray{T}}
++) where {T <: Number, M <: AbstractArray{T}}
+     m, γ = mean(dist), scale(dist)
+     return MvNormalMeanScalePrecision{T, M}(convert(M, m), convert(T, γ))
+ end
+@@ -105,7 +105,7 @@ end
+ function Base.convert(
+     ::Type{MvNormalMeanScalePrecision{T}},
+     dist::MvNormalMeanScalePrecision
+-) where {T <: Real}
++) where {T <: Number}
+     return convert(MvNormalMeanScalePrecision{T, AbstractArray{T, 1}}, dist)
+ end
+ 
+@@ -157,9 +157,9 @@ Base.length(dist::MvNormalMeanScalePrecision) = length(mean(dist))
+ Base.ndims(dist::MvNormalMeanScalePrecision) = length(dist)
+ Base.size(dist::MvNormalMeanScalePrecision) = (length(dist),)
+ 
+-Base.convert(::Type{<:MvNormalMeanScalePrecision}, μ::AbstractVector, γ::Real) = MvNormalMeanScalePrecision(μ, γ)
++Base.convert(::Type{<:MvNormalMeanScalePrecision}, μ::AbstractVector, γ::Number) = MvNormalMeanScalePrecision(μ, γ)
+ 
+-function Base.convert(::Type{<:MvNormalMeanScalePrecision{T}}, μ::AbstractVector, γ::Real) where {T <: Real}
++function Base.convert(::Type{<:MvNormalMeanScalePrecision{T}}, μ::AbstractVector, γ::Number) where {T <: Number}
+     MvNormalMeanScalePrecision(convert(AbstractArray{T}, μ), convert(T, γ))
+ end
+ 
+diff --git a/src/distributions/normal_family/mv_normal_weighted_mean_precision.jl b/src/distributions/normal_family/mv_normal_weighted_mean_precision.jl
+index 031aff8..d91e0cb 100644
+--- a/src/distributions/normal_family/mv_normal_weighted_mean_precision.jl
++++ b/src/distributions/normal_family/mv_normal_weighted_mean_precision.jl
+@@ -4,7 +4,7 @@ import Distributions: logdetcov, distrname, sqmahal, sqmahal!, AbstractMvNormal
+ import LinearAlgebra: diag, Diagonal, dot
+ import Base: ndims, precision, length, size, prod
+ """
+-    MvNormalWeightedMeanPrecision{T <: Real, M <: AbstractVector{T}, P <: AbstractMatrix{T}} <: AbstractMvNormal
++    MvNormalWeightedMeanPrecision{T <: Number, M <: AbstractVector{T}, P <: AbstractMatrix{T}} <: AbstractMvNormal
+ 
+ A multivariate normal distribution with a weighted mean vector `xi` and precision matrix `Λ`, where `T` is the element type of the vectors `M` and matrices `P`. This struct represents a natural parametrization of a multivariate Gaussian distribution.
+ 
+@@ -12,12 +12,12 @@ A multivariate normal distribution with a weighted mean vector `xi` and precisio
+ - `xi::M`: The weighted mean vector of the multivariate normal distribution.
+ - `Λ::P`: The precision matrix (inverse of the covariance matrix) of the multivariate normal distribution.
+ """
+-struct MvNormalWeightedMeanPrecision{T <: Real, M <: AbstractVector{T}, P <: AbstractMatrix{T}} <: AbstractMvNormal
++struct MvNormalWeightedMeanPrecision{T <: Number, M <: AbstractVector{T}, P <: AbstractMatrix{T}} <: AbstractMvNormal
+     xi::M
+     Λ::P
+ end
+ 
+-function MvNormalWeightedMeanPrecision(xi::AbstractVector{<:Real}, Λ::AbstractMatrix{<:Real})
++function MvNormalWeightedMeanPrecision(xi::AbstractVector{<:Number}, Λ::AbstractMatrix{<:Number})
+     T = promote_type(eltype(xi), eltype(Λ))
+     return MvNormalWeightedMeanPrecision(convert(AbstractArray{T}, xi), convert(AbstractArray{T}, Λ))
+ end
+@@ -89,7 +89,7 @@ function Base.convert(
+     ::Type{<:MvNormalWeightedMeanPrecision{T}},
+     xi::AbstractVector,
+     Λ::AbstractMatrix
+-) where {T <: Real}
++) where {T <: Number}
+     MvNormalWeightedMeanPrecision(convert(AbstractArray{T}, xi), convert(AbstractArray{T}, Λ))
+ end
+ 
+diff --git a/src/distributions/normal_family/normal_family.jl b/src/distributions/normal_family/normal_family.jl
+index 28ef866..7a99fb0 100644
+--- a/src/distributions/normal_family/normal_family.jl
++++ b/src/distributions/normal_family/normal_family.jl
+@@ -268,69 +268,69 @@ end
+ 
+ # Conversion to mean - variance parametrisation
+ 
+-function Base.convert(::Type{NormalMeanVariance{T}}, dist::UnivariateNormalDistributionsFamily) where {T <: Real}
++function Base.convert(::Type{NormalMeanVariance{T}}, dist::UnivariateNormalDistributionsFamily) where {T <: Number}
+     mean, var = mean_var(dist)
+     return NormalMeanVariance(convert(T, T(mean)), convert(T, T(var)))
+ end
+ 
+-function Base.convert(::Type{MvNormalMeanCovariance{T}}, dist::MultivariateNormalDistributionsFamily) where {T <: Real}
++function Base.convert(::Type{MvNormalMeanCovariance{T}}, dist::MultivariateNormalDistributionsFamily) where {T <: Number}
+     return convert(MvNormalMeanCovariance{T, AbstractArray{T, 1}}, dist)
+ end
+ 
+ function Base.convert(
+     ::Type{MvNormalMeanCovariance{T, M}},
+     dist::MultivariateNormalDistributionsFamily
+-) where {T <: Real, M <: AbstractArray{T}}
++) where {T <: Number, M <: AbstractArray{T}}
+     return convert(MvNormalMeanCovariance{T, AbstractArray{T, 1}, AbstractArray{T, 2}}, dist)
+ end
+ 
+ function Base.convert(
+     ::Type{MvNormalMeanCovariance{T, M, P}},
+     dist::MultivariateNormalDistributionsFamily
+-) where {T <: Real, M <: AbstractArray{T}, P <: AbstractArray{T}}
++) where {T <: Number, M <: AbstractArray{T}, P <: AbstractArray{T}}
+     mean, cov = mean_cov(dist)
+     return MvNormalMeanCovariance(convert(M, M(mean)), convert(P, P(cov)))
+ end
+ 
+-function Base.convert(::Type{NormalMeanVariance}, dist::UnivariateNormalDistributionsFamily{T}) where {T <: Real}
++function Base.convert(::Type{NormalMeanVariance}, dist::UnivariateNormalDistributionsFamily{T}) where {T <: Number}
+     return convert(NormalMeanVariance{T}, dist)
+ end
+ 
+-function Base.convert(::Type{MvNormalMeanCovariance}, dist::MultivariateNormalDistributionsFamily{T}) where {T <: Real}
++function Base.convert(::Type{MvNormalMeanCovariance}, dist::MultivariateNormalDistributionsFamily{T}) where {T <: Number}
+     return convert(MvNormalMeanCovariance{T}, dist)
+ end
+ 
+ # Conversion to mean - precision parametrisation
+ 
+-function Base.convert(::Type{NormalMeanPrecision{T}}, dist::UnivariateNormalDistributionsFamily) where {T <: Real}
++function Base.convert(::Type{NormalMeanPrecision{T}}, dist::UnivariateNormalDistributionsFamily) where {T <: Number}
+     mean, precision = mean_precision(dist)
+     return NormalMeanPrecision(convert(T, T(mean)), convert(T, T(precision)))
+ end
+ 
+-function Base.convert(::Type{MvNormalMeanPrecision{T}}, dist::MultivariateNormalDistributionsFamily) where {T <: Real}
++function Base.convert(::Type{MvNormalMeanPrecision{T}}, dist::MultivariateNormalDistributionsFamily) where {T <: Number}
+     return convert(MvNormalMeanPrecision{T, AbstractArray{T, 1}}, dist)
+ end
+ 
+ function Base.convert(
+     ::Type{MvNormalMeanPrecision{T, M}},
+     dist::MultivariateNormalDistributionsFamily
+-) where {T <: Real, M <: AbstractArray{T}}
++) where {T <: Number, M <: AbstractArray{T}}
+     return convert(MvNormalMeanPrecision{T, AbstractArray{T, 1}, AbstractArray{T, 2}}, dist)
+ end
+ 
+ function Base.convert(
+     ::Type{MvNormalMeanPrecision{T, M, P}},
+     dist::MultivariateNormalDistributionsFamily
+-) where {T <: Real, M <: AbstractArray{T}, P <: AbstractArray{T}}
++) where {T <: Number, M <: AbstractArray{T}, P <: AbstractArray{T}}
+     mean, precision = mean_precision(dist)
+     return MvNormalMeanPrecision(convert(M, M(mean)), convert(P, P(precision)))
+ end
+ 
+-function Base.convert(::Type{NormalMeanPrecision}, dist::UnivariateNormalDistributionsFamily{T}) where {T <: Real}
++function Base.convert(::Type{NormalMeanPrecision}, dist::UnivariateNormalDistributionsFamily{T}) where {T <: Number}
+     return convert(NormalMeanPrecision{T}, dist)
+ end
+ 
+-function Base.convert(::Type{MvNormalMeanPrecision}, dist::MultivariateNormalDistributionsFamily{T}) where {T <: Real}
++function Base.convert(::Type{MvNormalMeanPrecision}, dist::MultivariateNormalDistributionsFamily{T}) where {T <: Number}
+     return convert(MvNormalMeanPrecision{T}, dist)
+ end
+ 
+@@ -339,7 +339,7 @@ end
+ function Base.convert(
+     ::Type{NormalWeightedMeanPrecision{T}},
+     dist::UnivariateNormalDistributionsFamily
+-) where {T <: Real}
++) where {T <: Number}
+     weightedmean, precision = weightedmean_precision(dist)
+     return NormalWeightedMeanPrecision(convert(T, T(weightedmean)), convert(T, T(precision)))
+ end
+@@ -347,21 +347,21 @@ end
+ function Base.convert(
+     ::Type{MvNormalWeightedMeanPrecision{T}},
+     dist::MultivariateNormalDistributionsFamily
+-) where {T <: Real}
++) where {T <: Number}
+     return convert(MvNormalWeightedMeanPrecision{T, AbstractArray{T, 1}}, dist)
+ end
+ 
+ function Base.convert(
+     ::Type{MvNormalWeightedMeanPrecision{T, M}},
+     dist::MultivariateNormalDistributionsFamily
+-) where {T <: Real, M <: AbstractArray{T}}
++) where {T <: Number, M <: AbstractArray{T}}
+     return convert(MvNormalWeightedMeanPrecision{T, AbstractArray{T, 1}, AbstractArray{T, 2}}, dist)
+ end
+ 
+ function Base.convert(
+     ::Type{MvNormalWeightedMeanPrecision{T, M, P}},
+     dist::MultivariateNormalDistributionsFamily
+-) where {T <: Real, M <: AbstractArray{T}, P <: AbstractArray{T}}
++) where {T <: Number, M <: AbstractArray{T}, P <: AbstractArray{T}}
+     weightedmean, precision = weightedmean_precision(dist)
+     return MvNormalWeightedMeanPrecision(convert(M, M(weightedmean)), convert(P, P(precision)))
+ end
+@@ -369,14 +369,14 @@ end
+ function Base.convert(
+     ::Type{NormalWeightedMeanPrecision},
+     dist::UnivariateNormalDistributionsFamily{T}
+-) where {T <: Real}
++) where {T <: Number}
+     return convert(NormalWeightedMeanPrecision{T}, dist)
+ end
+ 
+ function Base.convert(
+     ::Type{MvNormalWeightedMeanPrecision},
+     dist::MultivariateNormalDistributionsFamily{T}
+-) where {T <: Real}
++) where {T <: Number}
+     return convert(MvNormalWeightedMeanPrecision{T}, dist)
+ end
+ 
+diff --git a/src/distributions/normal_family/normal_mean_precision.jl b/src/distributions/normal_family/normal_mean_precision.jl
+index 95079e0..4500a6a 100644
+--- a/src/distributions/normal_family/normal_mean_precision.jl
++++ b/src/distributions/normal_family/normal_mean_precision.jl
+@@ -3,7 +3,7 @@ export NormalMeanPrecision
+ import StatsFuns: log2π, invsqrt2π
+ 
+ """
+-    NormalMeanPrecision{T <: Real} <: ContinuousUnivariateDistribution
++    NormalMeanPrecision{T <: Number} <: ContinuousUnivariateDistribution
+ 
+ A normal distribution with a known mean `μ` and precision `w`.
+ 
+@@ -11,17 +11,17 @@ A normal distribution with a known mean `μ` and precision `w`.
+ - `μ::T`: The mean of the normal distribution.
+ - `w::T`: The precision of the normal distribution.
+ """
+-struct NormalMeanPrecision{T <: Real} <: ContinuousUnivariateDistribution
++struct NormalMeanPrecision{T <: Number} <: ContinuousUnivariateDistribution
+     μ::T
+     w::T
+ end
+ 
+-NormalMeanPrecision(μ::Real, w::Real)       = NormalMeanPrecision(promote(μ, w)...)
++NormalMeanPrecision(μ::Number, w::Number)       = NormalMeanPrecision(promote(μ, w)...)
+ NormalMeanPrecision(μ::Integer, w::Integer) = NormalMeanPrecision(float(μ), float(w))
+-NormalMeanPrecision(μ::Real)                = NormalMeanPrecision(μ, one(μ))
++NormalMeanPrecision(μ::Number)                = NormalMeanPrecision(μ, one(μ))
+ NormalMeanPrecision()                       = NormalMeanPrecision(0.0, 1.0)
+ 
+-function NormalMeanPrecision(μ::T1, w::UniformScaling{T2}) where {T1 <: Real, T2}
++function NormalMeanPrecision(μ::T1, w::UniformScaling{T2}) where {T1 <: Number, T2}
+     T = promote_type(T1, T2)
+     μ_new = convert(T, μ)
+     w_new = convert(T, w.λ)
+@@ -52,8 +52,8 @@ BayesBase.logpdf(dist::NormalMeanPrecision, x::Real) = -(log2π - log(precision(
+ Base.precision(dist::NormalMeanPrecision)       = invcov(dist)
+ Base.eltype(::NormalMeanPrecision{T}) where {T} = T
+ 
+-Base.convert(::Type{NormalMeanPrecision}, μ::Real, w::Real) = NormalMeanPrecision(μ, w)
+-Base.convert(::Type{NormalMeanPrecision{T}}, μ::Real, w::Real) where {T <: Real} =
++Base.convert(::Type{NormalMeanPrecision}, μ::Number, w::Number) = NormalMeanPrecision(μ, w)
++Base.convert(::Type{NormalMeanPrecision{T}}, μ::Number, w::Number) where {T <: Number} =
+     NormalMeanPrecision(convert(T, μ), convert(T, w))
+ 
+ BayesBase.vague(::Type{<:NormalMeanPrecision}) = NormalMeanPrecision(0.0, tiny)
+diff --git a/src/distributions/normal_family/normal_mean_variance.jl b/src/distributions/normal_family/normal_mean_variance.jl
+index aa9a47c..b829539 100644
+--- a/src/distributions/normal_family/normal_mean_variance.jl
++++ b/src/distributions/normal_family/normal_mean_variance.jl
+@@ -3,7 +3,7 @@ export NormalMeanVariance
+ import StatsFuns: log2π, invsqrt2π
+ 
+ """
+-    NormalMeanVariance{T <: Real} <: ContinuousUnivariateDistribution
++    NormalMeanVariance{T <: Number} <: ContinuousUnivariateDistribution
+ 
+ A normal distribution with a known mean `μ` and variance `v`.
+ 
+@@ -11,17 +11,17 @@ A normal distribution with a known mean `μ` and variance `v`.
+ - `μ::T`: The mean of the normal distribution.
+ - `v::T`: The variance of the normal distribution.
+ """
+-struct NormalMeanVariance{T <: Real} <: ContinuousUnivariateDistribution
++struct NormalMeanVariance{T <: Number} <: ContinuousUnivariateDistribution
+     μ::T
+     v::T
+ end
+ 
+-NormalMeanVariance(μ::Real, v::Real)       = NormalMeanVariance(promote(μ, v)...)
++NormalMeanVariance(μ::Number, v::Number)       = NormalMeanVariance(promote(μ, v)...)
+ NormalMeanVariance(μ::Integer, v::Integer) = NormalMeanVariance(float(μ), float(v))
+-NormalMeanVariance(μ::T) where {T <: Real} = NormalMeanVariance(μ, one(T))
++NormalMeanVariance(μ::T) where {T <: Number} = NormalMeanVariance(μ, one(T))
+ NormalMeanVariance()                       = NormalMeanVariance(0.0, 1.0)
+ 
+-function NormalMeanVariance(μ::T1, v::UniformScaling{T2}) where {T1 <: Real, T2}
++function NormalMeanVariance(μ::T1, v::UniformScaling{T2}) where {T1 <: Number, T2}
+     T = promote_type(T1, T2)
+     μ_new = convert(T, μ)
+     v_new = convert(T, v.λ)
+@@ -57,8 +57,8 @@ BayesBase.logpdf(dist::NormalMeanVariance, x::Real) = -(log2π + log(var(dist))
+ Base.precision(dist::NormalMeanVariance{T}) where {T} = invcov(dist)
+ Base.eltype(::NormalMeanVariance{T}) where {T}        = T
+ 
+-Base.convert(::Type{NormalMeanVariance}, μ::Real, v::Real) = NormalMeanVariance(μ, v)
+-Base.convert(::Type{NormalMeanVariance{T}}, μ::Real, v::Real) where {T <: Real} =
++Base.convert(::Type{NormalMeanVariance}, μ::Number, v::Number) = NormalMeanVariance(μ, v)
++Base.convert(::Type{NormalMeanVariance{T}}, μ::Number, v::Number) where {T <: Number} =
+     NormalMeanVariance(convert(T, μ), convert(T, v))
+ 
+ BayesBase.vague(::Type{<:NormalMeanVariance}) = NormalMeanVariance(0.0, huge)
+diff --git a/src/distributions/normal_family/normal_weighted_mean_precision.jl b/src/distributions/normal_family/normal_weighted_mean_precision.jl
+index b9a501f..a2ad613 100644
+--- a/src/distributions/normal_family/normal_weighted_mean_precision.jl
++++ b/src/distributions/normal_family/normal_weighted_mean_precision.jl
+@@ -3,7 +3,7 @@ export NormalWeightedMeanPrecision
+ import StatsFuns: log2π, invsqrt2π
+ 
+ """
+-    NormalWeightedMeanPrecision{T <: Real} <: ContinuousUnivariateDistribution
++    NormalWeightedMeanPrecision{T <: Number} <: ContinuousUnivariateDistribution
+ 
+ A normal distribution parametrized by its natural parameters: the weighted mean `xi` and precision `w`.
+ 
+@@ -11,17 +11,17 @@ A normal distribution parametrized by its natural parameters: the weighted mean
+ - `xi::T`: The weighted mean of the normal distribution. `xi` is computed as `w * μ`, where `μ` is the mean of the distribution.
+ - `w::T`: The precision (inverse variance) of the normal distribution.
+ """
+-struct NormalWeightedMeanPrecision{T <: Real} <: ContinuousUnivariateDistribution
++struct NormalWeightedMeanPrecision{T <: Number} <: ContinuousUnivariateDistribution
+     xi :: T # Weighted mean: xi = w * μ
+     w  :: T
+ end
+ 
+-NormalWeightedMeanPrecision(xi::Real, w::Real)       = NormalWeightedMeanPrecision(promote(xi, w)...)
++NormalWeightedMeanPrecision(xi::Number, w::Number)       = NormalWeightedMeanPrecision(promote(xi, w)...)
+ NormalWeightedMeanPrecision(xi::Integer, w::Integer) = NormalWeightedMeanPrecision(float(xi), float(w))
+-NormalWeightedMeanPrecision(xi::Real)                = NormalWeightedMeanPrecision(xi, one(xi))
++NormalWeightedMeanPrecision(xi::Number)                = NormalWeightedMeanPrecision(xi, one(xi))
+ NormalWeightedMeanPrecision()                        = NormalWeightedMeanPrecision(0.0, 1.0)
+ 
+-function NormalWeightedMeanPrecision(xi::T1, w::UniformScaling{T2}) where {T1 <: Real, T2}
++function NormalWeightedMeanPrecision(xi::T1, w::UniformScaling{T2}) where {T1 <: Number, T2}
+     T = promote_type(T1, T2)
+     xi_new = convert(T, xi)
+     w_new = convert(T, w.λ)
+@@ -57,8 +57,8 @@ BayesBase.logpdf(dist::NormalWeightedMeanPrecision, x::Real) = -(log2π - log(pr
+ Base.precision(dist::NormalWeightedMeanPrecision)       = invcov(dist)
+ Base.eltype(::NormalWeightedMeanPrecision{T}) where {T} = T
+ 
+-Base.convert(::Type{NormalWeightedMeanPrecision}, xi::Real, w::Real) = NormalWeightedMeanPrecision(xi, w)
+-Base.convert(::Type{NormalWeightedMeanPrecision{T}}, xi::Real, w::Real) where {T <: Real} =
++Base.convert(::Type{NormalWeightedMeanPrecision}, xi::Number, w::Number) = NormalWeightedMeanPrecision(xi, w)
++Base.convert(::Type{NormalWeightedMeanPrecision{T}}, xi::Number, w::Number) where {T <: Number} =
+     NormalWeightedMeanPrecision(convert(T, xi), convert(T, w))
+ 
+ BayesBase.vague(::Type{<:NormalWeightedMeanPrecision}) = NormalWeightedMeanPrecision(0.0, tiny)
+diff --git a/src/distributions/normal_gamma.jl b/src/distributions/normal_gamma.jl
+index 673ddaf..3860a7b 100644
+--- a/src/distributions/normal_gamma.jl
++++ b/src/distributions/normal_gamma.jl
+@@ -6,7 +6,7 @@ using StaticArrays
+ using DomainSets
+ 
+ """
+-    NormalGamma{T <: Real} <: ContinuousMultivariateDistribution
++    NormalGamma{T <: Number} <: ContinuousMultivariateDistribution
+ 
+ A normal-gamma distribution, where `T` is a real number. This distribution is a joint distribution of a normal random variable with mean `μ` and precision `λ`, and a gamma-distributed random variable with shape `α` and rate `β`.
+ 
+@@ -16,14 +16,14 @@ A normal-gamma distribution, where `T` is a real number. This distribution is a
+ - `α::T`: The shape parameter of the gamma distribution.
+ - `β::T`: The rate parameter of the gamma distribution.
+ """
+-struct NormalGamma{T <: Real} <: ContinuousMultivariateDistribution
++struct NormalGamma{T <: Number} <: ContinuousMultivariateDistribution
+     μ::T
+     λ::T
+     α::T
+     β::T
+ end
+ 
+-function NormalGamma(μ::Real, λ::Real, α::Real, β::Real)
++function NormalGamma(μ::Number, λ::Number, α::Number, β::Number)
+     μ_promoted, λ_promoted, α_promoted, β_promoted = promote(μ, λ, α, β)
+     T = typeof(μ_promoted)
+     return NormalGamma{T}(μ_promoted, λ_promoted, α_promoted, β_promoted)
+diff --git a/src/distributions/wishart.jl b/src/distributions/wishart.jl
+index bf18655..d23bf18 100644
+--- a/src/distributions/wishart.jl
++++ b/src/distributions/wishart.jl
+@@ -7,7 +7,7 @@ import SpecialFunctions: digamma
+ import StatsFuns: logmvgamma
+ 
+ """
+-    WishartFast{T <: Real, A <: AbstractMatrix{T}} <: ContinuousMatrixDistribution
++    WishartFast{T <: Number, A <: AbstractMatrix{T}} <: ContinuousMatrixDistribution
+ 
+ The `WishartFast` struct represents a fast version of the Wishart distribution. It is similar to the `Wishart` distribution from `Distributions.jl`, but it does not check input arguments, allowing the creation of improper `Wishart` messages.
+ 
+@@ -21,12 +21,12 @@ For model creation and regular usage, it is recommended to use `Wishart` from `D
+ 
+ Internally, `WishartFast` stores and creates the inverse of its scale matrix. However, the `params()` function returns the scale matrix itself for backward compatibility. This is done to ensure better stability in the message passing update rules for `ReactiveMP.jl`.
+ """
+-struct WishartFast{T <: Real, A <: AbstractMatrix{T}} <: ContinuousMatrixDistribution
++struct WishartFast{T <: Number, A <: AbstractMatrix{T}} <: ContinuousMatrixDistribution
+     ν::T
+     invS::A
+ end
+ 
+-function WishartFast(ν::Real, invS::AbstractMatrix{<:Real})
++function WishartFast(ν::Number, invS::AbstractMatrix{<:Number})
+     T = promote_type(typeof(ν), eltype(invS))
+     return WishartFast(convert(T, ν), convert(AbstractArray{T}, invS))
+ end
+diff --git a/src/distributions/wishart_inverse.jl b/src/distributions/wishart_inverse.jl
+index e6acdeb..a63000e 100644
+--- a/src/distributions/wishart_inverse.jl
++++ b/src/distributions/wishart_inverse.jl
+@@ -7,7 +7,7 @@ import StatsFuns: logπ, logmvgamma
+ import SpecialFunctions: digamma, loggamma
+ 
+ """
+-    InverseWishartFast{T <: Real, A <: AbstractMatrix{T}} <: ContinuousMatrixDistribution
++    InverseWishartFast{T <: Number, A <: AbstractMatrix{T}} <: ContinuousMatrixDistribution
+ 
+ The `InverseWishartFast` struct represents an improper Inverse Wishart distribution. It is similar to the `InverseWishart` distribution from `Distributions.jl`, but it does not check input arguments, allowing the creation of improper `InverseWishart` messages. 
+ 
+@@ -21,12 +21,12 @@ For model creation and regular usage, it is recommended to use `InverseWishart`
+ 
+ The `InverseWishartFast` distribution does not enforce input argument validation, making it suitable for specialized cases where improper message constructions are needed.
+ """
+-struct InverseWishartFast{T <: Real, A <: AbstractMatrix{T}} <: ContinuousMatrixDistribution
++struct InverseWishartFast{T <: Number, A <: AbstractMatrix{T}} <: ContinuousMatrixDistribution
+     ν::T
+     S::A
+ end
+ 
+-function InverseWishartFast(ν::Real, S::AbstractMatrix{<:Real})
++function InverseWishartFast(ν::Number, S::AbstractMatrix{<:Number})
+     T = promote_type(typeof(ν), eltype(S))
+     return InverseWishartFast(convert(T, ν), convert(AbstractArray{T}, S))
+ end

@@ -1,0 +1,26 @@
+diff --git a/src/densities/pointmass.jl b/src/densities/pointmass.jl
+index 3d3752b..050de63 100644
+--- a/src/densities/pointmass.jl
++++ b/src/densities/pointmass.jl
+@@ -97,10 +97,10 @@ function BayesBase.logpdf(
+     return insupport(distribution, x) ? zero(T) : convert(T, -Inf)
+ end
+ 
+-function BayesBase.mean(distribution::PointMass{V}) where {T<:Real,V<:AbstractArray{T}}
++function BayesBase.mean(distribution::PointMass{V}) where {T<:Number,V<:AbstractArray{T}}
+     return getpointmass(distribution)
+ end
+-function BayesBase.mode(distribution::PointMass{V}) where {T<:Real,V<:AbstractArray{T}}
++function BayesBase.mode(distribution::PointMass{V}) where {T<:Number,V<:AbstractArray{T}}
+     return mean(distribution)
+ end
+ function BayesBase.var(distribution::PointMass{V}) where {T<:Real,V<:AbstractArray{T}}
+@@ -144,7 +144,7 @@ function Base.ndims(distribution::PointMass{M}) where {T<:Real,N,M<:AbstractArra
+     return size(mean(distribution))
+ end
+ 
+-Base.eltype(::PointMass{V}) where {T<:Real,N,V<:AbstractArray{T,N}} = T
++Base.eltype(::PointMass{V}) where {T<:Number,N,V<:AbstractArray{T,N}} = T
+ 
+ # UniformScaling-based matrixvariate point mass
+ 
