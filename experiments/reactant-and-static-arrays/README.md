@@ -62,12 +62,12 @@ prior, keeps the compile small.
 |---|---|---|---|
 | 1 | ExponentialFamily, BayesBase, Distributions | Reactant's traced numbers are `Number`, not `Real`, and every distribution bounds its parameters by `Real` | **EnzymeAD/Reactant.jl#2170** (split number types, traced floats `<: AbstractFloat`) fixes it with every package unchanged: checked on its head e3c22f69 (Julia 1.12.7), 11.5×, max\|Δ\| 3.6e-15 (`scripts/ssm_reactant_pr2170.jl`). Relaxing to `Number` locally also worked (`patches/`) but is not proposed: it admits complex and other non-real numbers (EnzymeAD/Reactant.jl#1570) |
 | 2 | BayesBase | `mean(PointMass(x))` of a point no specialised method matches recursed until the stack overflowed | ReactiveBayes/BayesBase.jl#65 |
-| 3 | FastCholesky | the dense path cannot trace, and Reactant's `cholesky` supports only `\ vector` | ReactiveBayes/FastCholesky.jl#39 (`TracedCholesky`, triangular solves) |
+| 3 | FastCholesky | the dense path cannot trace, and Reactant's `cholesky` supports only `\ vector`; on CPU it is also 50–170× slower than LAPACK, while `lu` calls LAPACK (EnzymeAD/Reactant.jl#3411) | ReactiveBayes/FastCholesky.jl#39 (`TracedCholesky`, through LU; with Cholesky a compiled step at d = 64 was 7× slower than RxInfer, with LU 1.5× faster) |
 | 4 | GraphPPL | `x ~ x0` hashed the distribution object; `is_nodelabel` iterated number arrays | ReactiveBayes/GraphPPL.jl#334 |
 | 5 | RxInfer | the data check iterated every data array; `UnfactorizedData` with `predictvars` failed | ReactiveBayes/RxInfer.jl#702 |
 | 6 | RxInfer | PrettyTables 2 pinned, Reactant requires 3 | ReactiveBayes/RxInfer.jl#701 |
 | 7 | StandardMessagePassingRules | the `*` rule's default `ReplaceZeroDiagonalEntries` reads values | pass `options = (context = (matrix_correction = MatrixCorrectionTools.NoCorrection(),),)` |
-| 8 | Reactant | inside a trace, `any(f, ::AbstractArray)` gives a traced `Bool` or throws for plain-`Bool` `f`, and `sum` of plain `Bool`s is a `Bool`, not an `Int` | reported on EnzymeAD/Reactant.jl#2170; `sum` makes GraphPPL's constraint check reject `x ~ x0` with a traced prior, so the prior is written inside the model (`x_prior ~ MvNormalMeanCovariance(m0, V0)`) |
+| 8 | Reactant (EnzymeAD/Reactant.jl#3410) | inside a trace, `any(f, ::AbstractArray)` gives a traced `Bool` or throws for plain-`Bool` `f`, and `sum` of plain `Bool`s is a `Bool`, not an `Int` | reported on EnzymeAD/Reactant.jl#2170; `sum` makes GraphPPL's constraint check reject `x ~ x0` with a traced prior, so the prior is written inside the model (`x_prior ~ MvNormalMeanCovariance(m0, V0)`) |
 | 9 | Reactant | `one(::TracedRArray)` and `Matrix(UpperTriangular(traced))` index scalars | avoided |
 
 ReactiveMP's engine and the rule bodies needed no change.
@@ -82,3 +82,19 @@ PR branches above:
 - `scripts/ssm_reactant_pr2170.jl`: Reactant from #2170 (Julia 1.12) with ExponentialFamily and
   BayesBase from the registry.
 - `scripts/fc_reactant_check.jl`: FastCholesky's operations on traced matrices against dense ones.
+
+## The notebook (on hold)
+
+`examples/Advanced Examples/Compiling RxInfer with Reactant` compiles one filtering step and loops it, each
+posterior the next prior: 78 s to compile once (Reactant's warm-up; later sizes compile in under a
+second), then per step:
+
+| d | RxInfer | compiled | speed-up |
+|---|---|---|---|
+| 2 | 125 μs | 10.6 μs | 11.7× |
+| 8 | 130 μs | 21.8 μs | 6.0× |
+| 32 | 225 μs | 106 μs | 2.1× |
+| 64 | 675 μs | 437 μs | 1.5× |
+
+It builds only on EnzymeAD/Reactant.jl#2170 (Julia 1.12, `JULIAUP_CHANNEL=1.12 make examples-env …`), with
+the PR branches above developed; CPU only here, no GPU backend on macOS.
