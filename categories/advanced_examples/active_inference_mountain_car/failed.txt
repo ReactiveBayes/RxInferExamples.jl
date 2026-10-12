@@ -1,0 +1,3 @@
+│   • Advanced Examples/Active Inference Mountain car/Active Inference Mountain car.ipynb
+│   • Advanced Examples/Advanced Tutorial/Advanced Tutorial.ipynb
+│   • Experimental Examples/Recurrent Switching Linear Dynamical System/Recurrent Switching Linear Dynamical System.ipynb
