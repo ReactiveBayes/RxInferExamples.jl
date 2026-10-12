@@ -1,5 +1,4 @@
 [deps]
-GaussianCouplingMessagePassingRules = "a57ce80c-d854-4eb3-973d-f0d0550df039"
 GraphViz = "f526b714-d49f-11e8-06ff-31ed36ee7ee0"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 OneHotArrays = "0b1bfda6-eb8a-41d2-88d8-f5af5cad476f"

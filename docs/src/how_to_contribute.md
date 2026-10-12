@@ -21,6 +21,8 @@ If your example cannot be statically generated, put it inside the `interactive` 
 
 2. **Environment Setup**
    - The notebook will use the environment specified in the `Project.toml` file. Add any additional dependencies to the local project.
+   - `using RxInfer` loads the factor nodes most models need: the standard distributions, arithmetic and logic nodes, the mixtures and `Probit`, nonlinear functions of random variables (the Delta node), and `AR`, `DiscreteTransition`, `GCV`, `GaussianCoupling` and `SoftDot`. A notebook that uses `ContinuousTransition`, `BinomialPolya` or `MultinomialPolya`, `BIFM` or `Flow` loads the node's package itself, `using ContinuousTransitionMessagePassingRules`, `using PolyaMessagePassingRules`, `using BIFMMessagePassingRules` or `using FlowMessagePassingRules`, and lists it in its `Project.toml`. The [Rule packages](https://reactivebayes.github.io/RxInfer.jl/stable/manuals/rules_and_nodes/#rule-packages) section of RxInfer's manual lists them.
+   - A `PointMassFormConstraint` on a continuous variable whose marginal is not a standard distribution runs Optim.jl, which RxInfer does not load: add `using Optim` and list Optim in the `Project.toml`, or give the constraint an optimiser of your own.
    - Notebook should run regardless of what versions of dependencies are being used 
    - The `[compat]` section inside each individual `Project.toml` will **NOT** be respected, do not rely on it
 

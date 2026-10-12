@@ -62,6 +62,7 @@ make examples
 ```
 
 All the examples are Jupyter notebooks, which also can be run with [Jupyter](https://jupyter.org/). 
+An example that uses a factor node RxInfer does not load, such as `ContinuousTransition` or `Flow`, loads the node's package itself and lists it in its `Project.toml` (see [the contribution guide](@ref "Contributing to RxInfer Examples")).
 Note, however, that the automatic build process merges the dependencies in all the examples into one single temporary environment. 
 This means that dependencies can be resolved differently when running examples individually in comparison with the automatic build process.
 

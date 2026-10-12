@@ -17,6 +17,12 @@ Checked on Julia 1.13.0, 2026-09-30, against the same notebooks on RxInfer 5.5.2
 ReactiveMP 6.6.0, where all 47 buildable notebooks pass (Large Language Models needed
 `OPENAI_KEY` and was skipped).
 
+RxInfer loads the node packages most models use (Standard, which holds Probit, Delta, AR,
+DiscreteTransition, GCV, GaussianCoupling and SoftDot; ReactiveMP's `DISCUSSION.md` §3.57), so a
+notebook loads only ContinuousTransition, Pólya, BIFM or Flow itself, and lists only those in its
+`Project.toml`. The rows below that name `using …MessagePassingRules` for another package describe
+the port before 2026-10-12.
+
 ## Status
 
 | Status | Notebooks |
