@@ -494,63 +494,61 @@ end
 # their `meta.jl`. `pmap` otherwise dispatches in `walkdir` order, which lets a slow
 # notebook start last and become the tail that determines total wall-clock time.
 # This is a scheduling hint only - it changes wall-clock, never CPU time or output.
-function has_build_priority(notebook)
+function meta_flag(notebook, key)
     meta_path = joinpath(@__DIR__, dirname(notebook), "meta.jl")
     # Deliberately lenient: a missing or broken `meta.jl` must not break scheduling.
     # `process_notebook` reports it properly, per notebook, with a much clearer message.
     isfile(meta_path) || return false
     try
         meta = include(meta_path)
-        return get(meta, :build_priority, false) === true
+        return get(meta, key, false) === true
     catch
         return false
     end
 end
 
-# Evaluate the flag once per notebook - `has_build_priority` includes `meta.jl`.
-let prioritized = Set(filter(has_build_priority, notebook_files))
-    if !isempty(prioritized)
-        # `MergeSort` is stable, so notebooks keep their `walkdir` order within each
-        # group and build logs stay diffable between runs.
-        global notebook_files = sort(notebook_files, by=(n) -> !(n in prioritized), alg=MergeSort)
-        @info """
-        Scheduling $(length(prioritized)) notebook(s) first (build_priority = true in meta.jl):
-        $(join(["  • " * notebook for notebook in sort(collect(prioritized))], "\n"))
-        """
-    end
-end
+has_build_priority(notebook) = meta_flag(notebook, :build_priority)
 
-notebook_directories = map(f -> joinpath(@__DIR__, dirname(f)), notebook_files)
-if !isnothing(CUSTOM_ENVIRONMENT)
-    temporary_environment = abspath(CUSTOM_ENVIRONMENT)
-    @info "Using the given environment at $temporary_environment"
-else
-    temporary_environment = mktempdir(cleanup=true)
-    # We start with the current environment
-    temporary_environment_dependencies = Pkg.project().dependencies
+# Notebooks may opt out of the shared build environment by setting `own_environment = true`
+# in their `meta.jl`, when their dependencies cannot share one with the others' (the VAE
+# example's AutoEncoderToolkit pins Flux 0.14, which Reactant's Functors 0.5 excludes).
+has_own_environment(notebook) = meta_flag(notebook, :own_environment)
+
+# A temporary environment with the build's dependencies and those of `notebooks`, each
+# added at the compat entry a notebook's `Project.toml` gives it: a conflict then fails the
+# build instead of resolving, say, an older RxInfer without a word.
+function create_environment(description, notebooks)
+    environment = mktempdir(cleanup=true)
+    dependencies = Pkg.project().dependencies
+    compat = Dict{String, String}()
 
     @info """
-    Creating temporary environment to run examples from at $temporary_environment.
+    $description at $environment.
     The environment will be deleted automatically after the process exits.
     """
-    for notebook_directory in notebook_directories
-        new_dependencies = Pkg.activate(notebook_directory) do
+    for notebook in notebooks
+        new_dependencies = Pkg.activate(joinpath(@__DIR__, dirname(notebook))) do
             Pkg.project().dependencies
         end
-        merge!(
-            temporary_environment_dependencies,
-            new_dependencies
-        )
+        merge!(dependencies, new_dependencies)
+        project = Pkg.TOML.parsefile(joinpath(@__DIR__, dirname(notebook), "Project.toml"))
+        for (name, entry) in get(project, "compat", Dict{String, Any}())
+            name == "julia" && continue
+            if get(compat, name, entry) != entry
+                error("Notebooks disagree on the compat entry of $name: \"$(compat[name])\" and \"$entry\" (in $notebook)")
+            end
+            compat[name] = entry
+        end
     end
 
-    Pkg.activate(temporary_environment) do
-        Pkg.add(collect(keys(temporary_environment_dependencies)))
+    Pkg.activate(environment) do
+        Pkg.add([Pkg.PackageSpec(name = name, version = get(compat, name, nothing)) for name in keys(dependencies)])
         Pkg.update()
         Pkg.precompile()
     end
 
     if !isnothing(RXINFER_PATH)
-        Pkg.activate(temporary_environment) do
+        Pkg.activate(environment) do
             @info "Adding development version of RxInfer to the temporary environment"
             Pkg.develop(path = RXINFER_PATH)
 
@@ -571,13 +569,48 @@ else
             Pkg.precompile()
         end
     end
+
+    return environment
 end
+
+# Evaluate the flag once per notebook - `has_build_priority` includes `meta.jl`.
+let prioritized = Set(filter(has_build_priority, notebook_files))
+    if !isempty(prioritized)
+        # `MergeSort` is stable, so notebooks keep their `walkdir` order within each
+        # group and build logs stay diffable between runs.
+        global notebook_files = sort(notebook_files, by=(n) -> !(n in prioritized), alg=MergeSort)
+        @info """
+        Scheduling $(length(prioritized)) notebook(s) first (build_priority = true in meta.jl):
+        $(join(["  • " * notebook for notebook in sort(collect(prioritized))], "\n"))
+        """
+    end
+end
+
+if !isnothing(CUSTOM_ENVIRONMENT)
+    temporary_environment = abspath(CUSTOM_ENVIRONMENT)
+    @info "Using the given environment at $temporary_environment"
+else
+    temporary_environment = create_environment(
+        "Creating temporary environment to run examples from",
+        filter(!has_own_environment, notebook_files)
+    )
+end
+
+# Notebooks with `own_environment = true` in their `meta.jl` are built in an environment
+# of their own, made from their `Project.toml` and the build's own dependencies.
+notebook_environments = Dict(
+    notebook => (
+        isnothing(CUSTOM_ENVIRONMENT) && has_own_environment(notebook) ?
+            create_environment("Creating an environment of its own for $notebook", [notebook]) :
+            temporary_environment
+    ) for notebook in notebook_files
+)
 
 # Process notebooks in parallel
 build_wall_clock_begin = time_ns()
 results = pmap(
     notebook -> process_notebook(
-        temporary_environment,
+        notebook_environments[notebook],
         notebook,
         BUILD_DIR,
         CACHE_DIR
