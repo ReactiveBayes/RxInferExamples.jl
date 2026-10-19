@@ -249,6 +249,12 @@ end
     return new_content
 end
 
+# Removes the lines that end in `# hide` from the code blocks, as Documenter does: they run in the
+# notebook, and the page shows the rest of the block and its output.
+@everywhere function strip_hidden_lines(content)
+    return replace(content, r"```julia\n.*?\n\s*```"s => block -> join(filter(line -> !occursin(r"#\s*hide\s*$", line), split(block, '\n')), '\n'))
+end
+
 @everywhere struct ProcessedNotebook
     notebook::String
     notebook_path::String
@@ -371,6 +377,9 @@ end
 
         # Replace hidden block markers with HTML details tags
         content = replace_hidden_blocks(content)
+
+        # Leave the lines that end in `# hide` out of the page
+        content = strip_hidden_lines(content)
 
         EXAMPLE_METADATA = """
         ```@meta

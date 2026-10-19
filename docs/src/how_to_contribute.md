@@ -86,6 +86,16 @@ If your example cannot be statically generated, put it inside the `interactive` 
 
     Run them locally with `make docs-check` after `make docs`. See `docs/tools/README.md`.
 
+## Hidden Lines
+
+A line that ends in `# hide` runs in the notebook but is left out of the page, as in Documenter: use it for
+a check or a setting that would distract from the example.
+
+```julia
+@assert maximum(abs, estimate - truth) < 0.1 # hide
+plot(estimate)
+```
+
 ## Hidden/Collapsible Code Blocks
 
 You can hide complex or supplementary code blocks behind collapsible sections to improve readability while still making all code available to users.
