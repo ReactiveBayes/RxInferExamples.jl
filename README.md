@@ -62,26 +62,6 @@ We welcome contributions! Please check our [contribution guide](https://examples
 - [RxInfer.jl Repository](https://github.com/ReactiveBayes/RxInfer.jl)
 - [Examples Documentation](https://examples.rxinfer.com)
 
-## Python Integration
-
-RxInfer can be used from Python through client-server infrastructure developed by Lazy Dynamics.
-
-- **[RxInferServer.jl](https://github.com/lazydynamics/RxInferServer)** - A RESTful API service for deploying RxInfer models
-- **[RxInferClient.py](https://github.com/lazydynamics/RxInferClient.py)** - Python SDK for interacting with RxInferServer
-
-**Note** that the license for the `RxInferServer` is different from Rxinfer and is hosted under a different organization.
-
-The server provides OpenAPI-compliant endpoints for model deployment and inference, while the Python client offers a convenient interface to:
-- Create and manage model instances
-- Execute inference tasks
-- Monitor inference progress
-- Handle authentication and API keys
-- Process results in a native format
-
-For more information, visit:
-- [Server Documentation](https://server.rxinfer.com)
-- [Python SDK Documentation](https://lazydynamics.github.io/RxInferClient.py/)
-
 ## License
 
 This repository is licensed under the MIT License. See [LICENSE](LICENSE) for details.
