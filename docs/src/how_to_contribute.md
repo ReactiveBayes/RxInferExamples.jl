@@ -160,8 +160,8 @@ Both fields below are optional - omit them unless your example needs them.
   CPU time of the build, are unchanged.
 - `own_environment = true` - build this example in an environment of its own instead of
   the one the examples share. Use it only when the example's dependencies cannot share an
-  environment with the others' (Learning Dynamics with VAEs needs Flux 0.14, which the
-  Reactant example excludes): the shared environment then resolves without it. Compat
+  environment with the others' (a package that pins Flux 0.14, say, which the Reactant
+  example excludes): the shared environment then resolves without it. Compat
   entries in an example's `Project.toml` hold in either environment, so a conflict fails
   the build instead of resolving an older RxInfer.
 

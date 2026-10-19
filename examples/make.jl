@@ -510,8 +510,8 @@ end
 has_build_priority(notebook) = meta_flag(notebook, :build_priority)
 
 # Notebooks may opt out of the shared build environment by setting `own_environment = true`
-# in their `meta.jl`, when their dependencies cannot share one with the others' (the VAE
-# example's AutoEncoderToolkit pins Flux 0.14, which Reactant's Functors 0.5 excludes).
+# in their `meta.jl`, when their dependencies cannot share one with the others': one that
+# pins Flux 0.14, say, which Reactant's Functors 0.5 excludes.
 has_own_environment(notebook) = meta_flag(notebook, :own_environment)
 
 # A temporary environment with the build's dependencies and those of `notebooks`, each
