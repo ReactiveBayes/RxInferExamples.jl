@@ -276,8 +276,11 @@ is_processing_successful(processed::ProcessedNotebook) =
 
 @everywhere ns_to_seconds(nanoseconds) = nanoseconds / 10^9
 
+# The build's own packages, Weave among them, load from `examples/Project.toml`, stacked after
+# the notebook's environment: an environment of a notebook's own holds only its packages.
 @everywhere function execute_in_julia_subprocess(envdir, command)
-    run(`julia --startup-file=no --threads=2,1 --gcthreads=2,1 --project=$envdir -e $command`)
+    load_path = join(["@", @__DIR__, "@stdlib"], Sys.iswindows() ? ";" : ":")
+    run(addenv(`julia --startup-file=no --threads=2,1 --gcthreads=2,1 --project=$envdir -e $command`, "JULIA_LOAD_PATH" => load_path))
 end
 
 # Function to process a single notebook
@@ -510,16 +513,16 @@ end
 has_build_priority(notebook) = meta_flag(notebook, :build_priority)
 
 # Notebooks may opt out of the shared build environment by setting `own_environment = true`
-# in their `meta.jl`, when their dependencies cannot share one with the others': one that
-# pins Flux 0.14, say, which Reactant's Functors 0.5 excludes.
+# in their `meta.jl`, when their dependencies cannot share one with the build's or the
+# others': Reactant needs JSON 1.4 or later, which Weave excludes.
 has_own_environment(notebook) = meta_flag(notebook, :own_environment)
 
-# A temporary environment with the build's dependencies and those of `notebooks`, each
-# added at the compat entry a notebook's `Project.toml` gives it: a conflict then fails the
-# build instead of resolving, say, an older RxInfer without a word.
-function create_environment(description, notebooks)
+# A temporary environment with the dependencies of `notebooks`, and the build's own with
+# `build_dependencies`, each added at the compat entry a notebook's `Project.toml` gives it:
+# a conflict then fails the build instead of resolving, say, an older RxInfer without a word.
+function create_environment(description, notebooks; build_dependencies = true)
     environment = mktempdir(cleanup=true)
-    dependencies = Pkg.project().dependencies
+    dependencies = build_dependencies ? Pkg.project().dependencies : Dict{String, Base.UUID}()
     compat = Dict{String, String}()
 
     @info """
@@ -597,11 +600,11 @@ else
 end
 
 # Notebooks with `own_environment = true` in their `meta.jl` are built in an environment
-# of their own, made from their `Project.toml` and the build's own dependencies.
+# of their own, made from their `Project.toml` alone.
 notebook_environments = Dict(
     notebook => (
         isnothing(CUSTOM_ENVIRONMENT) && has_own_environment(notebook) ?
-            create_environment("Creating an environment of its own for $notebook", [notebook]) :
+            create_environment("Creating an environment of its own for $notebook", [notebook]; build_dependencies = false) :
             temporary_environment
     ) for notebook in notebook_files
 )
