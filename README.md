@@ -44,7 +44,7 @@ Navigate to the [Examples](https://examples.rxinfer.com) page to check the pre-r
 > [!NOTE]  
 > If you make changes to an example and still see old errors after rebuilding, try clearing the cache first with the `make clean` command.
 
-All the examples are Jupyter notebooks, which also can be run with [Jupyter](https://jupyter.org/). Note, however, that the automatic build process 
+All the examples are Jupyter notebooks, which also can be run with [Jupyter](https://jupyter.org/). An example that uses a factor node RxInfer does not load, such as `ContinuousTransition` or `Flow`, loads the node's package itself and lists it in its `Project.toml` (see the contribution guide). Note, however, that the automatic build process 
 merges the dependencies in all the examples into one single temporary environment. This means that dependencies can be resolved differently when running examples individually in comparison with the automatic build process.
 
 ## Interactive examples
@@ -61,26 +61,6 @@ We welcome contributions! Please check our [contribution guide](https://examples
 - [RxInfer.jl Documentation](https://docs.rxinfer.com)
 - [RxInfer.jl Repository](https://github.com/ReactiveBayes/RxInfer.jl)
 - [Examples Documentation](https://examples.rxinfer.com)
-
-## Python Integration
-
-RxInfer can be used from Python through client-server infrastructure developed by Lazy Dynamics.
-
-- **[RxInferServer.jl](https://github.com/lazydynamics/RxInferServer)** - A RESTful API service for deploying RxInfer models
-- **[RxInferClient.py](https://github.com/lazydynamics/RxInferClient.py)** - Python SDK for interacting with RxInferServer
-
-**Note** that the license for the `RxInferServer` is different from Rxinfer and is hosted under a different organization.
-
-The server provides OpenAPI-compliant endpoints for model deployment and inference, while the Python client offers a convenient interface to:
-- Create and manage model instances
-- Execute inference tasks
-- Monitor inference progress
-- Handle authentication and API keys
-- Process results in a native format
-
-For more information, visit:
-- [Server Documentation](https://server.rxinfer.com)
-- [Python SDK Documentation](https://lazydynamics.github.io/RxInferClient.py/)
 
 ## License
 

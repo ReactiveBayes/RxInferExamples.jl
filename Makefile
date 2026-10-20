@@ -1,4 +1,4 @@
-.PHONY: docs docs-check clean docs-setup preview examples
+.PHONY: docs docs-check clean docs-setup preview examples examples-env
 
 # Default target
 all: examples docs
@@ -10,6 +10,10 @@ examples: examples-setup
 # Build examples with local development version of RxInfer
 examples-dev: examples-setup
 	julia --project=examples examples/make.jl --use-dev $(if $(RXINFER),--rxinfer-path=$(RXINFER),) $(if $(FILTER),$(FILTER),) $(if $(USE_CACHE),--use-cache,) $(if $(STRICT_ENV),--strict-env,)
+
+# Build examples in an existing environment, e.g. one with unregistered packages developed by path
+examples-env: examples-setup
+	julia --project=examples examples/make.jl --environment=$(ENVIRONMENT) $(if $(FILTER),$(FILTER),) $(if $(USE_CACHE),--use-cache,) $(if $(STRICT_ENV),--strict-env,)
 
 # Clean build artifacts
 clean:
@@ -53,6 +57,7 @@ help:
 	@echo "  all        - Build all examples and documentation (default)"
 	@echo "  examples   - Build all examples or a specific example (usage: make examples [FILTER=pattern] [USE_CACHE=true/false] [STRICT_ENV=true/false])"
 	@echo "  examples-dev - Build examples with local RxInfer development version (usage: make examples-dev [FILTER=pattern] [USE_CACHE=true/false] [STRICT_ENV=true/false])"
+	@echo "  examples-env - Build examples in an existing environment (usage: make examples-env ENVIRONMENT=path [FILTER=pattern] [USE_CACHE=true/false] [STRICT_ENV=true/false])"
 	@echo "  docs       - Build the documentation website"
 	@echo "  docs-check - Verify the built site renders math and highlighting (needs node)"
 	@echo "  preview    - Open documentation in browser"

@@ -47,7 +47,6 @@ jobs:
       - name: Build examples
         env:
           JULIA_FASTCHOLESKY_THROW_ERROR_NON_SYMMETRIC: 1
-          OPENAI_KEY: ${{ secrets.OPENAI_KEY }}
         run: |
           julia -e 'using Pkg; Pkg.add("Weave"); Pkg.precompile()'
           make examples-setup

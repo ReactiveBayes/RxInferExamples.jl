@@ -32,6 +32,17 @@ When using the development version (`--use-dev`), the build system will:
 2. Add it as a development dependency to each notebook's environment
 3. Ensure all notebooks use the same RxInfer version
 
+To build in an environment you prepared yourself, for instance one where RxInfer, ReactiveMP
+and packages that are not registered yet are developed by path, pass it instead:
+
+```bash
+make examples-env ENVIRONMENT=/path/to/environment
+make examples-env ENVIRONMENT=/path/to/environment FILTER=Coin
+```
+
+The environment must already hold every dependency of the examples being built; the build
+uses it as it is, without adding, updating or developing anything.
+
 ## Overview
 
 The build process happens in two stages:

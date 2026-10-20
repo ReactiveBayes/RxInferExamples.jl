@@ -21,6 +21,8 @@ If your example cannot be statically generated, put it inside the `interactive` 
 
 2. **Environment Setup**
    - The notebook will use the environment specified in the `Project.toml` file. Add any additional dependencies to the local project.
+   - `using RxInfer` loads the factor nodes most models need: the standard distributions, arithmetic and logic nodes, the mixtures and `Probit`, nonlinear functions of random variables (the Delta node), and `AR`, `DiscreteTransition`, `GCV`, `GaussianCoupling` and `SoftDot`. A notebook that uses `ContinuousTransition`, `BinomialPolya` or `MultinomialPolya`, `BIFM` or `Flow` loads the node's package itself, `using ContinuousTransitionMessagePassingRules`, `using PolyaMessagePassingRules`, `using BIFMMessagePassingRules` or `using FlowMessagePassingRules`, and lists it in its `Project.toml`. The [Rule packages](https://reactivebayes.github.io/RxInfer.jl/stable/manuals/rules_and_nodes/#rule-packages) section of RxInfer's manual lists them.
+   - A `PointMassFormConstraint` on a continuous variable whose marginal is not a standard distribution runs Optim.jl, which RxInfer does not load: add `using Optim` and list Optim in the `Project.toml`, or give the constraint an optimiser of your own.
    - Notebook should run regardless of what versions of dependencies are being used 
    - The `[compat]` section inside each individual `Project.toml` will **NOT** be respected, do not rely on it
 
@@ -84,6 +86,16 @@ If your example cannot be statically generated, put it inside the `interactive` 
 
     Run them locally with `make docs-check` after `make docs`. See `docs/tools/README.md`.
 
+## Hidden Lines
+
+A line that ends in `# hide` runs in the notebook but is left out of the page, as in Documenter: use it for
+a check or a setting that would distract from the example.
+
+```julia
+@assert maximum(abs, estimate - truth) < 0.1 # hide
+plot(estimate)
+```
+
 ## Hidden/Collapsible Code Blocks
 
 You can hide complex or supplementary code blocks behind collapsible sections to improve readability while still making all code available to users.
@@ -146,6 +158,13 @@ Both fields below are optional - omit them unless your example needs them.
   that are genuinely among the slowest (check the performance report printed at the end
   of `make examples`). It affects scheduling only: the example's output, and the total
   CPU time of the build, are unchanged.
+- `own_environment = true` - build this example in an environment of its own, made from
+  its `Project.toml` alone, instead of the one the examples share. Use it only when the
+  example's dependencies cannot share an environment with the build's or the others'
+  (Compiling RxInfer with Reactant needs JSON 1.4 or later, which Weave excludes): the
+  shared environment then resolves without it. Compat
+  entries in an example's `Project.toml` hold in either environment, so a conflict fails
+  the build instead of resolving an older RxInfer.
 
 ```julia
 return (

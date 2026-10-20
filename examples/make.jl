@@ -16,6 +16,8 @@ function parse_commandline()
         help = "Use cached results for notebooks"
         "--rxinfer-path"
         help = "Path to RxInfer.jl repository (overrides default ../RxInfer.jl)"
+        "--environment"
+        help = "Build the examples in this existing environment instead of a temporary one (it must hold every example's dependencies)"
         "--strict-env"
         action = :store_true
         help = "Fail if required environment variables are missing (use for CI)"
@@ -38,6 +40,12 @@ const USE_DEV = ARGS["use-dev"]
 const USE_CACHE = ARGS["use-cache"]
 const STRICT_ENV = ARGS["strict-env"]
 const CUSTOM_RXINFER_PATH = get(ARGS, "rxinfer-path", nothing)
+const CUSTOM_ENVIRONMENT = get(ARGS, "environment", nothing)
+
+if !isnothing(CUSTOM_ENVIRONMENT) && USE_DEV
+    @error "--environment and --use-dev are exclusive: develop RxInfer in the given environment instead"
+    exit(-1)
+end
 
 const RXINFER_PATH = if USE_DEV
     # Try to find local RxInfer development version
@@ -241,6 +249,12 @@ end
     return new_content
 end
 
+# Removes the lines that end in `# hide` from the code blocks, as Documenter does: they run in the
+# notebook, and the page shows the rest of the block and its output.
+@everywhere function strip_hidden_lines(content)
+    return replace(content, r"```julia\n.*?\n\s*```"s => block -> join(filter(line -> !occursin(r"#\s*hide\s*$", line), split(block, '\n')), '\n'))
+end
+
 @everywhere struct ProcessedNotebook
     notebook::String
     notebook_path::String
@@ -262,8 +276,11 @@ is_processing_successful(processed::ProcessedNotebook) =
 
 @everywhere ns_to_seconds(nanoseconds) = nanoseconds / 10^9
 
+# The build's own packages, Weave among them, load from `examples/Project.toml`, stacked after
+# the notebook's environment: an environment of a notebook's own holds only its packages.
 @everywhere function execute_in_julia_subprocess(envdir, command)
-    run(`julia --startup-file=no --threads=2,1 --gcthreads=2,1 --project=$envdir -e $command`)
+    load_path = join(["@", @__DIR__, "@stdlib"], Sys.iswindows() ? ";" : ":")
+    run(addenv(`julia --startup-file=no --threads=2,1 --gcthreads=2,1 --project=$envdir -e $command`, "JULIA_LOAD_PATH" => load_path))
 end
 
 # Function to process a single notebook
@@ -363,6 +380,9 @@ end
 
         # Replace hidden block markers with HTML details tags
         content = replace_hidden_blocks(content)
+
+        # Leave the lines that end in `# hide` out of the page
+        content = strip_hidden_lines(content)
 
         EXAMPLE_METADATA = """
         ```@meta
@@ -477,17 +497,83 @@ end
 # their `meta.jl`. `pmap` otherwise dispatches in `walkdir` order, which lets a slow
 # notebook start last and become the tail that determines total wall-clock time.
 # This is a scheduling hint only - it changes wall-clock, never CPU time or output.
-function has_build_priority(notebook)
+function meta_flag(notebook, key)
     meta_path = joinpath(@__DIR__, dirname(notebook), "meta.jl")
     # Deliberately lenient: a missing or broken `meta.jl` must not break scheduling.
     # `process_notebook` reports it properly, per notebook, with a much clearer message.
     isfile(meta_path) || return false
     try
         meta = include(meta_path)
-        return get(meta, :build_priority, false) === true
+        return get(meta, key, false) === true
     catch
         return false
     end
+end
+
+has_build_priority(notebook) = meta_flag(notebook, :build_priority)
+
+# Notebooks may opt out of the shared build environment by setting `own_environment = true`
+# in their `meta.jl`, when their dependencies cannot share one with the build's or the
+# others': Reactant needs JSON 1.4 or later, which Weave excludes.
+has_own_environment(notebook) = meta_flag(notebook, :own_environment)
+
+# A temporary environment with the dependencies of `notebooks`, and the build's own with
+# `build_dependencies`, each added at the compat entry a notebook's `Project.toml` gives it:
+# a conflict then fails the build instead of resolving, say, an older RxInfer without a word.
+function create_environment(description, notebooks; build_dependencies = true)
+    environment = mktempdir(cleanup=true)
+    dependencies = build_dependencies ? Pkg.project().dependencies : Dict{String, Base.UUID}()
+    compat = Dict{String, String}()
+
+    @info """
+    $description at $environment.
+    The environment will be deleted automatically after the process exits.
+    """
+    for notebook in notebooks
+        new_dependencies = Pkg.activate(joinpath(@__DIR__, dirname(notebook))) do
+            Pkg.project().dependencies
+        end
+        merge!(dependencies, new_dependencies)
+        project = Pkg.TOML.parsefile(joinpath(@__DIR__, dirname(notebook), "Project.toml"))
+        for (name, entry) in get(project, "compat", Dict{String, Any}())
+            name == "julia" && continue
+            if get(compat, name, entry) != entry
+                error("Notebooks disagree on the compat entry of $name: \"$(compat[name])\" and \"$entry\" (in $notebook)")
+            end
+            compat[name] = entry
+        end
+    end
+
+    Pkg.activate(environment) do
+        Pkg.add([Pkg.PackageSpec(name = name, version = get(compat, name, nothing)) for name in keys(dependencies)])
+        Pkg.update()
+        Pkg.precompile()
+    end
+
+    if !isnothing(RXINFER_PATH)
+        Pkg.activate(environment) do
+            @info "Adding development version of RxInfer to the temporary environment"
+            Pkg.develop(path = RXINFER_PATH)
+
+            # Developing a package does not inherit path dependencies from its Manifest.
+            # Honor RxInfer's local ReactiveMP checkout when one is recorded there.
+            rxinfer_manifest_path = joinpath(RXINFER_PATH, "Manifest.toml")
+            if isfile(rxinfer_manifest_path)
+                rxinfer_manifest = Pkg.TOML.parsefile(rxinfer_manifest_path)
+                reactivemp_entries = get(get(rxinfer_manifest, "deps", Dict()), "ReactiveMP", [])
+                if length(reactivemp_entries) == 1 && haskey(only(reactivemp_entries), "path")
+                    reactivemp_path = normpath(RXINFER_PATH, only(reactivemp_entries)["path"])
+                    @info "Adding ReactiveMP used by the development version of RxInfer" reactivemp_path
+                    Pkg.develop(path = reactivemp_path)
+                end
+            end
+
+            Pkg.update()
+            Pkg.precompile()
+        end
+    end
+
+    return environment
 end
 
 # Evaluate the flag once per notebook - `has_build_priority` includes `meta.jl`.
@@ -503,59 +589,31 @@ let prioritized = Set(filter(has_build_priority, notebook_files))
     end
 end
 
-notebook_directories = map(f -> joinpath(@__DIR__, dirname(f)), notebook_files)
-temporary_environment = mktempdir(cleanup=true)
-# We start with the current environment
-temporary_environment_dependencies = Pkg.project().dependencies
-
-@info """
-Creating temporary environment to run examples from at $temporary_environment.
-The environment will be deleted automatically after the process exits.
-"""
-for notebook_directory in notebook_directories
-    new_dependencies = Pkg.activate(notebook_directory) do
-        Pkg.project().dependencies
-    end
-    merge!(
-        temporary_environment_dependencies,
-        new_dependencies
+if !isnothing(CUSTOM_ENVIRONMENT)
+    temporary_environment = abspath(CUSTOM_ENVIRONMENT)
+    @info "Using the given environment at $temporary_environment"
+else
+    temporary_environment = create_environment(
+        "Creating temporary environment to run examples from",
+        filter(!has_own_environment, notebook_files)
     )
 end
 
-Pkg.activate(temporary_environment) do
-    Pkg.add(collect(keys(temporary_environment_dependencies)))
-    Pkg.update()
-    Pkg.precompile()
-end
-
-if !isnothing(RXINFER_PATH)
-    Pkg.activate(temporary_environment) do
-        @info "Adding development version of RxInfer to the temporary environment"
-        Pkg.develop(path = RXINFER_PATH)
-
-        # Developing a package does not inherit path dependencies from its Manifest.
-        # Honor RxInfer's local ReactiveMP checkout when one is recorded there.
-        rxinfer_manifest_path = joinpath(RXINFER_PATH, "Manifest.toml")
-        if isfile(rxinfer_manifest_path)
-            rxinfer_manifest = Pkg.TOML.parsefile(rxinfer_manifest_path)
-            reactivemp_entries = get(get(rxinfer_manifest, "deps", Dict()), "ReactiveMP", [])
-            if length(reactivemp_entries) == 1 && haskey(only(reactivemp_entries), "path")
-                reactivemp_path = normpath(RXINFER_PATH, only(reactivemp_entries)["path"])
-                @info "Adding ReactiveMP used by the development version of RxInfer" reactivemp_path
-                Pkg.develop(path = reactivemp_path)
-            end
-        end
-
-        Pkg.update()
-        Pkg.precompile()
-    end
-end
+# Notebooks with `own_environment = true` in their `meta.jl` are built in an environment
+# of their own, made from their `Project.toml` alone.
+notebook_environments = Dict(
+    notebook => (
+        isnothing(CUSTOM_ENVIRONMENT) && has_own_environment(notebook) ?
+            create_environment("Creating an environment of its own for $notebook", [notebook]; build_dependencies = false) :
+            temporary_environment
+    ) for notebook in notebook_files
+)
 
 # Process notebooks in parallel
 build_wall_clock_begin = time_ns()
 results = pmap(
     notebook -> process_notebook(
-        temporary_environment,
+        notebook_environments[notebook],
         notebook,
         BUILD_DIR,
         CACHE_DIR
