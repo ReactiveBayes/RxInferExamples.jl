@@ -9,3 +9,4 @@ StableRNGs = "860ef19b-820b-49d6-a774-d7a799459cd3"
 
 [compat]
 Reactant = "0.2.292"
+RxInfer = "6.0.1"
