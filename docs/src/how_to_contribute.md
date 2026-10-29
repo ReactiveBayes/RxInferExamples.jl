@@ -4,7 +4,7 @@ We welcome contributions from the community! This guide will help you understand
 
 ## Location and Structure
 
-Create a new Jupyter notebook in the appropriate category folder. Use `examples/Basic Examples/` for fundamental concepts, `examples/Advanced Examples/` for complex applications, `examples/Problem Specific/` for domain-specific use cases, or `examples/Experimental Examples` for some (potentially unpolished) experiments.
+Create a new Jupyter notebook in the appropriate category folder. Use `examples/Basic Examples/` for fundamental concepts, `examples/Advanced Examples/` for complex applications, `examples/Problem Specific/` for domain-specific use cases, `examples/Universal Inference/` for inference with generic approximations instead of hand-derived rules, or `examples/Experimental Examples` for some (potentially unpolished) experiments.
 
 !!! note
     You can also introduce a new category by creating a new folder in the `examples/` directory.

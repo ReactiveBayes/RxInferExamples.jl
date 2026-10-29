@@ -35,6 +35,15 @@ can be applied to specific problems like time series analysis and signal process
 """
     ),
     Category(
+        "Universal Inference",
+        "universal_inference",
+        """
+Inference in a broad class of models with generic approximations, such as the Laplace
+approximation, instead of hand-derived update rules. The approximation machinery is written
+inside the notebooks for now and previews an upcoming generic approximation layer.
+"""
+    ),
+    Category(
         "Experimental Examples",
         "experimental_examples",
         """
