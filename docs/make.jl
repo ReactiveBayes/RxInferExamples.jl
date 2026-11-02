@@ -27,6 +27,16 @@ sophisticated models, performance optimization, and integration with other Julia
 """
     ),
     Category(
+        "Making Inference Faster",
+        "making_inference_faster",
+        """
+Performance from the user's side. These examples show experienced users how to make an
+existing model run faster without changing the inference procedure: matrix types that cache
+their factorizations, form constraints that change how a posterior is stored, and where such
+changes pay off.
+"""
+    ),
+    Category(
         "Problem Specific",
         "problem_specific",
         """
