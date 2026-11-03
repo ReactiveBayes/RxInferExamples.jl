@@ -1,7 +1,7 @@
 return (
     title = "Laplace Approximation: Gaussian Mixture",
     description = """
-    A Gaussian mixture with Laplace approximations for the means and log-precisions, exact updates for the discrete assignments, and a variational rule fallback computing expected log-densities, compared with the conjugate NormalMixture solution.
+    A Gaussian mixture through fallback = LaplaceApproximation(): Laplace approximations for the means and log-precisions, exact beliefs for the discrete assignments and variational messages computed as expectations, compared with the conjugate NormalMixture solution and with a plug-in rule fallback.
     """,
     tags = ["universal inference", "laplace approximation", "mixture model", "discrete variables", "mean field", "rule fallback", "quadrature"]
 )
