@@ -376,9 +376,12 @@ end
         time_to_env_log_end = time_ns()
 
         time_to_build_begin = time_ns()
+        # `wide_output = true` in `meta.jl`: the printed output is not wrapped at 75 characters
+        wide_output = get(meta, :wide_output, false) === true
         execute_in_julia_subprocess(envdir, quote
             using Serialization
             using Weave
+            $wide_output && Weave.set_chunk_defaults!(:wrap => false)
             weave($build_input_path;
                 out_path=$output_path,
                 doctype="github",
