@@ -48,9 +48,10 @@ can be applied to specific problems like time series analysis and signal process
         "Universal Inference",
         "universal_inference",
         """
-Inference in a broad class of models with generic approximations, such as the Laplace
-approximation, instead of hand-derived update rules. The approximation machinery is written
-inside the notebooks for now and previews an upcoming generic approximation layer.
+Inference in a broad class of models with generic approximations instead of hand-derived update
+rules: one keyword, `fallback`, chooses the Laplace approximation, conjugate-computation
+variational inference (CVI), Laplace propagation or expectation propagation, and the inference
+report says what was approximated and how.
 """
     ),
     Category(
