@@ -49,9 +49,9 @@ can be applied to specific problems like time series analysis and signal process
         "universal_inference",
         """
 Inference in a broad class of models with generic approximations instead of hand-derived update
-rules: one keyword, `fallback`, chooses the Laplace approximation, conjugate-computation
-variational inference (CVI), Laplace propagation or expectation propagation, and the inference
-report says what was approximated and how.
+rules: one keyword, `fallback`, chooses a local Laplace approximation (`LocalLaplace`),
+conjugate-computation variational inference (`CVI`), Laplace propagation or expectation
+propagation, and the inference report says what was approximated and how.
 """
     ),
     Category(

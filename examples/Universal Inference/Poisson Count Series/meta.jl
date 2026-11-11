@@ -1,8 +1,8 @@
 return (
-    title = "Laplace, CVI and EP: A Poisson Count Series",
+    title = "Poisson Count Series",
     description = """
-    A latent autoregressive log-rate observed through Poisson counts, smoothed by belief propagation with a rule-free observation node, under LocalLaplace() and CVI(), and by expectation propagation and Laplace propagation, against the exact smoother of a fine grid and its evidence; then the transition's precision learned under mean field.
+    A latent autoregressive log-rate observed through Poisson counts, smoothed by belief propagation with a rule-free observation node under LocalLaplace(), CVI(), ExpectationPropagation() and LaplacePropagation(), against the exact smoother of a fine grid and its evidence; then the transition's precision learned under mean field.
     """,
-    tags = ["universal inference", "laplace approximation", "cvi", "state space model", "poisson", "time series", "free energy", "expectation propagation"],
+    tags = ["universal inference", "laplace approximation", "cvi", "expectation propagation", "laplace propagation", "state space model", "poisson", "time series", "free energy"],
     wide_output = true
 )
