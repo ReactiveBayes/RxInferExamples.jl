@@ -44,3 +44,6 @@ examples/cache/
 
 # Node dependencies for the post-build documentation checks (docs/tools)
 docs/tools/node_modules/
+
+# Data downloaded by examples when they run
+examples/Universal Inference/Poisson Regression of Doctor Visits/data/
