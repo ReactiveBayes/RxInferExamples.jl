@@ -160,12 +160,29 @@ end
     return true, nothing
 end
 
+# The range of the first line that starts with `Error:` in an output block, a fence without a
+# language: Weave writes a cell's error after whatever the cell printed before it, so it need
+# not open the block, as when a hidden `@assert` fails after a `println`.
+@everywhere function find_error_line(mdtext)
+    infence, isoutput, offset = false, false, 0
+    for line in eachsplit(mdtext, '\n')
+        if startswith(line, "```")
+            isoutput = !infence && strip(line) == "```"
+            infence = !infence
+        elseif infence && isoutput && startswith(line, "Error:")
+            return (offset + 1):(offset + ncodeunits(line))
+        end
+        offset += ncodeunits(line) + 1
+    end
+    return nothing
+end
+
 # Function to check markdown for error blocks
 @everywhere function has_error_blocks(md_path)
     !isfile(md_path) && return true
     mdtext = read(md_path, String)
 
-    erroridx = findnext("```\nError:", mdtext, 1)
+    erroridx = find_error_line(mdtext)
     if !isnothing(erroridx)
         # Extract error context window
         errwindow = 500
@@ -359,9 +376,12 @@ end
         time_to_env_log_end = time_ns()
 
         time_to_build_begin = time_ns()
+        # `wide_output = true` in `meta.jl`: the printed output is not wrapped at 75 characters
+        wide_output = get(meta, :wide_output, false) === true
         execute_in_julia_subprocess(envdir, quote
             using Serialization
             using Weave
+            $wide_output && Weave.set_chunk_defaults!(:wrap => false)
             weave($build_input_path;
                 out_path=$output_path,
                 doctype="github",

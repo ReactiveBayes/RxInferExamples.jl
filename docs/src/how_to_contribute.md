@@ -4,7 +4,7 @@ We welcome contributions from the community! This guide will help you understand
 
 ## Location and Structure
 
-Create a new Jupyter notebook in the appropriate category folder. Use `examples/Basic Examples/` for fundamental concepts, `examples/Advanced Examples/` for complex applications, `examples/Making Inference Faster/` for user-side performance techniques, `examples/Problem Specific/` for domain-specific use cases, or `examples/Experimental Examples` for some (potentially unpolished) experiments.
+Create a new Jupyter notebook in the appropriate category folder. Use `examples/Basic Examples/` for fundamental concepts, `examples/Advanced Examples/` for complex applications, `examples/Making Inference Faster/` for user-side performance techniques, `examples/Problem Specific/` for domain-specific use cases, `examples/Universal Inference/` for inference with generic approximations instead of hand-derived rules, or `examples/Experimental Examples` for some (potentially unpolished) experiments.
 
 !!! note
     You can also introduce a new category by creating a new folder in the `examples/` directory.
@@ -146,7 +146,7 @@ return (
 
 ### Optional fields
 
-Both fields below are optional - omit them unless your example needs them.
+The fields below are optional - omit them unless your example needs them.
 
 - `env_required = ["SOME_API_KEY"]` - environment variables the example needs in order to
   run. If any of them are missing the example is skipped with a warning instead of
@@ -165,6 +165,10 @@ Both fields below are optional - omit them unless your example needs them.
   shared environment then resolves without it. Compat
   entries in an example's `Project.toml` hold in either environment, so a conflict fails
   the build instead of resolving an older RxInfer.
+- `wide_output = true` - print the output of the example's cells as it is, without
+  wrapping it at 75 characters. Use it for output laid out wider than that, such as the
+  tables of RxInfer's inference report (`result.report`) with PrettyTables.jl loaded,
+  which wrapping breaks apart.
 
 ```julia
 return (
