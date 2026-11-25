@@ -294,10 +294,12 @@ is_processing_successful(processed::ProcessedNotebook) =
 @everywhere ns_to_seconds(nanoseconds) = nanoseconds / 10^9
 
 # The build's own packages, Weave among them, load from `examples/Project.toml`, stacked after
-# the notebook's environment: an environment of a notebook's own holds only its packages.
+# the notebook's environment: an environment of a notebook's own holds only its packages. The
+# build runs one notebook per CPU thread, so BLAS runs on one thread: with its default, the
+# notebooks' threads spin-wait for each other's, and a small factorisation takes milliseconds.
 @everywhere function execute_in_julia_subprocess(envdir, command)
     load_path = join(["@", @__DIR__, "@stdlib"], Sys.iswindows() ? ";" : ":")
-    run(addenv(`julia --startup-file=no --threads=2,1 --gcthreads=2,1 --project=$envdir -e $command`, "JULIA_LOAD_PATH" => load_path))
+    run(addenv(`julia --startup-file=no --threads=2,1 --gcthreads=2,1 --project=$envdir -e $command`, "JULIA_LOAD_PATH" => load_path, "OPENBLAS_NUM_THREADS" => "1"))
 end
 
 # Function to process a single notebook
