@@ -45,6 +45,16 @@ can be applied to specific problems like time series analysis and signal process
 """
     ),
     Category(
+        "Universal Inference",
+        "universal_inference",
+        """
+Inference in a broad class of models with generic approximations instead of hand-derived update
+rules: one keyword, `fallback`, chooses a local Laplace approximation (`LocalLaplace`), Laplace
+propagation, expectation propagation or natural-gradient propagation, and the inference report says
+what was approximated and how.
+"""
+    ),
+    Category(
         "Experimental Examples",
         "experimental_examples",
         """

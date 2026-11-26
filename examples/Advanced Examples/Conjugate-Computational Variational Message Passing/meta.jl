@@ -1,7 +1,7 @@
 return (
     title = "Conjugate-Computational Variational Message Passing (CVI)",
     description = """
-    This example provides an extensive tutorial for the non-conjugate message-passing based inference by exploiting the local CVI approximation.
+    This example has moved: natural-gradient propagation, fallback = NaturalGradientPropagation(), replaces CVI, and the tracking problem of this example is now Tracking with a Squared-Distance Sensor in the Universal Inference section.
     """,
-    tags = ["advanced examples", "cvi", "non conjugate", "variational inference", "tutorial"]
+    tags = ["advanced examples", "cvi", "moved"]
 )

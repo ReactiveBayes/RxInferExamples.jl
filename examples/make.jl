@@ -160,12 +160,29 @@ end
     return true, nothing
 end
 
+# The range of the first line that starts with `Error:` in an output block, a fence without a
+# language: Weave writes a cell's error after whatever the cell printed before it, so it need
+# not open the block, as when a hidden `@assert` fails after a `println`.
+@everywhere function find_error_line(mdtext)
+    infence, isoutput, offset = false, false, 0
+    for line in eachsplit(mdtext, '\n')
+        if startswith(line, "```")
+            isoutput = !infence && strip(line) == "```"
+            infence = !infence
+        elseif infence && isoutput && startswith(line, "Error:")
+            return (offset + 1):(offset + ncodeunits(line))
+        end
+        offset += ncodeunits(line) + 1
+    end
+    return nothing
+end
+
 # Function to check markdown for error blocks
 @everywhere function has_error_blocks(md_path)
     !isfile(md_path) && return true
     mdtext = read(md_path, String)
 
-    erroridx = findnext("```\nError:", mdtext, 1)
+    erroridx = find_error_line(mdtext)
     if !isnothing(erroridx)
         # Extract error context window
         errwindow = 500
@@ -277,10 +294,12 @@ is_processing_successful(processed::ProcessedNotebook) =
 @everywhere ns_to_seconds(nanoseconds) = nanoseconds / 10^9
 
 # The build's own packages, Weave among them, load from `examples/Project.toml`, stacked after
-# the notebook's environment: an environment of a notebook's own holds only its packages.
+# the notebook's environment: an environment of a notebook's own holds only its packages. The
+# build runs one notebook per CPU thread, so BLAS runs on one thread: with its default, the
+# notebooks' threads spin-wait for each other's, and a small factorisation takes milliseconds.
 @everywhere function execute_in_julia_subprocess(envdir, command)
     load_path = join(["@", @__DIR__, "@stdlib"], Sys.iswindows() ? ";" : ":")
-    run(addenv(`julia --startup-file=no --threads=2,1 --gcthreads=2,1 --project=$envdir -e $command`, "JULIA_LOAD_PATH" => load_path))
+    run(addenv(`julia --startup-file=no --threads=2,1 --gcthreads=2,1 --project=$envdir -e $command`, "JULIA_LOAD_PATH" => load_path, "OPENBLAS_NUM_THREADS" => "1"))
 end
 
 # Function to process a single notebook
@@ -359,9 +378,12 @@ end
         time_to_env_log_end = time_ns()
 
         time_to_build_begin = time_ns()
+        # `wide_output = true` in `meta.jl`: the printed output is not wrapped at 75 characters
+        wide_output = get(meta, :wide_output, false) === true
         execute_in_julia_subprocess(envdir, quote
             using Serialization
             using Weave
+            $wide_output && Weave.set_chunk_defaults!(:wrap => false)
             weave($build_input_path;
                 out_path=$output_path,
                 doctype="github",
