@@ -9,6 +9,6 @@ RxInfer = "86711068-29c9-4ff7-b620-ae75d7495b3d"
 SpecialFunctions = "276daf66-3868-5448-9aa4-cd146d93841b"
 
 [compat]
-# the free energy takes E[log Γ(α)] from `mean(loggamma, q)`, exact from 2.9.2
-ExponentialFamily = "2.9.2"
+# the free energy takes E[log Γ(α)] from `mean(loggamma, q)`, exact from 2.9.3
+ExponentialFamily = "2.9.3"
 RxInfer = "6.2"
